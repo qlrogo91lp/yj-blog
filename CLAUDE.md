@@ -1,25 +1,46 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+이 파일은 Claude Code가 이 저장소에서 작업할 때 참고하는 가이드입니다.
 
-## Commands
+## 명령어
 
 ```bash
-npm run dev      # Start dev server at http://localhost:3000
-npm run build    # Production build
-npm run lint     # Run ESLint
+npm run dev      # 개발 서버 실행 (http://localhost:3000)
+npm run build    # 프로덕션 빌드
+npm run lint     # ESLint 실행
 ```
 
-No test suite is configured yet.
+### DB 스키마
 
-## Architecture
+스키마 변경 시 `drizzle-kit push`를 사용한다. 개인 프로젝트이므로 generate + migrate 대신 push로 직접 DB에 반영한다.
 
-This is a Next.js 16 blog using the **App Router** with React 19 and TypeScript (strict mode).
+```bash
+npx drizzle-kit push    # schema.ts 변경 후 DB에 바로 반영
+npx drizzle-kit studio  # DB 데이터 GUI로 확인
+```
 
-- `src/app/` — App Router root. `layout.tsx` is the root layout; `page.tsx` is the homepage.
-- `public/` — Static assets served at `/`.
-- Styling: **Tailwind CSS v4** via PostCSS. Global styles in `app/globals.css`.
-- Fonts: Geist Sans and Geist Mono loaded via `next/font/google` and exposed as CSS variables (`--font-geist-sans`, `--font-geist-mono`).
-- Path alias: `@/*` maps to `src/` (e.g. `@/app/...`, `@/components/...`).
+> **주의**: 컬럼 삭제·타입 변경 등 데이터 손실 가능성이 있는 작업은 push 전에 반드시 확인한다.
 
-New routes are created by adding folders under `src/app/` following Next.js App Router conventions (e.g. `src/app/posts/[slug]/page.tsx`).
+### 테스트
+
+```bash
+npm run test        # Vitest 단위/통합 테스트 (watch 모드)
+npm run test:run    # Vitest 1회 실행 (CI용)
+npm run test:e2e    # Playwright E2E 테스트
+```
+
+## 아키텍처
+
+Next.js 16 개인 블로그. **App Router** + React 19 + TypeScript strict 모드.
+
+- `src/app/` — App Router 루트. `layout.tsx`는 루트 레이아웃, `page.tsx`는 홈페이지.
+- `src/db/` — Drizzle ORM 설정. `schema.ts`에 모든 테이블 정의, `index.ts`에 db 인스턴스.
+- `src/components/` — UI 컴포넌트. `ui/`는 shadcn/ui 자동 생성.
+- `src/actions/` — Server Actions. 데이터 변경은 모두 여기서 처리.
+- `src/db/queries/` — Server Component용 DB 쿼리 함수 모음.
+- `public/` — 정적 파일.
+- 스타일링: **Tailwind CSS v4** (PostCSS). 전역 스타일은 `app/globals.css`.
+- 폰트: Geist Sans, Geist Mono (`next/font/google`). CSS 변수 `--font-geist-sans`, `--font-geist-mono`로 노출.
+- 경로 별칭: `@/*` → `src/` (예: `@/components/...`, `@/db/...`).
+
+새 라우트는 `src/app/` 하위에 폴더를 추가하는 App Router 컨벤션을 따른다 (예: `src/app/posts/[slug]/page.tsx`).
