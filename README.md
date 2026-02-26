@@ -8,6 +8,8 @@ Next.js 16 기반 개인 블로그. App Router + Drizzle ORM + Neon PostgreSQL +
 - **Database**: Neon PostgreSQL + Drizzle ORM
 - **Styling**: Tailwind CSS v4 + shadcn/ui
 - **Auth**: Clerk (관리자 전용)
+- **유효성 검사**: Zod (Server Action 입력 검증, 폼 스키마)
+- **상태관리**: Zustand (클라이언트 전역 상태), TanStack Query (서버 상태 캐싱, 필요 시)
 - **Deploy**: Vercel
 
 ## 명령어
@@ -113,6 +115,9 @@ middleware.ts                       # Clerk - /admin/* 보호
 
 - **Server Component** → `db/queries/*.ts` 직접 호출 (DB 읽기)
 - **Client Component** → `actions/*.ts` Server Actions 호출 (데이터 변경)
+- **입력 검증** → Zod 스키마로 Server Action 진입 시 검증 (`types/` 폼 스키마 재사용)
+- **전역 클라이언트 상태** → Zustand (UI 상태, 모달, 에디터 임시 데이터 등)
+- **서버 상태 캐싱** → TanStack Query (필요 시 — 실시간 데이터, 낙관적 업데이트 등)
 - **관리자 Actions** → 내부에서 Clerk `auth()` 재검증
 - **댓글 Actions** → bcrypt로 비밀번호 검증 후 처리
 - **캐시 무효화** → `revalidatePath()` / `revalidateTag()`
@@ -180,6 +185,9 @@ npm install @clerk/nextjs
 npm install unified remark-parse remark-rehype rehype-stringify remark-gfm rehype-highlight rehype-slug
 npm install bcryptjs && npm install -D @types/bcryptjs
 npm install date-fns
+npm install zod
+npm install zustand
+npm install @tanstack/react-query  # 필요 시
 
 # 테스트
 npm install -D vitest @vitejs/plugin-react @testing-library/react @testing-library/jest-dom jsdom
