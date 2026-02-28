@@ -25,8 +25,8 @@ npm run test:run    # Vitest 1회 실행 (CI용)
 npm run test:e2e    # Playwright E2E 테스트
 
 # DB
-npx drizzle-kit generate   # 마이그레이션 파일 생성
-npx drizzle-kit migrate    # DB에 마이그레이션 적용
+npx drizzle-kit push    # schema.ts 변경 후 DB에 바로 반영
+npx drizzle-kit studio  # DB 데이터 GUI로 확인
 ```
 
 ## DB 스키마
@@ -35,7 +35,6 @@ npx drizzle-kit migrate    # DB에 마이그레이션 적용
 |--------|------|
 | `posts` | 블로그 글. slug 기반 URL, draft/published 상태, 조회수, SEO 메타 |
 | `categories` | 글 분류 (1:N) |
-| `series` | 연재글 묶음. 글에 순서(series_order) 포함 |
 | `comments` | 비밀번호 기반 댓글. parent_id로 대댓글 지원, 소프트 삭제 |
 
 ## 프로젝트 구조 (목표)
@@ -52,10 +51,6 @@ src/
 │   │
 │   ├── categories/[slug]/page.tsx  # 카테고리별 글 목록
 │   │
-│   ├── series/
-│   │   ├── page.tsx                # 시리즈 목록
-│   │   └── [slug]/page.tsx         # 시리즈 글 목록
-│   │
 │   ├── admin/
 │   │   ├── layout.tsx              # Clerk auth 체크, AdminSidebar
 │   │   ├── page.tsx                # 대시보드
@@ -63,8 +58,7 @@ src/
 │   │   │   ├── page.tsx            # 글 관리 목록
 │   │   │   ├── new/page.tsx        # 글 작성
 │   │   │   └── [id]/edit/page.tsx  # 글 수정
-│   │   ├── categories/page.tsx     # 카테고리 관리
-│   │   └── series/page.tsx         # 시리즈 관리
+│   │   └── categories/page.tsx     # 카테고리 관리
 │   │
 │   ├── sitemap.ts                  # 동적 sitemap.xml
 │   ├── robots.ts                   # robots.txt (/admin/* disallow)
@@ -73,17 +67,15 @@ src/
 ├── components/
 │   ├── ui/                         # shadcn/ui 자동 생성
 │   ├── layout/                     # Header, Footer, AdminSidebar
-│   ├── post/                       # PostCard, PostList, PostContent, PostHeader, PostFooter, SeriesNav, ViewCounter
+│   ├── post/                       # PostCard, PostList, PostContent, PostHeader, PostFooter, ViewCounter
 │   ├── comment/                    # CommentList, CommentItem, CommentForm, CommentDeleteDialog
 │   ├── category/                   # CategoryFilter, CategoryBadge
-│   ├── series/                     # SeriesCard
-│   └── admin/                      # PostEditor, PostForm, CategoryForm, SeriesForm
+│   └── admin/                      # PostEditor, PostForm, CategoryForm
 │
 ├── actions/                        # Server Actions
 │   ├── post.ts                     # createPost, updatePost, deletePost, publishPost
 │   ├── comment.ts                  # createComment, updateComment, deleteComment
 │   ├── category.ts                 # createCategory, updateCategory, deleteCategory
-│   ├── series.ts                   # createSeries, updateSeries, deleteSeries
 │   └── view.ts                     # incrementViewCount
 │
 ├── db/
@@ -92,8 +84,7 @@ src/
 │   └── queries/                    # Server Component용 재사용 쿼리 함수
 │       ├── posts.ts
 │       ├── comments.ts
-│       ├── categories.ts
-│       └── series.ts
+│       └── categories.ts
 │
 ├── lib/
 │   ├── utils.ts                    # cn() 유틸
@@ -105,7 +96,6 @@ src/
     ├── post.ts
     ├── comment.ts
     ├── category.ts
-    ├── series.ts
     └── index.ts
 
 middleware.ts                       # Clerk - /admin/* 보호

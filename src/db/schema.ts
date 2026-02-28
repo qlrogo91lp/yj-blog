@@ -20,20 +20,6 @@ export const categories = pgTable('categories', {
 })
 
 // -----------------------------------------------
-// series (연재글 묶음)
-// -----------------------------------------------
-
-export const series = pgTable('series', {
-  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  title: text('title').notNull(),
-  slug: text('slug').notNull().unique(),      // URL: /series/[slug]
-  description: text('description'),
-  thumbnailUrl: text('thumbnail_url'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
-
-// -----------------------------------------------
 // posts
 // -----------------------------------------------
 
@@ -51,10 +37,6 @@ export const posts = pgTable('posts', {
 
   // 분류
   categoryId: integer('category_id').references(() => categories.id, { onDelete: 'set null' }),
-
-  // 시리즈
-  seriesId: integer('series_id').references(() => series.id, { onDelete: 'set null' }),
-  seriesOrder: integer('series_order'),       // 시리즈 내 순서
 
   // SEO - 비워두면 title/excerpt를 fallback으로 사용
   metaTitle: text('meta_title'),
@@ -92,18 +74,10 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
   posts: many(posts),
 }))
 
-export const seriesRelations = relations(series, ({ many }) => ({
-  posts: many(posts),
-}))
-
 export const postsRelations = relations(posts, ({ one, many }) => ({
   category: one(categories, {
     fields: [posts.categoryId],
     references: [categories.id],
-  }),
-  series: one(series, {
-    fields: [posts.seriesId],
-    references: [series.id],
   }),
   comments: many(comments),
 }))

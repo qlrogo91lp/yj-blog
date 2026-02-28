@@ -2,20 +2,13 @@ import { z } from 'zod'
 import type { InferSelectModel } from 'drizzle-orm'
 import type { posts } from '@/db/schema'
 import type { Category } from './category'
-import type { Series } from './series'
 
 // DB row 타입 (Drizzle 추론)
 export type Post = InferSelectModel<typeof posts>
 
-// 목록 페이지용 (category join)
+// 목록/상세 페이지용 (category join)
 export type PostWithCategory = Post & {
   category: Category | null
-}
-
-// 상세 페이지용 (category + series join)
-export type PostWithRelations = Post & {
-  category: Category | null
-  series: Series | null
 }
 
 // 글 생성/수정 폼 스키마
@@ -31,8 +24,6 @@ export const postFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
   status: z.enum(['draft', 'published']),
   categoryId: z.number().int().positive().nullable(),
-  seriesId: z.number().int().positive().nullable(),
-  seriesOrder: z.number().int().positive().nullable(),
   metaTitle: z.string().max(100, 'meta 제목은 100자 이하여야 합니다').optional(),
   metaDescription: z.string().max(200, 'meta 설명은 200자 이하여야 합니다').optional(),
 })

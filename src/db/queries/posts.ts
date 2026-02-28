@@ -1,7 +1,7 @@
 import { db } from '@/db'
-import { posts, categories, series as seriesTable } from '@/db/schema'
+import { posts, categories } from '@/db/schema'
 import { and, count, desc, eq } from 'drizzle-orm'
-import type { PostWithCategory, PostWithRelations } from '@/types'
+import type { PostWithCategory } from '@/types'
 
 interface GetPostsOptions {
   categoryId?: number
@@ -40,31 +40,19 @@ export async function getPosts({ categoryId, page = 1, limit = 10 }: GetPostsOpt
 }
 
 /**
- * slug로 글 상세 조회 (category + series join)
+ * slug로 글 상세 조회 (category join)
  */
-export async function getPostBySlug(slug: string): Promise<PostWithRelations | null> {
+export async function getPostBySlug(slug: string): Promise<PostWithCategory | null> {
   const result = await db
-    .select({ post: posts, category: categories, series: seriesTable })
+    .select({ post: posts, category: categories })
     .from(posts)
     .leftJoin(categories, eq(posts.categoryId, categories.id))
-    .leftJoin(seriesTable, eq(posts.seriesId, seriesTable.id))
     .where(eq(posts.slug, slug))
     .limit(1)
 
   if (!result[0]) return null
-  const { post, category, series } = result[0]
-  return { ...post, category, series }
-}
-
-/**
- * 시리즈에 속한 발행 글 목록 (series_order 순)
- */
-export async function getPostsBySeries(seriesId: number) {
-  return db
-    .select()
-    .from(posts)
-    .where(and(eq(posts.seriesId, seriesId), eq(posts.status, 'published')))
-    .orderBy(posts.seriesOrder)
+  const { post, category } = result[0]
+  return { ...post, category }
 }
 
 /**
