@@ -124,3 +124,6 @@
     @apply bg-background text-foreground;
   }
 }
+
+@import "../styles/prose.css";
+@import "../styles/highlight.css";

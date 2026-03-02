@@ -64,6 +64,10 @@ src/
 │   ├── robots.ts                   # robots.txt (/admin/* disallow)
 │   └── not-found.tsx
 │
+├── styles/
+│   ├── prose.css                   # 글 상세 페이지 .prose 스타일 (rehype-stringify 출력)
+│   └── highlight.css               # .hljs-* 토큰 색상 (github-dark 기반, rehype-highlight)
+│
 ├── components/
 │   ├── ui/                         # shadcn/ui 자동 생성
 │   ├── layout/                     # Header, Footer, AdminSidebar

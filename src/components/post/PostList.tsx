@@ -10,23 +10,26 @@ import type { PostWithCategory } from "@/types"
 interface Props {
   posts: PostWithCategory[]
   total: number
+  hideTitleBar?: boolean
 }
 
 type ViewType = "card" | "list"
 
-export function PostList({ posts, total }: Props) {
+export function PostList({ posts, total, hideTitleBar }: Props) {
   const [viewType, setViewType] = useState<ViewType>("card")
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className={hideTitleBar ? "" : "mx-auto max-w-3xl px-4 py-8"}>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">
-          최신 글{" "}
-          <span className="text-base font-normal text-muted-foreground">
-            ({total}편)
-          </span>
-        </h1>
-        <div className="flex gap-1">
+        {!hideTitleBar && (
+          <h1 className="text-2xl font-bold">
+            최신 글{" "}
+            <span className="text-base font-normal text-muted-foreground">
+              ({total}편)
+            </span>
+          </h1>
+        )}
+        <div className="flex gap-1 ml-auto">
           <Button
             variant={viewType === "card" ? "secondary" : "ghost"}
             size="icon"
