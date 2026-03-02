@@ -120,6 +120,7 @@ middleware.ts                       # Clerk - /admin/* 보호
 - shadcn 컴포넌트 추가 (button, card, badge 등)
 - Header, Footer 컴포넌트
 - `src/app/layout.tsx` 업데이트
+- Clerk 설치, `middleware.ts`
 
 ### Phase 2 - 공개 독자 페이지
 - 홈페이지, 글 목록, 글 상세 (Markdown 렌더링)
@@ -136,7 +137,6 @@ middleware.ts                       # Clerk - /admin/* 보호
 - 각 페이지 `generateMetadata`
 
 ### Phase 5 - 관리자
-- Clerk 설치, middleware.ts
 - 글 / 카테고리 / 시리즈 CRUD 관리 페이지
 
 ## 테스트 전략
@@ -171,7 +171,6 @@ e2e/                     # E2E 테스트
 ## 설치 예정 패키지
 
 ```bash
-npm install @clerk/nextjs
 npm install unified remark-parse remark-rehype rehype-stringify remark-gfm rehype-highlight rehype-slug
 npm install bcryptjs && npm install -D @types/bcryptjs
 npm install date-fns
