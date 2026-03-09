@@ -57,7 +57,7 @@ npx shadcn@latest add input textarea select dropdown-menu toggle toggle-group \
 ## 파일 구조
 
 ```
-src/app/write/
+src/app/newpost/
 ├── layout.tsx                    # 전용 레이아웃 (Header/Footer 없는 전체화면)
 ├── page.tsx                      # Server Component - 인증, 카테고리 fetch
 ├── _store.ts                     # Zustand 스토어
@@ -65,7 +65,7 @@ src/app/write/
 │   ├── save-post-action.ts       # 글 저장 (draft/published)
 │   └── upload-image-action.ts    # 이미지 업로드 → URL 반환
 └── _components/
-    ├── write-page-client.tsx     # 'use client' 최상위 래퍼
+    ├── newpost-page-client.tsx   # 'use client' 최상위 래퍼
     ├── title-input.tsx           # 제목 입력
     ├── editor-toolbar.tsx        # 서식 툴바 + 모드 드롭다운
     ├── wysiwyg-editor.tsx        # TipTap 에디터
@@ -86,7 +86,7 @@ src/app/write/
 
 ```
 page.tsx (Server - auth guard, getCategories)
-└── write-page-client.tsx (Client)
+└── newpost-page-client.tsx (Client)
     ├── editor-toolbar.tsx
     │   ├── 모드 드롭다운 (기본모드/마크다운)
     │   ├── 제목 스타일 select (본문, 제목1~3)
@@ -109,16 +109,16 @@ page.tsx (Server - auth guard, getCategories)
 
 ## 레이아웃
 
-`/write` 라우트는 Tistory처럼 **Header/Footer 없는 전체화면** 에디터:
+`/newpost` 라우트는 Tistory처럼 **Header/Footer 없는 전체화면** 에디터:
 
 ```tsx
-// src/app/write/layout.tsx
-export default function WriteLayout({ children }: { children: React.ReactNode }) {
+// src/app/newpost/layout.tsx
+export default function NewPostLayout({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen flex flex-col">{children}</div>
 }
 ```
 
-루트 layout.tsx의 Header/Footer를 건너뛰기 위해 **(write)** route group을 사용하거나, write/layout.tsx에서 자체 구조를 가짐. 루트 레이아웃이 항상 Header/Footer를 포함하므로, route group `(main)` 으로 기존 페이지를 묶고 `(write)` 그룹으로 분리하는 것이 깔끔함.
+루트 layout.tsx의 Header/Footer를 건너뛰기 위해 **(newpost)** route group을 사용하거나, newpost/layout.tsx에서 자체 구조를 가짐. 루트 레이아웃이 항상 Header/Footer를 포함하므로, route group `(main)` 으로 기존 페이지를 묶고 `(newpost)` 그룹으로 분리하는 것이 깔끔함.
 
 **구조 변경:**
 ```
@@ -128,8 +128,8 @@ src/app/
 │   ├── page.tsx
 │   ├── posts/
 │   └── categories/
-├── (write)/              # 에디터 전용
-│   └── write/
+├── (newpost)/            # 에디터 전용
+│   └── newpost/
 │       ├── layout.tsx    # Header/Footer 없음
 │       └── page.tsx
 └── layout.tsx            # 루트 (ClerkProvider, 폰트만)
@@ -144,11 +144,11 @@ src/app/
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
-export default async function WritePage() {
+export default async function NewPostPage() {
   const { userId } = await auth()
   if (!userId) redirect('/sign-in')
   const categories = await getCategories()
-  return <WritePageClient categories={categories} />
+  return <NewPostPageClient categories={categories} />
 }
 ```
 
@@ -190,16 +190,16 @@ export default async function WritePage() {
 ## 구현 순서
 
 ### Phase 1: 기반 작업
-1. route group으로 레이아웃 분리 (`(main)`, `(write)`)
+1. route group으로 레이아웃 분리 (`(main)`, `(newpost)`)
 2. 스키마에 `contentFormat` 추가 → `drizzle-kit push`
 3. postFormSchema 업데이트
 4. npm 패키지 설치 (TipTap, zustand, @vercel/blob, turndown)
 5. shadcn/ui 컴포넌트 추가
 
 ### Phase 2: 기본 UI
-6. `/write` page.tsx (auth guard + 카테고리 fetch)
+6. `/newpost` page.tsx (auth guard + 카테고리 fetch)
 7. `_store.ts` (Zustand 스토어)
-8. `write-page-client.tsx` (클라이언트 래퍼)
+8. `newpost-page-client.tsx` (클라이언트 래퍼)
 9. `title-input.tsx`, `category-selector.tsx`
 10. `bottom-bar.tsx`
 
@@ -228,7 +228,7 @@ export default async function WritePage() {
 
 ## 검증 방법
 1. `npm run build` — 빌드 에러 없음 확인
-2. `npm run dev` → `/write` 접속, 로그인 안 된 상태에서 리다이렉트 확인
+2. `npm run dev` → `/newpost` 접속, 로그인 안 된 상태에서 리다이렉트 확인
 3. 기본모드에서 글 작성 → 서식 적용 확인 (Bold, 이탈릭, 표 등)
 4. 마크다운 모드 전환 → 내용 변환 확인
 5. 임시저장 → DB에 draft 상태로 저장 확인
