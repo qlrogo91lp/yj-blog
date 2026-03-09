@@ -1,7 +1,7 @@
 import React from "react"
 import { render, screen, fireEvent } from "@testing-library/react"
 import { describe, it, expect, vi } from "vitest"
-import { PostList } from "./PostList"
+import { PostList } from "./post-list"
 import type { PostWithCategory } from "@/types"
 
 vi.mock("next/link", () => ({

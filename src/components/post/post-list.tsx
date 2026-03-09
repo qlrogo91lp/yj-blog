@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { LayoutGrid, List } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { PostCard } from "./PostCard"
-import { PostListItem } from "./PostListItem"
+import { PostCard } from "./post-card"
+import { PostListItem } from "./post-list-item"
 import type { PostWithCategory } from "@/types"
 
 interface Props {

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { getPostBySlug } from "@/db/queries/posts"
 import { markdownToHtml } from "@/lib/markdown"
-import { PostDetail } from "@/components/post/PostDetail"
+import { PostDetail } from "./_components/post-detail"
 
 interface Props {
   params: Promise<{ slug: string }>

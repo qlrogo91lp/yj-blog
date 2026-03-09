@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { getCategoryBySlug } from "@/db/queries/categories"
 import { getPosts } from "@/db/queries/posts"
-import { PostList } from "@/components/post/PostList"
+import { PostList } from "@/components/post/post-list"
 
 interface Props {
   params: Promise<{ slug: string }>

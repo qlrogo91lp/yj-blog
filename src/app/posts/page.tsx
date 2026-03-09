@@ -2,8 +2,8 @@ import { Suspense } from "react"
 import { getPosts } from "@/db/queries/posts"
 import { getCategories } from "@/db/queries/categories"
 import { getCategoryBySlug } from "@/db/queries/categories"
-import { PostList } from "@/components/post/PostList"
-import { CategoryFilter } from "@/components/category/CategoryFilter"
+import { PostList } from "@/components/post/post-list"
+import { CategoryFilter } from "./_components/category-filter"
 
 interface Props {
   searchParams: Promise<{ category?: string; page?: string }>
