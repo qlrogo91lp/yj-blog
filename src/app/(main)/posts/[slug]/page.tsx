@@ -25,7 +25,9 @@ export default async function PostPage({ params }: Props) {
 
   if (!post || post.status !== "published") notFound()
 
-  const contentHtml = await markdownToHtml(post.content)
+  const contentHtml = post.contentFormat === 'html'
+    ? post.content
+    : await markdownToHtml(post.content)
 
   return <PostDetail post={post} contentHtml={contentHtml} />
 }

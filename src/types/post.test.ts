@@ -5,6 +5,7 @@ const validData = {
   title: "테스트 제목",
   slug: "test-slug",
   content: "내용",
+  contentFormat: "markdown" as const,
   status: "draft" as const,
   categoryId: null,
 }
@@ -85,6 +86,7 @@ describe("postFormSchema", () => {
       title: "완전한 글 제목",
       slug: "complete-post",
       content: "본문 내용",
+      contentFormat: "html",
       excerpt: "요약",
       status: "published",
       categoryId: 1,

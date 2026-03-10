@@ -28,6 +28,7 @@ export const posts = pgTable('posts', {
   title: text('title').notNull(),
   slug: text('slug').notNull().unique(),      // URL: /posts/[slug], SEO-friendly
   content: text('content').notNull().default(''),
+  contentFormat: text('content_format').notNull().default('markdown'), // 'markdown' | 'html'
   excerpt: text('excerpt'),                   // 글 요약 - 목록 미리보기 및 meta description 기본값
 
   thumbnailUrl: text('thumbnail_url'),

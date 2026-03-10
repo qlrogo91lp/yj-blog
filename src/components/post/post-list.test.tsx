@@ -18,6 +18,7 @@ vi.mock("next/image", () => ({
 
 const basePost = {
   content: "내용",
+  contentFormat: "markdown",
   thumbnailUrl: null,
   status: "published" as const,
   views: 0,

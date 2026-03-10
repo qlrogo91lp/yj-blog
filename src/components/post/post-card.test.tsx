@@ -15,6 +15,7 @@ const mockPost: PostWithCategory = {
   title: "테스트 글 제목",
   slug: "test-post",
   content: "본문 내용",
+  contentFormat: "markdown",
   excerpt: "요약 내용",
   thumbnailUrl: null,
   status: "published",
