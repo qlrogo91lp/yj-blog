@@ -5,6 +5,7 @@ import {
   SignInButton,
   UserButton,
 } from "@clerk/nextjs"
+import { Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Header() {
@@ -23,6 +24,11 @@ export function Header() {
             </SignInButton>
           </SignedOut>
           <SignedIn>
+            <Link href="/admin">
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </Link>
             <UserButton />
           </SignedIn>
         </div>

@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
-import { SignedIn } from "@clerk/nextjs"
 import { LayoutGrid, List } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PostCard } from "./post-card"
@@ -32,12 +30,6 @@ export function PostList({ posts, total, hideTitleBar }: Props) {
           </h1>
         )}
         <div className="flex items-center gap-1 ml-auto">
-          <SignedIn>
-            <Button variant="default" size="sm" asChild>
-              <Link href="/newpost">글쓰기</Link>
-            </Button>
-            <div className="mx-1 h-4 w-px bg-border" />
-          </SignedIn>
           <Button
             variant={viewType === "card" ? "secondary" : "ghost"}
             size="icon"
