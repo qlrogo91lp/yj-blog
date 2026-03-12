@@ -15,6 +15,7 @@ type SavePostInput = {
   excerpt?: string
   categoryId: number | null
   status: 'draft' | 'published'
+  publishedAt?: Date | null
 }
 
 type SavePostResult =
@@ -33,29 +34,36 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
   }
 
   const { title, slug, content, contentFormat, excerpt, categoryId, status } = parsed.data
-  const publishedAt = status === 'published' ? new Date() : null
 
   try {
     if (input.postId) {
-      // UPDATE
+      // UPDATE — publishedAt은 처음 발행할 때만 설정
+      const updateData: Record<string, unknown> = {
+        title,
+        slug,
+        content,
+        contentFormat,
+        excerpt: excerpt ?? null,
+        categoryId,
+        status,
+        updatedAt: new Date(),
+      }
+      if (status === 'published' && !input.publishedAt) {
+        updateData.publishedAt = new Date()
+      }
+      if (status === 'draft') {
+        updateData.publishedAt = null
+      }
+
       await db
         .update(posts)
-        .set({
-          title,
-          slug,
-          content,
-          contentFormat,
-          excerpt: excerpt ?? null,
-          categoryId,
-          status,
-          publishedAt,
-          updatedAt: new Date(),
-        })
+        .set(updateData)
         .where(eq(posts.id, input.postId))
 
       return { success: true, postId: input.postId }
     } else {
       // INSERT
+      const publishedAt = status === 'published' ? new Date() : null
       const [newPost] = await db
         .insert(posts)
         .values({

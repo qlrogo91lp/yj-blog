@@ -3,8 +3,7 @@ import { create } from 'zustand'
 type EditorMode = 'wysiwyg' | 'markdown'
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
-interface NewPostState {
-  // 글 데이터
+type State = {
   postId: number | null
   title: string
   content: string
@@ -13,13 +12,13 @@ interface NewPostState {
   slug: string
   excerpt: string
   status: 'draft' | 'published'
-
-  // 에디터 상태
+  publishedAt: Date | null
   mode: EditorMode
   saveStatus: SaveStatus
   lastSavedAt: Date | null
+}
 
-  // 액션
+type Action = {
   setPostId: (id: number) => void
   setTitle: (title: string) => void
   setContent: (content: string) => void
@@ -28,12 +27,25 @@ interface NewPostState {
   setSlug: (slug: string) => void
   setExcerpt: (excerpt: string) => void
   setStatus: (status: 'draft' | 'published') => void
+  setPublishedAt: (date: Date | null) => void
   setMode: (mode: EditorMode) => void
   setSaveStatus: (status: SaveStatus) => void
   setLastSavedAt: (date: Date) => void
+  reset: () => void
+  initializePost: (data: {
+    postId: number
+    title: string
+    content: string
+    contentFormat: 'markdown' | 'html'
+    categoryId: number | null
+    slug: string
+    excerpt: string
+    status: 'draft' | 'published'
+    publishedAt: Date | null
+  }) => void
 }
 
-export const useNewPostStore = create<NewPostState>((set) => ({
+export const useNewPostStore = create<State & Action>((set) => ({
   postId: null,
   title: '',
   content: '',
@@ -42,6 +54,7 @@ export const useNewPostStore = create<NewPostState>((set) => ({
   slug: '',
   excerpt: '',
   status: 'draft',
+  publishedAt: null,
 
   mode: 'wysiwyg',
   saveStatus: 'idle',
@@ -55,7 +68,28 @@ export const useNewPostStore = create<NewPostState>((set) => ({
   setSlug: (slug) => set({ slug }),
   setExcerpt: (excerpt) => set({ excerpt }),
   setStatus: (status) => set({ status }),
+  setPublishedAt: (publishedAt) => set({ publishedAt }),
   setMode: (mode) => set({ mode }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setLastSavedAt: (lastSavedAt) => set({ lastSavedAt }),
+  reset: () => set({
+    postId: null,
+    title: '',
+    content: '',
+    contentFormat: 'html',
+    categoryId: null,
+    slug: '',
+    excerpt: '',
+    status: 'draft',
+    publishedAt: null,
+    mode: 'wysiwyg',
+    saveStatus: 'idle',
+    lastSavedAt: null,
+  }),
+  initializePost: (data) => set({
+    ...data,
+    mode: data.contentFormat === 'markdown' ? 'markdown' : 'wysiwyg',
+    saveStatus: 'idle',
+    lastSavedAt: null,
+  }),
 }))

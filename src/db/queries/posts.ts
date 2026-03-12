@@ -56,6 +56,19 @@ export async function getPostBySlug(slug: string): Promise<PostWithCategory | nu
 }
 
 /**
+ * ID로 글 단건 조회 (관리자 수정용)
+ */
+export async function getPostById(id: number) {
+  const result = await db
+    .select()
+    .from(posts)
+    .where(eq(posts.id, id))
+    .limit(1)
+
+  return result[0] ?? null
+}
+
+/**
  * 관리자용 전체 글 목록 (draft 포함, 최근 수정 순)
  */
 export async function getAllPostsForAdmin() {

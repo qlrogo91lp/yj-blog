@@ -16,6 +16,7 @@ export async function submitPost(status: 'draft' | 'published') {
     contentFormat: store.contentFormat,
     categoryId: store.categoryId,
     status,
+    publishedAt: store.publishedAt,
   })
 
   if (result.success) {
