@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { ClerkProvider } from "@clerk/nextjs"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { PageTracker } from "@/components/page-tracker"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <TooltipProvider>
+            <PageTracker />
             {children}
           </TooltipProvider>
         </body>

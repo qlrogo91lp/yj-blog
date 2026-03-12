@@ -1,4 +1,4 @@
-import { boolean, integer, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, date, integer, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
 // -----------------------------------------------
@@ -65,6 +65,18 @@ export const comments = pgTable('comments', {
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+// -----------------------------------------------
+// daily_stats (일별 조회수·방문자 통계)
+// -----------------------------------------------
+
+export const dailyStats = pgTable('daily_stats', {
+  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+  date: date('date').notNull().unique(),         // 'YYYY-MM-DD' 형태
+  views: integer('views').notNull().default(0),  // 일별 총 조회수
+  visitors: integer('visitors').notNull().default(0), // 일별 순 방문자
+  createdAt: timestamp('created_at').notNull().defaultNow(),
 })
 
 // -----------------------------------------------

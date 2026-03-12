@@ -33,77 +33,67 @@ npx drizzle-kit studio  # DB 데이터 GUI로 확인
 
 | 테이블 | 설명 |
 |--------|------|
-| `posts` | 블로그 글. slug 기반 URL, draft/published 상태, 조회수, SEO 메타 |
-| `categories` | 글 분류 (1:N) |
-| `comments` | 비밀번호 기반 댓글. parent_id로 대댓글 지원, 소프트 삭제 |
+| `posts` | 블로그 글. slug 기반 URL, draft/published 상태, 조회수, 썸네일, SEO 메타(metaTitle, metaDescription), markdown/html 콘텐츠 |
+| `categories` | 글 분류 (1:N). slug 기반 URL, 설명 필드 |
+| `comments` | 비밀번호(bcrypt) 기반 댓글. parentId로 대댓글 지원, 소프트 삭제(isDeleted) |
 
-## 프로젝트 구조 (목표)
+**관계**: categories 1:N posts, posts 1:N comments, comments 셀프 참조(parentId → 대댓글)
+
+## 프로젝트 구조
 
 ```
 src/
 ├── app/
-│   ├── layout.tsx                  # ClerkProvider, Header, Footer, Toaster
-│   ├── page.tsx                    # 홈 (최신 글, 시리즈, 카테고리)
+│   ├── layout.tsx                          # 루트 레이아웃 (ClerkProvider, Toaster)
 │   │
-│   ├── posts/
-│   │   ├── page.tsx                # 글 목록 (/posts?category=&page=)
-│   │   └── [slug]/page.tsx         # 글 상세 + 댓글
-│   │
-│   ├── categories/[slug]/page.tsx  # 카테고리별 글 목록
-│   │
-│   ├── admin/
-│   │   ├── layout.tsx              # Clerk auth 체크, AdminSidebar
-│   │   ├── page.tsx                # 대시보드
+│   ├── (main)/                             # 공개 페이지 그룹
+│   │   ├── layout.tsx                      # Header, Footer
+│   │   ├── page.tsx                        # 홈 (최신 글 목록)
 │   │   ├── posts/
-│   │   │   ├── page.tsx            # 글 관리 목록
-│   │   │   ├── new/page.tsx        # 글 작성
-│   │   │   └── [id]/edit/page.tsx  # 글 수정
-│   │   └── categories/page.tsx     # 카테고리 관리
+│   │   │   ├── page.tsx                    # 글 목록
+│   │   │   └── [slug]/page.tsx             # 글 상세 + 댓글
+│   │   └── categories/[slug]/page.tsx      # 카테고리별 글 목록
 │   │
-│   ├── sitemap.ts                  # 동적 sitemap.xml
-│   ├── robots.ts                   # robots.txt (/admin/* disallow)
-│   └── not-found.tsx
+│   └── admin/                              # 관리자 페이지
+│       ├── layout.tsx                      # Clerk auth 체크, AdminSidebar
+│       ├── page.tsx                        # 대시보드
+│       ├── posts/
+│       │   ├── page.tsx                    # 글 관리 목록
+│       │   └── new/page.tsx                # 글 작성 (layout.tsx 포함)
+│       ├── categories/page.tsx             # 카테고리 관리
+│       ├── comments/page.tsx               # 댓글 관리
+│       ├── statistics/
+│       │   ├── page.tsx                    # 통계
+│       │   └── referrers/page.tsx          # 유입 경로
+│       └── settings/page.tsx               # 설정
 │
 ├── styles/
-│   ├── prose.css                   # 글 상세 페이지 .prose 스타일 (rehype-stringify 출력)
-│   └── highlight.css               # .hljs-* 토큰 색상 (github-dark 기반, rehype-highlight)
+│   ├── prose.css                           # 글 상세 .prose 스타일
+│   └── highlight.css                       # .hljs-* 토큰 색상 (github-dark 기반)
 │
 ├── components/
-│   ├── ui/                         # shadcn/ui 자동 생성
-│   ├── layout/                     # Header, Footer, AdminSidebar
-│   ├── post/                       # PostCard, PostList, PostContent, PostHeader, PostFooter, ViewCounter
-│   ├── comment/                    # CommentList, CommentItem, CommentForm, CommentDeleteDialog
-│   ├── category/                   # CategoryFilter, CategoryBadge
-│   └── admin/                      # PostEditor, PostForm, CategoryForm
+│   ├── ui/                                 # shadcn/ui 자동 생성
+│   ├── layout/                             # Header, Footer
+│   └── post/                               # PostCard, PostList, PostListItem
 │
-├── actions/                        # Server Actions
-│   ├── post.ts                     # createPost, updatePost, deletePost, publishPost
-│   ├── comment.ts                  # createComment, updateComment, deleteComment
-│   ├── category.ts                 # createCategory, updateCategory, deleteCategory
-│   └── view.ts                     # incrementViewCount
+├── hooks/                                  # 공통 커스텀 훅
 │
 ├── db/
-│   ├── index.ts                    # Drizzle + Neon 인스턴스
-│   ├── schema.ts                   # 테이블 & 관계 정의
-│   └── queries/                    # Server Component용 재사용 쿼리 함수
-│       ├── posts.ts
-│       ├── comments.ts
-│       └── categories.ts
+│   ├── index.ts                            # Drizzle + Neon 인스턴스
+│   ├── schema.ts                           # 테이블 & 관계 정의
+│   └── queries/                            # Server Component용 쿼리 함수
 │
 ├── lib/
-│   ├── utils.ts                    # cn() 유틸
-│   ├── markdown.ts                 # remark/rehype 파이프라인
-│   ├── password.ts                 # bcryptjs 래퍼
-│   └── metadata.ts                 # generateMetadata 헬퍼
+│   ├── utils.ts                            # cn() 유틸
+│   ├── markdown.ts                         # remark/rehype 파이프라인
+│   └── slugify.ts                          # 슬러그 변환
 │
-└── types/
-    ├── post.ts
-    ├── comment.ts
-    ├── category.ts
-    └── index.ts
+└── types/                                  # Zod 스키마 & 타입 정의
 
-middleware.ts                       # Clerk - /admin/* 보호
+e2e/                                        # Playwright E2E 테스트
 ```
+
+> 각 라우트 폴더에는 `_actions`, `_components`, `_hooks`, `_store.ts` 등 private 폴더/파일이 포함될 수 있다.
 
 ## 데이터 흐름
 
@@ -115,33 +105,6 @@ middleware.ts                       # Clerk - /admin/* 보호
 - **관리자 Actions** → 내부에서 Clerk `auth()` 재검증
 - **댓글 Actions** → bcrypt로 비밀번호 검증 후 처리
 - **캐시 무효화** → `revalidatePath()` / `revalidateTag()`
-
-## 구현 로드맵
-
-### Phase 1 - 기반 구조
-- `src/types/` — DB 스키마 기반 타입 정의
-- `src/db/queries/` — 기본 쿼리 함수
-- shadcn 컴포넌트 추가 (button, card, badge 등)
-- Header, Footer 컴포넌트
-- `src/app/layout.tsx` 업데이트
-- Clerk 설치, `middleware.ts`
-
-### Phase 2 - 공개 독자 페이지
-- 홈페이지, 글 목록, 글 상세 (Markdown 렌더링)
-- 카테고리 / 시리즈 목록 페이지
-- sitemap.xml, robots.txt, 404 페이지
-
-### Phase 3 - 댓글
-- bcryptjs 기반 비밀번호 해싱
-- 대댓글 트리 쿼리
-- CommentList, CommentForm, CommentDeleteDialog
-
-### Phase 4 - 조회수 + SEO
-- ViewCounter (Client Component + Server Action)
-- 각 페이지 `generateMetadata`
-
-### Phase 5 - 관리자
-- 글 / 카테고리 / 시리즈 CRUD 관리 페이지
 
 ## 테스트 전략
 
@@ -171,23 +134,3 @@ e2e/                     # E2E 테스트
 ├── comment.spec.ts
 └── admin.spec.ts
 ```
-
-## 설치 예정 패키지
-
-```bash
-npm install unified remark-parse remark-rehype rehype-stringify remark-gfm rehype-highlight rehype-slug
-npm install bcryptjs && npm install -D @types/bcryptjs
-npm install date-fns
-npm install zod
-npm install zustand
-npm install @tanstack/react-query  # 필요 시
-
-# 테스트
-npm install -D vitest @vitejs/plugin-react @testing-library/react @testing-library/jest-dom jsdom
-npm install -D @playwright/test
-
-npx shadcn@latest add button card input textarea badge dialog
-npx shadcn@latest add dropdown-menu form label select separator table pagination sonner
-```
-
-> 에디터 패키지(Markdown 에디터)는 방식 결정 후 추가 예정.
