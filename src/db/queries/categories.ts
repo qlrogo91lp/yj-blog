@@ -2,6 +2,7 @@ import { db } from '@/db'
 import { categories } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import type { Category } from '@/types'
+import type { CategoryFormValues } from '@/types/category'
 
 /**
  * 전체 카테고리 목록 (이름 알파벳 순)
@@ -21,4 +22,44 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
     .limit(1)
 
   return result[0] ?? null
+}
+
+/**
+ * 카테고리 생성
+ */
+export async function createCategory(data: CategoryFormValues): Promise<Category> {
+  const [created] = await db
+    .insert(categories)
+    .values({
+      name: data.name,
+      slug: data.slug,
+      description: data.description ?? null,
+    })
+    .returning()
+
+  return created
+}
+
+/**
+ * 카테고리 수정
+ */
+export async function updateCategory(id: number, data: CategoryFormValues): Promise<Category> {
+  const [updated] = await db
+    .update(categories)
+    .set({
+      name: data.name,
+      slug: data.slug,
+      description: data.description ?? null,
+    })
+    .where(eq(categories.id, id))
+    .returning()
+
+  return updated
+}
+
+/**
+ * 카테고리 삭제
+ */
+export async function deleteCategory(id: number): Promise<void> {
+  await db.delete(categories).where(eq(categories.id, id))
 }

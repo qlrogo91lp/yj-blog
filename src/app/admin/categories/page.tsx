@@ -1,8 +1,8 @@
-export default function AdminCategoriesPage() {
-  return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold">카테고리 관리</h1>
-      <p className="text-muted-foreground">준비 중입니다.</p>
-    </div>
-  )
+import { getCategories } from '@/db/queries/categories'
+import { CategoryTable } from './_components/category-table'
+
+export default async function AdminCategoriesPage() {
+  const categories = await getCategories()
+
+  return <CategoryTable categories={categories} />
 }

@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { Plus } from "lucide-react"
 import { UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -13,7 +12,6 @@ export function AdminHeader() {
       <div className="ml-auto flex items-center gap-2">
         <Button size="sm" asChild>
           <Link href="/admin/posts/new">
-            <Plus className="h-4 w-4" />
             글쓰기
           </Link>
         </Button>
