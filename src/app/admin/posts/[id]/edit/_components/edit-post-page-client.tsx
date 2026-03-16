@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import type { Post, Category } from '@/types'
 import { useNewPostStore } from '../../../new/_store'
+import { useAutoSave } from '../../../new/_hooks/use-auto-save'
 import { EditorProvider } from '../../../new/_components/editor-context'
 import { TitleInput } from '../../../new/_components/title-input'
 import { CategorySelector } from '../../../new/_components/category-selector'
@@ -18,6 +19,8 @@ type Props = {
 
 export function EditPostPageClient({ post, categories }: Props) {
   const mode = useNewPostStore((s) => s.mode)
+
+  useAutoSave()
 
   useEffect(() => {
     useNewPostStore.getState().initializePost({

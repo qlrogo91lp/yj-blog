@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { Category } from '@/types'
-import { deleteCategoryAction } from '../_actions/delete-category-action'
+import { deleteCategoryAction } from './_actions/delete-category-action'
 import {
   Dialog,
   DialogContent,

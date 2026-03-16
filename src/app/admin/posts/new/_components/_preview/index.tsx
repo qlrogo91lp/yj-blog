@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { useNewPostStore } from '../_store'
+import { useNewPostStore } from '../../_store'
 
 type Props = {
   open: boolean
@@ -18,11 +18,10 @@ export function PreviewDialog({ open, onOpenChange }: Props) {
   const content = useNewPostStore((s) => s.content)
   const contentFormat = useNewPostStore((s) => s.contentFormat)
 
-  // 마크다운 모드일 때는 간단한 HTML 변환 (미리보기 용도)
-  // 실제 렌더링은 서버사이드에서 unified로 처리됨
-  const html = contentFormat === 'html'
-    ? content
-    : `<pre style="white-space: pre-wrap; font-family: var(--font-geist-mono);">${escapeHtml(content)}</pre>`
+  const html =
+    contentFormat === 'html'
+      ? content
+      : `<pre style="white-space: pre-wrap; font-family: var(--font-geist-mono);">${escapeHtml(content)}</pre>`
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

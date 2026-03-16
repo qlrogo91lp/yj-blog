@@ -12,7 +12,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { uploadImage } from '../_actions/upload-image-action'
+import { uploadImage } from './_actions/upload-image-action'
+import { insertImage } from './_actions/insert-image-action'
 
 type Props = {
   editor: Editor | null
@@ -27,15 +28,12 @@ export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
     setIsUploading(true)
     try {
       const formData = new FormData()
       formData.append('file', file)
       const result = await uploadImage(formData)
-      if (result.url) {
-        setUrl(result.url)
-      }
+      if (result.url) setUrl(result.url)
     } finally {
       setIsUploading(false)
     }
@@ -44,8 +42,7 @@ export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!editor || !url) return
-
-    editor.chain().focus().setImage({ src: url }).run()
+    insertImage(editor, url)
     setUrl('')
     onOpenChange(false)
   }

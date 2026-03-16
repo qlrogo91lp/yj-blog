@@ -2,6 +2,7 @@
 
 import type { Category } from '@/types'
 import { useNewPostStore } from '../_store'
+import { useAutoSave } from '../_hooks/use-auto-save'
 import { EditorProvider } from './editor-context'
 import { TitleInput } from './title-input'
 import { CategorySelector } from './category-selector'
@@ -16,6 +17,8 @@ type Props = {
 
 export function NewPostPageClient({ categories }: Props) {
   const mode = useNewPostStore((s) => s.mode)
+
+  useAutoSave()
 
   return (
     <EditorProvider>

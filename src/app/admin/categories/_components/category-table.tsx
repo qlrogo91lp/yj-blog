@@ -6,8 +6,8 @@ import { ko } from 'date-fns/locale'
 import { PencilIcon, TrashIcon } from 'lucide-react'
 import type { Category } from '@/types'
 import { Button } from '@/components/ui/button'
-import { CategoryFormDialog } from './category-form-dialog'
-import { DeleteCategoryDialog } from './delete-category-dialog'
+import { CategoryFormDialog } from './_category-form'
+import { DeleteCategoryDialog } from './_delete-category'
 
 type Props = {
   categories: Category[]

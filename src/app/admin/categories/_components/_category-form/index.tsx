@@ -6,8 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { categoryFormSchema, type CategoryFormValues } from '@/types/category'
 import type { Category } from '@/types'
 import { generateSlug } from '@/lib/slugify'
-import { createCategoryAction } from '../_actions/create-category-action'
-import { updateCategoryAction } from '../_actions/update-category-action'
+import { createCategoryAction } from './_actions/create-category-action'
+import { updateCategoryAction } from './_actions/update-category-action'
 import {
   Dialog,
   DialogContent,
