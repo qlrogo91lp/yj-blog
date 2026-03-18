@@ -16,12 +16,11 @@ jobs:
           curl -H "Content-Type: application/json" \
             -d "{
               \"embeds\": [{
-                \"title\": \"✅ Vercel 배포 완료!\",
-                \"description\": \"main 브랜치 배포가 완료되었습니다.\",
+                \"title\": \"✅ Vercel 배포 성공!\",
+                \"description\": \"main branch 배포가 완료되었습니다.\",
                 \"color\": 5763719,
                 \"fields\": [
-                  {\"name\": \"🌐 배포 URL\", \"value\": \"${{ github.event.deployment_status.target_url }}\", \"inline\": false},
-                  {\"name\": \"👤 배포자\", \"value\": \"${{ github.actor }}\", \"inline\": true}
+                  {\"name\": \"👤 배포자\", \"value\": \"${{  github.event.deployment.creator.login }}\", \"inline\": true}
                 ]
               }]
             }" \
