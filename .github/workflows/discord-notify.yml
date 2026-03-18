@@ -1,0 +1,28 @@
+name: Discord Deploy Notification
+
+on:
+  deployment_status:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: github.event.deployment_status.state == 'success'
+
+    steps:
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"✅ Vercel 배포 완료!\",
+                \"description\": \"main 브랜치 배포가 완료되었습니다.\",
+                \"color\": 5763719,
+                \"fields\": [
+                  {\"name\": \"🌐 배포 URL\", \"value\": \"${{ github.event.deployment_status.target_url }}\", \"inline\": false},
+                  {\"name\": \"👤 배포자\", \"value\": \"${{ github.actor }}\", \"inline\": true}
+                ]
+              }]
+            }" \
+            $DISCORD_WEBHOOK_URL
