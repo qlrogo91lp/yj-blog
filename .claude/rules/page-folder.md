@@ -8,10 +8,10 @@
 
 | 폴더 | 역할 | 네이밍 예시 |
 |------|------|-------------|
-| `_action` | Action 컴포넌트. 유형별 하위 폴더 가능 (`_table`, `_filter` 등) | `*Action.tsx` |
-| `_component` | 순수 컴포넌트 (API, zustand 등 외부 의존성 없음) | - |
-| `_lib` | API 요청. `api/.../routes.ts`로 요청 전송 | `getPaymentList.ts`, `postPayments.ts` (HTTP 메소드 + camelCase) |
-| `_state` | 비즈니스 로직. tanstack-query로 _lib 데이터 가공 | `usePaymentList.ts`, `useUpdatePayments.ts` |
+| `_actions` | Action 컴포넌트. 유형별 하위 폴더 가능 (`_table`, `_filter` 등) | `*Action.tsx` |
+| `_components` | 순수 컴포넌트 (API, zustand 등 외부 의존성 없음) | - |
+| `_queries` | API 요청. tanstack-query가 필요할 경우`api/.../routes.ts`로 요청 전송 | `getPaymentList.ts`, `postPayments.ts` (HTTP 메소드 + camelCase) |
+| `_services` | 비즈니스 로직. 서버 데이터 가공 | `usePaymentList.ts`, `useUpdatePayments.ts` |
 | `_provider` | Provider 컴포넌트 모음 | `ResetProvider.tsx`, `LoadProvider.tsx` |
 | `_handler` | Handler 컴포넌트 모음 | `ViewHandler.tsx` |
 | `_suspense` | Prefetch용 Suspense 컴포넌트 | `*Suspense.tsx` |
