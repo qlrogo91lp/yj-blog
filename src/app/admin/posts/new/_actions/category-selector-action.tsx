@@ -14,7 +14,7 @@ type Props = {
   categories: Category[]
 }
 
-export function CategorySelector({ categories }: Props) {
+export function CategorySelectorAction({ categories }: Props) {
   const categoryId = useNewPostStore((s) => s.categoryId)
   const setCategoryId = useNewPostStore((s) => s.setCategoryId)
 

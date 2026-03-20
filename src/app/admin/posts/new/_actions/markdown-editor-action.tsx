@@ -3,7 +3,7 @@
 import { Textarea } from '@/components/ui/textarea'
 import { useNewPostStore } from '../_store'
 
-export function MarkdownEditor() {
+export function MarkdownEditorAction() {
   const content = useNewPostStore((s) => s.content)
   const setContent = useNewPostStore((s) => s.setContent)
   const setContentFormat = useNewPostStore((s) => s.setContentFormat)

@@ -3,12 +3,12 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import type { Category } from "@/types"
 
-interface Props {
+type Props = {
   categories: Category[]
   currentSlug?: string
 }
 
-export function CategoryFilter({ categories, currentSlug }: Props) {
+export function CategoryFilterAction({ categories, currentSlug }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
 

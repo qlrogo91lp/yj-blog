@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect, notFound } from 'next/navigation'
 import { getPostById } from '@/db/queries/posts'
 import { getCategories } from '@/db/queries/categories'
-import { EditPostPageClient } from './_components/edit-post-page-client'
+import { EditPostPageAction } from './_action/EditPostPageAction'
 
 type Props = {
   params: Promise<{ id: string }>
@@ -24,7 +24,7 @@ export default async function EditPostPage({ params }: Props) {
   if (!post) notFound()
 
   return (
-    <EditPostPageClient
+    <EditPostPageAction
       post={post}
       categories={categories}
     />

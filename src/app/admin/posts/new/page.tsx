@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { getCategories } from '@/db/queries/categories'
-import { NewPostPageClient } from './_components/newpost-page-client'
+import { NewPostPageAction } from './_actions/newpost-page-action'
 
 export default async function NewPostPage() {
   const { userId } = await auth()
@@ -9,5 +9,5 @@ export default async function NewPostPage() {
 
   const categories = await getCategories()
 
-  return <NewPostPageClient categories={categories} />
+  return <NewPostPageAction categories={categories} />
 }

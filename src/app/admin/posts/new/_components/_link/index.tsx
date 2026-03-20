@@ -12,8 +12,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { submitLink } from './_actions/submit-link-action'
-import { removeLink } from './_actions/remove-link-action'
 
 type Props = {
   editor: Editor | null
@@ -27,14 +25,14 @@ export function LinkDialog({ editor, open, onOpenChange }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!editor || !url) return
-    submitLink(editor, url)
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     setUrl('')
     onOpenChange(false)
   }
 
   const handleRemove = () => {
     if (!editor) return
-    removeLink(editor)
+    editor.chain().focus().unsetLink().run()
     onOpenChange(false)
   }
 

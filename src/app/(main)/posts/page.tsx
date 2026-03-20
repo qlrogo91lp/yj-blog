@@ -1,11 +1,10 @@
 import { Suspense } from "react"
 import { getPosts } from "@/db/queries/posts"
-import { getCategories } from "@/db/queries/categories"
-import { getCategoryBySlug } from "@/db/queries/categories"
+import { getCategories, getCategoryBySlug } from "@/db/queries/categories"
 import { PostList } from "@/components/post/post-list"
-import { CategoryFilter } from "./_components/category-filter"
+import { CategoryFilterAction } from "./_actions/category-filter-action"
 
-interface Props {
+type Props = {
   searchParams: Promise<{ category?: string; page?: string }>
 }
 
@@ -34,7 +33,7 @@ export default async function PostsPage({ searchParams }: Props) {
           </span>
         </h1>
         <Suspense>
-          <CategoryFilter
+          <CategoryFilterAction
             categories={categoriesData}
             currentSlug={categorySlug}
           />

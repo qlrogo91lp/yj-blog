@@ -2,22 +2,22 @@
 
 import { useEffect } from 'react'
 import type { Post, Category } from '@/types'
-import { useNewPostStore } from '../../../new/_store'
-import { useAutoSave } from '../../../new/_hooks/use-auto-save'
-import { EditorProvider } from '../../../new/_components/editor-context'
-import { TitleInput } from '../../../new/_components/title-input'
-import { CategorySelector } from '../../../new/_components/category-selector'
-import { EditorToolbar } from '../../../new/_components/editor-toolbar'
-import { WysiwygEditor } from '../../../new/_components/wysiwyg-editor'
-import { MarkdownEditor } from '../../../new/_components/markdown-editor'
-import { BottomBar } from '../../../new/_components/bottom-bar'
+import { useNewPostStore } from '../../../../new/_store'
+import { useAutoSave } from '../../../../new/_hooks/use-auto-save'
+import { EditorProvider } from '../../../../new/_components/editor-context'
+import { TitleInput } from '../../../../new/_components/title-input'
+import { CategorySelector } from '../../../../new/_components/category-selector'
+import { EditorToolbar } from '../../../../new/_components/editor-toolbar'
+import { WysiwygEditor } from '../../../../new/_components/wysiwyg-editor'
+import { MarkdownEditor } from '../../../../new/_components/markdown-editor'
+import { BottomBar } from '../../../../new/_components/bottom-bar'
 
 type Props = {
   post: Post
   categories: Category[]
 }
 
-export function EditPostPageClient({ post, categories }: Props) {
+export function EditPostPageAction({ post, categories }: Props) {
   const mode = useNewPostStore((s) => s.mode)
 
   useAutoSave()

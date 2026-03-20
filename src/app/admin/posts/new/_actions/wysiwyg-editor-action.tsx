@@ -16,9 +16,9 @@ import { TableHeader } from '@tiptap/extension-table-header'
 import { Placeholder } from '@tiptap/extension-placeholder'
 import { useEffect, useRef } from 'react'
 import { useNewPostStore } from '../_store'
-import { useEditorContext } from './editor-context'
+import { useEditorContext } from '../_providers/editor-provider'
 
-export function WysiwygEditor() {
+export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent)
   const setContentFormat = useNewPostStore((s) => s.setContentFormat)
   const content = useNewPostStore((s) => s.content)

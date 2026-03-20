@@ -3,7 +3,7 @@ import { ko } from "date-fns/locale"
 import { Badge } from "@/components/ui/badge"
 import type { PostWithCategory } from "@/types"
 
-interface Props {
+type Props = {
   post: PostWithCategory
   contentHtml: string
 }

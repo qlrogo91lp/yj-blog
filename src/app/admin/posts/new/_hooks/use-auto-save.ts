@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useNewPostStore } from '../_store'
-import { submitPost } from '../_actions/submit-post-action'
+import { submitPost } from '../_services/submit-post'
 
 export function useAutoSave(intervalMs = 30000) {
   const title = useNewPostStore((s) => s.title)

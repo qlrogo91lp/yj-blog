@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { useNewPostStore } from '../_store'
 
-export function SaveStatus() {
+export function SaveStatusAction() {
   const saveStatus = useNewPostStore((s) => s.saveStatus)
   const lastSavedAt = useNewPostStore((s) => s.lastSavedAt)
 
