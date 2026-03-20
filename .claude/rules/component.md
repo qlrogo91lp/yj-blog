@@ -1,8 +1,14 @@
+---
+paths:
+  - "**/*.tsx"
+---
+
 # 컴포넌트 생성 규칙
 
 ## 네이밍
 
 - 파일명은 **kebab case** 사용
+- 컴포넌트 function 명은 **PascalCase**
 - 최대한 **모듈화**하는 방향으로 컴포넌트 생성
 
 ## Props 타입
@@ -33,7 +39,7 @@ export default function SettlementListTable({ settlementData, columns }: Props) 
 위 로직이 필요한 경우 `*Action.tsx`로 만들고 모듈화한다.
 
 ```tsx
-// ✅ GOOD - _action/_filter/SelectInstructorAction.tsx
+// ✅ GOOD - _action/_filter/select-instrctor-action.tsx
 'use client';
 
 import CustomSelect from '@/(afterLogin)/payment/_component/CustomSelect';
@@ -48,8 +54,8 @@ export default function SelectInstructorAction() {
   const { localData } = useInstructorList();
 
   return (
-    <CustomSelect
       data={localData}
+    <CustomSelect
       selectData={filter.instructor}
       onChangeAction={setFilterInstructor}
     />
