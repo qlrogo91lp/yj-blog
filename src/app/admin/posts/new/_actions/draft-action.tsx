@@ -3,13 +3,13 @@
 import { Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNewPostStore } from '../_store'
-import { draftPost } from '../_actions/draft-action'
+import { submitPost } from '../_services/submit-post'
 
-export function DraftButton() {
+export function DraftAction() {
   const saveStatus = useNewPostStore((s) => s.saveStatus)
 
   const handleClick = async () => {
-    await draftPost()
+    await submitPost('draft')
   }
 
   return (

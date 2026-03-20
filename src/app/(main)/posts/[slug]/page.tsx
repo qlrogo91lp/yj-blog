@@ -4,7 +4,7 @@ import { getPostBySlug } from "@/db/queries/posts"
 import { markdownToHtml } from "@/lib/markdown"
 import { PostDetail } from "./_components/post-detail"
 
-interface Props {
+type Props = {
   params: Promise<{ slug: string }>
 }
 

@@ -1,5 +1,5 @@
 import { useNewPostStore } from '../_store'
-import { savePost } from './save-post-action'
+import { savePost } from './save-post'
 import { generateSlug } from '@/lib/slugify'
 
 export async function submitPost(status: 'draft' | 'published') {

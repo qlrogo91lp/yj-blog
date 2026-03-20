@@ -2,7 +2,7 @@
 
 import { useNewPostStore } from '../_store'
 
-export function TitleInput() {
+export function TitleInputAction() {
   const title = useNewPostStore((s) => s.title)
   const setTitle = useNewPostStore((s) => s.setTitle)
 

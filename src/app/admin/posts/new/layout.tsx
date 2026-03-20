@@ -1,16 +1,10 @@
-"use client"
-
-import { useEffect } from "react"
-import { useSidebar } from "@/components/ui/sidebar"
+import { SidebarCollapseHandler } from "./_handlers/sidebar-collapse-handler"
 
 export default function NewPostLayout({ children }: { children: React.ReactNode }) {
-  const { setOpen, setOpenMobile } = useSidebar()
-
-  useEffect(() => {
-    setOpen(false)
-    setOpenMobile(false)
-    return () => setOpen(true)
-  }, [setOpen, setOpenMobile])
-
-  return <div className="min-h-screen flex flex-col">{children}</div>
+  return (
+    <div className="min-h-screen flex flex-col">
+      <SidebarCollapseHandler />
+      {children}
+    </div>
+  )
 }

@@ -12,8 +12,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { uploadImage } from './_actions/upload-image-action'
-import { insertImage } from './_actions/insert-image-action'
+import { uploadImage } from './_services/upload-image'
 
 type Props = {
   editor: Editor | null
@@ -42,7 +41,7 @@ export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!editor || !url) return
-    insertImage(editor, url)
+    editor.chain().focus().setImage({ src: url }).run()
     setUrl('')
     onOpenChange(false)
   }

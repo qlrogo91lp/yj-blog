@@ -7,7 +7,6 @@ import {
   ImageIcon, Heading1, Heading2, Heading3,
   Highlighter, Undo2, Redo2, Type,
 } from 'lucide-react'
-import { Toggle } from '@/components/ui/toggle'
 import {
   Select,
   SelectContent,
@@ -15,18 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import { Separator } from '@/components/ui/separator'
-import { useEditorContext } from './editor-context'
+import { useEditorContext } from '../_providers/editor-provider'
 import { useNewPostStore } from '../_store'
-import { LinkDialog } from './_link'
-import { ImageUploadDialog } from './_image-upload'
-import { TableInsertPopover } from './table-insert-popover'
-import { ColorPicker } from './color-picker'
+import { LinkDialog } from '../_components/_link'
+import { ImageUploadDialog } from '../_components/_image-upload'
+import { TableInsertPopover } from '../_components/table-insert-popover'
+import { ColorPicker } from '../_components/color-picker'
+import { ToolbarButton } from '../_components/toolbar-button'
 import { useState, useCallback, useEffect } from 'react'
 import TurndownService from 'turndown'
 
@@ -35,7 +30,7 @@ function useForceUpdate() {
   return useCallback(() => setState((n) => n + 1), [])
 }
 
-export function EditorToolbar() {
+export function EditorToolbarAction() {
   const { editor } = useEditorContext()
   const mode = useNewPostStore((s) => s.mode)
   const forceUpdate = useForceUpdate()
@@ -274,36 +269,5 @@ export function EditorToolbar() {
       <LinkDialog editor={editor} open={isLinkOpen} onOpenChange={setIsLinkOpen} />
       <ImageUploadDialog editor={editor} open={isImageOpen} onOpenChange={setIsImageOpen} />
     </div>
-  )
-}
-
-function ToolbarButton({
-  icon: Icon,
-  tooltip,
-  isActive,
-  onClick,
-}: {
-  icon: React.ComponentType<{ className?: string }>
-  tooltip: string
-  isActive?: boolean
-  onClick?: () => void
-}) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Toggle
-          size="sm"
-          pressed={isActive}
-          onPressedChange={() => onClick?.()}
-          aria-label={tooltip}
-          className="cursor-pointer data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-        >
-          <Icon className="h-4 w-4" />
-        </Toggle>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">
-        <p>{tooltip}</p>
-      </TooltipContent>
-    </Tooltip>
   )
 }
