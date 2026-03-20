@@ -58,6 +58,7 @@ export const comments = pgTable('comments', {
   parentId: integer('parent_id'),             // null이면 최상위 댓글, 값이 있으면 대댓글
 
   authorName: text('author_name').notNull(),
+  email: text('email'),                          // nullable — 알림 수신 선택 시만 입력
   passwordHash: text('password_hash').notNull(), // bcrypt 해시 - 수정/삭제 시 검증
   content: text('content').notNull(),
 

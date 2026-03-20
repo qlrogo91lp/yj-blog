@@ -1,4 +1,4 @@
-# 수정 계획: 댓글 기능 추가
+# 계획: 댓글 기능 추가
 
 > 작성일: 2026-03-20
 
@@ -14,9 +14,8 @@ src/
 │   └── comment.ts                  ← 타입·스키마 존재, email 필드 없음
 └── app/
     ├── (main)/posts/[slug]/
-    │   ├── page.tsx                ← PostDetail만 렌더링
-    │   └── _components/
-    │       └── post-detail.tsx     ← 댓글 섹션 없음
+    │   ├── page.tsx                ← article 직접 렌더링 (post-detail.tsx 없음)
+    │   └── _components/            ← (비어 있음)
     └── admin/comments/
         └── page.tsx                ← "준비 중" 플레이스홀더
 ```
@@ -178,7 +177,7 @@ export async function sendReplyNotification({
 }
 ```
 
-**환경 변수** (`.env.local`에 추가)
+**환경 변수** (`.env.local`에 추가됨.)
 ```
 RESEND_API_KEY=re_...
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com
@@ -285,8 +284,8 @@ export async function deleteCommentAction(
 **파일 구조**
 ```
 src/app/(main)/posts/[slug]/
+├── page.tsx                         ← article 직접 렌더링 + CommentSection 호출
 ├── _components/
-│   ├── post-detail.tsx              ← comment-section 추가
 │   ├── comment-section.tsx          ← 신규 (Server Component)
 │   ├── comment-list.tsx             ← 신규 (순수 컴포넌트)
 │   ├── comment-item.tsx             ← 신규 (순수 컴포넌트)
@@ -412,25 +411,21 @@ export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
 - `CommentWithReplies[]`를 받아 `CommentItem` 트리 렌더링
 - 1단계 대댓글만 지원 (replies의 replies는 렌더링 안 함)
 
-**`post-detail.tsx` 수정**
+**`page.tsx` 구조** (post-detail.tsx 제거 후 직접 렌더링)
 ```tsx
-// 현재: PostDetail 내부에 article만 있음
-// 수정: CommentSection을 article 아래에 추가
+// page.tsx에서 article을 직접 렌더링하고 CommentSection을 호출
 
-import { CommentSection } from './comment-section'
-
-// ...
 return (
   <>
     <article className="mx-auto max-w-3xl px-4 py-8">
-      {/* 기존 내용 */}
+      {/* 제목, 날짜, 조회수, 본문 */}
     </article>
     <CommentSection postId={post.id} postSlug={post.slug} />
   </>
 )
 ```
 
-> `PostDetail`은 현재 순수 Server Component이므로 `CommentSection`(Server Component) 직접 사용 가능.
+> `post-detail.tsx` 컴포넌트를 제거하고 `page.tsx`에서 직접 article을 렌더링하는 방식으로 변경됨.
 
 ---
 
@@ -520,9 +515,8 @@ src/
 │   └── comment.ts                        ← email 필드 추가
 └── app/
     ├── (main)/posts/[slug]/
-    │   ├── page.tsx                      ← 변경 없음
+    │   ├── page.tsx                      ← article 직접 렌더링 + CommentSection 호출
     │   ├── _components/
-    │   │   ├── post-detail.tsx           ← CommentSection 추가
     │   │   ├── comment-section.tsx       ← 신규
     │   │   ├── comment-list.tsx          ← 신규
     │   │   ├── comment-item.tsx          ← 신규
@@ -572,7 +566,7 @@ src/
 - [ ] `comment-list.tsx` 생성
 - [ ] `comment-item.tsx` 생성 (삭제 다이얼로그 포함)
 - [ ] `comment-form.tsx` 생성
-- [ ] `post-detail.tsx` — `CommentSection` 렌더링 추가
+- [ ] `page.tsx` — `CommentSection` 렌더링 추가 (post-detail.tsx 제거 후 직접 처리)
 
 ### 관리자
 - [ ] `admin/comments/page.tsx` 구현
