@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { adminDeleteCommentAction } from './_actions/delete-comment-action'
+import { adminDeleteCommentAction } from './_services/delete-comment'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

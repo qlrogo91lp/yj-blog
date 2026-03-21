@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { commentFormSchema, type CommentFormValues } from '@/types/comment'
-import { createCommentAction } from '../_actions/create-comment-action'
+import { createCommentAction } from '../_services/create-comment'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
