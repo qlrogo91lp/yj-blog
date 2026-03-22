@@ -6,7 +6,7 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-    if: github.event.deployment_status.state == 'success' && github.event.deployment.ref == 'main'
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
 
     steps:
       - name: Send Discord Notification
