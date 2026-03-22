@@ -7,5 +7,5 @@ export function generateSlug(title: string): string {
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '') || `post-${Date.now()}`
-  )
+  );
 }

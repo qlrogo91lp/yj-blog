@@ -1,34 +1,41 @@
-import { db } from "@/db"
-import { posts, comments } from "@/db/schema"
-import { count, eq } from "drizzle-orm"
-import { FileText, MessageSquare, Eye, PenLine } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { count, eq } from 'drizzle-orm';
+import { Eye, FileText, MessageSquare, PenLine } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { db } from '@/db';
+import { comments, posts } from '@/db/schema';
 
 async function getStats() {
-  const [totalPosts, publishedPosts, draftPosts, totalComments] = await Promise.all([
-    db.select({ count: count() }).from(posts),
-    db.select({ count: count() }).from(posts).where(eq(posts.status, "published")),
-    db.select({ count: count() }).from(posts).where(eq(posts.status, "draft")),
-    db.select({ count: count() }).from(comments),
-  ])
+  const [totalPosts, publishedPosts, draftPosts, totalComments] =
+    await Promise.all([
+      db.select({ count: count() }).from(posts),
+      db
+        .select({ count: count() })
+        .from(posts)
+        .where(eq(posts.status, 'published')),
+      db
+        .select({ count: count() })
+        .from(posts)
+        .where(eq(posts.status, 'draft')),
+      db.select({ count: count() }).from(comments),
+    ]);
 
   return {
     totalPosts: totalPosts[0].count,
     publishedPosts: publishedPosts[0].count,
     draftPosts: draftPosts[0].count,
     totalComments: totalComments[0].count,
-  }
+  };
 }
 
 export default async function AdminDashboardPage() {
-  const stats = await getStats()
+  const stats = await getStats();
 
   const cards = [
-    { title: "전체 글", value: stats.totalPosts, icon: FileText },
-    { title: "발행됨", value: stats.publishedPosts, icon: Eye },
-    { title: "임시저장", value: stats.draftPosts, icon: PenLine },
-    { title: "댓글", value: stats.totalComments, icon: MessageSquare },
-  ]
+    { title: '전체 글', value: stats.totalPosts, icon: FileText },
+    { title: '발행됨', value: stats.publishedPosts, icon: Eye },
+    { title: '임시저장', value: stats.draftPosts, icon: PenLine },
+    { title: '댓글', value: stats.totalComments, icon: MessageSquare },
+  ];
 
   return (
     <div>
@@ -49,5 +56,5 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }

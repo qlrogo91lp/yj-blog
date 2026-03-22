@@ -1,36 +1,42 @@
-'use client'
+'use client';
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { commentFormSchema, type CommentFormValues } from '@/types/comment'
-import { createCommentAction } from '../_actions/create-comment-action'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { type CommentFormValues, commentFormSchema } from '@/types/comment';
+import { createCommentAction } from '../_services/create-comment';
 
 type Props = {
-  postId: number
-  postSlug: string
-  parentId?: number
-  onSuccess?: () => void
-}
+  postId: number;
+  postSlug: string;
+  parentId?: number;
+  onSuccess?: () => void;
+};
 
 export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
   const form = useForm<CommentFormValues>({
     resolver: zodResolver(commentFormSchema),
-    defaultValues: { authorName: '', email: '', password: '', content: '', parentId },
-  })
+    defaultValues: {
+      authorName: '',
+      email: '',
+      password: '',
+      content: '',
+      parentId,
+    },
+  });
 
   const onSubmit = async (data: CommentFormValues) => {
-    const result = await createCommentAction(postId, postSlug, data)
+    const result = await createCommentAction(postId, postSlug, data);
     if (result.success) {
-      form.reset()
-      onSuccess?.()
+      form.reset();
+      onSuccess?.();
     } else {
-      form.setError('root', { message: result.error })
+      form.setError('root', { message: result.error });
     }
-  }
+  };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
@@ -43,7 +49,9 @@ export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
             {...form.register('authorName')}
           />
           {form.formState.errors.authorName && (
-            <p className="text-sm text-destructive">{form.formState.errors.authorName.message}</p>
+            <p className="text-sm text-destructive">
+              {form.formState.errors.authorName.message}
+            </p>
           )}
         </div>
         <div className="grid gap-1.5">
@@ -55,12 +63,16 @@ export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
             {...form.register('password')}
           />
           {form.formState.errors.password && (
-            <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>
+            <p className="text-sm text-destructive">
+              {form.formState.errors.password.message}
+            </p>
           )}
         </div>
       </div>
       <div className="grid gap-1.5">
-        <Label htmlFor={`email-${parentId ?? 'root'}`}>이메일 (선택 — 답글 알림 수신)</Label>
+        <Label htmlFor={`email-${parentId ?? 'root'}`}>
+          이메일 (선택 — 답글 알림 수신)
+        </Label>
         <Input
           id={`email-${parentId ?? 'root'}`}
           type="email"
@@ -68,7 +80,9 @@ export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
           {...form.register('email')}
         />
         {form.formState.errors.email && (
-          <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
+          <p className="text-sm text-destructive">
+            {form.formState.errors.email.message}
+          </p>
         )}
       </div>
       <div className="grid gap-1.5">
@@ -80,15 +94,19 @@ export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
           {...form.register('content')}
         />
         {form.formState.errors.content && (
-          <p className="text-sm text-destructive">{form.formState.errors.content.message}</p>
+          <p className="text-sm text-destructive">
+            {form.formState.errors.content.message}
+          </p>
         )}
       </div>
       {form.formState.errors.root && (
-        <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
+        <p className="text-sm text-destructive">
+          {form.formState.errors.root.message}
+        </p>
       )}
       <Button type="submit" disabled={form.formState.isSubmitting}>
         {form.formState.isSubmitting ? '등록 중...' : '댓글 등록'}
       </Button>
     </form>
-  )
+  );
 }

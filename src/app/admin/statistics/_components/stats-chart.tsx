@@ -1,52 +1,55 @@
-"use client"
+'use client';
 
+import { format, parseISO } from 'date-fns';
 import {
-  LineChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts"
-import { format, parseISO } from "date-fns"
+} from 'recharts';
 
 type Props = {
-  data: { date: string; views: number; visitors: number }[]
-}
+  data: { date: string; views: number; visitors: number }[];
+};
 
-const VIEWS_COLOR = "#ef4444"    // red-500
-const VISITORS_COLOR = "#a1a1aa" // zinc-400
+const VIEWS_COLOR = '#ef4444'; // red-500
+const VISITORS_COLOR = '#a1a1aa'; // zinc-400
 
 export function StatsChart({ data }: Props) {
   const chartData = data.map((d) => ({
     ...d,
-    label: format(parseISO(d.date), "M/d"),
-  }))
+    label: format(parseISO(d.date), 'M/d'),
+  }));
 
   return (
     <div className="h-100 w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+        <LineChart
+          data={chartData}
+          margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 12, fill: "#9ca3af" }}
+            tick={{ fontSize: 12, fill: '#9ca3af' }}
             tickLine={false}
-            axisLine={{ stroke: "#e5e7eb" }}
+            axisLine={{ stroke: '#e5e7eb' }}
           />
           <YAxis
             allowDecimals={false}
-            tick={{ fontSize: 12, fill: "#9ca3af" }}
+            tick={{ fontSize: 12, fill: '#9ca3af' }}
             tickLine={false}
             axisLine={false}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "#fff",
-              border: "1px solid #e5e7eb",
-              borderRadius: "8px",
+              backgroundColor: '#fff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
               fontSize: 13,
             }}
             labelFormatter={(label) => label}
@@ -78,5 +81,5 @@ export function StatsChart({ data }: Props) {
         </LineChart>
       </ResponsiveContainer>
     </div>
-  )
+  );
 }

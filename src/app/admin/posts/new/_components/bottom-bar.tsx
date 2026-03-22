@@ -1,7 +1,7 @@
-import { PreviewButton } from './preview-button'
-import { SaveStatusAction } from '../_actions/save-status-action'
-import { DraftAction } from '../_actions/draft-action'
-import { PublishAction } from '../_actions/publish-action'
+import { DraftAction } from '../_actions/draft-action';
+import { PublishAction } from '../_actions/publish-action';
+import { SaveStatusAction } from '../_actions/save-status-action';
+import { PreviewButton } from './preview-button';
 
 export function BottomBar() {
   return (
@@ -16,5 +16,5 @@ export function BottomBar() {
         <PublishAction />
       </div>
     </div>
-  )
+  );
 }

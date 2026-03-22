@@ -1,11 +1,11 @@
-import { db } from "@/db"
-import { dailyStats } from "@/db/schema"
-import { sql, and, gte, lte } from "drizzle-orm"
-import { format, subDays } from "date-fns"
+import { format, subDays } from 'date-fns';
+import { and, gte, lte, sql } from 'drizzle-orm';
+import { db } from '@/db';
+import { dailyStats } from '@/db/schema';
 
 export async function getDailyStatsForRange(days: number = 30) {
-  const today = format(new Date(), "yyyy-MM-dd")
-  const startDate = format(subDays(new Date(), days - 1), "yyyy-MM-dd")
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const startDate = format(subDays(new Date(), days - 1), 'yyyy-MM-dd');
 
   const stats = await db
     .select({
@@ -15,14 +15,14 @@ export async function getDailyStatsForRange(days: number = 30) {
     })
     .from(dailyStats)
     .where(and(gte(dailyStats.date, startDate), lte(dailyStats.date, today)))
-    .orderBy(dailyStats.date)
+    .orderBy(dailyStats.date);
 
-  return stats
+  return stats;
 }
 
 export async function getStatsSummary() {
-  const today = format(new Date(), "yyyy-MM-dd")
-  const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd")
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
 
   const [todayStats, yesterdayStats, totalStats] = await Promise.all([
     db
@@ -39,7 +39,7 @@ export async function getStatsSummary() {
         totalVisitors: sql<number>`coalesce(sum(${dailyStats.visitors}), 0)`,
       })
       .from(dailyStats),
-  ])
+  ]);
 
   return {
     todayViews: todayStats[0]?.views ?? 0,
@@ -48,5 +48,5 @@ export async function getStatsSummary() {
     todayVisitors: todayStats[0]?.visitors ?? 0,
     yesterdayVisitors: yesterdayStats[0]?.visitors ?? 0,
     totalVisitors: Number(totalStats[0]?.totalVisitors ?? 0),
-  }
+  };
 }

@@ -1,14 +1,14 @@
-import { getCommentsByPostId } from '@/db/queries/comments'
-import { CommentList } from './comment-list'
-import { CommentForm } from './comment-form'
+import { getCommentsByPostId } from '@/db/queries/comments';
+import { CommentForm } from './comment-form';
+import { CommentList } from './comment-list';
 
 type Props = {
-  postId: number
-  postSlug: string
-}
+  postId: number;
+  postSlug: string;
+};
 
 export async function CommentSection({ postId, postSlug }: Props) {
-  const comments = await getCommentsByPostId(postId)
+  const comments = await getCommentsByPostId(postId);
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-8 border-t">
@@ -19,5 +19,5 @@ export async function CommentSection({ postId, postSlug }: Props) {
         <CommentForm postId={postId} postSlug={postSlug} />
       </div>
     </section>
-  )
+  );
 }

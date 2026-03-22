@@ -11,7 +11,8 @@
 | `*.tsx` | `_actions`, `_components`, `_providers`, `_handlers`, `_suspenses` |
 | `*.ts` | `_queries`, `_services`, `_utils`, `_hooks` |
 
-> **핵심**: `_actions`에는 컴포넌트 파일(`.tsx`)만 존재한다. 비즈니스 로직·쿼리 등 `.ts` 파일은 `_queries`, `_services`, `_util`, `_hook`에 위치한다.
+> **핵심**: `_actions`에는 컴포넌트 파일(`.tsx`)만 존재한다. 비즈니스 로직·쿼리 등 `.ts` 파일은 `_queries`, `_services`, `_utils`, `_hooks`에 위치한다.
+> **Next.js Server Action** (`'use server'` 지시어가 있는 `.ts` 파일)은 `_services`에 위치한다. 네이밍은 동사+명사 형식으로 작성하며 `-action` 접미사를 붙이지 않는다 (예: `create-comment.ts`, `delete-comment.ts`).
 
 ## 폴더별 역할
 
@@ -20,7 +21,7 @@
 | `_actions` | Action 컴포넌트. 유형별 하위 폴더 가능 (`_table`, `_filter` 등) | `*Action.tsx` |
 | `_components` | 순수 컴포넌트 (API, zustand 등 외부 의존성 없음) | - |
 | `_queries` | API 요청. tanstack-query가 필요할 경우`api/.../routes.ts`로 요청 전송 | `getPaymentList.ts`, `postPayments.ts` (HTTP 메소드 + camelCase) |
-| `_services` | 비즈니스 로직. 서버 데이터 가공 | `usePaymentList.ts`, `useUpdatePayments.ts` |
+| `_services` | 비즈니스 로직. 서버 데이터 가공. Next.js Server Action (`'use server'`) 포함 | `usePaymentList.ts`, `create-comment.ts`, `delete-comment.ts` |
 | `_providers` | Provider 컴포넌트 모음 | `ResetProvider.tsx`, `LoadProvider.tsx` |
 | `_handlers` | Handler 컴포넌트 모음 | `ViewHandler.tsx` |
 | `_suspenses` | Prefetch용 Suspense 컴포넌트 | `*Suspense.tsx` |

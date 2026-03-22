@@ -1,12 +1,7 @@
-import Link from "next/link"
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/nextjs"
-import { Settings } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from 'next/link';
+import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { Settings } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export function Header() {
   return (
@@ -34,5 +29,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

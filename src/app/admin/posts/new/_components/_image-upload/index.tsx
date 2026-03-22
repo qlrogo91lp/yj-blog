@@ -1,50 +1,50 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import type { Editor } from '@tiptap/react'
+import { useState } from 'react';
+import type { Editor } from '@tiptap/react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { uploadImage } from './_services/upload-image'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { uploadImage } from './_services/upload-image';
 
 type Props = {
-  editor: Editor | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
+  editor: Editor | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
 
 export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
-  const [url, setUrl] = useState('')
-  const [isUploading, setIsUploading] = useState(false)
+  const [url, setUrl] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setIsUploading(true)
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploading(true);
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      const result = await uploadImage(formData)
-      if (result.url) setUrl(result.url)
+      const formData = new FormData();
+      formData.append('file', file);
+      const result = await uploadImage(formData);
+      if (result.url) setUrl(result.url);
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
     }
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!editor || !url) return
-    editor.chain().focus().setImage({ src: url }).run()
-    setUrl('')
-    onOpenChange(false)
-  }
+    e.preventDefault();
+    if (!editor || !url) return;
+    editor.chain().focus().setImage({ src: url }).run();
+    setUrl('');
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -81,5 +81,5 @@ export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

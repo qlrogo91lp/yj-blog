@@ -1,73 +1,92 @@
-'use client'
+'use client';
 
+import { useCallback, useEffect, useState } from 'react';
 import {
-  Bold, Italic, Underline as UnderlineIcon, Strikethrough,
-  AlignLeft, AlignCenter, AlignRight, AlignJustify,
-  List, ListOrdered, Quote, Minus, Link as LinkIcon,
-  ImageIcon, Heading1, Heading2, Heading3,
-  Highlighter, Undo2, Redo2, Type,
-} from 'lucide-react'
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Heading1,
+  Heading2,
+  Heading3,
+  Highlighter,
+  ImageIcon,
+  Italic,
+  Link as LinkIcon,
+  List,
+  ListOrdered,
+  Minus,
+  Quote,
+  Redo2,
+  Strikethrough,
+  Type,
+  Underline as UnderlineIcon,
+  Undo2,
+} from 'lucide-react';
+import TurndownService from 'turndown';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { useEditorContext } from '../_providers/editor-provider'
-import { useNewPostStore } from '../_store'
-import { LinkDialog } from '../_components/_link'
-import { ImageUploadDialog } from '../_components/_image-upload'
-import { TableInsertPopover } from '../_components/table-insert-popover'
-import { ColorPicker } from '../_components/color-picker'
-import { ToolbarButton } from '../_components/toolbar-button'
-import { useState, useCallback, useEffect } from 'react'
-import TurndownService from 'turndown'
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { ImageUploadDialog } from '../_components/_image-upload';
+import { LinkDialog } from '../_components/_link';
+import { ColorPicker } from '../_components/color-picker';
+import { TableInsertPopover } from '../_components/table-insert-popover';
+import { ToolbarButton } from '../_components/toolbar-button';
+import { useEditorContext } from '../_providers/editor-provider';
+import { useNewPostStore } from '../_store';
 
 function useForceUpdate() {
-  const [, setState] = useState(0)
-  return useCallback(() => setState((n) => n + 1), [])
+  const [, setState] = useState(0);
+  return useCallback(() => setState((n) => n + 1), []);
 }
 
 export function EditorToolbarAction() {
-  const { editor } = useEditorContext()
-  const mode = useNewPostStore((s) => s.mode)
-  const forceUpdate = useForceUpdate()
+  const { editor } = useEditorContext();
+  const mode = useNewPostStore((s) => s.mode);
+  const forceUpdate = useForceUpdate();
 
   // editor 내부 상태 변경(커서 이동, 서식 적용 등) 시 리렌더링 트리거
   useEffect(() => {
-    if (!editor) return
-    editor.on('transaction', forceUpdate)
+    if (!editor) return;
+    editor.on('transaction', forceUpdate);
     return () => {
-      editor.off('transaction', forceUpdate)
-    }
-  }, [editor, forceUpdate])
-  const setMode = useNewPostStore((s) => s.setMode)
-  const content = useNewPostStore((s) => s.content)
-  const setContent = useNewPostStore((s) => s.setContent)
-  const setContentFormat = useNewPostStore((s) => s.setContentFormat)
-  const [isLinkOpen, setIsLinkOpen] = useState(false)
-  const [isImageOpen, setIsImageOpen] = useState(false)
+      editor.off('transaction', forceUpdate);
+    };
+  }, [editor, forceUpdate]);
+  const setMode = useNewPostStore((s) => s.setMode);
+  const content = useNewPostStore((s) => s.content);
+  const setContent = useNewPostStore((s) => s.setContent);
+  const setContentFormat = useNewPostStore((s) => s.setContentFormat);
+  const [isLinkOpen, setIsLinkOpen] = useState(false);
+  const [isImageOpen, setIsImageOpen] = useState(false);
 
-  const handleModeChange = useCallback((newMode: string) => {
-    if (newMode === mode) return
+  const handleModeChange = useCallback(
+    (newMode: string) => {
+      if (newMode === mode) return;
 
-    if (newMode === 'markdown' && mode === 'wysiwyg') {
-      // HTML → Markdown
-      const turndown = new TurndownService({
-        headingStyle: 'atx',
-        codeBlockStyle: 'fenced',
-      })
-      const markdown = turndown.turndown(content || '')
-      setContent(markdown)
-      setContentFormat('markdown')
-    }
-    // markdown → wysiwyg: 마크다운을 HTML로 변환해서 TipTap에 넣음
-    // content는 그대로 두고, WysiwygEditor가 마운트될 때 처리
+      if (newMode === 'markdown' && mode === 'wysiwyg') {
+        // HTML → Markdown
+        const turndown = new TurndownService({
+          headingStyle: 'atx',
+          codeBlockStyle: 'fenced',
+        });
+        const markdown = turndown.turndown(content || '');
+        setContent(markdown);
+        setContentFormat('markdown');
+      }
+      // markdown → wysiwyg: 마크다운을 HTML로 변환해서 TipTap에 넣음
+      // content는 그대로 두고, WysiwygEditor가 마운트될 때 처리
 
-    setMode(newMode as 'wysiwyg' | 'markdown')
-  }, [mode, content, setContent, setContentFormat, setMode])
+      setMode(newMode as 'wysiwyg' | 'markdown');
+    },
+    [mode, content, setContent, setContentFormat, setMode]
+  );
 
   if (mode === 'markdown') {
     return (
@@ -85,7 +104,7 @@ export function EditorToolbarAction() {
           마크다운 모드에서는 직접 마크다운 문법을 작성합니다
         </span>
       </div>
-    )
+    );
   }
 
   return (
@@ -115,12 +134,12 @@ export function EditorToolbarAction() {
                 : 'paragraph'
         }
         onValueChange={(value) => {
-          if (!editor) return
+          if (!editor) return;
           if (value === 'paragraph') {
-            editor.chain().focus().setParagraph().run()
+            editor.chain().focus().setParagraph().run();
           } else {
-            const level = Number(value.replace('h', '')) as 1 | 2 | 3
-            editor.chain().focus().toggleHeading({ level }).run()
+            const level = Number(value.replace('h', '')) as 1 | 2 | 3;
+            editor.chain().focus().toggleHeading({ level }).run();
           }
         }}
       >
@@ -129,16 +148,24 @@ export function EditorToolbarAction() {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="paragraph">
-            <div className="flex items-center gap-2"><Type className="h-4 w-4" /> 본문</div>
+            <div className="flex items-center gap-2">
+              <Type className="h-4 w-4" /> 본문
+            </div>
           </SelectItem>
           <SelectItem value="h1">
-            <div className="flex items-center gap-2"><Heading1 className="h-4 w-4" /> 제목 1</div>
+            <div className="flex items-center gap-2">
+              <Heading1 className="h-4 w-4" /> 제목 1
+            </div>
           </SelectItem>
           <SelectItem value="h2">
-            <div className="flex items-center gap-2"><Heading2 className="h-4 w-4" /> 제목 2</div>
+            <div className="flex items-center gap-2">
+              <Heading2 className="h-4 w-4" /> 제목 2
+            </div>
           </SelectItem>
           <SelectItem value="h3">
-            <div className="flex items-center gap-2"><Heading3 className="h-4 w-4" /> 제목 3</div>
+            <div className="flex items-center gap-2">
+              <Heading3 className="h-4 w-4" /> 제목 3
+            </div>
           </SelectItem>
         </SelectContent>
       </Select>
@@ -266,8 +293,16 @@ export function EditorToolbarAction() {
       />
 
       {/* 다이얼로그 */}
-      <LinkDialog editor={editor} open={isLinkOpen} onOpenChange={setIsLinkOpen} />
-      <ImageUploadDialog editor={editor} open={isImageOpen} onOpenChange={setIsImageOpen} />
+      <LinkDialog
+        editor={editor}
+        open={isLinkOpen}
+        onOpenChange={setIsLinkOpen}
+      />
+      <ImageUploadDialog
+        editor={editor}
+        open={isImageOpen}
+        onOpenChange={setIsImageOpen}
+      />
     </div>
-  )
+  );
 }

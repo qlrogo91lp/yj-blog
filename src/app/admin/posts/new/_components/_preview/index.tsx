@@ -1,27 +1,27 @@
-'use client'
+'use client';
 
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { useNewPostStore } from '../../_store'
+} from '@/components/ui/dialog';
+import { useNewPostStore } from '../../_store';
 
 type Props = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
 
 export function PreviewDialog({ open, onOpenChange }: Props) {
-  const title = useNewPostStore((s) => s.title)
-  const content = useNewPostStore((s) => s.content)
-  const contentFormat = useNewPostStore((s) => s.contentFormat)
+  const title = useNewPostStore((s) => s.title);
+  const content = useNewPostStore((s) => s.content);
+  const contentFormat = useNewPostStore((s) => s.contentFormat);
 
   const html =
     contentFormat === 'html'
       ? content
-      : `<pre style="white-space: pre-wrap; font-family: var(--font-geist-mono);">${escapeHtml(content)}</pre>`
+      : `<pre style="white-space: pre-wrap; font-family: var(--font-geist-mono);">${escapeHtml(content)}</pre>`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -38,12 +38,9 @@ export function PreviewDialog({ open, onOpenChange }: Props) {
         </article>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

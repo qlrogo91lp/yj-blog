@@ -1,23 +1,27 @@
-import { db } from '@/db'
-import { posts, categories } from '@/db/schema'
-import { and, count, desc, eq } from 'drizzle-orm'
-import type { PostWithCategory } from '@/types'
+import { and, count, desc, eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { categories, posts } from '@/db/schema';
+import type { PostWithCategory } from '@/types';
 
 interface GetPostsOptions {
-  categoryId?: number
-  page?: number
-  limit?: number
+  categoryId?: number;
+  page?: number;
+  limit?: number;
 }
 
 /**
  * 발행된 글 목록 (카테고리 join, 페이지네이션)
  */
-export async function getPosts({ categoryId, page = 1, limit = 10 }: GetPostsOptions = {}) {
-  const offset = (page - 1) * limit
+export async function getPosts({
+  categoryId,
+  page = 1,
+  limit = 10,
+}: GetPostsOptions = {}) {
+  const offset = (page - 1) * limit;
   const where = and(
     eq(posts.status, 'published'),
-    categoryId ? eq(posts.categoryId, categoryId) : undefined,
-  )
+    categoryId ? eq(posts.categoryId, categoryId) : undefined
+  );
 
   const [items, totalResult] = await Promise.all([
     db
@@ -29,43 +33,44 @@ export async function getPosts({ categoryId, page = 1, limit = 10 }: GetPostsOpt
       .limit(limit)
       .offset(offset),
     db.select({ total: count() }).from(posts).where(where),
-  ])
+  ]);
 
   return {
-    items: items.map(({ post, category }) => ({ ...post, category })) as PostWithCategory[],
+    items: items.map(({ post, category }) => ({
+      ...post,
+      category,
+    })) as PostWithCategory[],
     total: totalResult[0].total,
     page,
     limit,
-  }
+  };
 }
 
 /**
  * slug로 글 상세 조회 (category join)
  */
-export async function getPostBySlug(slug: string): Promise<PostWithCategory | null> {
+export async function getPostBySlug(
+  slug: string
+): Promise<PostWithCategory | null> {
   const result = await db
     .select({ post: posts, category: categories })
     .from(posts)
     .leftJoin(categories, eq(posts.categoryId, categories.id))
     .where(eq(posts.slug, slug))
-    .limit(1)
+    .limit(1);
 
-  if (!result[0]) return null
-  const { post, category } = result[0]
-  return { ...post, category }
+  if (!result[0]) return null;
+  const { post, category } = result[0];
+  return { ...post, category };
 }
 
 /**
  * ID로 글 단건 조회 (관리자 수정용)
  */
 export async function getPostById(id: number) {
-  const result = await db
-    .select()
-    .from(posts)
-    .where(eq(posts.id, id))
-    .limit(1)
+  const result = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
 
-  return result[0] ?? null
+  return result[0] ?? null;
 }
 
 /**
@@ -76,7 +81,10 @@ export async function getAllPostsForAdmin() {
     .select({ post: posts, category: categories })
     .from(posts)
     .leftJoin(categories, eq(posts.categoryId, categories.id))
-    .orderBy(desc(posts.updatedAt))
+    .orderBy(desc(posts.updatedAt));
 
-  return result.map(({ post, category }) => ({ ...post, category })) as PostWithCategory[]
+  return result.map(({ post, category }) => ({
+    ...post,
+    category,
+  })) as PostWithCategory[];
 }
