@@ -1,8 +1,8 @@
-import { getAllCommentsForAdmin } from '@/db/queries/comments'
-import { CommentTable } from './_components/comment-table'
+import { getAllCommentsForAdmin } from '@/db/queries/comments';
+import { CommentTable } from './_components/comment-table';
 
 export default async function AdminCommentsPage() {
-  const { comments, total } = await getAllCommentsForAdmin()
+  const { comments, total } = await getAllCommentsForAdmin();
 
   return (
     <div>
@@ -10,5 +10,5 @@ export default async function AdminCommentsPage() {
       <p className="text-sm text-muted-foreground mb-4">전체 {total}개</p>
       <CommentTable comments={comments} />
     </div>
-  )
+  );
 }

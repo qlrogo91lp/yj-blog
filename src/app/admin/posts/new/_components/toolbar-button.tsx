@@ -1,20 +1,25 @@
-'use client'
+'use client';
 
-import { Toggle } from '@/components/ui/toggle'
+import { Toggle } from '@/components/ui/toggle';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@/components/ui/tooltip';
 
 type Props = {
-  icon: React.ComponentType<{ className?: string }>
-  tooltip: string
-  isActive?: boolean
-  onClick?: () => void
-}
+  icon: React.ComponentType<{ className?: string }>;
+  tooltip: string;
+  isActive?: boolean;
+  onClick?: () => void;
+};
 
-export function ToolbarButton({ icon: Icon, tooltip, isActive, onClick }: Props) {
+export function ToolbarButton({
+  icon: Icon,
+  tooltip,
+  isActive,
+  onClick,
+}: Props) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -32,5 +37,5 @@ export function ToolbarButton({ icon: Icon, tooltip, isActive, onClick }: Props)
         <p>{tooltip}</p>
       </TooltipContent>
     </Tooltip>
-  )
+  );
 }

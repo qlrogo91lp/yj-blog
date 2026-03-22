@@ -1,11 +1,19 @@
-import { boolean, date, integer, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
-import { relations } from 'drizzle-orm'
+import { relations } from 'drizzle-orm';
+import {
+  boolean,
+  date,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 
 // -----------------------------------------------
 // Enums
 // -----------------------------------------------
 
-export const postStatusEnum = pgEnum('post_status', ['draft', 'published'])
+export const postStatusEnum = pgEnum('post_status', ['draft', 'published']);
 
 // -----------------------------------------------
 // categories
@@ -14,10 +22,10 @@ export const postStatusEnum = pgEnum('post_status', ['draft', 'published'])
 export const categories = pgTable('categories', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
   name: text('name').notNull(),
-  slug: text('slug').notNull().unique(),      // URL: /category/[slug]
+  slug: text('slug').notNull().unique(), // URL: /category/[slug]
   description: text('description'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-})
+});
 
 // -----------------------------------------------
 // posts
@@ -26,10 +34,10 @@ export const categories = pgTable('categories', {
 export const posts = pgTable('posts', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
   title: text('title').notNull(),
-  slug: text('slug').notNull().unique(),      // URL: /posts/[slug], SEO-friendly
+  slug: text('slug').notNull().unique(), // URL: /posts/[slug], SEO-friendly
   content: text('content').notNull().default(''),
   contentFormat: text('content_format').notNull().default('markdown'), // 'markdown' | 'html'
-  excerpt: text('excerpt'),                   // 글 요약 - 목록 미리보기 및 meta description 기본값
+  excerpt: text('excerpt'), // 글 요약 - 목록 미리보기 및 meta description 기본값
 
   thumbnailUrl: text('thumbnail_url'),
 
@@ -37,16 +45,18 @@ export const posts = pgTable('posts', {
   views: integer('views').notNull().default(0),
 
   // 분류
-  categoryId: integer('category_id').references(() => categories.id, { onDelete: 'set null' }),
+  categoryId: integer('category_id').references(() => categories.id, {
+    onDelete: 'set null',
+  }),
 
   // SEO - 비워두면 title/excerpt를 fallback으로 사용
   metaTitle: text('meta_title'),
   metaDescription: text('meta_description'),
 
-  publishedAt: timestamp('published_at'),     // 발행 시각 (sitemap, 정렬에 사용)
+  publishedAt: timestamp('published_at'), // 발행 시각 (sitemap, 정렬에 사용)
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
+});
 
 // -----------------------------------------------
 // comments
@@ -54,11 +64,13 @@ export const posts = pgTable('posts', {
 
 export const comments = pgTable('comments', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  postId: integer('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
-  parentId: integer('parent_id'),             // null이면 최상위 댓글, 값이 있으면 대댓글
+  postId: integer('post_id')
+    .notNull()
+    .references(() => posts.id, { onDelete: 'cascade' }),
+  parentId: integer('parent_id'), // null이면 최상위 댓글, 값이 있으면 대댓글
 
   authorName: text('author_name').notNull(),
-  email: text('email'),                          // nullable — 알림 수신 선택 시만 입력
+  email: text('email'), // nullable — 알림 수신 선택 시만 입력
   passwordHash: text('password_hash').notNull(), // bcrypt 해시 - 수정/삭제 시 검증
   content: text('content').notNull(),
 
@@ -66,7 +78,7 @@ export const comments = pgTable('comments', {
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
+});
 
 // -----------------------------------------------
 // daily_stats (일별 조회수·방문자 통계)
@@ -74,11 +86,11 @@ export const comments = pgTable('comments', {
 
 export const dailyStats = pgTable('daily_stats', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  date: date('date').notNull().unique(),         // 'YYYY-MM-DD' 형태
-  views: integer('views').notNull().default(0),  // 일별 총 조회수
+  date: date('date').notNull().unique(), // 'YYYY-MM-DD' 형태
+  views: integer('views').notNull().default(0), // 일별 총 조회수
   visitors: integer('visitors').notNull().default(0), // 일별 순 방문자
   createdAt: timestamp('created_at').notNull().defaultNow(),
-})
+});
 
 // -----------------------------------------------
 // Relations
@@ -86,7 +98,7 @@ export const dailyStats = pgTable('daily_stats', {
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
   posts: many(posts),
-}))
+}));
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
   category: one(categories, {
@@ -94,7 +106,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     references: [categories.id],
   }),
   comments: many(comments),
-}))
+}));
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
   post: one(posts, {
@@ -107,4 +119,4 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
     relationName: 'replies',
   }),
   replies: many(comments, { relationName: 'replies' }),
-}))
+}));

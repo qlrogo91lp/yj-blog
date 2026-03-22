@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { format } from 'date-fns'
-import { ko } from 'date-fns/locale'
-import type { Comment } from '@/types'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { DeleteCommentDialog } from './_delete-comment'
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import type { Comment } from '@/types';
+import { DeleteCommentDialog } from './_delete-comment';
 
-type AdminComment = Comment & { postTitle: string; postSlug: string }
+type AdminComment = Comment & { postTitle: string; postSlug: string };
 
 type Props = {
-  comments: AdminComment[]
-}
+  comments: AdminComment[];
+};
 
 export function CommentTable({ comments }: Props) {
-  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   if (comments.length === 0) {
-    return <p className="text-muted-foreground">댓글이 없습니다.</p>
+    return <p className="text-muted-foreground">댓글이 없습니다.</p>;
   }
 
   return (
@@ -49,9 +49,13 @@ export function CommentTable({ comments }: Props) {
                     {comment.postTitle}
                   </a>
                 </td>
-                <td className="py-3 pr-4 max-w-xs truncate">{comment.content}</td>
+                <td className="py-3 pr-4 max-w-xs truncate">
+                  {comment.content}
+                </td>
                 <td className="py-3 pr-4 whitespace-nowrap">
-                  {format(new Date(comment.createdAt), 'yyyy.M.d HH:mm', { locale: ko })}
+                  {format(new Date(comment.createdAt), 'yyyy.M.d HH:mm', {
+                    locale: ko,
+                  })}
                 </td>
                 <td className="py-3 pr-4">
                   {comment.isDeleted ? (
@@ -83,5 +87,5 @@ export function CommentTable({ comments }: Props) {
         onClose={() => setDeletingId(null)}
       />
     </>
-  )
+  );
 }

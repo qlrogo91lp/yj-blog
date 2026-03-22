@@ -1,26 +1,26 @@
-import Link from "next/link"
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import type { PostWithCategory } from "@/types"
+} from '@/components/ui/card';
+import type { PostWithCategory } from '@/types';
 
 interface Props {
-  post: PostWithCategory
+  post: PostWithCategory;
 }
 
 export function PostCard({ post }: Props) {
   const publishedAt = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString("ko-KR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+    ? new Date(post.publishedAt).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       })
-    : null
+    : null;
 
   return (
     <Link href={`/posts/${post.slug}`} className="block">
@@ -47,5 +47,5 @@ export function PostCard({ post }: Props) {
         )}
       </Card>
     </Link>
-  )
+  );
 }

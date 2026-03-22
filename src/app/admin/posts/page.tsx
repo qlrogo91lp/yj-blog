@@ -1,11 +1,11 @@
-import Link from "next/link"
-import { format } from "date-fns"
-import { ko } from "date-fns/locale"
-import { getAllPostsForAdmin } from "@/db/queries/posts"
-import { Badge } from "@/components/ui/badge"
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { Badge } from '@/components/ui/badge';
+import { getAllPostsForAdmin } from '@/db/queries/posts';
 
 export default async function AdminPostsPage() {
-  const posts = await getAllPostsForAdmin()
+  const posts = await getAllPostsForAdmin();
 
   return (
     <div>
@@ -15,21 +15,31 @@ export default async function AdminPostsPage() {
           <thead>
             <tr className="border-b bg-muted/50">
               <th className="px-4 py-3 text-left font-medium">제목</th>
-              <th className="hidden px-4 py-3 text-left font-medium sm:table-cell">카테고리</th>
-              <th className="hidden px-4 py-3 text-left font-medium md:table-cell">수정일</th>
+              <th className="hidden px-4 py-3 text-left font-medium sm:table-cell">
+                카테고리
+              </th>
+              <th className="hidden px-4 py-3 text-left font-medium md:table-cell">
+                수정일
+              </th>
               <th className="px-4 py-3 text-left font-medium">상태</th>
             </tr>
           </thead>
           <tbody>
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-12 text-center text-muted-foreground">
+                <td
+                  colSpan={4}
+                  className="px-4 py-12 text-center text-muted-foreground"
+                >
                   작성된 글이 없습니다.
                 </td>
               </tr>
             ) : (
               posts.map((post) => (
-                <tr key={post.id} className="border-b last:border-b-0 hover:bg-muted/30">
+                <tr
+                  key={post.id}
+                  className="border-b last:border-b-0 hover:bg-muted/30"
+                >
                   <td className="px-4 py-3">
                     <Link
                       href={`/posts/${post.slug}`}
@@ -39,14 +49,20 @@ export default async function AdminPostsPage() {
                     </Link>
                   </td>
                   <td className="hidden px-4 py-3 text-muted-foreground sm:table-cell">
-                    {post.category?.name ?? "—"}
+                    {post.category?.name ?? '—'}
                   </td>
                   <td className="hidden px-4 py-3 text-muted-foreground md:table-cell">
-                    {format(new Date(post.updatedAt), "yyyy년 M월 d일", { locale: ko })}
+                    {format(new Date(post.updatedAt), 'yyyy년 M월 d일', {
+                      locale: ko,
+                    })}
                   </td>
                   <td className="px-4 py-3">
-                    <Badge variant={post.status === "published" ? "default" : "secondary"}>
-                      {post.status === "published" ? "발행" : "임시저장"}
+                    <Badge
+                      variant={
+                        post.status === 'published' ? 'default' : 'secondary'
+                      }
+                    >
+                      {post.status === 'published' ? '발행' : '임시저장'}
                     </Badge>
                   </td>
                 </tr>
@@ -56,5 +72,5 @@ export default async function AdminPostsPage() {
         </table>
       </div>
     </div>
-  )
+  );
 }

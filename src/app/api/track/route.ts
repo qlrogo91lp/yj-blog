@@ -1,16 +1,16 @@
-import { db } from "@/db"
-import { dailyStats } from "@/db/schema"
-import { sql } from "drizzle-orm"
-import { format } from "date-fns"
-import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+import { format } from 'date-fns';
+import { sql } from 'drizzle-orm';
+import { db } from '@/db';
+import { dailyStats } from '@/db/schema';
 
 export async function POST() {
-  const today = format(new Date(), "yyyy-MM-dd")
-  const cookieStore = await cookies()
-  const visitorCookie = cookieStore.get("_blog_vid")
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const cookieStore = await cookies();
+  const visitorCookie = cookieStore.get('_blog_vid');
 
-  const isNewVisitor = !visitorCookie || visitorCookie.value !== today
+  const isNewVisitor = !visitorCookie || visitorCookie.value !== today;
 
   // upsert: 오늘 날짜 row가 있으면 views +1, 없으면 새로 생성
   await db
@@ -28,18 +28,18 @@ export async function POST() {
           ? sql`${dailyStats.visitors} + 1`
           : sql`${dailyStats.visitors}`,
       },
-    })
+    });
 
-  const response = NextResponse.json({ ok: true })
+  const response = NextResponse.json({ ok: true });
 
   if (isNewVisitor) {
-    response.cookies.set("_blog_vid", today, {
+    response.cookies.set('_blog_vid', today, {
       httpOnly: true,
-      sameSite: "lax",
-      path: "/",
+      sameSite: 'lax',
+      path: '/',
       maxAge: 60 * 60 * 24, // 1일
-    })
+    });
   }
 
-  return response
+  return response;
 }

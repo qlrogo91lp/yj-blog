@@ -1,4 +1,4 @@
-import { Separator } from "@/components/ui/separator"
+import { Separator } from '@/components/ui/separator';
 
 export function Footer() {
   return (
@@ -8,5 +8,5 @@ export function Footer() {
         © {new Date().getFullYear()} YJ Blog. All rights reserved.
       </div>
     </footer>
-  )
+  );
 }

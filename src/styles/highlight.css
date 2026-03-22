@@ -3,7 +3,9 @@
 .hljs-selector-tag,
 .hljs-built_in,
 .hljs-name,
-.hljs-tag { color: #f97583; }
+.hljs-tag {
+  color: #f97583;
+}
 
 .hljs-string,
 .hljs-title,
@@ -13,21 +15,34 @@
 .hljs-template-tag,
 .hljs-template-variable,
 .hljs-type,
-.hljs-addition { color: #9ecbff; }
+.hljs-addition {
+  color: #9ecbff;
+}
 
 .hljs-comment,
 .hljs-deletion,
-.hljs-meta { color: #6a737d; font-style: italic; }
+.hljs-meta {
+  color: #6a737d;
+  font-style: italic;
+}
 
 .hljs-regexp,
 .hljs-symbol,
 .hljs-variable,
-.hljs-number { color: #79b8ff; }
+.hljs-number {
+  color: #79b8ff;
+}
 
 .hljs-function,
-.hljs-title.function_ { color: #b392f0; }
+.hljs-title.function_ {
+  color: #b392f0;
+}
 
 .hljs-punctuation,
-.hljs-operator { color: #e1e4e8; }
+.hljs-operator {
+  color: #e1e4e8;
+}
 
-.hljs-property { color: #ffab70; }
+.hljs-property {
+  color: #ffab70;
+}

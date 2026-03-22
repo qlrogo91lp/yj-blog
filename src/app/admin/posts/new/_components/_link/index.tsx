@@ -1,40 +1,40 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import type { Editor } from '@tiptap/react'
+import { useState } from 'react';
+import type { Editor } from '@tiptap/react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type Props = {
-  editor: Editor | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
+  editor: Editor | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
 
 export function LinkDialog({ editor, open, onOpenChange }: Props) {
-  const [url, setUrl] = useState('')
+  const [url, setUrl] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!editor || !url) return
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-    setUrl('')
-    onOpenChange(false)
-  }
+    e.preventDefault();
+    if (!editor || !url) return;
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    setUrl('');
+    onOpenChange(false);
+  };
 
   const handleRemove = () => {
-    if (!editor) return
-    editor.chain().focus().unsetLink().run()
-    onOpenChange(false)
-  }
+    if (!editor) return;
+    editor.chain().focus().unsetLink().run();
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -65,5 +65,5 @@ export function LinkDialog({ editor, open, onOpenChange }: Props) {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

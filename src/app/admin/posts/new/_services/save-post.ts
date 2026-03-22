@@ -1,39 +1,40 @@
-'use server'
+'use server';
 
-import { auth } from '@clerk/nextjs/server'
-import { db } from '@/db'
-import { posts } from '@/db/schema'
-import { eq } from 'drizzle-orm'
-import { postFormSchema } from '@/types/post'
+import { auth } from '@clerk/nextjs/server';
+import { eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { posts } from '@/db/schema';
+import { postFormSchema } from '@/types/post';
 
 type SavePostInput = {
-  postId?: number | null
-  title: string
-  slug: string
-  content: string
-  contentFormat: 'markdown' | 'html'
-  excerpt?: string
-  categoryId: number | null
-  status: 'draft' | 'published'
-  publishedAt?: Date | null
-}
+  postId?: number | null;
+  title: string;
+  slug: string;
+  content: string;
+  contentFormat: 'markdown' | 'html';
+  excerpt?: string;
+  categoryId: number | null;
+  status: 'draft' | 'published';
+  publishedAt?: Date | null;
+};
 
 type SavePostResult =
   | { success: true; postId: number }
-  | { success: false; error: string }
+  | { success: false; error: string };
 
 export async function savePost(input: SavePostInput): Promise<SavePostResult> {
-  const { userId } = await auth()
+  const { userId } = await auth();
   if (!userId) {
-    return { success: false, error: '인증이 필요합니다' }
+    return { success: false, error: '인증이 필요합니다' };
   }
 
-  const parsed = postFormSchema.safeParse(input)
+  const parsed = postFormSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message }
+    return { success: false, error: parsed.error.issues[0].message };
   }
 
-  const { title, slug, content, contentFormat, excerpt, categoryId, status } = parsed.data
+  const { title, slug, content, contentFormat, excerpt, categoryId, status } =
+    parsed.data;
 
   try {
     if (input.postId) {
@@ -47,23 +48,20 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
         categoryId,
         status,
         updatedAt: new Date(),
-      }
+      };
       if (status === 'published' && !input.publishedAt) {
-        updateData.publishedAt = new Date()
+        updateData.publishedAt = new Date();
       }
       if (status === 'draft') {
-        updateData.publishedAt = null
+        updateData.publishedAt = null;
       }
 
-      await db
-        .update(posts)
-        .set(updateData)
-        .where(eq(posts.id, input.postId))
+      await db.update(posts).set(updateData).where(eq(posts.id, input.postId));
 
-      return { success: true, postId: input.postId }
+      return { success: true, postId: input.postId };
     } else {
       // INSERT
-      const publishedAt = status === 'published' ? new Date() : null
+      const publishedAt = status === 'published' ? new Date() : null;
       const [newPost] = await db
         .insert(posts)
         .values({
@@ -76,14 +74,14 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
           status,
           publishedAt,
         })
-        .returning({ id: posts.id })
+        .returning({ id: posts.id });
 
-      return { success: true, postId: newPost.id }
+      return { success: true, postId: newPost.id };
     }
   } catch (error) {
     if (error instanceof Error && error.message.includes('unique')) {
-      return { success: false, error: '이미 사용 중인 slug입니다' }
+      return { success: false, error: '이미 사용 중인 slug입니다' };
     }
-    return { success: false, error: '저장에 실패했습니다' }
+    return { success: false, error: '저장에 실패했습니다' };
   }
 }

@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import type { Category } from '@/types'
-import { useNewPostStore } from '../_store'
-import { useAutoSave } from '../_hooks/use-auto-save'
-import { EditorProvider } from '../_providers/editor-provider'
-import { TitleInputAction } from './title-input-action'
-import { CategorySelectorAction } from './category-selector-action'
-import { EditorToolbarAction } from './editor-toolbar-action'
-import { WysiwygEditorAction } from './wysiwyg-editor-action'
-import { MarkdownEditorAction } from './markdown-editor-action'
-import { BottomBar } from '../_components/bottom-bar'
+import type { Category } from '@/types';
+import { BottomBar } from '../_components/bottom-bar';
+import { useAutoSave } from '../_hooks/use-auto-save';
+import { EditorProvider } from '../_providers/editor-provider';
+import { useNewPostStore } from '../_store';
+import { CategorySelectorAction } from './category-selector-action';
+import { EditorToolbarAction } from './editor-toolbar-action';
+import { MarkdownEditorAction } from './markdown-editor-action';
+import { TitleInputAction } from './title-input-action';
+import { WysiwygEditorAction } from './wysiwyg-editor-action';
 
 type Props = {
-  categories: Category[]
-}
+  categories: Category[];
+};
 
 export function NewPostPageAction({ categories }: Props) {
-  const mode = useNewPostStore((s) => s.mode)
+  const mode = useNewPostStore((s) => s.mode);
 
-  useAutoSave()
+  useAutoSave();
 
   return (
     <EditorProvider>
@@ -28,11 +28,15 @@ export function NewPostPageAction({ categories }: Props) {
           <CategorySelectorAction categories={categories} />
           <TitleInputAction />
           <div className="mt-4 flex-1">
-            {mode === 'wysiwyg' ? <WysiwygEditorAction /> : <MarkdownEditorAction />}
+            {mode === 'wysiwyg' ? (
+              <WysiwygEditorAction />
+            ) : (
+              <MarkdownEditorAction />
+            )}
           </div>
         </div>
         <BottomBar />
       </div>
     </EditorProvider>
-  )
+  );
 }

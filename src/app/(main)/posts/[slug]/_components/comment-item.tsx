@@ -1,37 +1,46 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { format } from 'date-fns'
-import { ko } from 'date-fns/locale'
-import { type CommentWithReplies } from '@/types'
-import { DeleteCommentDialogAction } from '../_actions/delete-comment-dialog-action'
-import { CommentForm } from './comment-form'
-import { Button } from '@/components/ui/button'
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import { type CommentWithReplies } from '@/types';
+import { DeleteCommentDialogAction } from '../_actions/delete-comment-dialog-action';
+import { CommentForm } from './comment-form';
 
 type Props = {
-  comment: CommentWithReplies
-  postSlug: string
-  isReply?: boolean
-}
+  comment: CommentWithReplies;
+  postSlug: string;
+  isReply?: boolean;
+};
 
 export function CommentItem({ comment, postSlug, isReply = false }: Props) {
-  const [isReplying, setIsReplying] = useState(false)
+  const [isReplying, setIsReplying] = useState(false);
 
-  const formattedDate = format(new Date(comment.createdAt), 'yyyy.M.d HH:mm', { locale: ko })
+  const formattedDate = format(new Date(comment.createdAt), 'yyyy.M.d HH:mm', {
+    locale: ko,
+  });
 
   if (comment.isDeleted) {
     return (
       <div className={isReply ? 'ml-8 mt-4' : ''}>
-        <p className="text-sm text-muted-foreground italic">삭제된 댓글입니다.</p>
+        <p className="text-sm text-muted-foreground italic">
+          삭제된 댓글입니다.
+        </p>
         {comment.replies.length > 0 && (
           <div className="space-y-4">
             {comment.replies.map((reply) => (
-              <CommentItem key={reply.id} comment={reply} postSlug={postSlug} isReply />
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                postSlug={postSlug}
+                isReply
+              />
             ))}
           </div>
         )}
       </div>
-    )
+    );
   }
 
   return (
@@ -69,10 +78,15 @@ export function CommentItem({ comment, postSlug, isReply = false }: Props) {
       {comment.replies.length > 0 && (
         <div className="space-y-4">
           {comment.replies.map((reply) => (
-            <CommentItem key={reply.id} comment={reply} postSlug={postSlug} isReply />
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              postSlug={postSlug}
+              isReply
+            />
           ))}
         </div>
       )}
     </div>
-  )
+  );
 }

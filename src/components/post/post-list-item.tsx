@@ -1,20 +1,20 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Badge } from "@/components/ui/badge"
-import type { PostWithCategory } from "@/types"
+import Image from 'next/image';
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import type { PostWithCategory } from '@/types';
 
 interface Props {
-  post: PostWithCategory
+  post: PostWithCategory;
 }
 
 export function PostListItem({ post }: Props) {
   const publishedAt = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString("ko-KR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+    ? new Date(post.publishedAt).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       })
-    : null
+    : null;
 
   return (
     <Link href={`/posts/${post.slug}`} className="block">
@@ -50,5 +50,5 @@ export function PostListItem({ post }: Props) {
         </div>
       </div>
     </Link>
-  )
+  );
 }

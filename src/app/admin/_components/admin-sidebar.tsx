@@ -1,20 +1,21 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard,
-  FileText,
-  FolderOpen,
-  MessageSquare,
   BarChart3,
   ExternalLink,
-  Settings,
+  FileText,
+  FolderOpen,
   Globe,
-} from "lucide-react"
+  LayoutDashboard,
+  MessageSquare,
+  Settings,
+} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -22,44 +23,43 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
 const menuGroups = [
   {
+    items: [{ label: '대시보드', icon: LayoutDashboard, href: '/admin' }],
+  },
+  {
+    label: '콘텐츠',
     items: [
-      { label: "대시보드", icon: LayoutDashboard, href: "/admin" },
+      { label: '글 관리', icon: FileText, href: '/admin/posts' },
+      { label: '카테고리 관리', icon: FolderOpen, href: '/admin/categories' },
+      { label: '댓글 관리', icon: MessageSquare, href: '/admin/comments' },
     ],
   },
   {
-    label: "콘텐츠",
+    label: '통계',
     items: [
-      { label: "글 관리", icon: FileText, href: "/admin/posts" },
-      { label: "카테고리 관리", icon: FolderOpen, href: "/admin/categories" },
-      { label: "댓글 관리", icon: MessageSquare, href: "/admin/comments" },
+      { label: '방문 통계', icon: BarChart3, href: '/admin/statistics' },
+      {
+        label: '유입경로',
+        icon: ExternalLink,
+        href: '/admin/statistics/referrers',
+      },
     ],
   },
   {
-    label: "통계",
-    items: [
-      { label: "방문 통계", icon: BarChart3, href: "/admin/statistics" },
-      { label: "유입경로", icon: ExternalLink, href: "/admin/statistics/referrers" },
-    ],
+    label: '설정',
+    items: [{ label: '블로그 설정', icon: Settings, href: '/admin/settings' }],
   },
-  {
-    label: "설정",
-    items: [
-      { label: "블로그 설정", icon: Settings, href: "/admin/settings" },
-    ],
-  },
-]
+];
 
 export function AdminSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   function isActive(href: string) {
-    if (href === "/admin") return pathname === "/admin"
-    return pathname.startsWith(href)
+    if (href === '/admin') return pathname === '/admin';
+    return pathname.startsWith(href);
   }
 
   return (
@@ -72,7 +72,9 @@ export function AdminSidebar() {
       <SidebarContent>
         {menuGroups.map((group, i) => (
           <SidebarGroup key={i}>
-            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
+            {group.label && (
+              <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            )}
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => (
@@ -100,5 +102,5 @@ export function AdminSidebar() {
         </Link>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

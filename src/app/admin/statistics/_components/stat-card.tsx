@@ -1,7 +1,7 @@
 type Props = {
-  label: string
-  value: number
-}
+  label: string;
+  value: number;
+};
 
 export function StatCard({ label, value }: Props) {
   return (
@@ -9,5 +9,5 @@ export function StatCard({ label, value }: Props) {
       <span className="text-xs text-muted-foreground">{label}</span>
       <span className="text-2xl font-bold">{value.toLocaleString()}</span>
     </div>
-  )
+  );
 }

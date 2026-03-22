@@ -1,40 +1,41 @@
-import { format } from "date-fns"
-import { ko } from "date-fns/locale"
-import { notFound } from "next/navigation"
-import type { Metadata } from "next"
-import { getPostBySlug } from "@/db/queries/posts"
-import { markdownToHtml } from "@/lib/markdown"
-import { CommentSection } from "./_components/comment-section"
-import { Badge } from "@/components/ui/badge"
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { Badge } from '@/components/ui/badge';
+import { getPostBySlug } from '@/db/queries/posts';
+import { markdownToHtml } from '@/lib/markdown';
+import { CommentSection } from './_components/comment-section';
 
 type Props = {
-  params: Promise<{ slug: string }>
-}
+  params: Promise<{ slug: string }>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params
-  const post = await getPostBySlug(slug)
-  if (!post) return {}
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+  if (!post) return {};
 
   return {
     title: post.metaTitle ?? post.title,
     description: post.metaDescription ?? post.excerpt ?? undefined,
-  }
+  };
 }
 
 export default async function PostPage({ params }: Props) {
-  const { slug } = await params
-  const post = await getPostBySlug(slug)
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
-  if (!post || post.status !== "published") notFound()
+  if (!post || post.status !== 'published') notFound();
 
-  const contentHtml = post.contentFormat === 'html'
-    ? post.content
-    : await markdownToHtml(post.content)
+  const contentHtml =
+    post.contentFormat === 'html'
+      ? post.content
+      : await markdownToHtml(post.content);
 
   const publishedAt = post.publishedAt
-    ? format(new Date(post.publishedAt), "yyyy년 M월 d일", { locale: ko })
-    : null
+    ? format(new Date(post.publishedAt), 'yyyy년 M월 d일', { locale: ko })
+    : null;
 
   return (
     <>
@@ -45,7 +46,9 @@ export default async function PostPage({ params }: Props) {
               {post.category.name}
             </Badge>
           )}
-          <h1 className="text-3xl font-bold leading-tight mb-4">{post.title}</h1>
+          <h1 className="text-3xl font-bold leading-tight mb-4">
+            {post.title}
+          </h1>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             {publishedAt && <time>{publishedAt}</time>}
             <span>{post.views.toLocaleString()}회 조회</span>
@@ -60,5 +63,5 @@ export default async function PostPage({ params }: Props) {
 
       <CommentSection postId={post.id} postSlug={post.slug} />
     </>
-  )
+  );
 }

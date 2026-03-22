@@ -1,33 +1,37 @@
-import { db } from '@/db'
-import { categories } from '@/db/schema'
-import { eq } from 'drizzle-orm'
-import type { Category } from '@/types'
-import type { CategoryFormValues } from '@/types/category'
+import { eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { categories } from '@/db/schema';
+import type { Category } from '@/types';
+import type { CategoryFormValues } from '@/types/category';
 
 /**
  * 전체 카테고리 목록 (이름 알파벳 순)
  */
 export async function getCategories(): Promise<Category[]> {
-  return db.select().from(categories).orderBy(categories.name)
+  return db.select().from(categories).orderBy(categories.name);
 }
 
 /**
  * slug로 카테고리 단건 조회
  */
-export async function getCategoryBySlug(slug: string): Promise<Category | null> {
+export async function getCategoryBySlug(
+  slug: string
+): Promise<Category | null> {
   const result = await db
     .select()
     .from(categories)
     .where(eq(categories.slug, slug))
-    .limit(1)
+    .limit(1);
 
-  return result[0] ?? null
+  return result[0] ?? null;
 }
 
 /**
  * 카테고리 생성
  */
-export async function createCategory(data: CategoryFormValues): Promise<Category> {
+export async function createCategory(
+  data: CategoryFormValues
+): Promise<Category> {
   const [created] = await db
     .insert(categories)
     .values({
@@ -35,15 +39,18 @@ export async function createCategory(data: CategoryFormValues): Promise<Category
       slug: data.slug,
       description: data.description ?? null,
     })
-    .returning()
+    .returning();
 
-  return created
+  return created;
 }
 
 /**
  * 카테고리 수정
  */
-export async function updateCategory(id: number, data: CategoryFormValues): Promise<Category> {
+export async function updateCategory(
+  id: number,
+  data: CategoryFormValues
+): Promise<Category> {
   const [updated] = await db
     .update(categories)
     .set({
@@ -52,14 +59,14 @@ export async function updateCategory(id: number, data: CategoryFormValues): Prom
       description: data.description ?? null,
     })
     .where(eq(categories.id, id))
-    .returning()
+    .returning();
 
-  return updated
+  return updated;
 }
 
 /**
  * 카테고리 삭제
  */
 export async function deleteCategory(id: number): Promise<void> {
-  await db.delete(categories).where(eq(categories.id, id))
+  await db.delete(categories).where(eq(categories.id, id));
 }
