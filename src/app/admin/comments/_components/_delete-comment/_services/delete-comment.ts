@@ -15,7 +15,7 @@ export async function adminDeleteCommentAction(
 
   try {
     await softDeleteComment(commentId);
-    revalidateTag(CACHE_TAGS.comments);
+    revalidateTag(CACHE_TAGS.comments, 'default');
     revalidatePath('/admin/comments');
     return { success: true };
   } catch {
