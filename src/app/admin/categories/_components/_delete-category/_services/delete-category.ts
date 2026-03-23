@@ -1,7 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { auth } from '@clerk/nextjs/server';
+import { CACHE_TAGS } from '@/db/cache-tags';
 import { deleteCategory } from '@/db/queries/categories';
 
 type Result = { success: true } | { success: false; error: string };
@@ -14,6 +15,7 @@ export async function deleteCategoryAction(id: number): Promise<Result> {
 
   try {
     await deleteCategory(id);
+    revalidateTag(CACHE_TAGS.categories);
     revalidatePath('/admin/categories');
     return { success: true };
   } catch (error) {

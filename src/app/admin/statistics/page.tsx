@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { Card, CardContent } from '@/components/ui/card';
 import {
   getDailyStatsForRange,

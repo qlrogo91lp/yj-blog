@@ -1,34 +1,9 @@
-import { count, eq } from 'drizzle-orm';
 import { Eye, FileText, MessageSquare, PenLine } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { db } from '@/db';
-import { comments, posts } from '@/db/schema';
-
-async function getStats() {
-  const [totalPosts, publishedPosts, draftPosts, totalComments] =
-    await Promise.all([
-      db.select({ count: count() }).from(posts),
-      db
-        .select({ count: count() })
-        .from(posts)
-        .where(eq(posts.status, 'published')),
-      db
-        .select({ count: count() })
-        .from(posts)
-        .where(eq(posts.status, 'draft')),
-      db.select({ count: count() }).from(comments),
-    ]);
-
-  return {
-    totalPosts: totalPosts[0].count,
-    publishedPosts: publishedPosts[0].count,
-    draftPosts: draftPosts[0].count,
-    totalComments: totalComments[0].count,
-  };
-}
+import { getAdminDashboardStats } from '@/db/queries/posts';
 
 export default async function AdminDashboardPage() {
-  const stats = await getStats();
+  const stats = await getAdminDashboardStats();
 
   const cards = [
     { title: '전체 글', value: stats.totalPosts, icon: FileText },

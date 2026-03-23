@@ -62,6 +62,23 @@ src/app/admin/
 
 ## 수정 계획
 
+### 0. `src/db/cache-tags.ts` — 캐시 태그 상수 파일 생성
+
+태그를 매직 스트링으로 분산시키면 오타 위험이 있으므로 상수로 중앙화한다.
+
+```typescript
+// src/db/cache-tags.ts
+export const CACHE_TAGS = {
+  posts: 'posts',
+  categories: 'categories',
+  comments: 'comments',
+} as const;
+```
+
+이후 `unstable_cache`와 `revalidateTag` 호출 모두 `CACHE_TAGS.*`를 통해 참조한다.
+
+---
+
 ### 1. [긴급] `save-post.ts` — `revalidateTag` + `revalidatePath` 누락 수정
 
 **현재 코드** (`src/app/admin/posts/new/_services/save-post.ts`)
@@ -295,6 +312,8 @@ export default function AdminPostsLoading() {
 
 ```
 src/
+├── db/
+│   └── cache-tags.ts                    # NEW: CACHE_TAGS 상수 중앙화
 ├── app/admin/
 │   ├── loading.tsx                      # NEW
 │   ├── page.tsx                         # MODIFY: 인라인 getStats → getAdminDashboardStats 교체
@@ -325,6 +344,9 @@ Server Action 변경:
 ---
 
 ## 체크리스트
+
+### High (사전 준비)
+- [ ] `src/db/cache-tags.ts` — `CACHE_TAGS` 상수 파일 생성
 
 ### High (버그 수준)
 - [ ] `src/app/admin/posts/new/_services/save-post.ts` — `revalidateTag('posts')` + `revalidatePath('/admin/posts')` 추가

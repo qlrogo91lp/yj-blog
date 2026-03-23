@@ -1,5 +1,7 @@
+import { unstable_cache } from 'next/cache';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
+import { CACHE_TAGS } from '@/db/cache-tags';
 import { categories } from '@/db/schema';
 import type { Category } from '@/types';
 import type { CategoryFormValues } from '@/types/category';
@@ -7,9 +9,13 @@ import type { CategoryFormValues } from '@/types/category';
 /**
  * 전체 카테고리 목록 (이름 알파벳 순)
  */
-export async function getCategories(): Promise<Category[]> {
-  return db.select().from(categories).orderBy(categories.name);
-}
+export const getCategories = unstable_cache(
+  async (): Promise<Category[]> => {
+    return db.select().from(categories).orderBy(categories.name);
+  },
+  ['categories-list'],
+  { tags: [CACHE_TAGS.categories] }
+);
 
 /**
  * slug로 카테고리 단건 조회
