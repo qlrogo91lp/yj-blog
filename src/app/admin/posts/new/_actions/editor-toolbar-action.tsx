@@ -13,6 +13,7 @@ import {
   Highlighter,
   ImageIcon,
   Italic,
+  Youtube,
   Link as LinkIcon,
   List,
   ListOrdered,
@@ -34,6 +35,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { ImageUploadDialog } from '../_components/_image-upload';
+import { YoutubeEmbedDialog } from '../_components/_youtube';
 import { LinkDialog } from '../_components/_link';
 import { ColorPicker } from '../_components/color-picker';
 import { TableInsertPopover } from '../_components/table-insert-popover';
@@ -65,6 +67,7 @@ export function EditorToolbarAction() {
   const setContentFormat = useNewPostStore((s) => s.setContentFormat);
   const [isLinkOpen, setIsLinkOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
+  const [isYoutubeOpen, setIsYoutubeOpen] = useState(false);
 
   const handleModeChange = useCallback(
     (newMode: string) => {
@@ -271,6 +274,11 @@ export function EditorToolbarAction() {
         tooltip="이미지"
         onClick={() => setIsImageOpen(true)}
       />
+      <ToolbarButton
+        icon={Youtube}
+        tooltip="YouTube 영상"
+        onClick={() => setIsYoutubeOpen(true)}
+      />
       <TableInsertPopover editor={editor} />
       <ToolbarButton
         icon={Minus}
@@ -302,6 +310,11 @@ export function EditorToolbarAction() {
         editor={editor}
         open={isImageOpen}
         onOpenChange={setIsImageOpen}
+      />
+      <YoutubeEmbedDialog
+        editor={editor}
+        open={isYoutubeOpen}
+        onOpenChange={setIsYoutubeOpen}
       />
     </div>
   );

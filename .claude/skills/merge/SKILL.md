@@ -73,19 +73,17 @@ gh pr merge --squash --delete-branch
 gh pr merge --squash
 ```
 
-### 5. 로컬 브랜치 정리 (feature/* 브랜치만)
+### 5. 로컬 브랜치 정리
 
-develop으로 전환 → pull → 로컬 브랜치 삭제 순서로 실행한다.
+`gh pr merge --squash --delete-branch`는 리모트·로컬 브랜치를 모두 삭제한다.
+따라서 **feature/* 브랜치**는 develop으로 전환 후 pull만 실행한다.
 
 ```bash
 git checkout develop
 git pull
-git branch -d <브랜치명>
 ```
 
-`-d`가 실패하면(완전히 머지되지 않은 것으로 판단될 경우) 사용자에게 확인 후 `-D`를 사용한다.
-
-**develop 브랜치**: 브랜치 삭제 없이 pull만 실행한다.
+**develop 브랜치**: pull만 실행한다.
 
 ```bash
 git pull
