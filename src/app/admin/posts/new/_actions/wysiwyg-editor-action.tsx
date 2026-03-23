@@ -5,6 +5,7 @@ import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';
 import { Link } from '@tiptap/extension-link';
+import { Youtube } from '@tiptap/extension-youtube';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { Table } from '@tiptap/extension-table';
 import { TableCell } from '@tiptap/extension-table-cell';
@@ -38,6 +39,12 @@ export function WysiwygEditorAction() {
       TextStyle,
       Link.configure({ openOnClick: false }),
       Image,
+      Youtube.configure({
+        nocookie: true,
+        allowFullscreen: true,
+        width: 640,
+        height: 360,
+      }),
       Table.configure({ resizable: true }),
       TableRow,
       TableCell,
