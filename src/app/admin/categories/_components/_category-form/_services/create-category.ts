@@ -21,7 +21,7 @@ export async function createCategoryAction(formData: unknown): Promise<Result> {
 
   try {
     await createCategory(parsed.data);
-    revalidateTag(CACHE_TAGS.categories);
+    revalidateTag(CACHE_TAGS.categories, 'default');
     revalidatePath('/admin/categories');
     return { success: true };
   } catch (error) {
