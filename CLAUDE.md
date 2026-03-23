@@ -2,6 +2,11 @@
 
 이 파일은 Claude Code가 이 저장소에서 작업할 때 참고하는 가이드입니다.
 
+## 커뮤니케이션 스타일
+- 항상 한국어로 답변
+- 경어 사용
+- 간결하고 기술적인 톤 유지
+
 ## 명령어
 
 ```bash
@@ -32,14 +37,25 @@ npm run test:e2e    # Playwright E2E 테스트
 ```
 
 
+## 브랜치 전략
+
+- `main` — 프로덕션 배포 브랜치
+- `develop` — 통합 개발 브랜치. 기능 브랜치의 merge 대상
+- `feature/*` — 기능 단위 개발 브랜치. 작업 완료 후 `develop`에 merge. merge된 feature 브랜치는 제거
+
+흐름: `feature/xxx` → `develop` → `main`
+
+> 새 기능 작업 시 `develop`에서 `feature/*` 브랜치를 생성하고, 완료 후 `develop`으로 PR을 올린다.
+
 ## 아키텍처
 
 Next.js 16 개인 블로그. **App Router** + React 19 + TypeScript strict 모드.
 
 - `src/app/` — App Router 루트. `layout.tsx`는 루트 레이아웃, `page.tsx`는 홈페이지.
 - `src/db/` — Drizzle ORM 설정. `schema.ts`에 모든 테이블 정의, `index.ts`에 db 인스턴스.
+  - `src/db/cache-tags.ts` — `unstable_cache` / `revalidateTag`에 사용하는 태그 상수 (`CACHE_TAGS`). 태그 문자열은 반드시 이 파일에서 참조한다.
 - `src/components/` — UI 컴포넌트. `ui/`는 shadcn/ui 자동 생성. 그 외 공통적으로 사용하는 컴포넌트.
-- `src/db/queries/` — Server Component용 DB 쿼리 함수 모음.
+- `src/db/queries/` — Server Component용 DB 쿼리 함수 모음. 캐시가 필요한 함수는 `unstable_cache`로 감싸고 `CACHE_TAGS`로 태그를 지정한다.
 - `public/` — 정적 파일.
 - 스타일링: **Tailwind CSS v4** (PostCSS). 전역 스타일은 `app/globals.css`. 분리된 CSS는 `src/styles/`에 모아두고 `globals.css`에서 `@import`로 참조한다.
   - `src/styles/prose.css` — 글 상세 페이지 `.prose` 스타일

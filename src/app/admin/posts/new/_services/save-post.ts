@@ -1,8 +1,10 @@
 'use server';
 
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
+import { CACHE_TAGS } from '@/db/cache-tags';
 import { posts } from '@/db/schema';
 import { postFormSchema } from '@/types/post';
 
@@ -58,6 +60,8 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
 
       await db.update(posts).set(updateData).where(eq(posts.id, input.postId));
 
+      revalidateTag(CACHE_TAGS.posts);
+      revalidatePath('/admin/posts');
       return { success: true, postId: input.postId };
     } else {
       // INSERT
@@ -76,6 +80,8 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
         })
         .returning({ id: posts.id });
 
+      revalidateTag(CACHE_TAGS.posts);
+      revalidatePath('/admin/posts');
       return { success: true, postId: newPost.id };
     }
   } catch (error) {

@@ -12,6 +12,18 @@ Next.js 16 기반 개인 블로그. App Router + Drizzle ORM + Neon PostgreSQL +
 - **상태관리**: Zustand (클라이언트 전역 상태), TanStack Query (서버 상태 캐싱, 필요 시)
 - **Deploy**: Vercel
 
+## 브랜치 전략
+
+| 브랜치 | 역할 |
+|--------|------|
+| `main` | 프로덕션 배포 브랜치 |
+| `develop` | 통합 개발 브랜치. 기능 브랜치의 merge 대상 |
+| `feature/*` | 기능 단위 개발 브랜치. 작업 완료 후 `develop`에 merge |
+
+```
+feature/xxx → develop → main
+```
+
 ## 명령어
 
 ```bash
