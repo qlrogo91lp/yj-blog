@@ -1,5 +1,7 @@
+import { unstable_cache } from 'next/cache';
 import { count, desc, eq } from 'drizzle-orm';
 import { db } from '@/db';
+import { CACHE_TAGS } from '@/db/cache-tags';
 import { comments, posts } from '@/db/schema';
 import type { Comment, CommentWithReplies } from '@/types';
 
@@ -89,30 +91,34 @@ export async function softDeleteComment(commentId: number): Promise<void> {
 /**
  * 관리자용 전체 댓글 조회 (post title 포함, 페이지네이션)
  */
-export async function getAllCommentsForAdmin(page = 1, limit = 20) {
-  const offset = (page - 1) * limit;
+export const getAllCommentsForAdmin = unstable_cache(
+  async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
 
-  const [items, totalResult] = await Promise.all([
-    db
-      .select({
-        comment: comments,
-        postTitle: posts.title,
-        postSlug: posts.slug,
-      })
-      .from(comments)
-      .innerJoin(posts, eq(comments.postId, posts.id))
-      .orderBy(desc(comments.createdAt))
-      .limit(limit)
-      .offset(offset),
-    db.select({ total: count() }).from(comments),
-  ]);
+    const [items, totalResult] = await Promise.all([
+      db
+        .select({
+          comment: comments,
+          postTitle: posts.title,
+          postSlug: posts.slug,
+        })
+        .from(comments)
+        .innerJoin(posts, eq(comments.postId, posts.id))
+        .orderBy(desc(comments.createdAt))
+        .limit(limit)
+        .offset(offset),
+      db.select({ total: count() }).from(comments),
+    ]);
 
-  return {
-    comments: items.map(({ comment, postTitle, postSlug }) => ({
-      ...comment,
-      postTitle,
-      postSlug,
-    })),
-    total: totalResult[0].total,
-  };
-}
+    return {
+      comments: items.map(({ comment, postTitle, postSlug }) => ({
+        ...comment,
+        postTitle,
+        postSlug,
+      })),
+      total: totalResult[0].total,
+    };
+  },
+  ['admin-comments-list'],
+  { tags: [CACHE_TAGS.comments] }
+);

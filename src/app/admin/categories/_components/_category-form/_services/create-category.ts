@@ -1,7 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { auth } from '@clerk/nextjs/server';
+import { CACHE_TAGS } from '@/db/cache-tags';
 import { createCategory } from '@/db/queries/categories';
 import { categoryFormSchema } from '@/types/category';
 
@@ -20,6 +21,7 @@ export async function createCategoryAction(formData: unknown): Promise<Result> {
 
   try {
     await createCategory(parsed.data);
+    revalidateTag(CACHE_TAGS.categories);
     revalidatePath('/admin/categories');
     return { success: true };
   } catch (error) {
