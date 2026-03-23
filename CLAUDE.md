@@ -37,6 +37,16 @@ npm run test:e2e    # Playwright E2E 테스트
 ```
 
 
+## 브랜치 전략
+
+- `main` — 프로덕션 배포 브랜치
+- `develop` — 통합 개발 브랜치. 기능 브랜치의 merge 대상
+- `feature/*` — 기능 단위 개발 브랜치. 작업 완료 후 `develop`에 merge. merge된 feature 브랜치는 제거
+
+흐름: `feature/xxx` → `develop` → `main`
+
+> 새 기능 작업 시 `develop`에서 `feature/*` 브랜치를 생성하고, 완료 후 `develop`으로 PR을 올린다.
+
 ## 아키텍처
 
 Next.js 16 개인 블로그. **App Router** + React 19 + TypeScript strict 모드.
