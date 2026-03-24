@@ -34,3 +34,39 @@
 
 - `_action/_table`: 테이블 관련 action
 - `_action/_filter`: 필터 관련 action
+
+## page.tsx 구성 원칙
+
+`page.tsx`는 서버 컴포넌트로 유지하고, 중간 `*PageAction` 래퍼 컴포넌트를 만들지 않는다. 대신 `page.tsx`에서 직접 Provider·Handler·Action 컴포넌트를 조합한다.
+
+```tsx
+// ✅ GOOD — page.tsx가 직접 구성
+export default async function NewPostPage() {
+  const categories = await getCategories();
+
+  return (
+    <EditorProvider>
+      <EditorToolbarAction />
+      <CategorySelectorAction categories={categories} />
+      <EditorViewHandler />
+      <AutoSaveProvider />
+    </EditorProvider>
+  );
+}
+
+// ❌ BAD — 불필요한 중간 레이어
+export default async function NewPostPage() {
+  const categories = await getCategories();
+  return <NewPostPageAction categories={categories} />;
+}
+```
+
+## _handlers 활용 패턴
+
+렌더링 결과물 없이 **사이드이펙트·조건부 렌더링** 역할만 하는 클라이언트 로직은 Handler로 분리한다.
+
+| 패턴 | 예시 |
+|------|------|
+| 상태에 따른 조건부 렌더링 | `EditorViewHandler` — mode에 따라 에디터 컴포넌트 전환 |
+| `useEffect` 초기화/정리 | `PostInitHandler` — 글 데이터 로드 및 cleanup 시 reset |
+| 사이드바·UI 상태 제어 | `SidebarCollapseHandler` — 진입 시 사이드바 닫기 |
