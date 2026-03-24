@@ -22,7 +22,7 @@
 | `_components` | 순수 컴포넌트 (API, zustand 등 외부 의존성 없음) | - |
 | `_queries` | API 요청. tanstack-query가 필요할 경우`api/.../routes.ts`로 요청 전송 | `getPaymentList.ts`, `postPayments.ts` (HTTP 메소드 + camelCase) |
 | `_services` | 비즈니스 로직. 서버 데이터 가공. Next.js Server Action (`'use server'`) 포함 | `usePaymentList.ts`, `create-comment.ts`, `delete-comment.ts` |
-| `_providers` | Provider 컴포넌트 모음 | `ResetProvider.tsx`, `LoadProvider.tsx` |
+| `_providers` | Provider 컴포넌트 모음. 무언가를 제공하는 컴포넌트로, `children` 없이 `null`을 반환하는 사이드이펙트 전용 컴포넌트도 포함 | `ResetProvider.tsx`, `LoadProvider.tsx`, `AutoSaveProvider.tsx` |
 | `_handlers` | Handler 컴포넌트 모음 | `ViewHandler.tsx` |
 | `_suspenses` | Prefetch용 Suspense 컴포넌트 | `*Suspense.tsx` |
 | `_utils` | 해당 페이지 전용 순수 함수 | - |
