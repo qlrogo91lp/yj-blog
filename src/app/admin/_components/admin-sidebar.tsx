@@ -24,6 +24,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { SITE_NAME } from '@/lib/constants';
 
 const menuGroups = [
   {
@@ -66,7 +67,7 @@ export function AdminSidebar() {
     <Sidebar>
       <SidebarHeader className="border-b px-4 py-3">
         <Link href="/admin" className="font-semibold text-lg">
-          YJLOGs 관리
+          {SITE_NAME} 관리
         </Link>
       </SidebarHeader>
       <SidebarContent>

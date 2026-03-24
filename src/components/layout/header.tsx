@@ -4,6 +4,7 @@ import { Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavLinks } from '@/components/nav/nav-links';
 import { MobileMenu } from '@/components/nav/mobile-menu';
+import { SITE_NAME } from '@/lib/constants';
 
 export function Header() {
   return (
@@ -11,7 +12,7 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="font-semibold text-lg">
-            YJLOGs
+            {SITE_NAME}
           </Link>
           <NavLinks className="hidden md:flex items-center gap-4" />
         </div>

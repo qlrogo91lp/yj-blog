@@ -1,9 +1,8 @@
 import React from 'react';
-import Image from 'next/image';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { PostWithCategory } from '@/types';
-import { PostList } from './post-list';
+import { PostListViewHandler } from './post-list-view-handler';
 
 vi.mock('next/link', () => ({
   default: ({
@@ -35,13 +34,7 @@ vi.mock('next/image', () => ({
     height: number;
     className?: string;
   }) => (
-    <Image
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-    />
+    <img src={src} alt={alt} width={width} height={height} className={className} />
   ),
 }));
 
@@ -78,41 +71,35 @@ const mockPosts: PostWithCategory[] = [
   },
 ];
 
-describe('PostList', () => {
-  it('제목 heading을 렌더링한다', () => {
-    render(<PostList posts={mockPosts} total={2} />);
-    expect(
-      screen.getByRole('heading', { name: /최신 글/ })
-    ).toBeInTheDocument();
-  });
-
-  it('총 글 수를 렌더링한다', () => {
-    render(<PostList posts={mockPosts} total={2} />);
-    expect(screen.getByText('(2편)')).toBeInTheDocument();
-  });
-
+describe('PostListViewHandler', () => {
   it('posts가 빈 배열이면 빈 상태 메시지를 렌더링한다', () => {
-    render(<PostList posts={[]} total={0} />);
+    render(<PostListViewHandler posts={[]} viewType="card" />);
     expect(screen.getByText('아직 작성된 글이 없습니다.')).toBeInTheDocument();
   });
 
-  it('기본 뷰(카드)에서 모든 글 제목이 보인다', () => {
-    render(<PostList posts={mockPosts} total={2} />);
+  it('viewType이 card이면 모든 글 제목이 보인다', () => {
+    render(<PostListViewHandler posts={mockPosts} viewType="card" />);
     expect(screen.getByText('첫 번째 글')).toBeInTheDocument();
     expect(screen.getByText('두 번째 글')).toBeInTheDocument();
   });
 
-  it('리스트 뷰 버튼 클릭 시 뷰가 전환되어도 글 제목이 유지된다', () => {
-    render(<PostList posts={mockPosts} total={2} />);
-    fireEvent.click(screen.getByRole('button', { name: '리스트 뷰' }));
+  it('viewType이 list이면 모든 글 제목이 보인다', () => {
+    render(<PostListViewHandler posts={mockPosts} viewType="list" />);
     expect(screen.getByText('첫 번째 글')).toBeInTheDocument();
     expect(screen.getByText('두 번째 글')).toBeInTheDocument();
   });
 
-  it('카드 뷰 버튼 클릭 시 카드 뷰로 돌아온다', () => {
-    render(<PostList posts={mockPosts} total={2} />);
-    fireEvent.click(screen.getByRole('button', { name: '리스트 뷰' }));
-    fireEvent.click(screen.getByRole('button', { name: '카드 뷰' }));
-    expect(screen.getByText('첫 번째 글')).toBeInTheDocument();
+  it('viewType이 card이면 그리드 레이아웃으로 렌더링한다', () => {
+    const { container } = render(
+      <PostListViewHandler posts={mockPosts} viewType="card" />
+    );
+    expect(container.querySelector('.grid')).toBeInTheDocument();
+  });
+
+  it('viewType이 list이면 flex 컬럼 레이아웃으로 렌더링한다', () => {
+    const { container } = render(
+      <PostListViewHandler posts={mockPosts} viewType="list" />
+    );
+    expect(container.querySelector('.flex.flex-col')).toBeInTheDocument();
   });
 });

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
+import { SITE_NAME } from '@/lib/constants';
 
 export const metadata: Metadata = {
-  title: '플레이그라운드 | YJLOGs',
+  title: `플레이그라운드 | ${SITE_NAME}`,
   description: '프론트엔드 기술 위키 & 인터랙티브 데모',
 };
 
