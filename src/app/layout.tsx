@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'YJ Blog',
+  title: 'YJLOGs',
   description: '개인 기술 블로그',
 };
 

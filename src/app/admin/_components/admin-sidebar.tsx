@@ -66,7 +66,7 @@ export function AdminSidebar() {
     <Sidebar>
       <SidebarHeader className="border-b px-4 py-3">
         <Link href="/admin" className="font-semibold text-lg">
-          YJ Blog 관리
+          YJLOGs 관리
         </Link>
       </SidebarHeader>
       <SidebarContent>

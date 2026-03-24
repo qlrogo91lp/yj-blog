@@ -11,7 +11,7 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="font-semibold text-lg">
-            YJ Blog
+            YJLOGs
           </Link>
           <NavLinks className="hidden md:flex items-center gap-4" />
         </div>

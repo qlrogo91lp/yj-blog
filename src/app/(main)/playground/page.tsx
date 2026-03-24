@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '플레이그라운드 | YJ Blog',
+  title: '플레이그라운드 | YJLOGs',
   description: '프론트엔드 기술 위키 & 인터랙티브 데모',
 };
 
