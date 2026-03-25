@@ -6,6 +6,7 @@ import { BottomBar } from '../../new/_components/bottom-bar';
 import { EditorToolbarAction } from '../../new/_actions/editor-toolbar-action';
 import { CategorySelectorAction } from '../../new/_actions/category-selector-action';
 import { TitleInputAction } from '../../new/_actions/title-input-action';
+import { ThumbnailUploadAction } from '../../new/_actions/thumbnail-upload-action';
 import { EditorProvider } from '../../new/_providers/editor-provider';
 import { AutoSaveProvider } from '../../new/_providers/auto-save-provider';
 import { EditorViewHandler } from '../../new/_handlers/editor-view-handler';
@@ -37,6 +38,7 @@ export default async function EditPostPage({ params }: Props) {
         <EditorToolbarAction />
         <div className="flex-1 mx-auto w-full max-w-4xl px-6 py-6">
           <CategorySelectorAction categories={categories} />
+          <ThumbnailUploadAction />
           <TitleInputAction />
           <div className="mt-4 flex-1">
             <EditorViewHandler />
