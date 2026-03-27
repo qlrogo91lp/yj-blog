@@ -18,6 +18,7 @@ export function PostInitHandler({ post }: Props) {
       categoryId: post.categoryId,
       slug: post.slug,
       excerpt: post.excerpt ?? '',
+      thumbnailUrl: post.thumbnailUrl ?? null,
       status: post.status,
       publishedAt: post.publishedAt,
     });

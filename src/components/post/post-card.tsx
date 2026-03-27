@@ -1,4 +1,8 @@
+import Image from 'next/image';
 import Link from 'next/link';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -9,22 +13,33 @@ import {
 } from '@/components/ui/card';
 import type { PostWithCategory } from '@/types';
 
-interface Props {
+type Props = {
   post: PostWithCategory;
-}
+};
 
 export function PostCard({ post }: Props) {
   const publishedAt = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+    ? format(new Date(post.publishedAt), 'yyyy년 M월 d일', { locale: ko })
     : null;
 
   return (
     <Link href={`/posts/${post.slug}`} className="block">
-      <Card className="h-full transition-shadow hover:shadow-md">
+      <Card
+        className={cn(
+          'h-full overflow-hidden transition-shadow hover:shadow-md',
+          post.thumbnailUrl && 'pt-0'
+        )}
+      >
+        {post.thumbnailUrl && (
+          <div className="relative aspect-video w-full">
+            <Image
+              src={post.thumbnailUrl}
+              alt={post.title}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
         <CardHeader>
           {post.category && (
             <Badge variant="secondary" className="w-fit">

@@ -1,7 +1,16 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
-import { put } from '@vercel/blob';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+
+const r2 = new S3Client({
+  region: 'auto',
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+  },
+});
 
 type UploadResult =
   | { url: string; error?: never }
@@ -28,11 +37,19 @@ export async function uploadImage(formData: FormData): Promise<UploadResult> {
   }
 
   try {
-    const blob = await put(`blog/${Date.now()}-${file.name}`, file, {
-      access: 'public',
-    });
+    const key = `images/${Date.now()}-${file.name}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    return { url: blob.url };
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+      }),
+    );
+
+    return { url: `${process.env.R2_PUBLIC_URL}/${key}` };
   } catch {
     return { error: '업로드에 실패했습니다' };
   }

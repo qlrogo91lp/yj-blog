@@ -11,6 +11,7 @@ type State = {
   categoryId: number | null;
   slug: string;
   excerpt: string;
+  thumbnailUrl: string | null;
   status: 'draft' | 'published';
   publishedAt: Date | null;
   mode: EditorMode;
@@ -26,6 +27,7 @@ type Action = {
   setCategoryId: (id: number | null) => void;
   setSlug: (slug: string) => void;
   setExcerpt: (excerpt: string) => void;
+  setThumbnailUrl: (url: string | null) => void;
   setStatus: (status: 'draft' | 'published') => void;
   setPublishedAt: (date: Date | null) => void;
   setMode: (mode: EditorMode) => void;
@@ -40,6 +42,7 @@ type Action = {
     categoryId: number | null;
     slug: string;
     excerpt: string;
+    thumbnailUrl: string | null;
     status: 'draft' | 'published';
     publishedAt: Date | null;
   }) => void;
@@ -53,6 +56,7 @@ export const useNewPostStore = create<State & Action>((set) => ({
   categoryId: null,
   slug: '',
   excerpt: '',
+  thumbnailUrl: null,
   status: 'draft',
   publishedAt: null,
 
@@ -67,6 +71,7 @@ export const useNewPostStore = create<State & Action>((set) => ({
   setCategoryId: (categoryId) => set({ categoryId }),
   setSlug: (slug) => set({ slug }),
   setExcerpt: (excerpt) => set({ excerpt }),
+  setThumbnailUrl: (thumbnailUrl) => set({ thumbnailUrl }),
   setStatus: (status) => set({ status }),
   setPublishedAt: (publishedAt) => set({ publishedAt }),
   setMode: (mode) => set({ mode }),
@@ -81,6 +86,7 @@ export const useNewPostStore = create<State & Action>((set) => ({
       categoryId: null,
       slug: '',
       excerpt: '',
+      thumbnailUrl: null,
       status: 'draft',
       publishedAt: null,
       mode: 'wysiwyg',

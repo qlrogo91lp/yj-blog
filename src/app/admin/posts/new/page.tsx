@@ -7,6 +7,7 @@ import { EditorViewHandler } from './_handlers/editor-view-handler';
 import { EditorToolbarAction } from './_actions/editor-toolbar-action';
 import { CategorySelectorAction } from './_actions/category-selector-action';
 import { TitleInputAction } from './_actions/title-input-action';
+import { ThumbnailUploadAction } from './_actions/thumbnail-upload-action';
 import { AutoSaveProvider } from './_providers/auto-save-provider';
 
 export default async function NewPostPage() {
@@ -21,6 +22,7 @@ export default async function NewPostPage() {
         <EditorToolbarAction />
         <div className="flex-1 mx-auto w-full max-w-4xl px-6 py-6">
           <CategorySelectorAction categories={categories} />
+          <ThumbnailUploadAction />
           <TitleInputAction />
           <div className="mt-4 flex-1">
             <EditorViewHandler />
