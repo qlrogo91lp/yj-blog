@@ -10,7 +10,22 @@ Next.js 16 기반 개인 블로그. App Router + Drizzle ORM + Neon PostgreSQL +
 - **Auth**: Clerk (관리자 전용)
 - **유효성 검사**: Zod (Server Action 입력 검증, 폼 스키마)
 - **상태관리**: Zustand (클라이언트 전역 상태), TanStack Query (서버 상태 캐싱, 필요 시)
+- **Storage**: Vercel Blob (이미지 업로드)
+- **알림**: Resend (이메일), Discord Webhook (댓글 알림)
 - **Deploy**: Vercel
+
+## 환경 변수
+
+| 변수 | 설명 | 필수 |
+|------|------|------|
+| `DATABASE_URL` | Neon PostgreSQL 연결 문자열 | ✅ |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk 공개 키 | ✅ |
+| `CLERK_SECRET_KEY` | Clerk 비밀 키 | ✅ |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob 업로드 토큰 (Vercel 환경에서는 자동 주입) | ✅ |
+| `NEXT_PUBLIC_SITE_URL` | 사이트 URL (기본값: `https://yjlogs.com`) | - |
+| `NEXT_PUBLIC_BASE_URL` | sitemap/robots 기준 URL | - |
+| `RESEND_API_KEY` | Resend 이메일 전송 API 키 | - |
+| `DISCORD_WEBHOOK_URL` | Discord 댓글 알림 Webhook URL | - |
 
 ## 브랜치 전략
 
@@ -121,28 +136,14 @@ e2e/                                        # Playwright E2E 테스트
 ## 테스트 전략
 
 ### Vitest — 단위/통합 테스트
-- `lib/` 유틸 함수: markdown 파싱, 비밀번호 해싱, metadata 헬퍼 등
-- `db/queries/` 쿼리 함수: DB를 mock 처리해 로직 검증
-- `actions/` Server Actions: 입력 검증, 에러 처리 로직
-
-```
-src/
-└── __tests__/           # 단위 테스트
-    ├── lib/
-    └── actions/
-```
+- 테스트 파일은 대상 파일 옆에 `*.test.ts(x)` 로 위치 (예: `PostCard.tsx` → `PostCard.test.tsx`)
+- `types/` Zod 스키마 유효성 검증
+- `components/` 컴포넌트 렌더링 및 인터랙션
 
 ### Playwright — E2E 테스트
-- 실제 브라우저(Chromium/Firefox/WebKit)에서 사용자 시나리오 실행
-- 주요 테스트 케이스:
-  - 홈 → 글 목록 → 글 상세 이동 흐름
-  - 댓글 작성 → 비밀번호로 수정/삭제
-  - 관리자 로그인 → 글 작성/수정/삭제
+- 실제 브라우저(Chromium)에서 사용자 시나리오 실행
 
 ```
 e2e/                     # E2E 테스트
-├── home.spec.ts
-├── post.spec.ts
-├── comment.spec.ts
-└── admin.spec.ts
+└── home.spec.ts
 ```

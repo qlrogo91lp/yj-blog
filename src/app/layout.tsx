@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import { PageTracker } from '@/components/page-tracker';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import './globals.css';
 
 const geistSans = Geist({
@@ -16,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'YJ Blog',
-  description: '개인 기술 블로그',
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
 };
 
 export default function RootLayout({

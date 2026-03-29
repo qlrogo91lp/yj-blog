@@ -42,10 +42,16 @@ describe('postFormSchema', () => {
       ).toBe(true);
     });
 
-    it('한글이 있으면 실패', () => {
+    it('한글이 있으면 성공', () => {
       expect(
         postFormSchema.safeParse({ ...validData, slug: '한글-slug' }).success
-      ).toBe(false);
+      ).toBe(true);
+    });
+
+    it('한글만으로 구성된 slug는 성공', () => {
+      expect(
+        postFormSchema.safeParse({ ...validData, slug: '한글슬러그' }).success
+      ).toBe(true);
     });
 
     it('대문자가 있으면 실패', () => {

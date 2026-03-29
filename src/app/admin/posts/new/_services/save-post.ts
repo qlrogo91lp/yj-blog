@@ -15,6 +15,7 @@ type SavePostInput = {
   content: string;
   contentFormat: 'markdown' | 'html';
   excerpt?: string;
+  thumbnailUrl?: string | null;
   categoryId: number | null;
   status: 'draft' | 'published';
   publishedAt?: Date | null;
@@ -47,6 +48,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
         content,
         contentFormat,
         excerpt: excerpt ?? null,
+        thumbnailUrl: input.thumbnailUrl ?? null,
         categoryId,
         status,
         updatedAt: new Date(),
@@ -74,6 +76,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
           content,
           contentFormat,
           excerpt: excerpt ?? null,
+          thumbnailUrl: input.thumbnailUrl ?? null,
           categoryId,
           status,
           publishedAt,

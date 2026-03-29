@@ -21,7 +21,7 @@ export const postFormSchema = z.object({
     .string()
     .min(1, 'slug를 입력해주세요')
     .max(200, 'slug는 200자 이하여야 합니다')
-    .regex(/^[a-z0-9-]+$/, '영소문자, 숫자, 하이픈만 사용 가능합니다'),
+    .regex(/^[a-z0-9\uAC00-\uD7A3-]+$/, '영소문자, 숫자, 한글, 하이픈만 사용 가능합니다'),
   content: z.string().min(1, '내용을 입력해주세요'),
   contentFormat: z.enum(['markdown', 'html']),
   excerpt: z.string().max(500, '요약은 500자 이하여야 합니다').optional(),

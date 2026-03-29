@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, Globe, Smartphone } from 'lucide-react';
 import { apps, getApp } from '../_utils/apps-data';
+import { SITE_NAME } from '@/lib/constants';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!app) return {};
 
   return {
-    title: `${app.name} | YJ Blog`,
+    title: `${app.name} | ${SITE_NAME}`,
     description: app.description,
   };
 }

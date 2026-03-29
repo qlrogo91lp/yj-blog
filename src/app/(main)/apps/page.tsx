@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { apps } from './_utils/apps-data';
 import { AppCard } from './_components/app-card';
+import { SITE_NAME } from '@/lib/constants';
 
 export const metadata: Metadata = {
-  title: 'Apps | YJ Blog',
+  title: `Apps | ${SITE_NAME}`,
   description: '개발한 웹앱과 앱스토어 앱 목록',
 };
 
