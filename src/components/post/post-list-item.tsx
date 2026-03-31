@@ -15,9 +15,9 @@ export function PostListItem({ post }: Props) {
 
   return (
     <Link href={`/posts/${post.slug}`} className="block group">
-      <article className="flex gap-6 rounded-2xl bg-card p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)]">
+      <article className="flex gap-6 rounded-2xl bg-card shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)]">
         {/* 썸네일 */}
-        <div className="relative w-40 shrink-0 overflow-hidden rounded-xl bg-muted sm:w-48">
+        <div className="relative w-40 shrink-0 overflow-hidden rounded-l-xl bg-muted sm:w-48">
           {post.thumbnailUrl ? (
             <Image
               src={post.thumbnailUrl}
@@ -31,7 +31,7 @@ export function PostListItem({ post }: Props) {
         </div>
 
         {/* 텍스트 */}
-        <div className="flex min-w-0 flex-col justify-center gap-3">
+        <div className="flex min-w-0 flex-col justify-center gap-3 p-4">
           {/* 카테고리 · 날짜 */}
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
