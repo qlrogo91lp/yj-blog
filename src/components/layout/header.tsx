@@ -7,7 +7,7 @@ import { SITE_NAME } from '@/lib/constants';
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 bg-card backdrop-blur">
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-2">
         <div className="flex items-center gap-6">
           <Link href="/" className="font-black text-lg">
