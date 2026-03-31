@@ -12,7 +12,7 @@ export default async function Home({ searchParams }: Props) {
   const { items: posts, total } = await getPosts({ limit: 10 });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <span className="text-sm font-bold text-primary">
           총{' '}{total}개
