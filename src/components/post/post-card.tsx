@@ -1,16 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { enUS } from 'date-fns/locale';
 import type { PostWithCategory } from '@/types';
 
 type Props = {
@@ -19,48 +10,42 @@ type Props = {
 
 export function PostCard({ post }: Props) {
   const publishedAt = post.publishedAt
-    ? format(new Date(post.publishedAt), 'yyyy년 M월 d일', { locale: ko })
+    ? format(new Date(post.publishedAt), 'dd MMM yyyy', { locale: enUS })
     : null;
 
   return (
-    <Link href={`/posts/${post.slug}`} className="block">
-      <Card
-        className={cn(
-          'h-full overflow-hidden transition-shadow hover:shadow-md',
-          post.thumbnailUrl && 'pt-0'
-        )}
-      >
-        {post.thumbnailUrl && (
-          <div className="relative aspect-video w-full">
+    <Link href={`/posts/${post.slug}`} className="block group">
+      <article className="h-full overflow-hidden rounded-2xl bg-card shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:-translate-y-0.5">
+        <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
+          {post.thumbnailUrl ? (
             <Image
               src={post.thumbnailUrl}
               alt={post.title}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
-          </div>
-        )}
-        <CardHeader>
-          {post.category && (
-            <Badge variant="secondary" className="w-fit">
-              {post.category.name}
-            </Badge>
+          ) : (
+            <div className="h-full w-full bg-muted" />
           )}
-          <CardTitle className="line-clamp-2 text-lg">{post.title}</CardTitle>
-        </CardHeader>
-        {post.excerpt && (
-          <CardContent>
-            <p className="line-clamp-3 text-sm text-muted-foreground">
-              {post.excerpt}
-            </p>
-          </CardContent>
-        )}
-        {publishedAt && (
-          <CardFooter>
-            <time className="text-xs text-muted-foreground">{publishedAt}</time>
-          </CardFooter>
-        )}
-      </Card>
+        </div>
+
+        <div className="p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+              {post.category?.name ?? ''}
+            </span>
+            {publishedAt && (
+              <time className="text-[10px] font-medium tracking-widest text-muted-foreground uppercase">
+                {publishedAt}
+              </time>
+            )}
+          </div>
+
+          <h2 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight">
+            {post.title}
+          </h2>
+        </div>
+      </article>
     </Link>
   );
 }

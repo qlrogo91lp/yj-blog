@@ -12,14 +12,11 @@ export default async function Home({ searchParams }: Props) {
   const { items: posts, total } = await getPosts({ limit: 10 });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">
-          최신 글{' '}
-          <span className="text-base font-normal text-muted-foreground">
-            ({total}편)
-          </span>
-        </h1>
+        <span className="text-sm font-bold text-primary">
+          총{' '}{total}개
+        </span>
         <ViewToggleAction viewType={viewType} />
       </div>
       <PostListViewHandler posts={posts} viewType={viewType} />
