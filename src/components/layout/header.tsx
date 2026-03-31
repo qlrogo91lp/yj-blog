@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
-import { Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavLinks } from '@/components/nav/nav-links';
 import { MobileMenu } from '@/components/nav/mobile-menu';
@@ -11,12 +10,12 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
-          <Link href="/" className="font-semibold text-lg">
+          <Link href="/" className="font-black text-lg">
             {SITE_NAME}
           </Link>
           <NavLinks className="hidden md:flex items-center gap-4" />
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-4">
           <MobileMenu />
           <SignedOut>
             <SignInButton mode="modal">
@@ -27,8 +26,8 @@ export function Header() {
           </SignedOut>
           <SignedIn>
             <Link href="/admin">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Settings className="h-4 w-4" />
+              <Button variant="default">
+                대시보드
               </Button>
             </Link>
             <UserButton />
