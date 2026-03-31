@@ -21,3 +21,15 @@
 - 타입 단언(`as`)은 가능하면 피하고, Zod 파싱 결과를 활용한다
 - `console.log`는 커밋하지 않는다
 - 적절한 semantic tag는 적극적으로 활용한다
+
+## Lucid-Icon
+
+- 사이즈는 `className`이 아닌 `size` 속성으로 지정한다
+
+  ```tsx
+  // ❌ BAD
+  <Search className="w-4 h-4" />
+
+  // ✅ GOOD
+  <Search size={16} />
+  ```
