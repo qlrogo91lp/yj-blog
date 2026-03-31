@@ -1,54 +1,60 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import { enUS } from 'date-fns/locale';
 import type { PostWithCategory } from '@/types';
 
-interface Props {
+type Props = {
   post: PostWithCategory;
-}
+};
 
 export function PostListItem({ post }: Props) {
   const publishedAt = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
+    ? format(new Date(post.publishedAt), 'MMM dd, yyyy', { locale: enUS })
     : null;
 
   return (
-    <Link href={`/posts/${post.slug}`} className="block">
-      <div className="flex gap-4 rounded-lg p-3 transition-colors hover:bg-muted/50">
-        <div className="shrink-0">
+    <Link href={`/posts/${post.slug}`} className="block group">
+      <article className="flex gap-6 rounded-2xl bg-card shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)]">
+        <div className="relative w-40 shrink-0 overflow-hidden rounded-l-xl bg-muted sm:w-48">
           {post.thumbnailUrl ? (
             <Image
               src={post.thumbnailUrl}
               alt={post.title}
-              width={80}
-              height={80}
-              className="rounded-md object-cover"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="h-20 w-20 rounded-md bg-muted" />
+            <div className="h-full w-full bg-muted" />
           )}
         </div>
-        <div className="flex min-w-0 flex-col gap-1">
-          {post.category && (
-            <Badge variant="secondary" className="w-fit text-xs">
-              {post.category.name}
-            </Badge>
-          )}
-          <p className="font-medium leading-snug">{post.title}</p>
+
+        <div className="flex min-w-0 flex-col justify-center gap-3 p-4">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
+              {post.category?.name ?? ''}
+            </span>
+            {publishedAt && (
+              <>
+                <span className="text-muted-foreground/40">·</span>
+                <time className="text-[10px] font-medium tracking-widest text-muted-foreground uppercase">
+                  {publishedAt}
+                </time>
+              </>
+            )}
+          </div>
+
+          <h2 className="line-clamp-2 text-xl font-bold leading-snug tracking-tight">
+            {post.title}
+          </h2>
+
           {post.excerpt && (
-            <p className="line-clamp-2 text-sm text-muted-foreground">
+            <p className="line-clamp-2 text-sm text-muted-foreground leading-relaxed">
               {post.excerpt}
             </p>
           )}
-          {publishedAt && (
-            <time className="text-xs text-muted-foreground">{publishedAt}</time>
-          )}
         </div>
-      </div>
+      </article>
     </Link>
   );
 }
