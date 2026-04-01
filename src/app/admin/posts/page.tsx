@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { getAllPostsForAdmin } from '@/db/queries/posts';
+import { PostActionsMenu } from './_components/post-actions-menu';
 
 export default async function AdminPostsPage() {
   const posts = await getAllPostsForAdmin();
@@ -22,13 +23,14 @@ export default async function AdminPostsPage() {
                 수정일
               </th>
               <th className="px-4 py-3 text-left font-medium">상태</th>
+              <th className="px-4 py-3 text-right font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {posts.length === 0 ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="px-4 py-12 text-center text-muted-foreground"
                 >
                   작성된 글이 없습니다.
@@ -64,6 +66,9 @@ export default async function AdminPostsPage() {
                     >
                       {post.status === 'published' ? '발행' : '임시저장'}
                     </Badge>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <PostActionsMenu postId={post.id} postTitle={post.title} />
                   </td>
                 </tr>
               ))

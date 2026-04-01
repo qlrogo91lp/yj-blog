@@ -3,6 +3,7 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { NavLinks } from '@/components/nav/nav-links';
 import { MobileMenu } from '@/components/nav/mobile-menu';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { SITE_NAME } from '@/lib/constants';
 
 export function Header() {
@@ -16,6 +17,7 @@ export function Header() {
           <NavLinks className="hidden md:flex items-center gap-4" />
         </div>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <MobileMenu />
           <SignedOut>
             <SignInButton mode="modal">

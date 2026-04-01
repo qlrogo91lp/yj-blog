@@ -105,3 +105,7 @@
   border: none;
   border-radius: 0.5rem;
 }
+
+.dark .prose a {
+  color: oklch(0.7 0.15 250);
+}
