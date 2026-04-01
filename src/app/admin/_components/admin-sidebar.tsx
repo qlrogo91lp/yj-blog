@@ -65,11 +65,12 @@ export function AdminSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b px-4 py-3">
+      <SidebarHeader className="border-b px-4 py-3 h-14">
         <Link href="/admin" className="font-semibold text-lg">
           {SITE_NAME} 관리
         </Link>
       </SidebarHeader>
+
       <SidebarContent>
         {menuGroups.map((group, i) => (
           <SidebarGroup key={i}>
@@ -82,7 +83,7 @@ export function AdminSidebar() {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton asChild isActive={isActive(item.href)}>
                       <Link href={item.href}>
-                        <item.icon className="h-4 w-4" />
+                        <item.icon size={16} />
                         <span>{item.label}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -93,12 +94,13 @@ export function AdminSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
+
       <SidebarFooter className="border-t p-4">
         <Link
           href="/"
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          <Globe className="h-4 w-4" />
+          <Globe size={16} />
           블로그 보기
         </Link>
       </SidebarFooter>
