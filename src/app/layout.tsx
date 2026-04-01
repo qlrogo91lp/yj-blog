@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { PageTracker } from '@/components/page-tracker';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
+import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 
 const geistSans = Geist({
@@ -28,14 +29,16 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="ko">
+      <html lang="ko" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <TooltipProvider>
-            <PageTracker />
-            {children}
-          </TooltipProvider>
+          <ThemeProvider>
+            <TooltipProvider>
+              <PageTracker />
+              {children}
+            </TooltipProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

@@ -118,3 +118,10 @@ export const getAdminDashboardStats = unstable_cache(
   ['admin-dashboard-stats'],
   { tags: [CACHE_TAGS.posts, CACHE_TAGS.comments] }
 );
+
+/**
+ * 글 삭제 (물리 삭제, 댓글 cascade)
+ */
+export async function deletePostById(id: number) {
+  return db.delete(posts).where(eq(posts.id, id)).returning({ id: posts.id });
+}
