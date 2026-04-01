@@ -34,6 +34,7 @@ timelens_sessions
 ├── startedAt (timestamp) — 시작 시간
 ├── endedAt (timestamp, nullable) — 종료 시간 (null이면 진행 중)
 ├── duration (integer) — 초 단위 총 작업 시간
+├── lastHeartbeat (timestamp) — 마지막 클라이언트 heartbeat 시각
 └── createdAt (timestamp)
 
 timelens_daily_log
@@ -59,6 +60,7 @@ timelens_daily_log
 
 - `start-session.ts` — 타이머 시작 (새 세션 생성)
 - `stop-session.ts` — 타이머 정지 (endedAt, duration 업데이트 + daily_log.totalDuration 갱신)
+- `heartbeat-session.ts` — 진행 중 세션의 lastHeartbeat 갱신 (5분 간격)
 - `delete-session.ts` — 세션 삭제
 - `record-wake-up.ts` — 기상 시간 기록 (daily_log upsert)
 - `create-category.ts` — 카테고리 추가
@@ -103,12 +105,45 @@ timelens_daily_log
 - 비인증 사용자는 타이머 영역 대신 앱 소개 표시
 - 오늘의 기록은 시간순으로 모든 세션 표시 (카테고리 색상 포함)
 
-### 1-5. 상태 관리
+### 1-5. 세션 유지 & 자동 종료
+
+**요약 플로우:**
+
+```
+[▶ 시작 클릭]
+  → DB에 세션 생성 (startedAt = now, endedAt = null)
+  → 클라이언트 setInterval 시작 (1초마다 UI 갱신)
+  → 5분마다 heartbeat 전송 (lastHeartbeat 갱신)
+
+[■ 정지 클릭] — 정상 종료
+  → DB 업데이트 (endedAt = now, duration 계산)
+  → daily_log.totalDuration 갱신
+
+[탭 닫음] — heartbeat 중단, DB 세션은 열린 채 유지
+
+[탭 재진입] — getActiveSession()으로 활성 세션 확인
+  → lastHeartbeat가 30분 이내?
+     ├─ YES → 타이머 복원 (now - startedAt 경과 표시, heartbeat 재개)
+     └─ NO  → 자동 종료 (endedAt = lastHeartbeat) + "세션이 자동 종료됨" 알림
+```
+
+**상세:**
+
+- 타이머 시작 시 DB에 세션 행 생성 (`startedAt` 기록, `endedAt = null`)
+- **탭이 열려있는 동안**: 클라이언트가 **5분마다 heartbeat** 전송 → `lastHeartbeat` 갱신
+- **탭을 닫았다 복귀 시**: `getActiveSession()`으로 활성 세션 조회
+  - `now - lastHeartbeat ≤ 30분` → 타이머 진행 중 상태로 복원 (`now - startedAt`만큼 경과 표시)
+  - `now - lastHeartbeat > 30분` → 자동 종료 처리 (`endedAt = lastHeartbeat`, duration 계산) + 알림 표시
+- 장시간 작업(1시간, 3시간 등)도 탭이 열려있으면 heartbeat가 계속 갱신되므로 만료되지 않음
+
+> **데이터 전송 시점**: 시작 시 1회(세션 생성) + 진행 중 5분마다(heartbeat) + 종료 시 1회(endedAt, duration 기록)
+
+### 1-6. 상태 관리
 
 - `useTimerStore` (Zustand) — 클라이언트 타이머 상태
   - `isRunning`, `elapsedSeconds`, `activeSessionId`
   - `startTimer()`, `stopTimer()`, `tick()`
-- 페이지 진입 시 `getActiveSession()`으로 진행 중 세션 복원
+- 페이지 진입 시 `getActiveSession()`으로 진행 중 세션 복원 (1-5 로직 적용)
 
 ---
 
