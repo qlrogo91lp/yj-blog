@@ -10,8 +10,8 @@
 
 | 항목 | 상태 | 위치/설명 |
 |------|------|-----------|
-| 글 수정 진입점 | ⚠️ 누락 | 목록 테이블에 편집 버튼 없음. `/admin/posts/[id]/edit` 페이지는 구현 완료 → 테이블 행에 편집 링크 추가 |
-| 글 삭제 기능 | ❌ 미구현 | Server Action + UI 버튼 + 확인 다이얼로그 필요 |
+| 글 수정 진입점 | ✅ 완료 | Actions 드롭다운에 수정 링크 추가 (`post-actions-menu.tsx`) |
+| 글 삭제 기능 | ✅ 완료 | `deletePost` Server Action + `DeletePostDialog` 확인 다이얼로그 구현 |
 | 글 상태 일괄 변경 | ❌ 미구현 | 체크박스 선택 → 일괄 발행/비공개 전환 |
 | 글 목록 검색/필터 | ❌ 미구현 | 제목·카테고리 기반 검색/필터링 |
 
@@ -55,15 +55,15 @@
 | RSS 피드 | ❌ 미구현 | `/feed.xml` 또는 `/rss` 엔드포인트 |
 | 이전/다음 글 네비게이션 | ❌ 미구현 | 글 상세 하단에 이전/다음 글 링크 |
 | 글 공유 버튼 | ❌ 미구현 | 링크 복사, SNS 공유 등 |
-| 다크모드 | ⚠️ 부분 구현 | CSS 변수(`.dark`)·shadcn `dark:` 스타일은 존재하나, 테마 전환 라이브러리(`next-themes`) 및 토글 UI 미구현 |
+| 다크모드 | ✅ 완료 | `next-themes` + `ThemeProvider` + `ThemeToggle` 구현. Header에 토글 버튼 배치 |
 
 ---
 
 ## 우선순위 제안
 
-1. 다크모드 (`next-themes` + 토글 UI)
-2. 글 목록에 수정/삭제 버튼 추가 (`/admin/posts` 테이블 Actions 컬럼)
-3. 글 삭제 Server Action (`delete-post.ts`)
+1. ~~다크모드 (`next-themes` + 토글 UI)~~ ✅
+2. ~~글 목록에 수정/삭제 버튼 추가 (`/admin/posts` 테이블 Actions 컬럼)~~ ✅
+3. ~~글 삭제 Server Action (`delete-post.ts`)~~ ✅
 4. 대시보드 최근 활동 (최근 글 + 최근 댓글 위젯)
 5. 검색 기능 (공개 페이지 글 검색)
 6. 글 상세 TOC (긴 글 탐색 UX 개선)
