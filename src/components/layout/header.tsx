@@ -16,9 +16,18 @@ export function Header() {
           </Link>
           <NavLinks className="hidden md:flex items-center gap-4" />
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center">
+          <SignedIn>
+            <Link href="/admin" className='mx-1'>
+              <Button variant="default">
+                대시보드
+              </Button>
+            </Link>
+          </SignedIn>
+
           <ThemeToggle />
           <MobileMenu />
+
           <SignedOut>
             <SignInButton mode="modal">
               <Button variant="ghost" size="sm">
@@ -27,12 +36,9 @@ export function Header() {
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <Link href="/admin">
-              <Button variant="default">
-                대시보드
-              </Button>
-            </Link>
-            <UserButton />
+            <div className='ml-2'>
+              <UserButton />
+            </div>
           </SignedIn>
         </div>
       </div>
