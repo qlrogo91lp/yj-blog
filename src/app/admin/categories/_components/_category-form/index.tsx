@@ -18,8 +18,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { generateSlug } from '@/lib/slugify';
 import type { Category } from '@/types';
 import { type CategoryFormValues, categoryFormSchema } from '@/types/category';
-import { createCategoryAction } from './_services/create-category';
-import { updateCategoryAction } from './_services/update-category';
+import { createCategoryAction } from '../../_services/create-category';
+import { updateCategoryAction } from '../../_services/update-category';
 
 type Props = {
   open: boolean;

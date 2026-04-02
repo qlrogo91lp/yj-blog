@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import type { Category } from '@/types';
-import { deleteCategoryAction } from './_services/delete-category';
+import { deleteCategoryAction } from '../../_services/delete-category';
 
 type Props = {
   open: boolean;
