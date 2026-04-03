@@ -17,18 +17,25 @@ export function ThumbnailUploadAction() {
   );
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setIsUploading(true);
+    setUploadError(null);
     try {
       const formData = new FormData();
       formData.append('file', file);
       const result = await uploadImage(formData);
-      if (result.url) setThumbnailUrl(result.url);
+      if (result.url) {
+        setThumbnailUrl(result.url);
+      } else if (result.error) {
+        setUploadError(result.error);
+      }
     } finally {
       setIsUploading(false);
+      e.target.value = '';
     }
   };
 
@@ -51,20 +58,25 @@ export function ThumbnailUploadAction() {
             className="absolute right-2 top-2"
             onClick={() => setThumbnailUrl(null)}
           >
-            <X className="h-4 w-4" />
+            <X size={16} />
           </Button>
         </div>
       ) : (
-        <Button
-          type="button"
-          variant="outline"
-          className="gap-2"
-          disabled={isUploading}
-          onClick={() => inputRef.current?.click()}
-        >
-          <ImagePlus className="h-4 w-4" />
-          {isUploading ? '업로드 중...' : '썸네일 추가'}
-        </Button>
+        <div className="flex flex-col gap-1">
+          <Button
+            type="button"
+            variant="outline"
+            className="gap-2"
+            disabled={isUploading}
+            onClick={() => inputRef.current?.click()}
+          >
+            <ImagePlus size={16} />
+            {isUploading ? '업로드 중...' : '썸네일 추가'}
+          </Button>
+          {uploadError && (
+            <p className="text-sm text-destructive">{uploadError}</p>
+          )}
+        </div>
       )}
     </div>
   );
