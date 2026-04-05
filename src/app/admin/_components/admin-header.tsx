@@ -14,7 +14,7 @@ export function AdminHeader() {
   return (
     <header className="flex h-14 items-center gap-2 border-b px-4">
       <SidebarTrigger />
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-4">
         {!isEditing && (
           <Button size="sm" asChild>
             <Link href="/admin/posts/new">글쓰기</Link>

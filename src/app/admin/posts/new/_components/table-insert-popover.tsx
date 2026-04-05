@@ -20,8 +20,6 @@ type Props = {
 };
 
 export function TableInsertPopover({ editor }: Props) {
-  const [rows, setRows] = useState(3);
-  const [cols, setCols] = useState(3);
   const [hoverRow, setHoverRow] = useState(0);
   const [hoverCol, setHoverCol] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
