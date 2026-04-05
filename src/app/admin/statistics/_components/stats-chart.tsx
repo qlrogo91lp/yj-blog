@@ -26,8 +26,8 @@ export function StatsChart({ data }: Props) {
   }));
 
   return (
-    <div className="h-100 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="w-full">
+      <ResponsiveContainer width="100%" height={400}>
         <LineChart
           data={chartData}
           margin={{ top: 5, right: 20, left: 0, bottom: 5 }}

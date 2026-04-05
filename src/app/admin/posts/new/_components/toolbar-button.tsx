@@ -25,7 +25,7 @@ export function ToolbarButton({
       <TooltipTrigger asChild>
         <Toggle
           size="sm"
-          pressed={isActive}
+          pressed={isActive ?? false}
           onPressedChange={() => onClick?.()}
           aria-label={tooltip}
           className="cursor-pointer data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"

@@ -13,7 +13,7 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div>
+    <>
       <h1 className="mb-6 text-2xl font-bold">대시보드</h1>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
@@ -30,6 +30,6 @@ export default async function AdminDashboardPage() {
           </Card>
         ))}
       </div>
-    </div>
+    </>
   );
 }

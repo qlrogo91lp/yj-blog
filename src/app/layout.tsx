@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { cn } from '@/lib/utils';
 import { ClerkProvider } from '@clerk/nextjs';
 import { PageTracker } from '@/components/page-tracker';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -31,7 +32,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ko" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={cn(geistSans.variable, geistMono.variable, 'antialiased min-w-[375px]')}
         >
           <ThemeProvider>
             <TooltipProvider>

@@ -12,7 +12,7 @@ export function TitleInputAction() {
       placeholder="제목을 입력하세요"
       value={title}
       onChange={(e) => setTitle(e.target.value)}
-      className="w-full text-3xl font-bold border-none outline-none bg-transparent placeholder:text-muted-foreground/50"
+      className="w-full text-3xl font-bold outline-none bg-transparent placeholder:text-muted-foreground/50 border-b pb-4"
     />
   );
 }
