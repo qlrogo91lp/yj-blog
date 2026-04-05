@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { SITE_NAME } from '@/lib/constants';
 
 export function AdminHeader() {
   const pathname = usePathname();
@@ -13,7 +14,10 @@ export function AdminHeader() {
 
   return (
     <header className="flex h-14 items-center gap-2 border-b px-4">
-      <SidebarTrigger />
+      {!isEditing && <SidebarTrigger />}
+      {isEditing && (<Link href='/admin' className='text-lg font-semibold'>
+        {SITE_NAME}
+      </Link>)}
       <div className="ml-auto flex items-center gap-4">
         {!isEditing && (
           <Button size="sm" asChild>

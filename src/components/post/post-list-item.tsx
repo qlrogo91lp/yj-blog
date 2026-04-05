@@ -15,13 +15,14 @@ export function PostListItem({ post }: Props) {
 
   return (
     <Link href={`/posts/${post.slug}`} className="block group">
-      <article className="flex gap-6 rounded-2xl bg-card shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)]">
+      <article className="flex min-h-35 gap-6 rounded-2xl bg-card shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)]">
         <div className="relative w-40 shrink-0 overflow-hidden rounded-l-xl bg-muted sm:w-48">
           {post.thumbnailUrl ? (
             <Image
               src={post.thumbnailUrl}
               alt={post.title}
               fill
+              sizes="(max-width: 640px) 160px, 192px"
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (

@@ -6,9 +6,10 @@ import type { PostWithCategory } from '@/types';
 
 type Props = {
   post: PostWithCategory;
+  priority?: boolean;
 };
 
-export function PostCard({ post }: Props) {
+export function PostCard({ post, priority = false }: Props) {
   const publishedAt = post.publishedAt
     ? format(new Date(post.publishedAt), 'dd MMM yyyy', { locale: enUS })
     : null;
@@ -22,6 +23,8 @@ export function PostCard({ post }: Props) {
               src={post.thumbnailUrl}
               alt={post.title}
               fill
+              sizes="(max-width: 640px) calc(100vw - 32px), 420px"
+              priority={priority}
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (

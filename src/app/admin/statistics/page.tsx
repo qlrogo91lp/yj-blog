@@ -32,7 +32,7 @@ export default async function AdminStatisticsPage() {
 
       {/* 통계 카드 */}
       <Card className="mb-6">
-        <CardContent className="flex flex-wrap divide-x p-0">
+        <CardContent className="flex flex-wrap p-0">
           {viewCards.map((card) => (
             <StatCard key={card.label} label={card.label} value={card.value} />
           ))}

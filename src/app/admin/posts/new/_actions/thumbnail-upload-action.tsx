@@ -66,7 +66,7 @@ export function ThumbnailUploadAction() {
           <Button
             type="button"
             variant="outline"
-            className="gap-2"
+            className="w-30"
             disabled={isUploading}
             onClick={() => inputRef.current?.click()}
           >

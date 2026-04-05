@@ -31,6 +31,8 @@ export function WysiwygEditorAction() {
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
+        link: false,
+        underline: false,
       }),
       Underline,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
