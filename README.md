@@ -10,8 +10,8 @@ Next.js 16 기반 개인 블로그. App Router + Drizzle ORM + Neon PostgreSQL +
 - **Auth**: Clerk (관리자 전용)
 - **유효성 검사**: Zod (Server Action 입력 검증, 폼 스키마)
 - **상태관리**: Zustand (클라이언트 전역 상태), TanStack Query (서버 상태 캐싱, 필요 시)
-- **Storage**: Vercel Blob (이미지 업로드)
-- **알림**: Resend (이메일), Discord Webhook (댓글 알림)
+- **Storage**: Cloudflare R2 (이미지 업로드, `@aws-sdk/client-s3`)
+- **알림**: Resend (이메일), Discord Webhook (댓글 알림), Sonner (토스트 UI)
 - **Deploy**: Vercel
 
 ## 환경 변수
@@ -21,7 +21,11 @@ Next.js 16 기반 개인 블로그. App Router + Drizzle ORM + Neon PostgreSQL +
 | `DATABASE_URL` | Neon PostgreSQL 연결 문자열 | ✅ |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk 공개 키 | ✅ |
 | `CLERK_SECRET_KEY` | Clerk 비밀 키 | ✅ |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob 업로드 토큰 (Vercel 환경에서는 자동 주입) | ✅ |
+| `R2_ACCOUNT_ID` | Cloudflare R2 계정 ID | ✅ |
+| `R2_ACCESS_KEY_ID` | Cloudflare R2 액세스 키 | ✅ |
+| `R2_SECRET_ACCESS_KEY` | Cloudflare R2 시크릿 키 | ✅ |
+| `R2_BUCKET_NAME` | R2 버킷 이름 | ✅ |
+| `R2_PUBLIC_URL` | R2 퍼블릭 도메인 URL | ✅ |
 | `NEXT_PUBLIC_SITE_URL` | 사이트 URL (기본값: `https://yjlogs.com`) | - |
 | `NEXT_PUBLIC_BASE_URL` | sitemap/robots 기준 URL | - |
 | `RESEND_API_KEY` | Resend 이메일 전송 API 키 | - |

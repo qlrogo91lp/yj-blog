@@ -6,6 +6,7 @@ import { PageTracker } from '@/components/page-tracker';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
 const geistSans = Geist({
@@ -38,6 +39,7 @@ export default function RootLayout({
             <TooltipProvider>
               <PageTracker />
               {children}
+              <Toaster />
             </TooltipProvider>
           </ThemeProvider>
         </body>

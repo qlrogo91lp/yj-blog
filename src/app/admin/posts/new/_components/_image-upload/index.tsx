@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Editor } from '@tiptap/react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,7 +33,13 @@ export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
       const formData = new FormData();
       formData.append('file', file);
       const result = await uploadImage(formData);
-      if (result.url) setUrl(result.url);
+      if (result.url) {
+        setUrl(result.url);
+      } else if (result.error) {
+        toast.error(result.error);
+      }
+    } catch {
+      toast.error('업로드에 실패했습니다');
     } finally {
       setIsUploading(false);
     }

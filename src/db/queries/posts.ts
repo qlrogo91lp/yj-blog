@@ -84,7 +84,7 @@ export const getAllPostsForAdmin = unstable_cache(
       .select({ post: posts, category: categories })
       .from(posts)
       .leftJoin(categories, eq(posts.categoryId, categories.id))
-      .orderBy(desc(posts.updatedAt));
+      .orderBy(desc(posts.publishedAt));
 
     return result.map(({ post, category }) => ({
       ...post,
