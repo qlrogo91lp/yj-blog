@@ -24,7 +24,7 @@ export function PostListViewHandler({ posts, viewType }: Props) {
     </div>
   ) : (
     <div className="flex flex-col gap-4">
-      {posts.map((post, index) => (
+      {posts.map(post => (
         <PostListItem key={post.id} post={post} />
       ))}
     </div>
