@@ -19,7 +19,7 @@ export function PostListViewHandler({ posts, viewType }: Props) {
   return viewType === 'card' ? (
     <div className="grid gap-6 sm:grid-cols-2">
       {posts.map((post, index) => (
-        <PostCard key={post.id} post={post} priority={index === 0} />
+        <PostCard key={post.id} post={post} />
       ))}
     </div>
   ) : (

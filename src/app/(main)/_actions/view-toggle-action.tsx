@@ -25,7 +25,7 @@ export function ViewToggleAction({ viewType }: Props) {
   };
 
   return (
-    <div className="flex items-center gap-1 ml-auto">
+    <div className="flex items-center gap-1">
       <Button
         variant={viewType === 'card' ? 'secondary' : 'ghost'}
         size="icon"

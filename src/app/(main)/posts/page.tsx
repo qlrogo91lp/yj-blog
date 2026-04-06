@@ -31,10 +31,19 @@ export default async function PostsPage({ searchParams }: Props) {
       <div className="mb-6 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="text-sm font-bold text-primary">총 {total}개</span>
-          <ViewToggleAction viewType={viewType} />
+          <div className="flex items-center gap-4">
+            <Suspense>
+              <div className="max-[500px]:hidden">
+                <SearchAction />
+              </div>
+              <ViewToggleAction viewType={viewType} />
+            </Suspense>
+          </div>
         </div>
         <Suspense>
-          <SearchAction />
+          <div className="hidden max-[500px]:block">
+            <SearchAction />
+          </div>
         </Suspense>
         <Suspense>
           <CategoryFilterAction
