@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { Category } from '@/types';
+import { cn } from '@/lib/utils';
 
 type Props = {
   categories: Category[];
@@ -33,11 +34,12 @@ export function CategoryFilterAction({ categories, currentSlug }: Props) {
           <button
             key={tab.slug ?? 'all'}
             onClick={() => navigate(tab.slug)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            className={cn(
+              'px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer',
               isActive
                 ? 'bg-foreground text-background'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
-            }`}
+                : 'bg-muted text-muted-foreground hover:bg-muted/80',
+            )}
           >
             {tab.name}
           </button>

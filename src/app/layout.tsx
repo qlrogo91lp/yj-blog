@@ -33,7 +33,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ko" suppressHydrationWarning>
         <body
-          className={cn(geistSans.variable, geistMono.variable, 'antialiased min-w-[375px]')}
+          className={cn(geistSans.variable, geistMono.variable, 'antialiased min-w-100')}
         >
           <ThemeProvider>
             <TooltipProvider>
