@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache';
-import { and, count, desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq, ilike, or } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { categories, comments, posts } from '@/db/schema';
@@ -9,20 +9,28 @@ interface GetPostsOptions {
   categoryId?: number;
   page?: number;
   limit?: number;
+  search?: string;
 }
 
 /**
- * 발행된 글 목록 (카테고리 join, 페이지네이션)
+ * 발행된 글 목록 (카테고리 join, 페이지네이션, 검색)
  */
 export async function getPosts({
   categoryId,
   page = 1,
   limit = 10,
+  search,
 }: GetPostsOptions = {}) {
   const offset = (page - 1) * limit;
   const where = and(
     eq(posts.status, 'published'),
-    categoryId ? eq(posts.categoryId, categoryId) : undefined
+    categoryId ? eq(posts.categoryId, categoryId) : undefined,
+    search
+      ? or(
+          ilike(posts.title, `%${search}%`),
+          ilike(posts.content, `%${search}%`)
+        )
+      : undefined
   );
 
   const [items, totalResult] = await Promise.all([
