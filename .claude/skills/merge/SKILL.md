@@ -83,10 +83,15 @@ git checkout develop
 git pull
 ```
 
-**develop 브랜치**: pull만 실행한다.
+**develop 브랜치**: main의 squash 커밋을 develop에 동기화한다.
+squash 머지는 develop 히스토리와 단절된 새 커밋을 main에 만들기 때문에,
+머지 후 즉시 `git merge origin/main`으로 공통 조상을 만들어 두지 않으면
+다음 develop → main 머지 시 반복 충돌이 발생한다.
 
 ```bash
-git pull
+git pull                  # develop 최신화
+git merge origin/main     # main squash 커밋을 develop에 반영 (fast-forward)
+git push                  # 동기화 결과 push
 ```
 
 ### 6. 완료 검증
