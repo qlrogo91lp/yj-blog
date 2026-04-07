@@ -3,10 +3,12 @@ import {
   boolean,
   date,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
   timestamp,
+  varchar,
 } from 'drizzle-orm/pg-core';
 
 // -----------------------------------------------
@@ -90,6 +92,21 @@ export const dailyStats = pgTable('daily_stats', {
   views: integer('views').notNull().default(0), // 일별 총 조회수
   visitors: integer('visitors').notNull().default(0), // 일별 순 방문자
   createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// -----------------------------------------------
+// blog_settings (단일 row, id = 1)
+// -----------------------------------------------
+
+export const blogSettings = pgTable('blog_settings', {
+  id: integer('id').primaryKey().default(1),
+  blogName: varchar('blog_name', { length: 100 }).notNull(),
+  tagline: varchar('tagline', { length: 255 }),
+  authorBio: text('author_bio'),
+  siteUrl: varchar('site_url', { length: 255 }),
+  socialLinks: jsonb('social_links').$type<Record<string, string>>(),
+  defaultMetaDescription: varchar('default_meta_description', { length: 300 }),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // -----------------------------------------------

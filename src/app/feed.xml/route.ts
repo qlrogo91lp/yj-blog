@@ -1,10 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getPosts } from '@/db/queries/posts';
+import { getBlogSettings } from '@/db/queries/settings';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
-import { siteUrl } from '@/app/(main)/_constants/profile';
 
 export async function GET() {
-  const { items } = await getPosts({ limit: 20 });
+  const [{ items }, settings] = await Promise.all([
+    getPosts({ limit: 20 }),
+    getBlogSettings(),
+  ]);
+
+  const siteUrl =
+    settings?.siteUrl ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'https://yjlogs.com';
+  const title = settings?.blogName ?? SITE_NAME;
+  const description = settings?.defaultMetaDescription ?? SITE_DESCRIPTION;
 
   const items_xml = items
     .map((post) => {
@@ -28,9 +38,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title><![CDATA[${SITE_NAME}]]></title>
+    <title><![CDATA[${title}]]></title>
     <link>${siteUrl}</link>
-    <description><![CDATA[${SITE_DESCRIPTION}]]></description>
+    <description><![CDATA[${description}]]></description>
     <language>ko</language>
     <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml" />
     ${items_xml}
