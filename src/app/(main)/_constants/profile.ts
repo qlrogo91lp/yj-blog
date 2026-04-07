@@ -5,3 +5,6 @@ export const PROFILE = {
   ctaLabel: '글 보러가기',
   ctaHref: '/posts',
 } as const;
+
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com';

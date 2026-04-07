@@ -89,6 +89,32 @@ export async function softDeleteComment(commentId: number): Promise<void> {
 }
 
 /**
+ * 관리자 대시보드 최근 댓글 (post title/slug 포함, 최신순)
+ */
+export const getRecentComments = unstable_cache(
+  async (limit = 5) => {
+    const result = await db
+      .select({
+        comment: comments,
+        postTitle: posts.title,
+        postSlug: posts.slug,
+      })
+      .from(comments)
+      .innerJoin(posts, eq(comments.postId, posts.id))
+      .orderBy(desc(comments.createdAt))
+      .limit(limit);
+
+    return result.map(({ comment, postTitle, postSlug }) => ({
+      ...comment,
+      postTitle,
+      postSlug,
+    }));
+  },
+  ['admin-recent-comments'],
+  { tags: [CACHE_TAGS.comments] }
+);
+
+/**
  * 관리자용 전체 댓글 조회 (post title 포함, 페이지네이션)
  */
 export const getAllCommentsForAdmin = unstable_cache(

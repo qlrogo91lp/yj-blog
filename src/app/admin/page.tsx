@@ -1,9 +1,17 @@
 import { Eye, FileText, MessageSquare, PenLine } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getAdminDashboardStats } from '@/db/queries/posts';
+import { getAdminDashboardStats, getRecentPostsForAdmin } from '@/db/queries/posts';
+import { getRecentComments } from '@/db/queries/comments';
+import { RecentPostsWidget } from './_components/recent-posts-widget';
+import { RecentCommentsWidget } from './_components/recent-comments-widget';
+import { QuickActions } from './_components/quick-actions';
 
 export default async function AdminDashboardPage() {
-  const stats = await getAdminDashboardStats();
+  const [stats, recentPosts, recentComments] = await Promise.all([
+    getAdminDashboardStats(),
+    getRecentPostsForAdmin(5),
+    getRecentComments(5),
+  ]);
 
   const cards = [
     { title: '전체 글', value: stats.totalPosts, icon: FileText },
@@ -29,6 +37,12 @@ export default async function AdminDashboardPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        <QuickActions />
+        <RecentPostsWidget posts={recentPosts} />
+        <RecentCommentsWidget comments={recentComments} />
       </div>
     </>
   );

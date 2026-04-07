@@ -56,36 +56,25 @@ describe('PostCard', () => {
     expect(screen.getByText('개발')).toBeInTheDocument();
   });
 
-  it('excerpt를 렌더링한다', () => {
+  it('제목 링크는 /posts/[slug]로 연결된다', () => {
     render(<PostCard post={mockPost} />);
-    expect(screen.getByText('요약 내용')).toBeInTheDocument();
+    const titleLink = screen.getByRole('link', { name: mockPost.title });
+    expect(titleLink).toHaveAttribute('href', `/posts/${mockPost.slug}`);
   });
 
-  it('publishedAt을 한국어 날짜 형식으로 렌더링한다', () => {
+  it('카테고리 뱃지는 /categories/[slug]로 링크된다', () => {
     render(<PostCard post={mockPost} />);
-    expect(screen.getByText('2024년 1월 15일')).toBeInTheDocument();
+    const categoryLink = screen.getByRole('link', { name: mockPost.category!.name });
+    expect(categoryLink).toHaveAttribute('href', `/categories/${mockPost.category!.slug}`);
   });
 
-  it('slug를 href로 사용하는 링크를 렌더링한다', () => {
-    render(<PostCard post={mockPost} />);
-    expect(screen.getByRole('link')).toHaveAttribute(
-      'href',
-      '/posts/test-post'
-    );
-  });
-
-  it('category가 null이면 badge를 렌더링하지 않는다', () => {
+  it('category가 null이면 카테고리 링크를 렌더링하지 않는다', () => {
     render(<PostCard post={{ ...mockPost, category: null }} />);
     expect(screen.queryByText('개발')).not.toBeInTheDocument();
   });
 
-  it('excerpt가 null이면 렌더링하지 않는다', () => {
-    render(<PostCard post={{ ...mockPost, excerpt: null }} />);
-    expect(screen.queryByText('요약 내용')).not.toBeInTheDocument();
-  });
-
   it('publishedAt이 null이면 날짜를 렌더링하지 않는다', () => {
     render(<PostCard post={{ ...mockPost, publishedAt: null }} />);
-    expect(screen.queryByText('2024년 1월 15일')).not.toBeInTheDocument();
+    expect(screen.queryByText('15 Jan 2024')).not.toBeInTheDocument();
   });
 });
