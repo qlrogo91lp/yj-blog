@@ -128,6 +128,27 @@ export const getAdminDashboardStats = unstable_cache(
 );
 
 /**
+ * 관리자 대시보드 최근 글 목록 (draft 포함, 수정 시각 내림차순)
+ */
+export const getRecentPostsForAdmin = unstable_cache(
+  async (limit = 5) => {
+    const result = await db
+      .select({ post: posts, category: categories })
+      .from(posts)
+      .leftJoin(categories, eq(posts.categoryId, categories.id))
+      .orderBy(desc(posts.updatedAt))
+      .limit(limit);
+
+    return result.map(({ post, category }) => ({
+      ...post,
+      category,
+    })) as PostWithCategory[];
+  },
+  ['admin-recent-posts'],
+  { tags: [CACHE_TAGS.posts] }
+);
+
+/**
  * 글 삭제 (물리 삭제, 댓글 cascade)
  */
 export async function deletePostById(id: number) {
