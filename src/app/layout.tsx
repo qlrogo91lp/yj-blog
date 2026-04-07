@@ -7,6 +7,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { getBlogSettings } from '@/db/queries/settings';
 import './globals.css';
 
 const geistSans = Geist({
@@ -19,15 +20,18 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: SITE_NAME,
-  description: SITE_DESCRIPTION,
-  alternates: {
-    types: {
-      'application/rss+xml': '/feed.xml',
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getBlogSettings();
+  return {
+    title: settings?.blogName ?? SITE_NAME,
+    description: settings?.defaultMetaDescription ?? SITE_DESCRIPTION,
+    alternates: {
+      types: {
+        'application/rss+xml': '/feed.xml',
+      },
     },
-  },
-};
+  };
+}
 
 export default function RootLayout({
   children,
