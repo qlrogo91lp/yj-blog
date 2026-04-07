@@ -68,9 +68,9 @@ it("유효한 데이터는 파싱 성공", () => {
   expect(postFormSchema.safeParse(validData).success).toBe(true)
 })
 
-it("slug에 한글이 있으면 실패", () => {
+it("slug에 한글이 있으면 성공", () => {
   const result = postFormSchema.safeParse({ ...validData, slug: "한글-slug" })
-  expect(result.success).toBe(false)
+  expect(result.success).toBe(true)
 })
 ```
 
