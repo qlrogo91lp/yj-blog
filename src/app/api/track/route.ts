@@ -1,11 +1,14 @@
 import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { format } from 'date-fns';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '@/db';
-import { dailyStats } from '@/db/schema';
+import { dailyStats, posts, referrers } from '@/db/schema';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  const body = await request.json().catch(() => ({}));
+  const { referrer, slug } = body as { referrer?: string; slug?: string };
+
   const today = format(new Date(), 'yyyy-MM-dd');
   const cookieStore = await cookies();
   const visitorCookie = cookieStore.get('_blog_vid');
@@ -29,6 +32,30 @@ export async function POST() {
           : sql`${dailyStats.visitors}`,
       },
     });
+
+  // referrer 기록
+  let postId: number | null = null;
+  if (slug) {
+    const post = await db
+      .select({ id: posts.id })
+      .from(posts)
+      .where(eq(posts.slug, slug))
+      .limit(1);
+    postId = post[0]?.id ?? null;
+
+    // 글 조회수 증가
+    if (postId) {
+      await db
+        .update(posts)
+        .set({ views: sql`${posts.views} + 1` })
+        .where(eq(posts.id, postId));
+    }
+  }
+
+  await db.insert(referrers).values({
+    postId,
+    referrer: referrer ?? '',
+  });
 
   const response = NextResponse.json({ ok: true });
 
