@@ -11,6 +11,7 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
+
 // -----------------------------------------------
 // Enums
 // -----------------------------------------------
@@ -95,6 +96,17 @@ export const dailyStats = pgTable('daily_stats', {
 });
 
 // -----------------------------------------------
+// referrers (유입 경로 기록)
+// -----------------------------------------------
+
+export const referrers = pgTable('referrers', {
+  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+  postId: integer('post_id').references(() => posts.id, { onDelete: 'cascade' }), // null이면 글 페이지가 아닌 방문
+  referrer: varchar('referrer', { length: 2048 }), // document.referrer 값. 빈 문자열이면 직접 접근
+  visitedAt: timestamp('visited_at').defaultNow().notNull(),
+});
+
+// -----------------------------------------------
 // blog_settings (단일 row, id = 1)
 // -----------------------------------------------
 
@@ -123,6 +135,14 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     references: [categories.id],
   }),
   comments: many(comments),
+  referrers: many(referrers),
+}));
+
+export const referrersRelations = relations(referrers, ({ one }) => ({
+  post: one(posts, {
+    fields: [referrers.postId],
+    references: [posts.id],
+  }),
 }));
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
