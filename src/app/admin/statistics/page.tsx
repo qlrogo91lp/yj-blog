@@ -1,17 +1,28 @@
 export const revalidate = 60;
 
-import { Card, CardContent } from '@/components/ui/card';
+import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import {
   getDailyStatsForRange,
   getStatsSummary,
 } from '@/db/queries/daily-stats';
+import { getPopularPosts } from '@/db/queries/statistics';
 import { StatCard } from './_components/stat-card';
 import { StatsChart } from './_components/stats-chart';
 
 export default async function AdminStatisticsPage() {
-  const [summary, dailyStats] = await Promise.all([
+  const [summary, dailyStats, popularPosts] = await Promise.all([
     getStatsSummary(),
     getDailyStatsForRange(30),
+    getPopularPosts(10),
   ]);
 
   const viewCards = [
@@ -44,7 +55,7 @@ export default async function AdminStatisticsPage() {
       </Card>
 
       {/* 추이 그래프 */}
-      <Card>
+      <Card className="mb-6">
         <CardContent className="pt-6">
           {dailyStats.length === 0 ? (
             <p className="py-20 text-center text-muted-foreground">
@@ -53,6 +64,50 @@ export default async function AdminStatisticsPage() {
             </p>
           ) : (
             <StatsChart data={dailyStats} />
+          )}
+        </CardContent>
+      </Card>
+
+      {/* 인기 글 Top 10 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">인기 글 Top 10</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {popularPosts.length === 0 ? (
+            <p className="px-6 py-10 text-center text-muted-foreground">
+              조회된 글이 없습니다.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10 text-center">#</TableHead>
+                  <TableHead>제목</TableHead>
+                  <TableHead className="w-24 text-right">조회수</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {popularPosts.map((post, index) => (
+                  <TableRow key={post.id}>
+                    <TableCell className="text-center text-muted-foreground">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        href={`/admin/statistics/posts/${post.id}`}
+                        className="hover:underline"
+                      >
+                        {post.title}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {post.views.toLocaleString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
