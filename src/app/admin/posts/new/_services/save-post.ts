@@ -5,7 +5,7 @@ import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
-import { posts } from '@/db/schema';
+import { postTags, posts } from '@/db/schema';
 import { postFormSchema } from '@/types/post';
 
 type SavePostInput = {
@@ -17,6 +17,7 @@ type SavePostInput = {
   excerpt?: string;
   thumbnailUrl?: string | null;
   categoryId: number | null;
+  tagIds?: number[];
   status: 'draft' | 'published';
   publishedAt?: Date | null;
 };
@@ -38,6 +39,8 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
 
   const { title, slug, content, contentFormat, excerpt, categoryId, status } =
     parsed.data;
+
+  const tagIds = input.tagIds ?? [];
 
   try {
     if (input.postId) {
@@ -61,6 +64,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
       }
 
       await db.update(posts).set(updateData).where(eq(posts.id, input.postId));
+      await syncPostTags(input.postId, tagIds);
 
       revalidateTag(CACHE_TAGS.posts, 'default');
       revalidatePath('/admin/posts');
@@ -83,6 +87,8 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
         })
         .returning({ id: posts.id });
 
+      await syncPostTags(newPost.id, tagIds);
+
       revalidateTag(CACHE_TAGS.posts, 'default');
       revalidatePath('/admin/posts');
       return { success: true, postId: newPost.id };
@@ -92,5 +98,14 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
       return { success: false, error: '이미 사용 중인 slug입니다' };
     }
     return { success: false, error: '저장에 실패했습니다' };
+  }
+}
+
+async function syncPostTags(postId: number, tagIds: number[]) {
+  await db.delete(postTags).where(eq(postTags.postId, postId));
+  if (tagIds.length > 0) {
+    await db
+      .insert(postTags)
+      .values(tagIds.map((tagId) => ({ postId, tagId })));
   }
 }

@@ -2,14 +2,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import type { PostWithCategory } from '@/types';
+import type { PostWithCategory, TagSummary } from '@/types';
 
 type Props = {
   post: PostWithCategory;
   priority?: boolean;
+  tags?: TagSummary[];
 };
 
-export function PostCard({ post, priority = false }: Props) {
+export function PostCard({ post, priority = false, tags }: Props) {
   const publishedAt = post.publishedAt
     ? format(new Date(post.publishedAt), 'dd MMM yyyy', { locale: enUS })
     : null;
@@ -58,6 +59,20 @@ export function PostCard({ post, priority = false }: Props) {
             {post.title}
           </Link>
         </h2>
+
+        {tags && tags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1">
+            {tags.slice(0, 3).map((tag) => (
+              <Link
+                key={tag.id}
+                href={`/tags/${tag.slug}`}
+                className="relative z-10 text-[10px] font-medium text-muted-foreground hover:text-foreground"
+              >
+                #{tag.name}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </article>
   );

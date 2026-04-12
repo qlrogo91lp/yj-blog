@@ -2,13 +2,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import type { PostWithCategory } from '@/types';
+import type { PostWithCategory, TagSummary } from '@/types';
 
 type Props = {
   post: PostWithCategory;
+  tags?: TagSummary[];
 };
 
-export function PostListItem({ post }: Props) {
+export function PostListItem({ post, tags }: Props) {
   const publishedAt = post.publishedAt
     ? format(new Date(post.publishedAt), 'MMM dd, yyyy', { locale: enUS })
     : null;
@@ -62,6 +63,20 @@ export function PostListItem({ post }: Props) {
           <p className="line-clamp-2 text-sm text-muted-foreground leading-relaxed">
             {post.excerpt}
           </p>
+        )}
+
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {tags.slice(0, 3).map((tag) => (
+              <Link
+                key={tag.id}
+                href={`/tags/${tag.slug}`}
+                className="relative z-10 text-[10px] font-medium text-muted-foreground hover:text-foreground"
+              >
+                #{tag.name}
+              </Link>
+            ))}
+          </div>
         )}
       </div>
     </article>

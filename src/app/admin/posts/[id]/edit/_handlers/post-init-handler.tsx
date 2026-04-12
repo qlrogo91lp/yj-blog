@@ -6,9 +6,10 @@ import { useNewPostStore } from '../../../new/_store';
 
 type Props = {
   post: Post;
+  initialTagIds: number[];
 };
 
-export function PostInitHandler({ post }: Props) {
+export function PostInitHandler({ post, initialTagIds }: Props) {
   useEffect(() => {
     useNewPostStore.getState().initializePost({
       postId: post.id,
@@ -16,6 +17,7 @@ export function PostInitHandler({ post }: Props) {
       content: post.content,
       contentFormat: post.contentFormat as 'markdown' | 'html',
       categoryId: post.categoryId,
+      tagIds: initialTagIds,
       slug: post.slug,
       excerpt: post.excerpt ?? '',
       thumbnailUrl: post.thumbnailUrl ?? null,
@@ -26,7 +28,7 @@ export function PostInitHandler({ post }: Props) {
     return () => {
       useNewPostStore.getState().reset();
     };
-  }, [post]);
+  }, [post, initialTagIds]);
 
   return null;
 }
