@@ -9,6 +9,7 @@ type State = {
   content: string;
   contentFormat: 'markdown' | 'html';
   categoryId: number | null;
+  tagIds: number[];
   slug: string;
   excerpt: string;
   thumbnailUrl: string | null;
@@ -25,6 +26,7 @@ type Action = {
   setContent: (content: string) => void;
   setContentFormat: (format: 'markdown' | 'html') => void;
   setCategoryId: (id: number | null) => void;
+  setTagIds: (ids: number[]) => void;
   setSlug: (slug: string) => void;
   setExcerpt: (excerpt: string) => void;
   setThumbnailUrl: (url: string | null) => void;
@@ -40,6 +42,7 @@ type Action = {
     content: string;
     contentFormat: 'markdown' | 'html';
     categoryId: number | null;
+    tagIds: number[];
     slug: string;
     excerpt: string;
     thumbnailUrl: string | null;
@@ -54,6 +57,7 @@ export const useNewPostStore = create<State & Action>((set) => ({
   content: '',
   contentFormat: 'html',
   categoryId: null,
+  tagIds: [],
   slug: '',
   excerpt: '',
   thumbnailUrl: null,
@@ -69,6 +73,7 @@ export const useNewPostStore = create<State & Action>((set) => ({
   setContent: (content) => set({ content }),
   setContentFormat: (contentFormat) => set({ contentFormat }),
   setCategoryId: (categoryId) => set({ categoryId }),
+  setTagIds: (tagIds) => set({ tagIds }),
   setSlug: (slug) => set({ slug }),
   setExcerpt: (excerpt) => set({ excerpt }),
   setThumbnailUrl: (thumbnailUrl) => set({ thumbnailUrl }),
@@ -84,6 +89,7 @@ export const useNewPostStore = create<State & Action>((set) => ({
       content: '',
       contentFormat: 'html',
       categoryId: null,
+      tagIds: [],
       slug: '',
       excerpt: '',
       thumbnailUrl: null,

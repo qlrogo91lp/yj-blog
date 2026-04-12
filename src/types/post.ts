@@ -2,6 +2,7 @@ import type { InferSelectModel } from 'drizzle-orm';
 import { z } from 'zod';
 import type { posts } from '@/db/schema';
 import type { Category } from './category';
+import type { TagSummary } from './tag';
 
 // DB row 타입 (Drizzle 추론)
 export type Post = InferSelectModel<typeof posts>;
@@ -9,6 +10,17 @@ export type Post = InferSelectModel<typeof posts>;
 // 목록/상세 페이지용 (category join)
 export type PostWithCategory = Post & {
   category: Category | null;
+};
+
+// 태그 포함 타입
+export type PostWithTags = Post & {
+  tags: TagSummary[];
+};
+
+// 카테고리 + 태그 포함 타입
+export type PostWithCategoryAndTags = Post & {
+  category: Category | null;
+  tags: TagSummary[];
 };
 
 // 글 생성/수정 폼 스키마

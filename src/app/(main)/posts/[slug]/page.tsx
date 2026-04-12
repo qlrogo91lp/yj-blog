@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { getPostBySlug } from '@/db/queries/posts';
 import { markdownToHtmlWithToc } from '@/lib/markdown';
@@ -62,6 +63,16 @@ export default async function PostPage({ params }: Props) {
               className="prose prose-neutral dark:prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: contentHtml }}
             />
+
+            {post.tags.length > 0 && (
+              <footer className="mt-8 pt-6 border-t flex flex-wrap gap-2">
+                {post.tags.map((tag) => (
+                  <Link key={tag.id} href={`/tags/${tag.slug}`}>
+                    <Badge variant="outline">#{tag.name}</Badge>
+                  </Link>
+                ))}
+              </footer>
+            )}
           </article>
 
           <PostToc toc={toc} />

@@ -2,8 +2,8 @@ import { unstable_cache } from 'next/cache';
 import { and, count, desc, eq, ilike, or } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
-import { categories, comments, posts } from '@/db/schema';
-import type { PostWithCategory } from '@/types';
+import { categories, comments, postTags, posts, tags } from '@/db/schema';
+import type { PostWithCategory, PostWithCategoryAndTags } from '@/types';
 
 interface GetPostsOptions {
   categoryId?: number;
@@ -57,11 +57,11 @@ export async function getPosts({
 }
 
 /**
- * slug로 글 상세 조회 (category join)
+ * slug로 글 상세 조회 (category + tags join)
  */
 export async function getPostBySlug(
   slug: string
-): Promise<PostWithCategory | null> {
+): Promise<PostWithCategoryAndTags | null> {
   const result = await db
     .select({ post: posts, category: categories })
     .from(posts)
@@ -71,7 +71,14 @@ export async function getPostBySlug(
 
   if (!result[0]) return null;
   const { post, category } = result[0];
-  return { ...post, category };
+
+  const tagRows = await db
+    .select({ id: tags.id, name: tags.name, slug: tags.slug })
+    .from(postTags)
+    .innerJoin(tags, eq(postTags.tagId, tags.id))
+    .where(eq(postTags.postId, post.id));
+
+  return { ...post, category, tags: tagRows };
 }
 
 /**

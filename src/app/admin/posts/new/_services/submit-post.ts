@@ -15,6 +15,7 @@ export async function submitPost(status: 'draft' | 'published') {
     content: store.content,
     contentFormat: store.contentFormat,
     categoryId: store.categoryId,
+    tagIds: store.tagIds,
     thumbnailUrl: store.thumbnailUrl,
     status,
     publishedAt: store.publishedAt,
