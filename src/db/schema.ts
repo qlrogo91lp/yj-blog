@@ -6,6 +6,8 @@ import {
   jsonb,
   pgEnum,
   pgTable,
+  primaryKey,
+  serial,
   text,
   timestamp,
   varchar,
@@ -122,6 +124,34 @@ export const blogSettings = pgTable('blog_settings', {
 });
 
 // -----------------------------------------------
+// tags
+// -----------------------------------------------
+
+export const tags = pgTable('tags', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 50 }).notNull().unique(),
+  slug: varchar('slug', { length: 50 }).notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// -----------------------------------------------
+// post_tags (N:M)
+// -----------------------------------------------
+
+export const postTags = pgTable(
+  'post_tags',
+  {
+    postId: integer('post_id')
+      .notNull()
+      .references(() => posts.id, { onDelete: 'cascade' }),
+    tagId: integer('tag_id')
+      .notNull()
+      .references(() => tags.id, { onDelete: 'cascade' }),
+  },
+  (t) => ({ pk: primaryKey({ columns: [t.postId, t.tagId] }) }),
+);
+
+// -----------------------------------------------
 // Relations
 // -----------------------------------------------
 
@@ -136,6 +166,22 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   }),
   comments: many(comments),
   referrers: many(referrers),
+  postTags: many(postTags),
+}));
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  postTags: many(postTags),
+}));
+
+export const postTagsRelations = relations(postTags, ({ one }) => ({
+  post: one(posts, {
+    fields: [postTags.postId],
+    references: [posts.id],
+  }),
+  tag: one(tags, {
+    fields: [postTags.tagId],
+    references: [tags.id],
+  }),
 }));
 
 export const referrersRelations = relations(referrers, ({ one }) => ({
