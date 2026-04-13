@@ -3,19 +3,28 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PostListViewHandler } from '../../_handlers/post-list-view-handler';
-import type { PostWithCategory } from '@/types';
+import type { PostWithCategory, TagSummary } from '@/types';
+
+type TagsMap = Record<number, TagSummary[]>;
 
 type Props = {
   initialPosts: PostWithCategory[];
   initialTotal: number;
   viewType: 'card' | 'list';
+  initialTagsMap?: TagsMap;
 };
 
 const LIMIT = 10;
 
-export function InfinitePostListAction({ initialPosts, initialTotal, viewType }: Props) {
+export function InfinitePostListAction({
+  initialPosts,
+  initialTotal,
+  viewType,
+  initialTagsMap = {},
+}: Props) {
   const searchParams = useSearchParams();
   const [posts, setPosts] = useState<PostWithCategory[]>(initialPosts);
+  const [tagsMap, setTagsMap] = useState<TagsMap>(initialTagsMap);
   const [page, setPage] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
   const [hasMore, setHasMore] = useState(initialPosts.length < initialTotal);
@@ -23,9 +32,10 @@ export function InfinitePostListAction({ initialPosts, initialTotal, viewType }:
 
   useEffect(() => {
     setPosts(initialPosts);
+    setTagsMap(initialTagsMap);
     setPage(1);
     setHasMore(initialPosts.length < initialTotal);
-  }, [initialPosts, initialTotal]);
+  }, [initialPosts, initialTotal, initialTagsMap]);
 
   const loadMore = useCallback(async () => {
     if (isFetching || !hasMore) return;
@@ -38,13 +48,21 @@ export function InfinitePostListAction({ initialPosts, initialTotal, viewType }:
     params.delete('view');
 
     try {
-      const res = await fetch(`/api/posts?${params.toString()}`);
-      const data = await res.json();
-      setPosts(prev => {
-        const updated = [...prev, ...data.items];
-        setHasMore(updated.length < data.total);
+      const [postsRes, tagsRes] = await Promise.all([
+        fetch(`/api/posts?${params.toString()}`),
+        fetch(`/api/posts/tags?${params.toString()}`),
+      ]);
+      const [postsData, newTagsMap]: [{ items: PostWithCategory[]; total: number }, TagsMap] = await Promise.all([
+        postsRes.json(),
+        tagsRes.json(),
+      ]);
+
+      setPosts((prev) => {
+        const updated = [...prev, ...postsData.items];
+        setHasMore(updated.length < postsData.total);
         return updated;
       });
+      setTagsMap((prev) => ({ ...prev, ...newTagsMap }));
       setPage(nextPage);
     } finally {
       setIsFetching(false);
@@ -55,7 +73,7 @@ export function InfinitePostListAction({ initialPosts, initialTotal, viewType }:
     const el = observerRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      entries => {
+      (entries) => {
         if (entries[0].isIntersecting) loadMore();
       },
       { threshold: 0.1 }
@@ -66,8 +84,11 @@ export function InfinitePostListAction({ initialPosts, initialTotal, viewType }:
 
   return (
     <>
-      <PostListViewHandler posts={posts} viewType={viewType} />
-      <div ref={observerRef} className="py-8 text-center text-sm text-muted-foreground">
+      <PostListViewHandler posts={posts} viewType={viewType} tagsMap={tagsMap} />
+      <div
+        ref={observerRef}
+        className="py-8 text-center text-sm text-muted-foreground"
+      >
         {isFetching && '불러오는 중...'}
         {!isFetching && !hasMore && posts.length > 0 && '모든 글을 불러왔습니다.'}
       </div>

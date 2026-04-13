@@ -1,30 +1,43 @@
 import { Suspense } from 'react';
 import { getCategories, getCategoryBySlug } from '@/db/queries/categories';
 import { getPosts } from '@/db/queries/posts';
+import { getAllTags, getTagBySlug, getTagsByPostIds } from '@/db/queries/tags';
 import { ViewToggleAction } from '../_actions/view-toggle-action';
 import { CategoryFilterAction } from './_actions/category-filter-action';
 import { SearchAction } from './_actions/search-action';
+import { TagFilterAction } from './_actions/tag-filter-action';
 import { InfinitePostListAction } from './_actions/infinite-post-list-action';
 
 type Props = {
-  searchParams: Promise<{ category?: string; view?: string; search?: string }>;
+  searchParams: Promise<{
+    category?: string;
+    view?: string;
+    search?: string;
+    tag?: string;
+  }>;
 };
 
 export default async function PostsPage({ searchParams }: Props) {
-  const { category: categorySlug, view, search } = await searchParams;
+  const { category: categorySlug, view, search, tag: tagSlug } = await searchParams;
   const viewType = view === 'list' ? 'list' : 'card';
 
-  const [categoriesData, categoryData] = await Promise.all([
+  const [categoriesData, categoryData, tagsData, tagData] = await Promise.all([
     getCategories(),
     categorySlug ? getCategoryBySlug(categorySlug) : null,
+    getAllTags(),
+    tagSlug ? getTagBySlug(tagSlug) : null,
   ]);
 
   const { items: posts, total } = await getPosts({
     categoryId: categoryData?.id,
+    tagId: tagData?.id,
     page: 1,
     limit: 10,
     search,
   });
+
+  const postTagsMap = await getTagsByPostIds(posts.map((p) => p.id));
+  const serializedTagsMap = Object.fromEntries(postTagsMap);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
@@ -51,12 +64,16 @@ export default async function PostsPage({ searchParams }: Props) {
             currentSlug={categorySlug}
           />
         </Suspense>
+        <Suspense>
+          <TagFilterAction tags={tagsData} currentSlug={tagSlug} />
+        </Suspense>
       </div>
       <Suspense>
         <InfinitePostListAction
           initialPosts={posts}
           initialTotal={total}
           viewType={viewType}
+          initialTagsMap={serializedTagsMap}
         />
       </Suspense>
     </div>

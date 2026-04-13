@@ -47,6 +47,13 @@ npm run test:e2e    # Playwright E2E 테스트
 
 > 새 기능 작업 시 `develop`에서 `feature/*` 브랜치를 생성하고, 완료 후 `develop`으로 PR을 올린다.
 
+## Git Worktree 규칙
+
+- worktree에서 작업이 완료(PR 생성 또는 merge)된 후에는 반드시 해당 worktree를 제거한다.
+- 제거 명령: `git worktree remove <worktree-경로>`
+- worktree 제거 전 해당 디렉토리에 커밋되지 않은 변경사항이 없는지 확인한다.
+- 강제 제거가 필요한 경우(미커밋 변경사항 있음): `git worktree remove --force <worktree-경로>`
+
 ## 아키텍처
 
 Next.js 16 개인 블로그. **App Router** + React 19 + TypeScript strict 모드.
