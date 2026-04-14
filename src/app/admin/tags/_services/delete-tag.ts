@@ -3,18 +3,18 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { auth } from '@clerk/nextjs/server';
 import { CACHE_TAGS } from '@/db/cache-tags';
-import { deleteTag } from '@/db/queries/tags';
+import { deleteTag as deleteTagQuery } from '@/db/queries/tags';
 
 type Result = { success: true } | { success: false; error: string };
 
-export async function deleteTagAction(id: number): Promise<Result> {
+export async function deleteTag(id: number): Promise<Result> {
   const { userId } = await auth();
   if (!userId) {
     return { success: false, error: '인증이 필요합니다' };
   }
 
   try {
-    await deleteTag(id);
+    await deleteTagQuery(id);
     revalidateTag(CACHE_TAGS.tags, 'default');
     revalidateTag(CACHE_TAGS.posts, 'default');
     revalidatePath('/admin/tags');
