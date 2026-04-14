@@ -19,7 +19,7 @@ export function CategorySelectorAction({ categories }: Props) {
   const setCategoryId = useNewPostStore((s) => s.setCategoryId);
 
   return (
-    <div>
+    <div className="mb-3">
       <Select
         value={categoryId?.toString() ?? ''}
         onValueChange={(value) => setCategoryId(value ? Number(value) : null)}

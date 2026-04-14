@@ -7,6 +7,7 @@ import type { PostWithCategory, PostWithCategoryAndTags } from '@/types';
 
 interface GetPostsOptions {
   categoryId?: number;
+  tagId?: number;
   page?: number;
   limit?: number;
   search?: string;
@@ -17,6 +18,7 @@ interface GetPostsOptions {
  */
 export async function getPosts({
   categoryId,
+  tagId,
   page = 1,
   limit = 10,
   search,
@@ -25,6 +27,7 @@ export async function getPosts({
   const where = and(
     eq(posts.status, 'published'),
     categoryId ? eq(posts.categoryId, categoryId) : undefined,
+    tagId ? eq(postTags.tagId, tagId) : undefined,
     search
       ? or(
           ilike(posts.title, `%${search}%`),
@@ -33,16 +36,31 @@ export async function getPosts({
       : undefined
   );
 
+  const baseQuery = tagId
+    ? db
+        .select({ post: posts, category: categories })
+        .from(posts)
+        .innerJoin(postTags, eq(posts.id, postTags.postId))
+        .leftJoin(categories, eq(posts.categoryId, categories.id))
+    : db
+        .select({ post: posts, category: categories })
+        .from(posts)
+        .leftJoin(categories, eq(posts.categoryId, categories.id));
+
+  const countQuery = tagId
+    ? db
+        .select({ total: count() })
+        .from(posts)
+        .innerJoin(postTags, eq(posts.id, postTags.postId))
+    : db.select({ total: count() }).from(posts);
+
   const [items, totalResult] = await Promise.all([
-    db
-      .select({ post: posts, category: categories })
-      .from(posts)
-      .leftJoin(categories, eq(posts.categoryId, categories.id))
+    baseQuery
       .where(where)
       .orderBy(desc(posts.publishedAt))
       .limit(limit)
       .offset(offset),
-    db.select({ total: count() }).from(posts).where(where),
+    countQuery.where(where),
   ]);
 
   return {

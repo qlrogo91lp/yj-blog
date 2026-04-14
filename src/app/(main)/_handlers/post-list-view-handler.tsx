@@ -1,13 +1,14 @@
 import { PostCard } from '@/components/post/post-card';
 import { PostListItem } from '@/components/post/post-list-item';
-import type { PostWithCategory } from '@/types';
+import type { PostWithCategory, TagSummary } from '@/types';
 
 type Props = {
   posts: PostWithCategory[];
   viewType: 'card' | 'list';
+  tagsMap?: Record<number, TagSummary[]>;
 };
 
-export function PostListViewHandler({ posts, viewType }: Props) {
+export function PostListViewHandler({ posts, viewType, tagsMap = {} }: Props) {
   if (posts.length === 0) {
     return (
       <p className="py-12 text-center text-muted-foreground">
@@ -18,14 +19,14 @@ export function PostListViewHandler({ posts, viewType }: Props) {
 
   return viewType === 'card' ? (
     <div className="grid gap-6 sm:grid-cols-2">
-      {posts.map((post, index) => (
-        <PostCard key={post.id} post={post} />
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} tags={tagsMap[post.id]} />
       ))}
     </div>
   ) : (
     <div className="flex flex-col gap-4">
-      {posts.map(post => (
-        <PostListItem key={post.id} post={post} />
+      {posts.map((post) => (
+        <PostListItem key={post.id} post={post} tags={tagsMap[post.id]} />
       ))}
     </div>
   );

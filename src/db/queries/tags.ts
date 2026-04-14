@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache';
-import { count, desc, eq } from 'drizzle-orm';
+import { count, desc, eq, inArray } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { categories, postTags, posts, tags } from '@/db/schema';
@@ -93,4 +93,39 @@ export async function getTagsByPostId(postId: number): Promise<TagSummary[]> {
     .from(postTags)
     .innerJoin(tags, eq(postTags.tagId, tags.id))
     .where(eq(postTags.postId, postId));
+}
+
+/**
+ * 여러 글의 태그를 일괄 조회 → Map<postId, TagSummary[]>
+ */
+export async function getTagsByPostIds(
+  postIds: number[]
+): Promise<Map<number, TagSummary[]>> {
+  if (postIds.length === 0) return new Map();
+
+  const rows = await db
+    .select({
+      postId: postTags.postId,
+      id: tags.id,
+      name: tags.name,
+      slug: tags.slug,
+    })
+    .from(postTags)
+    .innerJoin(tags, eq(postTags.tagId, tags.id))
+    .where(inArray(postTags.postId, postIds));
+
+  const map = new Map<number, TagSummary[]>();
+  for (const row of rows) {
+    const list = map.get(row.postId) ?? [];
+    list.push({ id: row.id, name: row.name, slug: row.slug });
+    map.set(row.postId, list);
+  }
+  return map;
+}
+
+/**
+ * 태그 삭제 (post_tags cascade 삭제됨)
+ */
+export async function deleteTag(id: number): Promise<void> {
+  await db.delete(tags).where(eq(tags.id, id));
 }

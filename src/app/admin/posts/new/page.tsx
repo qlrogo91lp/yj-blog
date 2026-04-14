@@ -23,10 +23,8 @@ export default async function NewPostPage() {
       <div className="flex flex-1 flex-col">
         <EditorToolbarAction />
         <div className="flex-1 mx-auto w-full max-w-4xl px-6 py-6">
-          <div className="flex gap-3 mb-4">
-            <CategorySelectorAction categories={categories} />
-            <TagSelectorAction allTags={tags} />
-          </div>
+          <CategorySelectorAction categories={categories} />
+          <TagSelectorAction allTags={tags} />
           <ThumbnailUploadAction />
           <TitleInputAction />
           <div className="mt-4 flex-1">
