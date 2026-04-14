@@ -15,8 +15,8 @@ export async function deleteTag(id: number): Promise<Result> {
 
   try {
     await deleteTagQuery(id);
-    revalidateTag(CACHE_TAGS.tags);
-    revalidateTag(CACHE_TAGS.posts);
+    revalidateTag(CACHE_TAGS.tags, 'default');
+    revalidateTag(CACHE_TAGS.posts, 'default');
     revalidatePath('/admin/tags');
     return { success: true };
   } catch {
