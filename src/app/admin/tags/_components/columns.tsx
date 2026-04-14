@@ -40,7 +40,7 @@ export const tagColumns = [
     header: '생성일',
     cell: (info) => (
       <span className="text-muted-foreground">
-        {format(new Date(info.getValue()), 'yyyy년 M월 d일', { locale: ko })}
+        {format(info.getValue(), 'yyyy년 M월 d일', { locale: ko })}
       </span>
     ),
   }),
