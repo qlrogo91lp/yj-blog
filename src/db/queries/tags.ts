@@ -122,3 +122,10 @@ export async function getTagsByPostIds(
   }
   return map;
 }
+
+/**
+ * 태그 삭제 (post_tags cascade 삭제됨)
+ */
+export async function deleteTag(id: number): Promise<void> {
+  await db.delete(tags).where(eq(tags.id, id));
+}

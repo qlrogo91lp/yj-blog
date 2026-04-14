@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Settings,
+  Tag,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -35,6 +36,7 @@ const menuGroups = [
     items: [
       { label: '글 관리', icon: FileText, href: '/admin/posts' },
       { label: '카테고리 관리', icon: FolderOpen, href: '/admin/categories' },
+      { label: '태그 관리', icon: Tag, href: '/admin/tags' },
       { label: '댓글 관리', icon: MessageSquare, href: '/admin/comments' },
     ],
   },

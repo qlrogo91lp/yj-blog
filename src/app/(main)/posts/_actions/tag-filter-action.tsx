@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import type { TagSummary } from '@/types';
@@ -30,6 +31,12 @@ export function TagFilterAction({ tags, currentSlug }: Props) {
 
   return (
     <div className="flex gap-2 flex-wrap">
+      <Link
+        href="/tags"
+        className="px-3 py-1 rounded-full text-sm font-medium transition-colors border bg-transparent text-muted-foreground border-border hover:border-foreground/40 hover:text-foreground"
+      >
+        태그 목록
+      </Link>
       {tags.map((tag) => {
         const isActive = tag.slug === currentSlug;
         return (
