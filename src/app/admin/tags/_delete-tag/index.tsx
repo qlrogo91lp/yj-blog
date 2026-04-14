@@ -10,8 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { TagRow } from '../columns';
-import { deleteTag } from '../../_services/delete-tag';
+import type { TagRow } from '../_components/columns';
+import { deleteTag } from '../_services/delete-tag';
 
 type Props = {
   open: boolean;

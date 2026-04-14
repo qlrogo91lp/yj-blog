@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { TagRow } from '../columns';
+import type { TagRow } from '../_components/columns';
 import { DeleteTagDialog } from '../_delete-tag';
 
 type Props = {
