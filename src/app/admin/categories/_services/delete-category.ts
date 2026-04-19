@@ -15,7 +15,7 @@ export async function deleteCategoryAction(id: number): Promise<Result> {
 
   try {
     await deleteCategory(id);
-    revalidateTag(CACHE_TAGS.categories, 'default');
+    revalidateTag(CACHE_TAGS.categories, 'max');
     revalidatePath('/admin/categories');
     return { success: true };
   } catch (error) {

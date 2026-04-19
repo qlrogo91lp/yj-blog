@@ -24,7 +24,7 @@ export async function updateCategoryAction(
 
   try {
     await updateCategory(id, parsed.data);
-    revalidateTag(CACHE_TAGS.categories, 'default');
+    revalidateTag(CACHE_TAGS.categories, 'max');
     revalidatePath('/admin/categories');
     return { success: true };
   } catch (error) {

@@ -38,7 +38,7 @@ export async function createTag(name: string): Promise<CreateTagResult> {
       .values({ name: trimmed, slug })
       .returning({ id: tags.id, name: tags.name, slug: tags.slug });
 
-    revalidateTag(CACHE_TAGS.tags, 'default');
+    revalidateTag(CACHE_TAGS.tags, 'max');
     return { success: true, tag: newTag };
   } catch {
     return { success: false, error: '태그 생성에 실패했습니다' };

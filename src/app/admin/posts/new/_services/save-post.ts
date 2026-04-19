@@ -66,7 +66,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
       await db.update(posts).set(updateData).where(eq(posts.id, input.postId));
       await syncPostTags(input.postId, tagIds);
 
-      revalidateTag(CACHE_TAGS.posts, 'default');
+      revalidateTag(CACHE_TAGS.posts, 'max');
       revalidatePath('/admin/posts');
       return { success: true, postId: input.postId };
     } else {
@@ -89,7 +89,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
 
       await syncPostTags(newPost.id, tagIds);
 
-      revalidateTag(CACHE_TAGS.posts, 'default');
+      revalidateTag(CACHE_TAGS.posts, 'max');
       revalidatePath('/admin/posts');
       return { success: true, postId: newPost.id };
     }
