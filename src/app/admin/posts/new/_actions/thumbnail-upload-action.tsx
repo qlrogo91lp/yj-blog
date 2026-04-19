@@ -12,9 +12,11 @@ import { useNewPostStore } from '../_store';
 const THUMBNAIL_SIZE_LIMIT = 1 * 1024 * 1024; // 1MB
 
 export function ThumbnailUploadAction() {
-  const { thumbnailUrl, setThumbnailUrl } = useNewPostStore(
+  const { postId, thumbnailUrl, setPostId, setThumbnailUrl } = useNewPostStore(
     useShallow((state) => ({
+      postId: state.postId,
       thumbnailUrl: state.thumbnailUrl,
+      setPostId: state.setPostId,
       setThumbnailUrl: state.setThumbnailUrl,
     }))
   );
@@ -35,9 +37,12 @@ export function ThumbnailUploadAction() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const result = await uploadImage(formData);
+      const result = await uploadImage(formData, postId, 'thumbnail');
       if (result.url) {
         setThumbnailUrl(result.url);
+        if (result.postId && !postId) {
+          setPostId(result.postId);
+        }
       } else if (result.error) {
         toast.error(result.error);
       }

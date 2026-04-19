@@ -22,5 +22,5 @@ export async function updateSettings(data: BlogSettingsFormValues) {
       set: { ...rest, socialLinks, updatedAt: new Date() },
     });
 
-  revalidateTag(CACHE_TAGS.settings, 'default');
+  revalidateTag(CACHE_TAGS.settings, 'max');
 }
