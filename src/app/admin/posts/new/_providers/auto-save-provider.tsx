@@ -9,6 +9,7 @@ const intervalMs = 30000;
 export function AutoSaveProvider() {
 	const title = useNewPostStore((s) => s.title);
 	const content = useNewPostStore((s) => s.content);
+	const status = useNewPostStore((s) => s.status);
 	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	useEffect(() => {
@@ -19,7 +20,7 @@ export function AutoSaveProvider() {
 		}
 
 		timerRef.current = setTimeout(() => {
-			submitPost('draft');
+			submitPost(status);
 		}, intervalMs);
 
 		return () => {
@@ -27,7 +28,7 @@ export function AutoSaveProvider() {
 				clearTimeout(timerRef.current);
 			}
 		};
-	}, [title, content]);
+	}, [title, content, status]);
 
 	return null;
 }
