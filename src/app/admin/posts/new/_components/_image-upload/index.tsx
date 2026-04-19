@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useNewPostStore } from '../../_store';
 import { uploadImage } from './_services/upload-image';
 
 type Props = {
@@ -24,6 +25,8 @@ type Props = {
 export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
   const [url, setUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const postId = useNewPostStore((s) => s.postId);
+  const setPostId = useNewPostStore((s) => s.setPostId);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -32,9 +35,12 @@ export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const result = await uploadImage(formData);
+      const result = await uploadImage(formData, postId, 'content');
       if (result.url) {
         setUrl(result.url);
+        if (result.postId && !postId) {
+          setPostId(result.postId);
+        }
       } else if (result.error) {
         toast.error(result.error);
       }
