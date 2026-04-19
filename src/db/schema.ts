@@ -135,6 +135,21 @@ export const tags = pgTable('tags', {
 });
 
 // -----------------------------------------------
+// post_images (게시글-이미지 매핑)
+// -----------------------------------------------
+
+export const postImages = pgTable('post_images', {
+  id: serial('id').primaryKey(),
+  postId: integer('post_id')
+    .notNull()
+    .references(() => posts.id, { onDelete: 'cascade' }),
+  key: text('key').notNull(),
+  type: text('type').notNull(), // 'thumbnail' | 'content'
+  index: integer('index').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// -----------------------------------------------
 // post_tags (N:M)
 // -----------------------------------------------
 
@@ -167,6 +182,14 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   comments: many(comments),
   referrers: many(referrers),
   postTags: many(postTags),
+  postImages: many(postImages),
+}));
+
+export const postImagesRelations = relations(postImages, ({ one }) => ({
+  post: one(posts, {
+    fields: [postImages.postId],
+    references: [posts.id],
+  }),
 }));
 
 export const tagsRelations = relations(tags, ({ many }) => ({
