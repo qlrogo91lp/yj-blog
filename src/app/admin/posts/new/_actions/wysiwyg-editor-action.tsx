@@ -18,6 +18,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { useEditorContext } from '../_providers/editor-provider';
 import { useNewPostStore } from '../_store';
+import { useEditorImageUpload } from '../_hooks/use-editor-image-upload';
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
@@ -25,6 +26,7 @@ export function WysiwygEditorAction() {
   const content = useNewPostStore((s) => s.content);
   const { setEditor } = useEditorContext();
   const isInitialMount = useRef(true);
+  const { uploadAndInsert } = useEditorImageUpload();
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -58,6 +60,25 @@ export function WysiwygEditorAction() {
       attributes: {
         class:
           'prose prose-neutral dark:prose-invert max-w-none min-h-[500px] outline-none',
+      },
+      handleDrop: (view, event, _slice, moved) => {
+        if (moved || !event.dataTransfer?.files.length) return false;
+        const file = event.dataTransfer.files[0];
+        if (!file?.type.startsWith('image/')) return false;
+        event.preventDefault();
+        uploadAndInsert(editor!, file);
+        return true;
+      },
+      handlePaste: (_view, event) => {
+        const files = event.clipboardData?.files;
+        if (!files?.length) return false;
+        const file = files[0];
+        if (!file?.type.startsWith('image/')) return false;
+        event.preventDefault();
+        if (editor) {
+          uploadAndInsert(editor, file);
+        }
+        return true;
       },
     },
     onUpdate: ({ editor }) => {
