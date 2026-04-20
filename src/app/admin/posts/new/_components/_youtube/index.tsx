@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -35,6 +36,7 @@ export function YoutubeEmbedDialog({ editor, open, onOpenChange }: Props) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>YouTube 영상 삽입</DialogTitle>
+          <DialogDescription className="sr-only">YouTube URL을 입력해 영상을 삽입합니다</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">

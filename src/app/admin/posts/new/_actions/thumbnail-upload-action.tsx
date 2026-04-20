@@ -65,7 +65,7 @@ export function ThumbnailUploadAction() {
       />
       {thumbnailUrl ? (
         <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-lg border">
-          <Image src={thumbnailUrl} alt="썸네일" fill className="object-cover" />
+          <Image src={thumbnailUrl} alt="썸네일" fill sizes="(max-width: 640px) calc(100vw - 2rem), 384px" className="object-cover" />
           <Button
             type="button"
             variant="secondary"
