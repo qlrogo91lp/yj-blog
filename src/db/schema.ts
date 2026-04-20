@@ -90,8 +90,7 @@ export const comments = pgTable('comments', {
 // -----------------------------------------------
 
 export const dailyStats = pgTable('daily_stats', {
-  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  date: date('date').notNull().unique(), // 'YYYY-MM-DD' 형태
+  date: date('date').primaryKey(), // 'YYYY-MM-DD' 형태 — natural PK
   views: integer('views').notNull().default(0), // 일별 총 조회수
   visitors: integer('visitors').notNull().default(0), // 일별 순 방문자
   createdAt: timestamp('created_at').notNull().defaultNow(),

@@ -2,10 +2,16 @@ import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { format } from 'date-fns';
 import { eq, sql } from 'drizzle-orm';
+import { auth } from '@clerk/nextjs/server';
 import { db } from '@/db';
 import { dailyStats, posts, referrers } from '@/db/schema';
 
 export async function POST(request: NextRequest) {
+  const { userId } = await auth();
+  if (userId) {
+    return NextResponse.json({ ok: true });
+  }
+
   const body = await request.json().catch(() => ({}));
   const { referrer, slug } = body as { referrer?: string; slug?: string };
 
