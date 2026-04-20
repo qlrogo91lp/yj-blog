@@ -62,9 +62,17 @@ git commit -m "refactor: daily_stats에서 id 제거, date를 PK로 변경"
 **Files:**
 - DB: `daily_stats` 테이블 구조 변경 (컬럼 삭제 포함)
 
-- [ ] **Step 1: drizzle-kit push 실행**
+- [ ] **Step 1: 기존 데이터 전체 삭제**
 
-> ⚠️ `id` 컬럼이 삭제되므로 데이터 손실 경고가 표시된다. 기존 `id` 값은 어디서도 참조되지 않으므로 삭제해도 무방하다.
+기존 `daily_stats` 데이터는 모두 삭제하고 새로 쌓는다. Drizzle Studio(`npx drizzle-kit studio`)에서 직접 실행하거나, 아래 SQL을 Neon 콘솔에서 실행한다.
+
+```sql
+TRUNCATE TABLE daily_stats;
+```
+
+- [ ] **Step 2: drizzle-kit push 실행**
+
+> ⚠️ `id` 컬럼이 삭제되므로 데이터 손실 경고가 표시된다. 기존 데이터는 이미 삭제했으므로 진행한다.
 
 ```bash
 npx drizzle-kit push
@@ -77,7 +85,7 @@ drizzle-kit이 아래 변경 사항을 감지해야 한다:
 
 컬럼 삭제 확인 프롬프트가 나오면 `yes`로 진행한다.
 
-- [ ] **Step 2: Drizzle Studio로 결과 확인**
+- [ ] **Step 3: Drizzle Studio로 결과 확인**
 
 ```bash
 npx drizzle-kit studio
@@ -86,7 +94,7 @@ npx drizzle-kit studio
 브라우저에서 `daily_stats` 테이블을 열어 다음을 확인한다:
 - `id` 컬럼이 사라졌는가
 - `date` 컬럼이 PRIMARY KEY로 표시되는가
-- 기존 데이터(views, visitors 값)가 보존되어 있는가
+- 테이블이 비어 있는가 (TRUNCATE 확인)
 
 ---
 
