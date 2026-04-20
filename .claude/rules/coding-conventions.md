@@ -15,6 +15,7 @@
 ## Import
 
 - React의 hook, 타입 등은 named import로 사용한다 (`import { useState, useEffect } from "react"`). `React.useState` 형태 사용 금지.
+- `import * as React from 'react'` 네임스페이스 import 사용 금지.
 
 ## 기타
 
