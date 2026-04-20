@@ -1,4 +1,5 @@
 import rehypeHighlight from 'rehype-highlight';
+import rehypeParse from 'rehype-parse';
 import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
@@ -70,6 +71,30 @@ export async function markdownToHtmlWithToc(markdown: string): Promise<MarkdownR
     .use(rehypeStringify, { allowDangerousHtml: true });
 
   const result = await processor.process(markdown);
+
+  return { html: result.toString(), toc };
+}
+
+export async function htmlToHtmlWithToc(html: string): Promise<MarkdownResult> {
+  const toc: TocItem[] = [];
+
+  const processor = unified()
+    .use(rehypeParse, { fragment: true })
+    .use(rehypeSlug)
+    .use(() => (tree) => {
+      visit(tree, 'element', (node: Element) => {
+        if (node.tagName === 'h2' || node.tagName === 'h3') {
+          const id = node.properties?.id as string | undefined;
+          const text = extractText(node);
+          if (id && text) {
+            toc.push({ level: Number(node.tagName[1]) as 2 | 3, text, id });
+          }
+        }
+      });
+    })
+    .use(rehypeStringify);
+
+  const result = await processor.process(html);
 
   return { html: result.toString(), toc };
 }

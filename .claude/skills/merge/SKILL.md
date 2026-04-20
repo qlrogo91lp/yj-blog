@@ -9,7 +9,7 @@ description: 현재 브랜치의 PR을 생성하고 머지한 뒤, 브랜치를 
 
 | 브랜치 | base | 머지 방식 | 브랜치 삭제 |
 |--------|------|-----------|-------------|
-| `feature/*` | `develop` | squash | 로컬·리모트 모두 삭제 |
+| `feature/*`, `debug/*`, `refactor/*` 등 | `develop` | merge | 로컬·리모트 모두 삭제 |
 | `develop` | `main` | squash | 삭제 안 함 |
 
 ## 동작 순서
@@ -27,7 +27,7 @@ gh pr list --head $(git branch --show-current)  # PR 존재 여부 확인
 - 미커밋 변경사항이 있으면 **작업을 중단**하고 사용자에게 알린다.
 - 현재 브랜치가 `main`이면 **작업을 중단**하고 사용자에게 알린다.
 - 현재 브랜치가 `develop`이면 → base: `main`, 머지 방식: `--merge`, 브랜치 삭제 없음.
-- 그 외 브랜치이면 → base: `develop`, 머지 방식: `--squash`, 머지 후 브랜치 삭제.
+- 그 외 브랜치이면 → base: `develop`, 머지 방식: `--merge`, 머지 후 브랜치 삭제.
 
 ### 2. 커밋 목록 확인
 
@@ -61,10 +61,10 @@ EOF
 
 ### 4. PR 머지
 
-**feature/* 브랜치**: squash 머지, 리모트 브랜치 동시 삭제
+**feature/*, debug/*, refactor/* 등 작업 브랜치**: 일반 머지, 리모트 브랜치 동시 삭제
 
 ```bash
-gh pr merge --squash --delete-branch
+gh pr merge --merge --delete-branch
 ```
 
 **develop 브랜치**: squash 머지, 브랜치 삭제 없음
@@ -75,8 +75,8 @@ gh pr merge --squash
 
 ### 5. 로컬 브랜치 정리
 
-`gh pr merge --squash --delete-branch`는 리모트·로컬 브랜치를 모두 삭제한다.
-따라서 **feature/* 브랜치**는 develop으로 전환 후 pull만 실행한다.
+`gh pr merge --merge --delete-branch`는 리모트·로컬 브랜치를 모두 삭제한다.
+따라서 **작업 브랜치(feature/*, debug/*, refactor/* 등)**는 develop으로 전환 후 pull만 실행한다.
 
 ```bash
 git checkout develop
