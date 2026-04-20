@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { getPostBySlug } from '@/db/queries/posts';
-import { markdownToHtmlWithToc } from '@/lib/markdown';
+import { markdownToHtmlWithToc, htmlToHtmlWithToc } from '@/lib/markdown';
 import { CommentSection } from './_components/comment-section';
 import { PostToc } from './_components/post-toc';
 
@@ -32,7 +33,7 @@ export default async function PostPage({ params }: Props) {
 
   const { html: contentHtml, toc } =
     post.contentFormat === 'html'
-      ? { html: post.content, toc: [] }
+      ? await htmlToHtmlWithToc(post.content)
       : await markdownToHtmlWithToc(post.content);
 
   const publishedAt = post.publishedAt
@@ -42,7 +43,7 @@ export default async function PostPage({ params }: Props) {
   return (
     <>
       <div className="mx-auto max-w-5xl px-4 py-8">
-        <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12">
+        <div className={cn(toc.length > 0 && 'lg:grid lg:grid-cols-[1fr_220px] lg:gap-12')}>
           <article>
             <header className="mb-8">
               {post.category && (
@@ -75,7 +76,7 @@ export default async function PostPage({ params }: Props) {
             )}
           </article>
 
-          <PostToc toc={toc} />
+          {toc.length > 0 &&  <PostToc toc={toc} />}
         </div>
       </div>
 
