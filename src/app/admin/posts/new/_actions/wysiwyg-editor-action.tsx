@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
-import { Image } from '@tiptap/extension-image';
+import { ImageBlock } from '../_components/_image-block/image-extension';
 import { Link } from '@tiptap/extension-link';
 import { Youtube } from '@tiptap/extension-youtube';
 import { Placeholder } from '@tiptap/extension-placeholder';
@@ -42,7 +42,7 @@ export function WysiwygEditorAction() {
       Color,
       TextStyle,
       Link.configure({ openOnClick: false }),
-      Image,
+      ImageBlock,
       Youtube.configure({
         nocookie: true,
         allowFullscreen: true,
