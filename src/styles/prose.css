@@ -109,3 +109,53 @@
 .dark .prose a {
   color: oklch(0.7 0.15 250);
 }
+
+/* ── 이미지 블록 (data-size / data-align) ── */
+.prose figure[data-size],
+.prose img[data-size] {
+  display: block;
+}
+.prose figure[data-size="small"],
+.prose img[data-size="small"] {
+  width: 40%;
+}
+.prose figure[data-size="medium"],
+.prose img[data-size="medium"] {
+  width: 70%;
+}
+.prose figure[data-size="full"],
+.prose img[data-size="full"] {
+  width: 100%;
+}
+.prose figure[data-size] img {
+  width: 100%;
+  height: auto;
+}
+
+.prose figure[data-align="left"],
+.prose img[data-align="left"] {
+  margin-right: auto;
+  margin-left: 0;
+}
+.prose figure[data-align="center"],
+.prose img[data-align="center"] {
+  margin-left: auto;
+  margin-right: auto;
+}
+.prose figure[data-align="right"],
+.prose img[data-align="right"] {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* ProseMirror 노드 선택 시의 파란 outline 제거 */
+.ProseMirror .ProseMirror-selectednode {
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .prose figure[data-size],
+  .prose img[data-size] {
+    width: 100%;
+  }
+}
