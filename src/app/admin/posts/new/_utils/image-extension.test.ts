@@ -33,4 +33,18 @@ describe('ImageBlock extension', () => {
     const spec = editor.schema.nodes.image.spec;
     expect(spec.draggable).toBe(true);
   });
+
+  it('data-caption 속성이 있는 이미지를 파싱하고 직렬화한다', () => {
+    const editor = createEditor(
+      '<p><img src="a.png" data-size="medium" data-align="center" data-caption="강남역 저녁" /></p>',
+    );
+    const html = editor.getHTML();
+    expect(html).toContain('data-caption="강남역 저녁"');
+  });
+
+  it('caption이 비어있으면 data-caption 속성을 출력하지 않는다', () => {
+    const editor = createEditor('<p><img src="a.png" /></p>');
+    const html = editor.getHTML();
+    expect(html).not.toContain('data-caption');
+  });
 });

@@ -35,6 +35,14 @@ export const ImageBlock = Image.extend({
         },
         renderHTML: (attrs) => ({ 'data-align': attrs.align ?? 'center' }),
       },
+      caption: {
+        default: '' as string,
+        parseHTML: (el) => el.getAttribute('data-caption') ?? '',
+        renderHTML: (attrs) => {
+          if (!attrs.caption) return {};
+          return { 'data-caption': attrs.caption };
+        },
+      },
     };
   },
 
