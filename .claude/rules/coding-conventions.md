@@ -17,6 +17,12 @@
 - React의 hook, 타입 등은 named import로 사용한다 (`import { useState, useEffect } from "react"`). `React.useState` 형태 사용 금지.
 - `import * as React from 'react'` 네임스페이스 import 사용 금지.
 
+## Zustand Store
+
+- 파일명은 `_store.ts` 형식으로 작성한다
+- 위치는 해당 라우트의 루트 폴더에 배치한다
+- 예: `src/app/admin/posts/new/_store.ts`, `src/app/admin/posts/_store.ts`
+
 ## 기타
 
 - 타입 단언(`as`)은 가능하면 피하고, Zod 파싱 결과를 활용한다
