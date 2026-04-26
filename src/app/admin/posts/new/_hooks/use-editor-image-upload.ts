@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import type { Editor } from '@tiptap/react';
 import { toast } from 'sonner';
-import { uploadImage } from '../_components/_image-upload/_services/upload-image';
+import { uploadImage } from '../_services/upload-image';
 import { useNewPostStore } from '../_store';
 
 export function useEditorImageUpload() {

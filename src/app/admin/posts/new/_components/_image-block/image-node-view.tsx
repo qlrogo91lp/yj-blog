@@ -1,7 +1,7 @@
 'use client';
 
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import type { ImageAlign, ImageSize } from './image-extension';
+import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
 import { ImageToolbar } from './image-toolbar';
 
 export function ImageNodeView({
@@ -33,6 +33,7 @@ export function ImageNodeView({
           />
         </div>
       )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
         alt={alt}

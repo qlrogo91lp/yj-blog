@@ -16,7 +16,7 @@ export function MarkdownEditorAction() {
         setContent(e.target.value);
         setContentFormat('markdown');
       }}
-      className="min-h-[500px] resize-none font-mono text-sm border-none shadow-none focus-visible:ring-0"
+      className="min-h-125 resize-none font-mono text-sm border-none shadow-none focus-visible:ring-0"
     />
   );
 }
