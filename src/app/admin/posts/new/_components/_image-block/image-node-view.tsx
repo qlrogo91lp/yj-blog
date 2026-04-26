@@ -14,6 +14,7 @@ export function ImageNodeView({
   const align = (node.attrs.align as ImageAlign) ?? 'center';
   const src = node.attrs.src as string;
   const alt = (node.attrs.alt as string) ?? '';
+  const caption = (node.attrs.caption as string) ?? '';
 
   return (
     <NodeViewWrapper
@@ -42,6 +43,22 @@ export function ImageNodeView({
         className={selected ? 'ring-2 ring-primary ring-offset-2' : ''}
         draggable={false}
       />
+      {(selected || caption) && (
+        <input
+          type="text"
+          value={caption}
+          onChange={(e) => updateAttributes({ caption: e.target.value })}
+          onKeyDown={(e) => {
+            e.stopPropagation();
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              (e.target as HTMLInputElement).blur();
+            }
+          }}
+          placeholder="캡션 추가..."
+          className="mt-1.5 w-full border-0 border-b border-muted-foreground/30 bg-transparent px-0 py-0.5 text-sm italic text-muted-foreground placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-0"
+        />
+      )}
     </NodeViewWrapper>
   );
 }
