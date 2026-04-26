@@ -6,7 +6,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { uploadImage } from '../_components/_image-upload/_services/upload-image';
+import { uploadImage } from '../_services/upload-image';
 import { useNewPostStore } from '../_store';
 
 const THUMBNAIL_SIZE_LIMIT = 1 * 1024 * 1024; // 1MB

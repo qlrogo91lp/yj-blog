@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
-import { ImageBlock } from '../_components/_image-block/image-extension';
+import { ImageBlock } from '../_utils/image-extension';
 import { Link } from '@tiptap/extension-link';
 import { Youtube } from '@tiptap/extension-youtube';
 import { Placeholder } from '@tiptap/extension-placeholder';
@@ -14,11 +14,12 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Underline } from '@tiptap/extension-underline';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { useEditorContext } from '../_providers/editor-provider';
 import { useNewPostStore } from '../_store';
 import { useEditorImageUpload } from '../_hooks/use-editor-image-upload';
+import { deleteImage } from '../_services/delete-image';
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
@@ -26,7 +27,18 @@ export function WysiwygEditorAction() {
   const content = useNewPostStore((s) => s.content);
   const { setEditor } = useEditorContext();
   const isInitialMount = useRef(true);
+  const prevImageSrcs = useRef<Set<string>>(new Set());
   const { uploadAndInsert } = useEditorImageUpload();
+
+  const getImageSrcs = useCallback((editorInstance: Editor): Set<string> => {
+    const srcs = new Set<string>();
+    editorInstance.state.doc.descendants((node) => {
+      if (node.type.name === 'imageBlock' && node.attrs.src) {
+        srcs.add(node.attrs.src as string);
+      }
+    });
+    return srcs;
+  }, []);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -61,7 +73,7 @@ export function WysiwygEditorAction() {
         class:
           'prose prose-neutral dark:prose-invert max-w-none min-h-[500px] outline-none',
       },
-      handleDrop: (view, event, _slice, moved) => {
+      handleDrop: (_view, event, _slice, moved) => {
         if (moved || !event.dataTransfer?.files.length) return false;
         const file = event.dataTransfer.files[0];
         if (!file?.type.startsWith('image/')) return false;
@@ -82,16 +94,26 @@ export function WysiwygEditorAction() {
       },
     },
     onUpdate: ({ editor }) => {
+      const currentSrcs = getImageSrcs(editor);
+      prevImageSrcs.current.forEach((src) => {
+        if (!currentSrcs.has(src)) {
+          deleteImage(src);
+        }
+      });
+      prevImageSrcs.current = currentSrcs;
       setContent(editor.getHTML());
       setContentFormat('html');
     },
   });
 
-  // context에 editor 인스턴스 공유
+  // context에 editor 인스턴스 공유 + 초기 이미지 src 추적 시작
   useEffect(() => {
     setEditor(editor);
+    if (editor) {
+      prevImageSrcs.current = getImageSrcs(editor);
+    }
     return () => setEditor(null);
-  }, [editor, setEditor]);
+  }, [editor, setEditor, getImageSrcs]);
 
   // content가 외부에서 변경되었을 때 (모드 전환 등) 에디터 내용 동기화
   useEffect(() => {

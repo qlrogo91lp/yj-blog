@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useNewPostStore } from '../../_store';
-import { uploadImage } from './_services/upload-image';
+import { uploadImage } from '../../_services/upload-image';
 
 type Props = {
   editor: Editor | null;

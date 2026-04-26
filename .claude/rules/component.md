@@ -27,6 +27,18 @@ export default function SettlementListTable({ settlementData, columns }: Props) 
 }
 ```
 
+## 스타일
+
+조건부 클래스명은 템플릿 리터럴 대신 `cn()` 함수로 처리한다.
+
+```tsx
+// ❌ BAD - 템플릿 리터럴로 조건부 처리
+className={`rounded p-2 ${isActive ? 'bg-primary text-white' : ''}`}
+
+// ✅ GOOD - cn()으로 깔끔하게 정리
+className={cn('rounded p-2', isActive && 'bg-primary text-white')}
+```
+
 ## 컴포넌트 분류
 
 ### Action 컴포넌트 (`*Action.tsx`)

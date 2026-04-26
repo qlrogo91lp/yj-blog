@@ -1,6 +1,6 @@
 import { Image } from '@tiptap/extension-image';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { ImageNodeView } from './image-node-view';
+import { ImageNodeView } from '../_components/_image-block/image-node-view';
 
 export type ImageSize = 'small' | 'medium' | 'full';
 export type ImageAlign = 'left' | 'center' | 'right';
