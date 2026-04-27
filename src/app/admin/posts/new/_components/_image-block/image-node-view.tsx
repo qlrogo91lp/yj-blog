@@ -1,6 +1,7 @@
 'use client';
 
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
+import { cn } from '@/lib/utils';
 import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
 import { ImageToolbar } from './image-toolbar';
 
@@ -40,8 +41,10 @@ export function ImageNodeView({
         alt={alt}
         data-size={size}
         data-align={align}
-        className={selected ? 'ring-2 ring-primary ring-offset-2' : ''}
-        draggable={false}
+        className={cn(
+          'cursor-grab active:cursor-grabbing',
+          selected && 'ring-2 ring-primary ring-offset-2',
+        )}
       />
       {(selected || caption) && (
         <input
