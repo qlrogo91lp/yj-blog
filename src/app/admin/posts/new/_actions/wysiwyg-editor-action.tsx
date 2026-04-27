@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { ImageBlock } from '../_utils/image-extension';
+import { ImageUploading } from '../_utils/image-uploading-extension';
 import { Link } from '@tiptap/extension-link';
 import { Youtube } from '@tiptap/extension-youtube';
 import { Placeholder } from '@tiptap/extension-placeholder';
@@ -55,6 +56,7 @@ export function WysiwygEditorAction() {
       TextStyle,
       Link.configure({ openOnClick: false }),
       ImageBlock,
+      ImageUploading,
       Youtube.configure({
         nocookie: true,
         allowFullscreen: true,
