@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import type { NodeViewProps } from '@tiptap/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ImageUploadingNodeView } from './image-uploading-node-view';
 
@@ -10,7 +11,7 @@ vi.mock('@tiptap/react', () => ({
 
 const baseProps = {
   node: { attrs: { id: 'abc', previewUrl: 'blob:preview' } },
-} as never;
+} as unknown as NodeViewProps;
 
 describe('ImageUploadingNodeView', () => {
   beforeEach(() => {
@@ -29,8 +30,7 @@ describe('ImageUploadingNodeView', () => {
   });
 
   it('unmount 시 URL.revokeObjectURL을 호출한다', () => {
-    const revoke = vi.fn();
-    vi.stubGlobal('URL', { ...URL, revokeObjectURL: revoke });
+    const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
     const { unmount } = render(<ImageUploadingNodeView {...baseProps} />);
     unmount();
     expect(revoke).toHaveBeenCalledWith('blob:preview');
