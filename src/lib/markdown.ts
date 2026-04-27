@@ -7,7 +7,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
-import type { Element } from 'hast';
+import type { Element, Root } from 'hast';
 import { remarkYoutube } from './remark-youtube';
 
 export type TocItem = {
@@ -20,6 +20,47 @@ export type MarkdownResult = {
   html: string;
   toc: TocItem[];
 };
+
+function rehypeImageCaption() {
+  return (tree: Root) => {
+    visit(tree, 'element', (node: Element, index, parent) => {
+      if (node.tagName !== 'p') return;
+      if (node.children.length !== 1) return;
+
+      const child = node.children[0];
+      if (child.type !== 'element') return;
+      const img = child as Element;
+      if (img.tagName !== 'img') return;
+
+      const caption = img.properties?.dataCaption;
+      if (!caption) return;
+
+      delete img.properties!.dataCaption;
+
+      const figure: Element = {
+        type: 'element',
+        tagName: 'figure',
+        properties: {
+          ...(img.properties?.dataSize && { dataSize: img.properties.dataSize }),
+          ...(img.properties?.dataAlign && { dataAlign: img.properties.dataAlign }),
+        },
+        children: [
+          img,
+          {
+            type: 'element',
+            tagName: 'figcaption',
+            properties: {},
+            children: [{ type: 'text', value: String(caption) }],
+          },
+        ],
+      };
+
+      if (parent && index !== null && index !== undefined) {
+        (parent.children as Element[])[index] = figure;
+      }
+    });
+  };
+}
 
 export async function markdownToHtml(markdown: string): Promise<string> {
   const result = await unified()
@@ -81,6 +122,7 @@ export async function htmlToHtmlWithToc(html: string): Promise<MarkdownResult> {
   const processor = unified()
     .use(rehypeParse, { fragment: true })
     .use(rehypeSlug)
+    .use(rehypeImageCaption)
     .use(() => (tree) => {
       visit(tree, 'element', (node: Element) => {
         if (node.tagName === 'h2' || node.tagName === 'h3') {

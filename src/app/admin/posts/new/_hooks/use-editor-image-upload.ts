@@ -3,6 +3,7 @@ import type { Editor } from '@tiptap/react';
 import { toast } from 'sonner';
 import { uploadImage } from '../_services/upload-image';
 import { useNewPostStore } from '../_store';
+import { replaceUploadingNode } from '../_utils/replace-uploading-node';
 
 export function useEditorImageUpload() {
   const setPostId = useNewPostStore((s) => s.setPostId);
@@ -16,6 +17,18 @@ export function useEditorImageUpload() {
         return true;
       }
 
+      const id = crypto.randomUUID();
+      const previewUrl = URL.createObjectURL(file);
+
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'imageUploading',
+          attrs: { id, previewUrl },
+        })
+        .run();
+
       const formData = new FormData();
       formData.append('file', file);
 
@@ -23,12 +36,16 @@ export function useEditorImageUpload() {
       const result = await uploadImage(formData, currentPostId, 'content');
 
       if (result.url) {
-        editor.chain().focus().setImage({ src: result.url }).run();
+        replaceUploadingNode(editor, id, {
+          type: 'image',
+          attrs: { src: result.url },
+        });
         if (result.postId && !currentPostId) {
           setPostId(result.postId);
         }
-      } else if (result.error) {
-        toast.error(result.error);
+      } else {
+        replaceUploadingNode(editor, id, null);
+        toast.error(result.error ?? '업로드 실패');
       }
 
       return true;
