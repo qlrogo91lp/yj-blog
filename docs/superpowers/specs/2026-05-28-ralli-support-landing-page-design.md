@@ -104,17 +104,18 @@ URL:
 
 ## 5. 개인정보 처리방침 `/apps/ralli/privacy` 구성
 
-영문, 단순 텍스트. Ralli는 HealthKit 연동·기기 로컬 저장 위주라 수집·전송 항목이 적다.
+영문, 단순 텍스트. **데이터 저장 모델: SwiftData(기기 로컬) + CloudKit(사용자 본인의 비공개 iCloud 동기화).** 개발자 운영 서버로의 전송은 없다.
 
 섹션:
 1. **Intro** — 시행일(Effective date), 앱 이름.
-2. **Data we access** — HealthKit 운동 세션·심박수·칼로리 등은 운동 기록 목적에만 사용. 경기 점수·기록은 기기에 로컬 저장.
-3. **Data we do NOT collect / share** — 개인 식별 정보를 외부 서버로 전송하지 않음, 제3자 공유·판매 없음, 광고 추적 없음. (실제 앱 동작과 일치하도록 작성 — 외부 전송이 있으면 문구 조정 필요)
-4. **HealthKit** — Apple HealthKit 데이터는 광고 목적 사용 금지 등 Apple 정책 준수 명시.
-5. **Children / 기타** — 필요 시 간단히.
-6. **Contact** — qlrogo91lp@gmail.com.
+2. **Data we access** — HealthKit 운동 세션·심박수·칼로리 등은 운동 기록 목적에만 사용. 경기 점수·기록은 SwiftData로 기기에 저장.
+3. **iCloud sync (CloudKit)** — 경기 데이터는 CloudKit을 통해 사용자 **본인의 비공개 iCloud 계정**에만 동기화되어 사용자의 여러 기기에서 공유됨. 데이터는 Apple이 관리하며, 개발자는 접근하지 않음.
+4. **Data we do NOT collect / share** — 개발자 운영 서버로 전송하지 않음, 제3자 공유·판매 없음, 광고 추적 없음, 분석 SDK 없음, 계정 로그인 없음(Apple ID 기반 iCloud만 사용).
+5. **HealthKit** — Apple HealthKit 데이터는 광고 목적 사용 금지 등 Apple 정책 준수 명시.
+6. **Children / 기타** — 필요 시 간단히.
+7. **Contact** — qlrogo91lp@gmail.com.
 
-> **확인 필요:** 본 처리방침은 "외부 서버 전송 없음 / 로컬 저장" 가정으로 작성한다. 앱이 실제로 분석 SDK·원격 동기화·계정 로그인 등을 쓴다면 해당 항목을 추가해야 한다. 초안 작성 후 사용자 검토에서 실제 동작과 대조한다.
+> 데이터 모델은 사용자 확인 완료(2026-05-28): SwiftData + CloudKit, 외부 서버 전송 없음.
 
 ---
 
