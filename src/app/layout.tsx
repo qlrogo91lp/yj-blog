@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getBlogSettings();
+  const settings = await getBlogSettings().catch(() => null);
   return {
     title: settings?.blogName ?? SITE_NAME,
     description: settings?.defaultMetaDescription ?? SITE_DESCRIPTION,

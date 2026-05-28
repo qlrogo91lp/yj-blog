@@ -20,8 +20,8 @@ export const apps: App[] = [
     links: [],
   },
   {
-    slug: 'tennis-counter',
-    name: 'Tennis Counter',
+    slug: 'ralli',
+    name: 'Ralli',
     description: '테니스 경기 중 점수 카운터 앱',
     type: 'app-store',
     tags: ['테니스', '스포츠', 'iOS'],
