@@ -42,7 +42,7 @@ export default async function PostPage({ params }: Props) {
         </article>
 
         {toc.length > 0 && (
-          <div className="absolute left-[calc(100%+2rem)] top-8 hidden w-[220px] xl:block">
+          <div className="absolute left-[calc(100%+2rem)] top-0 hidden h-full w-[220px] min-[1340px]:block">
             <PostToc toc={toc} />
           </div>
         )}
