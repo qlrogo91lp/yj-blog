@@ -38,7 +38,7 @@ export function PostContent({ html }: Props) {
         }}
       >
         <DialogContent
-          showCloseButton
+          showCloseButton={false}
           className="max-w-[95vw] border-0 bg-transparent p-0 shadow-none sm:max-w-[90vw]"
         >
           <DialogTitle className="sr-only">이미지 확대 보기</DialogTitle>
