@@ -38,8 +38,12 @@ export function PostHeader({ post }: Props) {
       </h1>
 
       <div className="mb-6 flex items-center gap-3 text-sm text-muted-foreground">
-        {publishedAt && <time>{publishedAt}</time>}
-        <span>·</span>
+        {publishedAt && (
+          <>
+            <time>{publishedAt}</time>
+            <span>·</span>
+          </>
+        )}
         <span>{post.views.toLocaleString()}회 조회</span>
       </div>
 

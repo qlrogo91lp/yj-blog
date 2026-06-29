@@ -67,4 +67,10 @@ describe('PostHeader', () => {
     render(<PostHeader post={mockPost} />);
     expect(screen.queryByText('yjlogs')).not.toBeInTheDocument();
   });
+
+  it('publishedAt이 null이면 구분점이 표시되지 않는다', () => {
+    render(<PostHeader post={{ ...mockPost, publishedAt: null }} />);
+    expect(screen.getByText(/회 조회/)).toBeInTheDocument();
+    expect(screen.queryByText('·')).not.toBeInTheDocument();
+  });
 });
