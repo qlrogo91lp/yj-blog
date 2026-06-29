@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 type Props = {
   html: string;
@@ -42,6 +42,7 @@ export function PostContent({ html }: Props) {
           className="max-w-[95vw] border-0 bg-transparent p-0 shadow-none sm:max-w-[90vw]"
         >
           <DialogTitle className="sr-only">이미지 확대 보기</DialogTitle>
+          <DialogDescription className="sr-only">{zoomed?.alt ?? '이미지'}</DialogDescription>
           {zoomed && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
