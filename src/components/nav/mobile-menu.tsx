@@ -22,6 +22,7 @@ export function MobileMenu() {
       {isOpen && (
         <div className="absolute left-0 right-0 top-14 border-b bg-background px-4 py-3">
           <NavLinks
+            variant="plain"
             className="flex flex-col gap-3"
             onLinkClick={() => setIsOpen(false)}
           />
