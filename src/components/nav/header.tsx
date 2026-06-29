@@ -16,9 +16,8 @@ export function Header() {
           {SITE_NAME}
         </Link>
 
-        <NavLinks className="hidden md:flex" />
-
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <NavLinks className="hidden md:flex" />
           <SignedIn>
             <Link href="/admin" className="mr-1">
               <Button variant="default" size="sm">
