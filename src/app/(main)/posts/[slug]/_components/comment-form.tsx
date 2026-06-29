@@ -104,9 +104,11 @@ export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
           {form.formState.errors.root.message}
         </p>
       )}
-      <Button type="submit" disabled={form.formState.isSubmitting}>
-        {form.formState.isSubmitting ? '등록 중...' : '댓글 등록'}
-      </Button>
+      <div className="flex justify-end">
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? '등록 중...' : '댓글 등록'}
+        </Button>
+      </div>
     </form>
   );
 }

@@ -23,7 +23,7 @@ export function CommentItem({ comment, postSlug, isReply = false }: Props) {
 
   if (comment.isDeleted) {
     return (
-      <div className={isReply ? 'ml-8 mt-4' : ''}>
+      <div className={isReply ? 'mt-4 ml-4 border-l border-border pl-4' : ''}>
         <p className="text-sm text-muted-foreground italic">
           삭제된 댓글입니다.
         </p>
@@ -44,7 +44,7 @@ export function CommentItem({ comment, postSlug, isReply = false }: Props) {
   }
 
   return (
-    <div className={isReply ? 'ml-8 mt-4' : ''}>
+    <div className={isReply ? 'mt-4 ml-4 border-l border-border pl-4' : ''}>
       <div className="flex items-center gap-2 mb-1">
         <span className="text-sm font-semibold">{comment.authorName}</span>
         <span className="text-xs text-muted-foreground">{formattedDate}</span>
