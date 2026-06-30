@@ -23,7 +23,7 @@ export function PostHeader({ post }: Props) {
         <span className="flex size-7 items-center justify-center rounded-full border">
           <ChevronLeft size={14} />
         </span>
-        Back to index
+        목록으로
       </Link>
 
       {post.category && (

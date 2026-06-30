@@ -60,7 +60,7 @@ describe('PostHeader', () => {
 
   it('목록으로 돌아가는 링크를 렌더한다', () => {
     render(<PostHeader post={mockPost} />);
-    expect(screen.getByRole('link', { name: /back to index/i })).toHaveAttribute('href', '/posts');
+    expect(screen.getByRole('link', { name: /목록으로/i })).toHaveAttribute('href', '/posts');
   });
 
   it('작성자명을 표시하지 않는다', () => {
