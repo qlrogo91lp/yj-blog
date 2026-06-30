@@ -16,9 +16,35 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await selectPostBySlug(slug);
   if (!post) return {};
 
+  const title = post.metaTitle ?? post.title;
+  const description = post.metaDescription ?? post.excerpt ?? undefined;
+  const ogImage = post.thumbnailUrl ?? '/og-default.png';
+  const url = `/posts/${slug}`;
+
   return {
-    title: post.metaTitle ?? post.title,
-    description: post.metaDescription ?? post.excerpt ?? undefined,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      title,
+      description,
+      url,
+      images: [ogImage],
+      publishedTime: post.publishedAt
+        ? new Date(post.publishedAt).toISOString()
+        : undefined,
+      modifiedTime: post.updatedAt
+        ? new Date(post.updatedAt).toISOString()
+        : undefined,
+      tags: post.tags.map((t) => t.name),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
   };
 }
 
