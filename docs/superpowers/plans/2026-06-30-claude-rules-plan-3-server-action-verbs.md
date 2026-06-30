@@ -1,6 +1,6 @@
 # 플랜 3 (B축) — Server Action 동사·접미사 정리
 
-> 브랜치: `feature/rules-server-action-verbs` (from `develop`)
+> 브랜치: `feature/rules-conventions` (from `develop`) — 플랜 1·2·3·4 공통 브랜치
 > 성격: `_services` 파일·함수 리네임 + 호출부 갱신. 동작 변화 없음.
 
 ## 규칙 근거

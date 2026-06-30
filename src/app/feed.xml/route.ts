@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getPosts } from '@/db/queries/posts';
+import { selectPosts } from '@/db/queries/posts';
 import { getBlogSettings } from '@/db/queries/settings';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 
 export async function GET() {
   const [{ items }, settings] = await Promise.all([
-    getPosts({ limit: 20 }),
+    selectPosts({ limit: 20 }),
     getBlogSettings(),
   ]);
 

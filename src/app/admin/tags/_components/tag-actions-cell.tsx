@@ -1,7 +1,7 @@
 'use client';
 
 import type { TagRow } from './columns';
-import { DeleteTagAction } from '../_actions/delete-tag-action';
+import { DeleteTagAction } from '../_actions/delete-tag.action';
 
 type Props = {
   tag: TagRow;

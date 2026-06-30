@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { PostListViewHandler } from '../../_handlers/post-list-view-handler';
+import { PostListViewHandler } from '../../_handlers/post-list-view.handler';
 import type { PostWithCategory, TagSummary } from '@/types';
 
 type TagsMap = Record<number, TagSummary[]>;

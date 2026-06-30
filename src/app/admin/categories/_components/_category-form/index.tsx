@@ -18,8 +18,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { generateSlug } from '@/lib/slugify';
 import type { Category } from '@/types';
 import { type CategoryFormValues, categoryFormSchema } from '@/types/category';
-import { createCategoryAction } from '../../_services/create-category';
-import { updateCategoryAction } from '../../_services/update-category';
+import { addCategory } from '../../_services/add-category';
+import { editCategory } from '../../_services/edit-category';
 
 type Props = {
   open: boolean;
@@ -63,8 +63,8 @@ export function CategoryFormDialog({ open, onOpenChange, category }: Props) {
     setError(null);
 
     const result = isEdit
-      ? await updateCategoryAction(category.id, data)
-      : await createCategoryAction(data);
+      ? await editCategory(category.id, data)
+      : await addCategory(data);
 
     setIsSubmitting(false);
 

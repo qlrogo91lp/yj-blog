@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCategoryBySlug } from '@/db/queries/categories';
-import { getPosts } from '@/db/queries/posts';
-import { ViewToggleAction } from '../../_actions/view-toggle-action';
-import { PostListViewHandler } from '../../_handlers/post-list-view-handler';
+import { selectCategoryBySlug } from '@/db/queries/categories';
+import { selectPosts } from '@/db/queries/posts';
+import { ViewToggleAction } from '../../_actions/view-toggle.action';
+import { PostListViewHandler } from '../../_handlers/post-list-view.handler';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -12,7 +12,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const category = await getCategoryBySlug(slug);
+  const category = await selectCategoryBySlug(slug);
   if (!category) return {};
 
   return {
@@ -25,11 +25,11 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const { view } = await searchParams;
   const viewType = view === 'list' ? 'list' : 'card';
-  const category = await getCategoryBySlug(slug);
+  const category = await selectCategoryBySlug(slug);
 
   if (!category) notFound();
 
-  const { items: posts, total } = await getPosts({ categoryId: category.id });
+  const { items: posts, total } = await selectPosts({ categoryId: category.id });
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">

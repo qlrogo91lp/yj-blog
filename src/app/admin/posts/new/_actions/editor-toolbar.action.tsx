@@ -40,7 +40,7 @@ import { LinkDialog } from '../_components/_link';
 import { ColorPicker } from '../_components/color-picker';
 import { TableInsertPopover } from '../_components/table-insert-popover';
 import { ToolbarButton } from '../_components/toolbar-button';
-import { useEditorContext } from '../_providers/editor-provider';
+import { useEditorContext } from '../_providers/editor.provider';
 import { useNewPostStore } from '../_store';
 
 function useForceUpdate() {

@@ -20,7 +20,7 @@ export const getCategories = unstable_cache(
 /**
  * slug로 카테고리 단건 조회
  */
-export async function getCategoryBySlug(
+export async function selectCategoryBySlug(
   slug: string
 ): Promise<Category | null> {
   const result = await db
@@ -35,7 +35,7 @@ export async function getCategoryBySlug(
 /**
  * 카테고리 생성
  */
-export async function createCategory(
+export async function insertCategory(
   data: CategoryFormValues
 ): Promise<Category> {
   const [created] = await db

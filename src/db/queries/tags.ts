@@ -87,7 +87,7 @@ export const getPostsByTag = unstable_cache(
 /**
  * 특정 글에 연결된 태그 목록
  */
-export async function getTagsByPostId(postId: number): Promise<TagSummary[]> {
+export async function selectTagsByPostId(postId: number): Promise<TagSummary[]> {
   return db
     .select({ id: tags.id, name: tags.name, slug: tags.slug })
     .from(postTags)
@@ -98,7 +98,7 @@ export async function getTagsByPostId(postId: number): Promise<TagSummary[]> {
 /**
  * 여러 글의 태그를 일괄 조회 → Map<postId, TagSummary[]>
  */
-export async function getTagsByPostIds(
+export async function selectTagsByPostIds(
   postIds: number[]
 ): Promise<Map<number, TagSummary[]>> {
   if (postIds.length === 0) return new Map();

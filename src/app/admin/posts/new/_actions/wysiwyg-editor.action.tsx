@@ -17,10 +17,10 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Underline } from '@tiptap/extension-underline';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
-import { useEditorContext } from '../_providers/editor-provider';
+import { useEditorContext } from '../_providers/editor.provider';
 import { useNewPostStore } from '../_store';
 import { useEditorImageUpload } from '../_hooks/use-editor-image-upload';
-import { deleteImage } from '../_services/delete-image';
+import { removeImage } from '../_services/remove-image';
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
@@ -99,7 +99,7 @@ export function WysiwygEditorAction() {
       const currentSrcs = getImageSrcs(editor);
       prevImageSrcs.current.forEach((src) => {
         if (!currentSrcs.has(src)) {
-          deleteImage(src);
+          removeImage(src);
         }
       });
       prevImageSrcs.current = currentSrcs;

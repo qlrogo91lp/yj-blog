@@ -2,15 +2,15 @@
 
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { createComment, getCommentById } from '@/db/queries/comments';
-import { getPostBySlug } from '@/db/queries/posts';
+import { insertComment, selectCommentById } from '@/db/queries/comments';
+import { selectPostBySlug } from '@/db/queries/posts';
 import { sendCommentNotification } from '@/lib/discord';
 import { sendReplyNotification } from '@/lib/email';
 import { commentFormSchema } from '@/types/comment';
 
 type Result = { success: true } | { success: false; error: string };
 
-export async function createCommentAction(
+export async function addComment(
   postId: number,
   postSlug: string,
   formData: unknown
@@ -25,7 +25,7 @@ export async function createCommentAction(
   const emailValue = email === '' ? null : (email ?? null);
 
   try {
-    await createComment({
+    await insertComment({
       postId,
       parentId,
       authorName,
@@ -34,7 +34,7 @@ export async function createCommentAction(
       content,
     });
 
-    const post = await getPostBySlug(postSlug);
+    const post = await selectPostBySlug(postSlug);
     if (post) {
       sendCommentNotification({
         postTitle: post.title,
@@ -46,7 +46,7 @@ export async function createCommentAction(
     }
 
     if (parentId && post) {
-      const parent = await getCommentById(parentId);
+      const parent = await selectCommentById(parentId);
       if (parent?.email) {
         await sendReplyNotification({
           to: parent.email,

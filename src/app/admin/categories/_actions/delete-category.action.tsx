@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Category } from '@/types';
-import { DeleteCategoryDialog } from '../_delete-category';
+import { DeleteCategoryDialog } from '../_components/_delete-category';
 
 type Props = {
   category: Category;

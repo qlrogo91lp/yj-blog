@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { deletePost } from '../_services/delete-post';
+import { removePost } from '../_services/remove-post';
 
 type Props = {
   postId: number;
@@ -24,7 +24,7 @@ export function DeletePostDialog({ postId, postTitle, open, onOpenChange }: Prop
 
   const handleDelete = () => {
     startTransition(async () => {
-      const result = await deletePost(postId);
+      const result = await removePost(postId);
       if (result.success) {
         onOpenChange(false);
       }

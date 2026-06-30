@@ -6,7 +6,7 @@ import { CACHE_TAGS } from '@/db/cache-tags';
 import { blogSettings } from '@/db/schema';
 import type { BlogSettingsFormValues } from '../_components/settings-form';
 
-export async function updateSettings(data: BlogSettingsFormValues) {
+export async function editSettings(data: BlogSettingsFormValues) {
   const { github, twitter, linkedin, ...rest } = data;
 
   const socialLinks: Record<string, string> = {};

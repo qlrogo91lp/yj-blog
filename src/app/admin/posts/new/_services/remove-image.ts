@@ -15,7 +15,7 @@ const r2 = new S3Client({
   },
 });
 
-export async function deleteImage(imageUrl: string): Promise<void> {
+export async function removeImage(imageUrl: string): Promise<void> {
   const { userId } = await auth();
   if (!userId) return;
 

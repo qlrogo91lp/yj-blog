@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import type { Category } from '@/types';
-import { deleteCategoryAction } from '../../_services/delete-category';
+import { removeCategory } from '../../_services/remove-category';
 
 type Props = {
   open: boolean;
@@ -27,7 +27,7 @@ export function DeleteCategoryDialog({ open, onOpenChange, category }: Props) {
     setIsDeleting(true);
     setError(null);
 
-    const result = await deleteCategoryAction(category.id);
+    const result = await removeCategory(category.id);
 
     setIsDeleting(false);
 

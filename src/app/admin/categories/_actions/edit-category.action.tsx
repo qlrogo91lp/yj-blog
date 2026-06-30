@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Category } from '@/types';
-import { CategoryFormDialog } from '../_category-form';
+import { CategoryFormDialog } from '../_components/_category-form';
 
 type Props = {
   category: Category;

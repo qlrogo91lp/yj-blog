@@ -6,7 +6,7 @@ import { posts, referrers } from '@/db/schema';
 /**
  * 조회수 상위 글 목록
  */
-export async function getPopularPosts(limit = 10) {
+export async function selectPopularPosts(limit = 10) {
   return db
     .select({
       id: posts.id,
@@ -24,7 +24,7 @@ export async function getPopularPosts(limit = 10) {
  * 상위 referrer 도메인 집계 (기간 필터 가능)
  * days: undefined이면 전체 기간
  */
-export async function getTopReferrers(limit = 20, days?: number) {
+export async function selectTopReferrers(limit = 20, days?: number) {
   const since = days ? subDays(new Date(), days) : undefined;
 
   const where = and(
@@ -54,7 +54,7 @@ export async function getTopReferrers(limit = 20, days?: number) {
 /**
  * 특정 글의 referrer 집계
  */
-export async function getReferrersByPost(postId: number, limit = 20) {
+export async function selectReferrersByPost(postId: number, limit = 20) {
   const rows = await db
     .select({
       referrer: referrers.referrer,
@@ -78,7 +78,7 @@ export async function getReferrersByPost(postId: number, limit = 20) {
 /**
  * 특정 글의 일별 조회수 추이 (referrers 테이블 기반)
  */
-export async function getPostDailyViews(postId: number, days = 30) {
+export async function selectPostDailyViews(postId: number, days = 30) {
   const since = subDays(new Date(), days);
 
   const rows = await db

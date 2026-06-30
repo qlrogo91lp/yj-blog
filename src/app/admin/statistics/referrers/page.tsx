@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getTopReferrers } from '@/db/queries/statistics';
+import { selectTopReferrers } from '@/db/queries/statistics';
 import { ReferrerPeriodFilter } from './_components/referrer-period-filter';
 
 export const revalidate = 60;
@@ -36,7 +36,7 @@ export default async function AdminReferrersPage({ searchParams }: Props) {
   const days = daysParam === 'all' || !daysParam ? undefined : Number(daysParam);
   const currentPeriod = daysParam ?? '30';
 
-  const referrerList = await getTopReferrers(20, days);
+  const referrerList = await selectTopReferrers(20, days);
 
   return (
     <div>

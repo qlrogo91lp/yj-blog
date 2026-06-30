@@ -1,4 +1,4 @@
-import { SidebarCollapseHandler } from './_handlers/sidebar-collapse-handler';
+import { SidebarCollapseHandler } from './_handlers/sidebar-collapse.handler';
 
 export default function NewPostLayout({
   children,

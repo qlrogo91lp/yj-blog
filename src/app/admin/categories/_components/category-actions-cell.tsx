@@ -1,6 +1,6 @@
 import type { Category } from '@/types';
-import { EditCategoryAction } from './_actions/edit-category-action';
-import { DeleteCategoryAction } from './_actions/delete-category-action';
+import { EditCategoryAction } from '../_actions/edit-category.action';
+import { DeleteCategoryAction } from '../_actions/delete-category.action';
 
 type Props = {
   category: Category;

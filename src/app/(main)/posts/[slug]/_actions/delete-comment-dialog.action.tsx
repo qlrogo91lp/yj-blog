@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { type CommentPasswordValues, commentPasswordSchema } from '@/types';
-import { deleteCommentAction } from '../_services/delete-comment';
+import { removeComment } from '../_services/remove-comment';
 
 type Props = {
   commentId: number;
@@ -29,7 +29,7 @@ export function DeleteCommentDialogAction({ commentId, postSlug }: Props) {
   });
 
   const onDelete = async (data: CommentPasswordValues) => {
-    const result = await deleteCommentAction(commentId, postSlug, data);
+    const result = await removeComment(commentId, postSlug, data);
     if (result.success) {
       setIsOpen(false);
       form.reset();

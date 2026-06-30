@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { type CommentFormValues, commentFormSchema } from '@/types/comment';
-import { createCommentAction } from '../_services/create-comment';
+import { addComment } from '../_services/add-comment';
 
 type Props = {
   postId: number;
@@ -29,7 +29,7 @@ export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
   });
 
   const onSubmit = async (data: CommentFormValues) => {
-    const result = await createCommentAction(postId, postSlug, data);
+    const result = await addComment(postId, postSlug, data);
     if (result.success) {
       form.reset();
       onSuccess?.();

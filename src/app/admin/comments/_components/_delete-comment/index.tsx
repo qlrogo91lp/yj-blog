@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { adminDeleteCommentAction } from './_services/delete-comment';
+import { removeComment } from './_services/remove-comment';
 
 type Props = {
   commentId: number | null;
@@ -25,7 +25,7 @@ export function DeleteCommentDialog({ commentId, onClose }: Props) {
     setIsSubmitting(true);
     setError(null);
 
-    const result = await adminDeleteCommentAction(commentId);
+    const result = await removeComment(commentId);
     setIsSubmitting(false);
 
     if (result.success) {
