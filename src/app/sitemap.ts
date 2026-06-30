@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { selectPosts } from '@/db/queries/posts';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { items: posts } = await selectPosts({ limit: 1000 });

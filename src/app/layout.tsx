@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getBlogSettings().catch(() => null);
   const siteName = settings?.blogName ?? SITE_NAME;
   const description = settings?.defaultMetaDescription ?? SITE_DESCRIPTION;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com';
 
   return {
     metadataBase: new URL(baseUrl),

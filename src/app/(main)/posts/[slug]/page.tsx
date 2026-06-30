@@ -17,7 +17,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await selectPostBySlug(slug);
-  if (!post) return {};
+  if (!post || post.status !== 'published') return {};
 
   const title = post.metaTitle ?? post.title;
   const description = post.metaDescription ?? post.excerpt ?? undefined;
@@ -70,7 +70,7 @@ export default async function PostPage({ params }: Props) {
       <ArticleJsonLd
         post={post}
         blogName={settings?.blogName ?? SITE_NAME}
-        baseUrl={process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'}
+        baseUrl={process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com'}
       />
       <div className="relative mx-auto max-w-3xl px-4 py-8">
         <article>
