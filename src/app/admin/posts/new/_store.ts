@@ -12,6 +12,8 @@ type State = {
   tagIds: number[];
   slug: string;
   excerpt: string;
+  metaTitle: string;
+  isGeneratingExcerpt: boolean;
   thumbnailUrl: string | null;
   status: 'draft' | 'published';
   publishedAt: Date | null;
@@ -29,6 +31,8 @@ type Action = {
   setTagIds: (ids: number[]) => void;
   setSlug: (slug: string) => void;
   setExcerpt: (excerpt: string) => void;
+  setMetaTitle: (metaTitle: string) => void;
+  setIsGeneratingExcerpt: (isGeneratingExcerpt: boolean) => void;
   setThumbnailUrl: (url: string | null) => void;
   setStatus: (status: 'draft' | 'published') => void;
   setPublishedAt: (date: Date | null) => void;
@@ -45,6 +49,7 @@ type Action = {
     tagIds: number[];
     slug: string;
     excerpt: string;
+    metaTitle: string;
     thumbnailUrl: string | null;
     status: 'draft' | 'published';
     publishedAt: Date | null;
@@ -60,6 +65,8 @@ export const useNewPostStore = create<State & Action>((set) => ({
   tagIds: [],
   slug: '',
   excerpt: '',
+  metaTitle: '',
+  isGeneratingExcerpt: false,
   thumbnailUrl: null,
   status: 'draft',
   publishedAt: null,
@@ -76,6 +83,9 @@ export const useNewPostStore = create<State & Action>((set) => ({
   setTagIds: (tagIds) => set({ tagIds }),
   setSlug: (slug) => set({ slug }),
   setExcerpt: (excerpt) => set({ excerpt }),
+  setMetaTitle: (metaTitle) => set({ metaTitle }),
+  setIsGeneratingExcerpt: (isGeneratingExcerpt) =>
+    set({ isGeneratingExcerpt }),
   setThumbnailUrl: (thumbnailUrl) => set({ thumbnailUrl }),
   setStatus: (status) => set({ status }),
   setPublishedAt: (publishedAt) => set({ publishedAt }),
@@ -92,6 +102,8 @@ export const useNewPostStore = create<State & Action>((set) => ({
       tagIds: [],
       slug: '',
       excerpt: '',
+      metaTitle: '',
+      isGeneratingExcerpt: false,
       thumbnailUrl: null,
       status: 'draft',
       publishedAt: null,
@@ -103,6 +115,7 @@ export const useNewPostStore = create<State & Action>((set) => ({
     set({
       ...data,
       mode: data.contentFormat === 'markdown' ? 'markdown' : 'wysiwyg',
+      isGeneratingExcerpt: false,
       saveStatus: 'idle',
       lastSavedAt: null,
     }),
