@@ -20,6 +20,7 @@ export function PostInitHandler({ post, initialTagIds }: Props) {
       tagIds: initialTagIds,
       slug: post.slug,
       excerpt: post.excerpt ?? '',
+      metaTitle: post.metaTitle ?? '',
       thumbnailUrl: post.thumbnailUrl ?? null,
       status: post.status,
       publishedAt: post.publishedAt,
