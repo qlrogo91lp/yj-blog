@@ -1,6 +1,6 @@
 ---
 name: execute-plan
-description: .claude/ 에 있는 plan.md 파일을 읽고 계획대로 코드를 수정한다. feature/* 브랜치에서 작업하며, 완료 후 plan 파일을 src/docs/로 이동한다.
+description: .claude/ 에 있는 plan.md 파일을 읽고 계획대로 코드를 수정한다. feature/* 브랜치에서 작업하며, 완료 후 plan 파일을 docs/superpowers/plans/로 이동한다.
 ---
 
 `.claude/` 디렉터리에 있는 plan 파일을 읽고 계획대로 코드를 수정한다.
@@ -72,14 +72,14 @@ EOF
 
 커밋 메시지는 plan 파일의 제목과 변경 내용을 기반으로 간결하게 작성한다.
 
-### 5. plan 파일을 src/docs/로 이동
+### 5. plan 파일을 docs/superpowers/plans/로 이동
 
-작업이 완료되면 plan 파일을 `src/docs/`로 이동한다.
+작업이 완료되면 plan 파일을 `docs/superpowers/plans/`로 이동한다.
 
 ```bash
-git mv .claude/<plan파일명> src/docs/<plan파일명>
+git mv .claude/<plan파일명> docs/superpowers/plans/<plan파일명>
 git commit -m "$(cat <<'EOF'
-📝 <plan파일명> → src/docs/ 이동
+📝 <plan파일명> → docs/superpowers/plans/ 이동
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 EOF
