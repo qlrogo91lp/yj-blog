@@ -10,6 +10,7 @@ import { CategorySelectorAction } from './_actions/category-selector.action';
 import { TagSelectorAction } from './_actions/tag-selector.action';
 import { TitleInputAction } from './_actions/title-input.action';
 import { ThumbnailUploadAction } from './_actions/thumbnail-upload.action';
+import { SeoSectionAction } from './_actions/seo-section.action';
 import { AutoSaveProvider } from './_providers/auto-save.provider';
 
 export default async function NewPostPage() {
@@ -30,6 +31,7 @@ export default async function NewPostPage() {
           <div className="mt-4 flex-1">
             <EditorViewHandler />
           </div>
+          <SeoSectionAction />
         </div>
         <BottomBar />
       </div>
