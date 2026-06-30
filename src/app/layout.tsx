@@ -22,13 +22,27 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getBlogSettings().catch(() => null);
+  const siteName = settings?.blogName ?? SITE_NAME;
+  const description = settings?.defaultMetaDescription ?? SITE_DESCRIPTION;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+
   return {
-    title: settings?.blogName ?? SITE_NAME,
-    description: settings?.defaultMetaDescription ?? SITE_DESCRIPTION,
+    metadataBase: new URL(baseUrl),
+    title: siteName,
+    description,
     alternates: {
       types: {
         'application/rss+xml': '/feed.xml',
       },
+    },
+    openGraph: {
+      siteName,
+      type: 'website',
+      images: ['/og-default.png'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      images: ['/og-default.png'],
     },
   };
 }
