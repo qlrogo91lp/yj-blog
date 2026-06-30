@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { selectPostBySlug } from '@/db/queries/posts';
+import { getBlogSettings } from '@/db/queries/settings';
 import { markdownToHtmlWithToc, htmlToHtmlWithToc } from '@/lib/markdown';
+import { SITE_NAME } from '@/lib/constants';
 import { CommentSection } from './_components/comment-section';
 import { PostToc } from './_components/post-toc';
 import { PostHeader } from './_components/post-header';
 import { PostContent } from './_components/post-content';
+import { ArticleJsonLd } from './_components/article-json-ld';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -14,17 +17,46 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await selectPostBySlug(slug);
-  if (!post) return {};
+  if (!post || post.status !== 'published') return {};
+
+  const title = post.metaTitle ?? post.title;
+  const description = post.metaDescription ?? post.excerpt ?? undefined;
+  const ogImage = post.thumbnailUrl ?? '/og-default.png';
+  const url = `/posts/${slug}`;
 
   return {
-    title: post.metaTitle ?? post.title,
-    description: post.metaDescription ?? post.excerpt ?? undefined,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      title,
+      description,
+      url,
+      images: [ogImage],
+      publishedTime: post.publishedAt
+        ? new Date(post.publishedAt).toISOString()
+        : undefined,
+      modifiedTime: post.updatedAt
+        ? new Date(post.updatedAt).toISOString()
+        : undefined,
+      tags: post.tags.map((t) => t.name),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
   };
 }
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = await selectPostBySlug(slug);
+  const [post, settings] = await Promise.all([
+    selectPostBySlug(slug),
+    getBlogSettings().catch(() => null),
+  ]);
 
   if (!post || post.status !== 'published') notFound();
 
@@ -35,6 +67,11 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <>
+      <ArticleJsonLd
+        post={post}
+        blogName={settings?.blogName ?? SITE_NAME}
+        baseUrl={process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com'}
+      />
       <div className="relative mx-auto max-w-3xl px-4 py-8">
         <article>
           <PostHeader post={post} />

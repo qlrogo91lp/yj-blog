@@ -9,6 +9,7 @@ import { CategorySelectorAction } from '../../new/_actions/category-selector.act
 import { TagSelectorAction } from '../../new/_actions/tag-selector.action';
 import { TitleInputAction } from '../../new/_actions/title-input.action';
 import { ThumbnailUploadAction } from '../../new/_actions/thumbnail-upload.action';
+import { SeoSectionAction } from '../../new/_actions/seo-section.action';
 import { EditorProvider } from '../../new/_providers/editor.provider';
 import { AutoSaveProvider } from '../../new/_providers/auto-save.provider';
 import { EditorViewHandler } from '../../new/_handlers/editor-view.handler';
@@ -48,6 +49,7 @@ export default async function EditPostPage({ params }: Props) {
           <div className="mt-4 flex-1">
             <EditorViewHandler />
           </div>
+          <SeoSectionAction />
         </div>
         <BottomBar />
       </div>
