@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { type CommentWithReplies } from '@/types';
-import { DeleteCommentDialogAction } from '../_actions/delete-comment-dialog-action';
+import { DeleteCommentDialogAction } from '../_actions/delete-comment-dialog.action';
 import { CommentForm } from './comment-form';
 
 type Props = {

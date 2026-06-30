@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPosts } from '@/db/queries/posts';
-import { getCategoryBySlug } from '@/db/queries/categories';
+import { selectPosts } from '@/db/queries/posts';
+import { selectCategoryBySlug } from '@/db/queries/categories';
 import { getTagBySlug } from '@/db/queries/tags';
 
 export async function GET(request: NextRequest) {
@@ -12,11 +12,11 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search') ?? undefined;
 
   const [categoryData, tagData] = await Promise.all([
-    categorySlug ? getCategoryBySlug(categorySlug) : null,
+    categorySlug ? selectCategoryBySlug(categorySlug) : null,
     tagSlug ? getTagBySlug(tagSlug) : null,
   ]);
 
-  const result = await getPosts({
+  const result = await selectPosts({
     categoryId: categoryData?.id,
     tagId: tagData?.id,
     page,

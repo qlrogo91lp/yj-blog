@@ -1,7 +1,7 @@
 'use client';
 
-import { MarkdownEditorAction } from '../_actions/markdown-editor-action';
-import { WysiwygEditorAction } from '../_actions/wysiwyg-editor-action';
+import { MarkdownEditorAction } from '../_actions/markdown-editor.action';
+import { WysiwygEditorAction } from '../_actions/wysiwyg-editor.action';
 import { useNewPostStore } from '../_store';
 
 export function EditorViewHandler() {

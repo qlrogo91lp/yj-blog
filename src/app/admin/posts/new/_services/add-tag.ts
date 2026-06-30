@@ -12,7 +12,7 @@ type CreateTagResult =
   | { success: true; tag: { id: number; name: string; slug: string } }
   | { success: false; error: string };
 
-export async function createTag(name: string): Promise<CreateTagResult> {
+export async function addTag(name: string): Promise<CreateTagResult> {
   const { userId } = await auth();
   if (!userId) return { success: false, error: '인증이 필요합니다' };
 

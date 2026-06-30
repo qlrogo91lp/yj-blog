@@ -1,6 +1,6 @@
 # 플랜 1 (A축) — 컴포넌트 dot-suffix 리네임
 
-> 브랜치: `feature/rules-component-dot-suffix` (from `develop`)
+> 브랜치: `feature/rules-conventions` (from `develop`) — 플랜 1·2·3·4 공통 브랜치
 > 성격: 순수 리네이밍. 동작 변화 없음.
 
 ## 규칙 근거

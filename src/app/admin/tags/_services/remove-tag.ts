@@ -7,7 +7,7 @@ import { deleteTag as deleteTagQuery } from '@/db/queries/tags';
 
 type Result = { success: true } | { success: false; error: string };
 
-export async function deleteTag(id: number): Promise<Result> {
+export async function removeTag(id: number): Promise<Result> {
   const { userId } = await auth();
   if (!userId) {
     return { success: false, error: '인증이 필요합니다' };

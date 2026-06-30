@@ -1,8 +1,8 @@
 # 플랜 2 (D축) — 폴더 배치 정리
 
-> 브랜치: `feature/rules-folder-relocation` (from `develop`)
+> 브랜치: `feature/rules-conventions` (from `develop`) — 플랜 1·2·3·4 공통 브랜치
 > 성격: 폴더 이동 + dot-suffix 적용. 동작 변화 없음.
-> 선행: 플랜 1(A축)이 `develop`에 머지된 뒤 진행 권장(충돌 최소화).
+> 선행: 플랜 1(A축) 완료 후 동일 브랜치에서 이어서 진행.
 
 ## 규칙 근거
 

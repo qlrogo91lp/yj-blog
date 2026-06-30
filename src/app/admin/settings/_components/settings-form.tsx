@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { updateSettings } from '../_services/update-settings';
+import { editSettings } from '../_services/edit-settings';
 import type { BlogSettings } from '@/db/queries/settings';
 
 const blogSettingsSchema = z.object({
@@ -66,7 +66,7 @@ export function SettingsForm({ defaultValues }: Props) {
   const onSubmit = (data: BlogSettingsFormValues) => {
     startTransition(async () => {
       try {
-        await updateSettings(data);
+        await editSettings(data);
         toast.success('설정이 저장되었습니다');
       } catch {
         toast.error('저장 중 오류가 발생했습니다');

@@ -7,7 +7,7 @@ import { softDeleteComment } from '@/db/queries/comments';
 
 type Result = { success: true } | { success: false; error: string };
 
-export async function adminDeleteCommentAction(
+export async function removeComment(
   commentId: number
 ): Promise<Result> {
   const { userId } = await auth();

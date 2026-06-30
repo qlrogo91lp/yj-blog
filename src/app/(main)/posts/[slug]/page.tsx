@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getPostBySlug } from '@/db/queries/posts';
+import { selectPostBySlug } from '@/db/queries/posts';
 import { markdownToHtmlWithToc, htmlToHtmlWithToc } from '@/lib/markdown';
 import { CommentSection } from './_components/comment-section';
 import { PostToc } from './_components/post-toc';
@@ -13,7 +13,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await selectPostBySlug(slug);
   if (!post) return {};
 
   return {
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await selectPostBySlug(slug);
 
   if (!post || post.status !== 'published') notFound();
 

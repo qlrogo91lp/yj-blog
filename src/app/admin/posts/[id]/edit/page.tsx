@@ -1,18 +1,18 @@
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import { getCategories } from '@/db/queries/categories';
-import { getPostById } from '@/db/queries/posts';
-import { getAllTags, getTagsByPostId } from '@/db/queries/tags';
+import { selectPostById } from '@/db/queries/posts';
+import { getAllTags, selectTagsByPostId } from '@/db/queries/tags';
 import { BottomBar } from '../../new/_components/bottom-bar';
-import { EditorToolbarAction } from '../../new/_actions/editor-toolbar-action';
-import { CategorySelectorAction } from '../../new/_actions/category-selector-action';
-import { TagSelectorAction } from '../../new/_actions/tag-selector-action';
-import { TitleInputAction } from '../../new/_actions/title-input-action';
-import { ThumbnailUploadAction } from '../../new/_actions/thumbnail-upload-action';
-import { EditorProvider } from '../../new/_providers/editor-provider';
-import { AutoSaveProvider } from '../../new/_providers/auto-save-provider';
-import { EditorViewHandler } from '../../new/_handlers/editor-view-handler';
-import { PostInitHandler } from './_handlers/post-init-handler';
+import { EditorToolbarAction } from '../../new/_actions/editor-toolbar.action';
+import { CategorySelectorAction } from '../../new/_actions/category-selector.action';
+import { TagSelectorAction } from '../../new/_actions/tag-selector.action';
+import { TitleInputAction } from '../../new/_actions/title-input.action';
+import { ThumbnailUploadAction } from '../../new/_actions/thumbnail-upload.action';
+import { EditorProvider } from '../../new/_providers/editor.provider';
+import { AutoSaveProvider } from '../../new/_providers/auto-save.provider';
+import { EditorViewHandler } from '../../new/_handlers/editor-view.handler';
+import { PostInitHandler } from './_handlers/post-init.handler';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -27,10 +27,10 @@ export default async function EditPostPage({ params }: Props) {
   if (Number.isNaN(postId)) notFound();
 
   const [post, categories, allTags, postTagList] = await Promise.all([
-    getPostById(postId),
+    selectPostById(postId),
     getCategories(),
     getAllTags(),
-    getTagsByPostId(postId),
+    selectTagsByPostId(postId),
   ]);
 
   if (!post) notFound();

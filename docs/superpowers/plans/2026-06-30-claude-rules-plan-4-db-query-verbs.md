@@ -1,6 +1,6 @@
 # 플랜 4 (C축) — DB 쿼리 동사 정리
 
-> 브랜치: `feature/rules-db-query-verbs` (from `develop`)
+> 브랜치: `feature/rules-conventions` (from `develop`) — 플랜 1·2·3·4 공통 브랜치
 > 성격: `src/db/queries/*` 함수 리네임 + 참조 갱신. 동작 변화 없음.
 > 가장 광범위(참조 21+파일)하므로 마지막에 진행.
 

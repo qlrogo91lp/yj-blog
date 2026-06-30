@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { PostWithCategory } from '@/types';
-import { PostListViewHandler } from './post-list-view-handler';
+import { PostListViewHandler } from './post-list-view.handler';
 
 vi.mock('next/link', () => ({
   default: ({

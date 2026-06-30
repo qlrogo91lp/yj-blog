@@ -2,12 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { getCommentById, softDeleteComment } from '@/db/queries/comments';
+import { selectCommentById, softDeleteComment } from '@/db/queries/comments';
 import { commentPasswordSchema } from '@/types/comment';
 
 type Result = { success: true } | { success: false; error: string };
 
-export async function deleteCommentAction(
+export async function removeComment(
   commentId: number,
   postSlug: string,
   formData: unknown
@@ -17,7 +17,7 @@ export async function deleteCommentAction(
     return { success: false, error: '비밀번호를 입력해주세요' };
   }
 
-  const comment = await getCommentById(commentId);
+  const comment = await selectCommentById(commentId);
   if (!comment) return { success: false, error: '댓글을 찾을 수 없습니다' };
 
   const isValid = await bcrypt.compare(

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPosts } from '@/db/queries/posts';
-import { getCategoryBySlug } from '@/db/queries/categories';
-import { getTagBySlug, getTagsByPostIds } from '@/db/queries/tags';
+import { selectPosts } from '@/db/queries/posts';
+import { selectCategoryBySlug } from '@/db/queries/categories';
+import { getTagBySlug, selectTagsByPostIds } from '@/db/queries/tags';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -12,11 +12,11 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search') ?? undefined;
 
   const [categoryData, tagData] = await Promise.all([
-    categorySlug ? getCategoryBySlug(categorySlug) : null,
+    categorySlug ? selectCategoryBySlug(categorySlug) : null,
     tagSlug ? getTagBySlug(tagSlug) : null,
   ]);
 
-  const { items: posts } = await getPosts({
+  const { items: posts } = await selectPosts({
     categoryId: categoryData?.id,
     tagId: tagData?.id,
     page,
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     search,
   });
 
-  const tagsMap = await getTagsByPostIds(posts.map((p) => p.id));
+  const tagsMap = await selectTagsByPostIds(posts.map((p) => p.id));
   const serialized = Object.fromEntries(tagsMap);
 
   return NextResponse.json(serialized);

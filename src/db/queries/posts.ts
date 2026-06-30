@@ -16,7 +16,7 @@ interface GetPostsOptions {
 /**
  * 발행된 글 목록 (카테고리 join, 페이지네이션, 검색)
  */
-export async function getPosts({
+export async function selectPosts({
   categoryId,
   tagId,
   page = 1,
@@ -77,7 +77,7 @@ export async function getPosts({
 /**
  * slug로 글 상세 조회 (category + tags join)
  */
-export async function getPostBySlug(
+export async function selectPostBySlug(
   slug: string
 ): Promise<PostWithCategoryAndTags | null> {
   const result = await db
@@ -102,7 +102,7 @@ export async function getPostBySlug(
 /**
  * ID로 글 단건 조회 (관리자 수정용)
  */
-export async function getPostById(id: number) {
+export async function selectPostById(id: number) {
   const result = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
 
   return result[0] ?? null;

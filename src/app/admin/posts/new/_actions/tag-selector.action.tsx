@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import type { TagSummary } from '@/types';
 import { useNewPostStore } from '../_store';
-import { createTag } from '../_services/manage-tags';
+import { addTag } from '../_services/add-tag';
 
 type Props = {
   allTags: TagSummary[];
@@ -32,7 +32,7 @@ export function TagSelectorAction({ allTags: initialTags }: Props) {
       )
     : allTags.filter((t) => !tagIds.includes(t.id));
 
-  const addTag = useCallback(
+  const selectTag = useCallback(
     (tag: TagSummary) => {
       setTagIds([...tagIds, tag.id]);
       setInput('');
@@ -57,16 +57,16 @@ export function TagSelectorAction({ allTags: initialTags }: Props) {
         (t) => t.name.toLowerCase() === trimmed.toLowerCase()
       );
       if (exact) {
-        if (!tagIds.includes(exact.id)) addTag(exact);
+        if (!tagIds.includes(exact.id)) selectTag(exact);
         return;
       }
 
-      const result = await createTag(trimmed);
+      const result = await addTag(trimmed);
       if (result.success) {
         if (!allTags.find((t) => t.id === result.tag.id)) {
           setAllTags((prev) => [...prev, result.tag]);
         }
-        addTag(result.tag);
+        selectTag(result.tag);
       } else {
         toast.error(result.error);
       }
@@ -101,7 +101,7 @@ export function TagSelectorAction({ allTags: initialTags }: Props) {
                 type="button"
                 onMouseDown={(e) => {
                   e.preventDefault();
-                  addTag(tag);
+                  selectTag(tag);
                 }}
                 className="w-full px-3 py-1.5 text-left text-sm hover:bg-accent"
               >
