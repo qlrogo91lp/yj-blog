@@ -49,6 +49,11 @@ npm run test:e2e    # Playwright E2E 테스트
 
 > 새 기능 작업 시 `develop`에서 `feature/*` 브랜치를 생성하고, 완료 후 `develop`으로 PR을 올린다.
 
+### 머지 규칙
+
+- **squash 머지 금지**. 각 커밋 히스토리를 보존하기 위해 머지 커밋을 남기는 방식(`--no-ff`)으로 머지한다.
+- feature 브랜치의 단계별 커밋을 develop에서도 그대로 추적할 수 있어야 한다.
+
 ## Git Worktree 규칙
 
 - worktree에서 작업이 완료(PR 생성 또는 merge)된 후에는 반드시 해당 worktree를 제거한다.
