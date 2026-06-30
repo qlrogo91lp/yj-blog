@@ -1,14 +1,19 @@
 'use client';
 
-import { AlignCenter, AlignLeft, AlignRight, ChevronsLeftRight, LucideIcon, Trash2 } from 'lucide-react';
+import { AlignCenter, AlignLeft, AlignRight, ChevronsLeftRight, LucideIcon, Settings, Trash2 } from 'lucide-react';
 import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
 import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type Props = {
   size: ImageSize;
   align: ImageAlign;
+  alt: string;
   onSizeChange: (size: ImageSize) => void;
   onAlignChange: (align: ImageAlign) => void;
+  onAltChange: (alt: string) => void;
   onDelete: () => void;
 };
 
@@ -32,8 +37,10 @@ const alignOptions: {
 export function ImageToolbar({
   size,
   align,
+  alt,
   onSizeChange,
   onAlignChange,
+  onAltChange,
   onDelete,
 }: Props) {
   const alignDisabled = size === 'full';
@@ -78,6 +85,31 @@ export function ImageToolbar({
           {Icon ? <Icon size={16} /> : label}
         </button>
       ))}
+
+      <div className="mx-1 h-5 w-px bg-border" />
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            aria-label="대체 텍스트 설정"
+            className="rounded p-1.5 hover:bg-accent cursor-pointer"
+          >
+            <Settings size={16} />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent side="bottom" align="center" className="w-72">
+          <Label htmlFor="image-alt-input" className="mb-1 block text-xs">
+            대체 텍스트 (alt)
+          </Label>
+          <Input
+            id="image-alt-input"
+            value={alt}
+            onChange={(e) => onAltChange(e.target.value)}
+            placeholder="이미지를 설명하는 짧은 문장"
+          />
+        </PopoverContent>
+      </Popover>
 
       <div className="mx-1 h-5 w-px bg-border" />
 
