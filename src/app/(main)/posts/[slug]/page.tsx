@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { selectPostBySlug } from '@/db/queries/posts';
+import { getBlogSettings } from '@/db/queries/settings';
 import { markdownToHtmlWithToc, htmlToHtmlWithToc } from '@/lib/markdown';
+import { SITE_NAME } from '@/lib/constants';
 import { CommentSection } from './_components/comment-section';
 import { PostToc } from './_components/post-toc';
 import { PostHeader } from './_components/post-header';
 import { PostContent } from './_components/post-content';
+import { ArticleJsonLd } from './_components/article-json-ld';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -50,7 +53,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = await selectPostBySlug(slug);
+  const [post, settings] = await Promise.all([
+    selectPostBySlug(slug),
+    getBlogSettings().catch(() => null),
+  ]);
 
   if (!post || post.status !== 'published') notFound();
 
@@ -61,6 +67,11 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <>
+      <ArticleJsonLd
+        post={post}
+        blogName={settings?.blogName ?? SITE_NAME}
+        baseUrl={process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'}
+      />
       <div className="relative mx-auto max-w-3xl px-4 py-8">
         <article>
           <PostHeader post={post} />
