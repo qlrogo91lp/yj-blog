@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { cn } from '@/lib/utils';
 import { ClerkProvider } from '@clerk/nextjs';
 import { PageTracker } from '@/components/page-tracker';
@@ -65,6 +66,9 @@ export default function RootLayout({
               <Toaster />
             </TooltipProvider>
           </ThemeProvider>
+          {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+          )}
         </body>
       </html>
     </ClerkProvider>
