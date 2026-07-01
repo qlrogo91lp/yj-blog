@@ -14,7 +14,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function PreviewDialog({ open, onOpenChange }: Props) {
+export function PreviewDialogAction({ open, onOpenChange }: Props) {
   const title = useNewPostStore((s) => s.title);
   const content = useNewPostStore((s) => s.content);
   const contentFormat = useNewPostStore((s) => s.contentFormat);
