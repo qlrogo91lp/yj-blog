@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PreviewDialog } from './_preview';
+import { PreviewDialog } from '../_components/_preview';
 
-export function PreviewButton() {
+export function PreviewButtonAction() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
