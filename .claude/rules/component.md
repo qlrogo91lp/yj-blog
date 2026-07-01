@@ -41,41 +41,9 @@ className={cn('rounded p-2', isActive && 'bg-primary text-white')}
 
 ## 컴포넌트 분류
 
-### Action 컴포넌트 (`*Action.tsx`)
+상태값(zustand)·Server Action 호출 등 **클라이언트 로직이 필요한 컴포넌트**와 **순수 컴포넌트**를 구분한다.
 
-다음이 필요할 때 Action 컴포넌트로 분리:
+- **순수 컴포넌트** — API, zustand 등 외부 의존성 없이 props만 받아 렌더링. `_components`에 둔다.
+- **인터랙션 컴포넌트** — 클라이언트 로직이 필요한 경우 역할에 맞는 폴더로 분리하고 dot-suffix로 표기한다 (`_actions/*.action.tsx`, `_handlers/*.handler.tsx`, `_providers/*.provider.tsx`).
 
-- API 호출
-- zustand 등 상태값 사용
-
-위 로직이 필요한 경우 `*Action.tsx`로 만들고 모듈화한다.
-
-```tsx
-// ✅ GOOD - _action/_filter/select-instrctor-action.tsx
-'use client';
-
-import CustomSelect from '@/(afterLogin)/payment/_component/CustomSelect';
-import { useSettlementStore } from '../../state';
-import { useShallow } from 'zustand/react/shallow';
-import { useInstructorList } from '@/(afterLogin)/group/@modal/_state/useInstructorList';
-
-export default function SelectInstructorAction() {
-  const { filter, setFilterInstructor } = useSettlementStore(
-    useShallow(state => ({ filter: state.filter, setFilterInstructor: state.setFilterInstructor }))
-  );
-  const { localData } = useInstructorList();
-
-  return (
-      data={localData}
-    <CustomSelect
-      selectData={filter.instructor}
-      onChangeAction={setFilterInstructor}
-    />
-  );
-}
-```
-
-### 순수 컴포넌트
-
-- API, zustand 등 외부 의존성 없음
-- Props만 받아 렌더링
+> 폴더 분류·역할·네이밍의 상세 정의는 `page-folder.md`를 참조한다.

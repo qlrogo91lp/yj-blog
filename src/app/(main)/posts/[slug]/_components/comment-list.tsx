@@ -1,5 +1,5 @@
 import type { CommentWithReplies } from '@/types';
-import { CommentItem } from './comment-item';
+import { CommentItemAction } from '../_actions/comment-item.action';
 
 type Props = {
   comments: CommentWithReplies[];
@@ -16,7 +16,7 @@ export function CommentList({ comments, postSlug }: Props) {
   return (
     <div className="space-y-6">
       {comments.map((comment) => (
-        <CommentItem key={comment.id} comment={comment} postSlug={postSlug} />
+        <CommentItemAction key={comment.id} comment={comment} postSlug={postSlug} />
       ))}
     </div>
   );

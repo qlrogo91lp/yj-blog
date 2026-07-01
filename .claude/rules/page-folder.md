@@ -8,32 +8,60 @@
 
 | 확장자 | 허용 폴더 |
 |--------|-----------|
-| `*.tsx` | `_actions`, `_components`, `_providers`, `_handlers`, `_suspenses` |
-| `*.ts` | `_queries`, `_services`, `_utils`, `_hooks` |
+| `*.tsx` | `_components`, `_actions`, `_handlers`, `_providers`, `_suspenses` |
+| `*.ts` | `_queries`, `_services`, `_hooks`, `_utils` |
 
-> **핵심**: `_actions`에는 컴포넌트 파일(`.tsx`)만 존재한다. 비즈니스 로직·쿼리 등 `.ts` 파일은 `_queries`, `_services`, `_utils`, `_hooks`에 위치한다.
-> **Next.js Server Action** (`'use server'` 지시어가 있는 `.ts` 파일)은 `_services`에 위치한다. 네이밍은 동사+명사 형식으로 작성하며 `-action` 접미사를 붙이지 않는다 (예: `create-comment.ts`, `delete-comment.ts`).
+> **핵심**: 컴포넌트가 아닌 로직(`.ts`)은 `_queries`·`_services`·`_hooks`·`_utils`에 둔다. `_actions`·`_handlers`·`_providers`·`_suspenses`에는 컴포넌트 파일(`.tsx`)만 존재한다.
+
+## 네이밍 규칙
+
+역할 컴포넌트는 **dot-suffix**(`<이름>.<역할>.tsx`)로 역할을 표기한다. 이 프로젝트가 이미 쓰는 `*.test.tsx`와 동일한 방식이며, 이름 본체와 역할이 시각적으로 분리되어 구분이 명확하다.
+
+| 폴더 | 파일명 형식 | 예시 |
+|------|-------------|------|
+| `_components` | kebab-case (본체명만) | `comment-form.tsx` |
+| `_actions` | `*.action.tsx` | `view-toggle.action.tsx` |
+| `_handlers` | `*.handler.tsx` | `editor-view.handler.tsx` |
+| `_providers` | `*.provider.tsx` | `auto-save.provider.tsx` |
+| `_suspenses` | `*.suspense.tsx` | `post-list.suspense.tsx` |
+| `_services` | 동사+명사 kebab (접미사 없음) | `add-comment.ts` |
+| `_queries` | `get-*.ts`(통신) / `use-*.ts`(소비) | `get-posts.ts`, `use-posts.ts` |
+| `_hooks` | `use-*.ts` | `use-toggle.ts` |
+| `_utils` | kebab-case | `replace-uploading-node.ts` |
+
+> 폴더명(분류)과 dot-suffix(역할)는 짝을 이룬다 — `_actions/*.action.tsx`, `_handlers/*.handler.tsx`처럼 위치와 표기가 일관된다.
 
 ## 폴더별 역할
 
-| 폴더 | 역할 | 네이밍 예시 |
-|------|------|-------------|
-| `_actions` | Action 컴포넌트. 유형별 하위 폴더 가능 (`_table`, `_filter` 등) | `*Action.tsx` |
-| `_components` | 순수 컴포넌트 (API, zustand 등 외부 의존성 없음) | - |
-| `_queries` | API 요청. tanstack-query가 필요할 경우`api/.../routes.ts`로 요청 전송 | `getPaymentList.ts`, `postPayments.ts` (HTTP 메소드 + camelCase) |
-| `_services` | 비즈니스 로직. 서버 데이터 가공. Next.js Server Action (`'use server'`) 포함 | `usePaymentList.ts`, `create-comment.ts`, `delete-comment.ts` |
-| `_providers` | Provider 컴포넌트 모음. 무언가를 제공하는 컴포넌트로, `children` 없이 `null`을 반환하는 사이드이펙트 전용 컴포넌트도 포함 | `ResetProvider.tsx`, `LoadProvider.tsx`, `AutoSaveProvider.tsx` |
-| `_handlers` | Handler 컴포넌트 모음 | `ViewHandler.tsx` |
-| `_suspenses` | Prefetch용 Suspense 컴포넌트 | `*Suspense.tsx` |
-| `_utils` | 해당 페이지 전용 순수 함수 | - |
-| `_hooks` | 해당 페이지 전용 React hook | - |
+| 폴더 | 역할 | 외부 의존 |
+|------|------|-----------|
+| `_components` | 순수 컴포넌트. props만 받아 렌더링 | 없음 |
+| `_actions` | 클라이언트 인터랙션 컴포넌트. form 전송·zustand 상태·input/button 액션 등 클라이언트 로직이 필요한 컴포넌트. 최대한 모듈화 | 상태/Server Action |
+| `_handlers` | 렌더링 결과 없이 사이드이펙트·조건부 렌더링만 담당하는 클라이언트 컴포넌트 | 상태 |
+| `_providers` | Provider 컴포넌트. `children` 없이 `null`을 반환하는 사이드이펙트 전용 컴포넌트 포함 | 상태 |
+| `_suspenses` | Prefetch용 Suspense 컴포넌트 | - |
+| `_services` | **Server Action 전용** (`'use server'`). 서버 mutation/작업과 그에 딸린 비즈니스 로직(검증·해싱·DB 호출·revalidate) | 서버(DB) |
+| `_queries` | 클라이언트 **서버 데이터 읽기**. 통신 계층(`fetch` + 모델/타입) + 소비·가공 계층(tanstack-query `useQuery`). 도입 시 사용 | API |
+| `_hooks` | **순수 상태/UI 로직** + props로 받은 데이터의 동기 `useMemo` 가공. API에 의존하지 않음 | 없음 |
+| `_utils` | 해당 페이지 전용 순수 함수 | 없음 |
 
-## _action 하위 분류
+### `_services` — Server Action
 
-비슷한 유형으로 분류 가능하면 하위 폴더 생성:
+- `'use server'` 지시어가 있는 `.ts` 파일. 클라이언트 컴포넌트에서 import해 호출한다.
+- 파일명·함수명은 **동사+명사** 형식이며 `-action` 접미사를 붙이지 않는다 (예: `add-comment.ts` → `addComment`).
+- Server Action의 동사는 일반 동사(`add`/`get`/`edit`/`remove`)를 쓰고, DB 쿼리 동사(`insert`/`select`/`update`/`delete`)와 구분한다. → 상세는 `coding-conventions.md`의 **CRUD 동사 컨벤션** 참조.
+- 초기 읽기는 Server Component가 `src/db/queries/`를 직접 호출한다. `_services`는 주로 쓰기(mutation)를 담당한다.
 
-- `_action/_table`: 테이블 관련 action
-- `_action/_filter`: 필터 관련 action
+### `_queries` — 클라이언트 서버 데이터 읽기 (도입 시)
+
+App Router에서 초기 읽기는 RSC, 쓰기는 Server Action이 담당하므로 현재는 사용하지 않는다. 무한 스크롤처럼 **클라이언트에서 추가로 데이터를 읽는** 경우가 늘어나면 도입한다.
+
+- **통신 계층** (`get-*.ts`): `fetch()` 호출 함수 + 응답 모델/타입 정의. tanstack-query를 직접 쓰지 않는 순수 함수.
+- **소비·가공 계층** (`use-*.ts`): 위 통신 함수를 `useQuery({ queryFn })`로 감싸고 `select`로 가공하는 hook. tanstack-query는 이 계층에서 사용한다.
+
+### `_actions` 하위 분류
+
+비슷한 유형으로 묶을 수 있으면 하위 폴더를 생성한다 (예: `_actions/_table`, `_actions/_filter`).
 
 ## page.tsx 구성 원칙
 
@@ -61,7 +89,7 @@ export default async function NewPostPage() {
 }
 ```
 
-## _handlers 활용 패턴
+## `_handlers` 활용 패턴
 
 렌더링 결과물 없이 **사이드이펙트·조건부 렌더링** 역할만 하는 클라이언트 로직은 Handler로 분리한다.
 

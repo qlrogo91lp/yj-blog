@@ -9,7 +9,7 @@ import type { Comment, CommentWithReplies } from '@/types';
  * 특정 글의 댓글 목록을 트리 구조로 반환
  * 소프트 삭제된 댓글은 포함 (대댓글이 있으면 "삭제된 댓글"로 표시해야 하므로)
  */
-export async function getCommentsByPostId(
+export async function selectCommentsByPostId(
   postId: number
 ): Promise<CommentWithReplies[]> {
   const allComments = await db
@@ -40,7 +40,7 @@ export async function getCommentsByPostId(
 /**
  * 댓글 작성
  */
-export async function createComment(data: {
+export async function insertComment(data: {
   postId: number;
   parentId?: number | null;
   authorName: string;
@@ -66,7 +66,7 @@ export async function createComment(data: {
 /**
  * 특정 댓글 단건 조회 (비밀번호 검증용)
  */
-export async function getCommentById(
+export async function selectCommentById(
   commentId: number
 ): Promise<Comment | undefined> {
   const result = await db

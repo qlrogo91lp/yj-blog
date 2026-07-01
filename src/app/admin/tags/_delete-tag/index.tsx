@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import type { TagRow } from '../_components/columns';
-import { deleteTag } from '../_services/delete-tag';
+import { removeTag } from '../_services/remove-tag';
 
 type Props = {
   open: boolean;
@@ -27,7 +27,7 @@ export function DeleteTagDialog({ open, onOpenChange, tag }: Props) {
     setIsDeleting(true);
     setError(null);
 
-    const result = await deleteTag(tag.id);
+    const result = await removeTag(tag.id);
 
     setIsDeleting(false);
 

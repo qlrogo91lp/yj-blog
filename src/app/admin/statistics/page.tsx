@@ -11,18 +11,18 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  getDailyStatsForRange,
-  getStatsSummary,
+  selectDailyStatsForRange,
+  selectStatsSummary,
 } from '@/db/queries/daily-stats';
-import { getPopularPosts } from '@/db/queries/statistics';
+import { selectPopularPosts } from '@/db/queries/statistics';
 import { StatCard } from './_components/stat-card';
 import { StatsChart } from './_components/stats-chart';
 
 export default async function AdminStatisticsPage() {
   const [summary, dailyStats, popularPosts] = await Promise.all([
-    getStatsSummary(),
-    getDailyStatsForRange(30),
-    getPopularPosts(10),
+    selectStatsSummary(),
+    selectDailyStatsForRange(30),
+    selectPopularPosts(10),
   ]);
 
   const viewCards = [

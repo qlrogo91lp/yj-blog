@@ -14,6 +14,8 @@ export async function submitPost(status: 'draft' | 'published') {
     slug,
     content: store.content,
     contentFormat: store.contentFormat,
+    excerpt: store.excerpt,
+    metaTitle: store.metaTitle,
     categoryId: store.categoryId,
     tagIds: store.tagIds,
     thumbnailUrl: store.thumbnailUrl,

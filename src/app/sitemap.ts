@@ -1,10 +1,12 @@
 import type { MetadataRoute } from 'next';
-import { getPosts } from '@/db/queries/posts';
+import { selectPosts } from '@/db/queries/posts';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com';
+
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { items: posts } = await getPosts({ limit: 1000 });
+  const { items: posts } = await selectPosts({ limit: 1000 });
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${BASE_URL}/posts/${post.slug}`,

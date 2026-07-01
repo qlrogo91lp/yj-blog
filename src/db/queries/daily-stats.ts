@@ -3,7 +3,7 @@ import { and, gte, lte, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { dailyStats } from '@/db/schema';
 
-export async function getDailyStatsForRange(days: number = 30) {
+export async function selectDailyStatsForRange(days: number = 30) {
   const today = format(new Date(), 'yyyy-MM-dd');
   const startDate = format(subDays(new Date(), days - 1), 'yyyy-MM-dd');
 
@@ -20,7 +20,7 @@ export async function getDailyStatsForRange(days: number = 30) {
   return stats;
 }
 
-export async function getStatsSummary() {
+export async function selectStatsSummary() {
   const today = format(new Date(), 'yyyy-MM-dd');
   const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
 

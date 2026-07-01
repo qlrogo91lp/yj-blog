@@ -6,6 +6,32 @@
 - 불리언 변수는 `is` / `has` 접두사 (예: `isPublished`, `hasError`)
 - 상수(환경 변수 제외)는 camelCase로 작성한다
 
+## CRUD 동사 컨벤션 (레이어 분리)
+
+Server Action(`_services`)과 DB 쿼리(`src/db/queries`)는 **서로 다른 동사 세트**를 사용한다. 같은 파일에서 두 레이어를 함께 import해도 이름이 겹치지 않고, 동사만 봐도 어느 레이어인지 즉시 구분된다.
+
+| 작업 | **Server Action** (일반 동사) | **DB 쿼리** (SQL 동사) |
+|------|:---:|:---:|
+| Create | `add` | `insert` |
+| Read | `get` | `select` |
+| Update | `edit` | `update` |
+| Delete | `remove` | `delete` |
+
+- **Server Action** = 행위/유스케이스 관점 → `addComment`, `getPost`, `editCategory`, `removeComment`
+- **DB 쿼리** = SQL 그대로 → `insertComment`, `selectPost`, `updateCategory`, `deleteComment`
+
+```ts
+// _services/add-comment.ts — Server Action 레이어
+import { insertComment } from '@/db/queries/comments'; // DB 레이어 (SQL 동사)
+
+export async function addComment(/* ... */) {
+  // ...검증·가공...
+  await insertComment(/* ... */);
+}
+```
+
+> 클라이언트 fetch 계층(`_queries`)은 읽기 위주라 `get-*` prefix를 그대로 사용한다.
+
 ## 날짜 처리
 
 - 날짜 포맷·연산은 **date-fns**를 사용한다 (`toLocaleDateString`, `toLocaleString` 등 네이티브 날짜 메서드 사용 금지)

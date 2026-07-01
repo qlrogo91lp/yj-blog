@@ -10,8 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getPostById } from '@/db/queries/posts';
-import { getPostDailyViews, getReferrersByPost } from '@/db/queries/statistics';
+import { selectPostById } from '@/db/queries/posts';
+import { selectPostDailyViews, selectReferrersByPost } from '@/db/queries/statistics';
 import { PostDailyChart } from './_components/post-daily-chart';
 
 type Props = {
@@ -33,12 +33,12 @@ export default async function PostStatsPage({ params }: Props) {
 
   if (isNaN(postId)) notFound();
 
-  const post = await getPostById(postId);
+  const post = await selectPostById(postId);
   if (!post) notFound();
 
   const [dailyViews, referrerList] = await Promise.all([
-    getPostDailyViews(postId, 30),
-    getReferrersByPost(postId),
+    selectPostDailyViews(postId, 30),
+    selectReferrersByPost(postId),
   ]);
 
   return (

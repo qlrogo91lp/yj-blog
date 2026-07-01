@@ -19,9 +19,9 @@ vi.mock('next/link', () => ({
   ),
 }));
 
-// update-settings mock
-vi.mock('../_services/update-settings', () => ({
-  updateSettings: vi.fn().mockResolvedValue(undefined),
+// edit-settings mock
+vi.mock('../_services/edit-settings', () => ({
+  editSettings: vi.fn().mockResolvedValue(undefined),
 }));
 
 // sonner mock
@@ -30,7 +30,7 @@ vi.mock('sonner', () => ({
 }));
 
 import { SettingsForm } from './settings-form';
-import { updateSettings } from '../_services/update-settings';
+import { editSettings } from '../_services/edit-settings';
 import { toast } from 'sonner';
 
 // -------------------------------------------------------------------
@@ -176,7 +176,7 @@ describe('SettingsForm', () => {
     });
   });
 
-  it('유효한 데이터 제출 시 updateSettings가 호출된다', async () => {
+  it('유효한 데이터 제출 시 editSettings가 호출된다', async () => {
     render(<SettingsForm />);
 
     fireEvent.change(screen.getByLabelText('블로그 이름 *'), {
@@ -186,7 +186,7 @@ describe('SettingsForm', () => {
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     await waitFor(() => {
-      expect(updateSettings).toHaveBeenCalledWith(
+      expect(editSettings).toHaveBeenCalledWith(
         expect.objectContaining({ blogName: 'YJlogs' }),
       );
     });

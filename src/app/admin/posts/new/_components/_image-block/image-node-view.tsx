@@ -29,8 +29,10 @@ export function ImageNodeView({
           <ImageToolbar
             size={size}
             align={align}
+            alt={alt}
             onSizeChange={(next) => updateAttributes({ size: next })}
             onAlignChange={(next) => updateAttributes({ align: next })}
+            onAltChange={(next) => updateAttributes({ alt: next })}
             onDelete={() => deleteNode()}
           />
         </div>

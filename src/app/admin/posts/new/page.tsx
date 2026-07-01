@@ -3,14 +3,15 @@ import { auth } from '@clerk/nextjs/server';
 import { getCategories } from '@/db/queries/categories';
 import { getAllTags } from '@/db/queries/tags';
 import { BottomBar } from './_components/bottom-bar';
-import { EditorProvider } from './_providers/editor-provider';
-import { EditorViewHandler } from './_handlers/editor-view-handler';
-import { EditorToolbarAction } from './_actions/editor-toolbar-action';
-import { CategorySelectorAction } from './_actions/category-selector-action';
-import { TagSelectorAction } from './_actions/tag-selector-action';
-import { TitleInputAction } from './_actions/title-input-action';
-import { ThumbnailUploadAction } from './_actions/thumbnail-upload-action';
-import { AutoSaveProvider } from './_providers/auto-save-provider';
+import { EditorProvider } from './_providers/editor.provider';
+import { EditorViewHandler } from './_handlers/editor-view.handler';
+import { EditorToolbarAction } from './_actions/editor-toolbar.action';
+import { CategorySelectorAction } from './_actions/category-selector.action';
+import { TagSelectorAction } from './_actions/tag-selector.action';
+import { TitleInputAction } from './_actions/title-input.action';
+import { ThumbnailUploadAction } from './_actions/thumbnail-upload.action';
+import { SeoSectionAction } from './_actions/seo-section.action';
+import { AutoSaveProvider } from './_providers/auto-save.provider';
 
 export default async function NewPostPage() {
   const { userId } = await auth();
@@ -30,6 +31,7 @@ export default async function NewPostPage() {
           <div className="mt-4 flex-1">
             <EditorViewHandler />
           </div>
+          <SeoSectionAction />
         </div>
         <BottomBar />
       </div>

@@ -15,6 +15,7 @@ type SavePostInput = {
   content: string;
   contentFormat: 'markdown' | 'html';
   excerpt?: string;
+  metaTitle?: string;
   thumbnailUrl?: string | null;
   categoryId: number | null;
   tagIds?: number[];
@@ -37,8 +38,16 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
     return { success: false, error: parsed.error.issues[0].message };
   }
 
-  const { title, slug, content, contentFormat, excerpt, categoryId, status } =
-    parsed.data;
+  const {
+    title,
+    slug,
+    content,
+    contentFormat,
+    excerpt,
+    categoryId,
+    status,
+    metaTitle,
+  } = parsed.data;
 
   const tagIds = input.tagIds ?? [];
 
@@ -50,7 +59,8 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
         slug,
         content,
         contentFormat,
-        excerpt: excerpt ?? null,
+        excerpt: excerpt && excerpt.length > 0 ? excerpt : null,
+        metaTitle: metaTitle && metaTitle.length > 0 ? metaTitle : null,
         thumbnailUrl: input.thumbnailUrl ?? null,
         categoryId,
         status,
@@ -79,7 +89,8 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
           slug,
           content,
           contentFormat,
-          excerpt: excerpt ?? null,
+          excerpt: excerpt && excerpt.length > 0 ? excerpt : null,
+          metaTitle: metaTitle && metaTitle.length > 0 ? metaTitle : null,
           thumbnailUrl: input.thumbnailUrl ?? null,
           categoryId,
           status,
