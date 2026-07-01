@@ -7,23 +7,23 @@
 
 ## 위반 목록 — `_components` 순수성 위반 (→ `_actions`로 이동)
 
-- [ ] `admin/_components/admin-header.tsx` — `usePathname()`으로 현재 경로 직접 읽어 `isEditing` 분기. → `_actions/admin-header.action.tsx`
-- [ ] `admin/_components/admin-sidebar.tsx` — `usePathname()`으로 `isActive` 계산. → `_actions/admin-sidebar.action.tsx`
-- [ ] `admin/categories/_components/_category-form/index.tsx`(`CategoryFormDialog`) — `useState`/`useEffect`/`useForm` + `addCategory`/`editCategory` Server Action 호출. 사적 폴더명(`_category-form`)도 표준 아님. → `_actions/category-form-dialog.action.tsx`로 평탄화 이동
-- [ ] `admin/categories/_components/_delete-category/index.tsx`(`DeleteCategoryDialog`) — `useState` + `removeCategory` 호출. 사적 폴더명(`_delete-category`) 표준 아님. → `_actions/delete-category-dialog.action.tsx`
-- [ ] `admin/categories/_components/category-table.tsx` — `useState(formOpen)`. → `_actions/category-table.action.tsx`
-- [ ] `admin/comments/_components/_delete-comment/index.tsx`(`DeleteCommentDialog`) — `useState` + `removeComment` 호출. 사적 폴더명(`_delete-comment`) 표준 아님. → `_actions/delete-comment-dialog.action.tsx`
-- [ ] `admin/comments/_components/comment-table.tsx` — `useState(deletingId)`. → `_actions/comment-table.action.tsx`
-- [ ] `admin/posts/_components/delete-post-dialog.tsx` — `useTransition` + `removePost` 호출. → `_actions/delete-post-dialog.action.tsx`
-- [ ] `admin/posts/_components/post-actions-cell.tsx` — `useState(isDeleteOpen)`. → `_actions/post-actions-cell.action.tsx`
-- [ ] `admin/settings/_components/settings-form.tsx` — `useForm`/`useTransition` + `editSettings` 호출. → `_actions/settings-form.action.tsx` (`settings-form.test.tsx`도 함께 이동)
-- [ ] `admin/statistics/referrers/_components/referrer-period-filter.tsx` — `useRouter().push` 사이드이펙트. → `_actions/referrer-period-filter.action.tsx`
-- [ ] `admin/tags/_delete-tag/index.tsx`(`DeleteTagDialog`) — `useState` + `removeTag` 호출. `tags/_actions/delete-tag.action.tsx`(`DeleteTagAction`, 트리거 버튼)가 이 파일을 `../_delete-tag`에서 import하는 구조. 사적 폴더명(`_delete-tag`) 표준 아님. → `_actions/delete-tag.action.tsx` 내부로 다이얼로그까지 합치거나 `_actions/_delete-tag/index.tsx`처럼 `_actions` 하위로 이동 (page-folder.md는 `_actions/_table`류 하위 폴더 생성은 허용)
+- [x] `admin/_components/admin-header.tsx` — `usePathname()`으로 현재 경로 직접 읽어 `isEditing` 분기. → `_actions/admin-header.action.tsx` (commit f74e4d6)
+- [x] `admin/_components/admin-sidebar.tsx` — `usePathname()`으로 `isActive` 계산. → `_actions/admin-sidebar.action.tsx` (commit f74e4d6)
+- [x] `admin/categories/_components/_category-form/index.tsx`(`CategoryFormDialog`) — `useState`/`useEffect`/`useForm` + `addCategory`/`editCategory` Server Action 호출. 사적 폴더명(`_category-form`)도 표준 아님. → `_actions/category-form-dialog.action.tsx`로 평탄화 이동 (commit 436e919)
+- [x] `admin/categories/_components/_delete-category/index.tsx`(`DeleteCategoryDialog`) — `useState` + `removeCategory` 호출. 사적 폴더명(`_delete-category`) 표준 아님. → `_actions/delete-category-dialog.action.tsx` (commit 436e919)
+- [x] `admin/categories/_components/category-table.tsx` — `useState(formOpen)`. → `_actions/category-table.action.tsx` (commit 436e919)
+- [x] `admin/comments/_components/_delete-comment/index.tsx`(`DeleteCommentDialog`) — `useState` + `removeComment` 호출. 사적 폴더명(`_delete-comment`) 표준 아님. → `_actions/delete-comment-dialog.action.tsx` (commit 742974a)
+- [x] `admin/comments/_components/comment-table.tsx` — `useState(deletingId)`. → `_actions/comment-table.action.tsx` (commit 742974a)
+- [x] `admin/posts/_components/delete-post-dialog.tsx` — `useTransition` + `removePost` 호출. → `_actions/delete-post-dialog.action.tsx` (commit 6ead21b)
+- [x] `admin/posts/_components/post-actions-cell.tsx` — `useState(isDeleteOpen)`. → `_actions/post-actions-cell.action.tsx` (commit 6ead21b)
+- [x] `admin/settings/_components/settings-form.tsx` — `useForm`/`useTransition` + `editSettings` 호출. → `_actions/settings-form.action.tsx` (`settings-form.test.tsx`도 함께 이동) (commit 15844cd)
+- [x] `admin/statistics/referrers/_components/referrer-period-filter.tsx` — `useRouter().push` 사이드이펙트. → `_actions/referrer-period-filter.action.tsx` (commit 9f07636)
+- [x] `admin/tags/_delete-tag/index.tsx`(`DeleteTagDialog`) — `useState` + `removeTag` 호출. `tags/_actions/delete-tag.action.tsx`(`DeleteTagAction`, 트리거 버튼)가 이 파일을 `../_delete-tag`에서 import하는 구조. 사적 폴더명(`_delete-tag`) 표준 아님. → **결정**: `_actions/delete-tag-dialog.action.tsx`로 평탄화 이동(같은 배치의 categories/comments와 동일 패턴 채택, `_actions/_delete-tag/` 서브폴더 대안은 미채택) (commit dc30b99)
 
 ## 위반 목록 — 구조/레이어 문제
 
-- [ ] `admin/comments/_components/_delete-comment/_services/remove-comment.ts` — `_services`가 `_components/_delete-comment` 내부에 중첩됨. 다른 라우트(categories/posts/tags)는 전부 라우트 루트의 형제 `_services` 폴더 형태. → `admin/comments/_services/remove-comment.ts`로 최상위 이동 (위 `DeleteCommentDialog` 이동과 함께 처리)
-- [ ] `admin/settings/_services/edit-settings.ts` — Server Action(`editSettings`)이 `db.insert(...).onConflictDoUpdate(...)`를 직접 호출. 같은 배치의 다른 서비스(add/edit/remove-category, remove-tag, remove-post)는 전부 `db/queries/*`의 insert/update/delete 함수에 위임하는데 이 파일만 레이어를 건너뜀. → `src/db/queries/settings.ts`에 `updateBlogSettings`(또는 upsert 계열) 함수를 만들어 위임
+- [x] `admin/comments/_components/_delete-comment/_services/remove-comment.ts` — `_services`가 `_components/_delete-comment` 내부에 중첩됨. 다른 라우트(categories/posts/tags)는 전부 라우트 루트의 형제 `_services` 폴더 형태. → `admin/comments/_services/remove-comment.ts`로 최상위 이동 (위 `DeleteCommentDialog` 이동과 함께 처리) (commit 742974a)
+- [x] `admin/settings/_services/edit-settings.ts` — Server Action(`editSettings`)이 `db.insert(...).onConflictDoUpdate(...)`를 직접 호출. 같은 배치의 다른 서비스(add/edit/remove-category, remove-tag, remove-post)는 전부 `db/queries/*`의 insert/update/delete 함수에 위임하는데 이 파일만 레이어를 건너뜀. → `src/db/queries/settings.ts`에 `updateBlogSettings`(또는 upsert 계열) 함수를 만들어 위임 (commit 15844cd)
 
 ## 참고 — 별도 검토 필요(이번 plan 범위 밖일 수 있음)
 
@@ -38,7 +38,7 @@
 
 ## 검증
 
-- [ ] `npm run lint`
-- [ ] `npm run test:run` (`settings-form.test.tsx` 이동 후에도 정상 수집되는지 확인)
-- [ ] `npm run build`
-- [ ] 브라우저 회귀 확인: 관리자 사이드바/헤더 활성 상태, 카테고리·댓글·태그 삭제 다이얼로그, 설정 폼 저장, 통계 기간 필터
+- [x] `npm run lint`
+- [x] `npm run test:run` (`settings-form.action.test.tsx`로 이동 후에도 14개 테스트 정상 수집·통과 확인)
+- [x] `npm run build`
+- [ ] 브라우저 회귀 확인: 관리자 사이드바/헤더 활성 상태, 카테고리·댓글·태그 삭제 다이얼로그, 설정 폼 저장, 통계 기간 필터 (A·B·C 3개 plan 전체 코드 작업 완료 후 한 번에 확인 예정)

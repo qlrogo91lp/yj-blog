@@ -1,12 +1,15 @@
 import Link from 'next/link';
-import { getBlogSettings } from '@/db/queries/settings';
 
-export async function HeroSection() {
-  const settings = await getBlogSettings();
+type Props = {
+  blogName?: string | null;
+  tagline?: string | null;
+  authorBio?: string | null;
+};
 
-  const name = settings?.blogName ?? 'YJ';
-  const headline = settings?.tagline ?? '개발하며 배운 것들을 기록합니다.';
-  const description = settings?.authorBio ?? 'Frontend · Backend · 일상의 메모';
+export function HeroSection({ blogName, tagline, authorBio }: Props) {
+  const name = blogName ?? 'YJ';
+  const headline = tagline ?? '개발하며 배운 것들을 기록합니다.';
+  const description = authorBio ?? 'Frontend · Backend · 일상의 메모';
 
   return (
     <section className="py-20 text-center">

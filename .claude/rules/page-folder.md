@@ -98,3 +98,5 @@ export default async function NewPostPage() {
 | 상태에 따른 조건부 렌더링 | `EditorViewHandler` — mode에 따라 에디터 컴포넌트 전환 |
 | `useEffect` 초기화/정리 | `PostInitHandler` — 글 데이터 로드 및 cleanup 시 reset |
 | 사이드바·UI 상태 제어 | `SidebarCollapseHandler` — 진입 시 사이드바 닫기 |
+
+> **예외**: `post-list-view.handler.tsx`는 현재 클라이언트 훅·사이드이펙트 없이 props만으로 렌더링하는 순수 컴포넌트 형태다. 향후 조건부 렌더링/사이드이펙트 확장이 예정되어 있어 `_handlers` 위치를 유지한다. 확장 계획이 사라지면 `_components`로 재이동을 검토한다.
