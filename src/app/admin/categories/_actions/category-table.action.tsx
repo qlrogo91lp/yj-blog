@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/data-table';
 import type { Category } from '@/types';
-import { CategoryFormDialog } from './_category-form';
-import { categoryColumns } from './columns';
+import { categoryColumns } from '../_components/columns';
+import { CategoryFormDialogAction } from './category-form-dialog.action';
 
 type Props = {
   categories: Category[];
 };
 
-export function CategoryTable({ categories }: Props) {
+export function CategoryTableAction({ categories }: Props) {
   const [formOpen, setFormOpen] = useState(false);
 
   return (
@@ -27,7 +27,7 @@ export function CategoryTable({ categories }: Props) {
         emptyMessage="카테고리가 없습니다."
       />
 
-      <CategoryFormDialog
+      <CategoryFormDialogAction
         open={formOpen}
         onOpenChange={setFormOpen}
       />

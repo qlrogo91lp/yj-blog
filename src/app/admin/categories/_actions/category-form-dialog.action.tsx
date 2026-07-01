@@ -18,8 +18,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { generateSlug } from '@/lib/slugify';
 import type { Category } from '@/types';
 import { type CategoryFormValues, categoryFormSchema } from '@/types/category';
-import { addCategory } from '../../_services/add-category';
-import { editCategory } from '../../_services/edit-category';
+import { addCategory } from '../_services/add-category';
+import { editCategory } from '../_services/edit-category';
 
 type Props = {
   open: boolean;
@@ -27,7 +27,7 @@ type Props = {
   category?: Category | null;
 };
 
-export function CategoryFormDialog({ open, onOpenChange, category }: Props) {
+export function CategoryFormDialogAction({ open, onOpenChange, category }: Props) {
   const isEdit = !!category;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

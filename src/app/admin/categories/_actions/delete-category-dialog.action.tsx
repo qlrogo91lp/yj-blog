@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import type { Category } from '@/types';
-import { removeCategory } from '../../_services/remove-category';
+import { removeCategory } from '../_services/remove-category';
 
 type Props = {
   open: boolean;
@@ -19,7 +19,7 @@ type Props = {
   category: Category;
 };
 
-export function DeleteCategoryDialog({ open, onOpenChange, category }: Props) {
+export function DeleteCategoryDialogAction({ open, onOpenChange, category }: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
