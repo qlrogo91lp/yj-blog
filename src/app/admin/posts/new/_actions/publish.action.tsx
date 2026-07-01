@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { submitPost } from '../_services/submit-post';
 import { useNewPostStore } from '../_store';
 
 export function PublishAction() {
@@ -10,6 +9,7 @@ export function PublishAction() {
   const title = useNewPostStore((s) => s.title);
   const content = useNewPostStore((s) => s.content);
   const saveStatus = useNewPostStore((s) => s.saveStatus);
+  const submitPost = useNewPostStore((s) => s.submitPost);
 
   const handleClick = async () => {
     const result = await submitPost('published');

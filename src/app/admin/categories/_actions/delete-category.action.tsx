@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Category } from '@/types';
-import { DeleteCategoryDialog } from '../_components/_delete-category';
+import { DeleteCategoryDialogAction } from './delete-category-dialog.action';
 
 type Props = {
   category: Category;
@@ -19,7 +19,7 @@ export function DeleteCategoryAction({ category }: Props) {
         <TrashIcon size={16} />
         <span className="sr-only">삭제</span>
       </Button>
-      <DeleteCategoryDialog
+      <DeleteCategoryDialogAction
         open={isOpen}
         onOpenChange={setIsOpen}
         category={category}

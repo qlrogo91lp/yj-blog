@@ -1,8 +1,8 @@
 import { getCategories } from '@/db/queries/categories';
-import { CategoryTable } from './_components/category-table';
+import { CategoryTableAction } from './_actions/category-table.action';
 
 export default async function AdminCategoriesPage() {
   const categories = await getCategories();
 
-  return <CategoryTable categories={categories} />;
+  return <CategoryTableAction categories={categories} />;
 }

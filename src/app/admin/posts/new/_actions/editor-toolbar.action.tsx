@@ -34,11 +34,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { ImageUploadDialog } from '../_components/_image-upload';
-import { YoutubeEmbedDialog } from '../_components/_youtube';
-import { LinkDialog } from '../_components/_link';
+import { ImageUploadDialogAction } from './_image-upload/image-upload.action';
+import { YoutubeEmbedDialogAction } from './_youtube/youtube.action';
+import { LinkDialogAction } from './_link/link.action';
 import { ColorPicker } from '../_components/color-picker';
-import { TableInsertPopover } from '../_components/table-insert-popover';
+import { TableInsertAction } from './table-insert.action';
 import { ToolbarButton } from '../_components/toolbar-button';
 import { useEditorContext } from '../_providers/editor.provider';
 import { useNewPostStore } from '../_store';
@@ -279,7 +279,7 @@ export function EditorToolbarAction() {
         tooltip="YouTube 영상"
         onClick={() => setIsYoutubeOpen(true)}
       />
-      <TableInsertPopover editor={editor} />
+      <TableInsertAction editor={editor} />
       <ToolbarButton
         icon={Minus}
         tooltip="구분선"
@@ -301,17 +301,17 @@ export function EditorToolbarAction() {
       />
 
       {/* 다이얼로그 */}
-      <LinkDialog
+      <LinkDialogAction
         editor={editor}
         open={isLinkOpen}
         onOpenChange={setIsLinkOpen}
       />
-      <ImageUploadDialog
+      <ImageUploadDialogAction
         editor={editor}
         open={isImageOpen}
         onOpenChange={setIsImageOpen}
       />
-      <YoutubeEmbedDialog
+      <YoutubeEmbedDialogAction
         editor={editor}
         open={isYoutubeOpen}
         onOpenChange={setIsYoutubeOpen}
