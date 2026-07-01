@@ -11,7 +11,7 @@ const scaleStep = 0.5;
 type Props = { html: string };
 type ZoomedImage = { src: string; alt: string };
 
-export function PostContent({ html }: Props) {
+export function PostContentAction({ html }: Props) {
   const [zoomed, setZoomed] = useState<ZoomedImage | null>(null);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });

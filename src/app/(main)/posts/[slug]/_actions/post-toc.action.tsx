@@ -8,7 +8,7 @@ type Props = {
   toc: TocItem[];
 };
 
-export function PostToc({ toc }: Props) {
+export function PostTocAction({ toc }: Props) {
   const [activeId, setActiveId] = useState<string>('');
   const observerRef = useRef<IntersectionObserver | null>(null);
 

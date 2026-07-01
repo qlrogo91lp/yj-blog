@@ -16,7 +16,7 @@ type Props = {
   onSuccess?: () => void;
 };
 
-export function CommentForm({ postId, postSlug, parentId, onSuccess }: Props) {
+export function CommentFormAction({ postId, postSlug, parentId, onSuccess }: Props) {
   const form = useForm<CommentFormValues>({
     resolver: zodResolver(commentFormSchema),
     defaultValues: {
