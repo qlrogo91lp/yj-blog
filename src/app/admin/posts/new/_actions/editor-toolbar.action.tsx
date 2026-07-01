@@ -35,7 +35,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { ImageUploadDialogAction } from './_image-upload/image-upload.action';
-import { YoutubeEmbedDialog } from '../_components/_youtube';
+import { YoutubeEmbedDialogAction } from './_youtube/youtube.action';
 import { LinkDialogAction } from './_link/link.action';
 import { ColorPicker } from '../_components/color-picker';
 import { TableInsertAction } from './table-insert.action';
@@ -311,7 +311,7 @@ export function EditorToolbarAction() {
         open={isImageOpen}
         onOpenChange={setIsImageOpen}
       />
-      <YoutubeEmbedDialog
+      <YoutubeEmbedDialogAction
         editor={editor}
         open={isYoutubeOpen}
         onOpenChange={setIsYoutubeOpen}

@@ -20,7 +20,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function YoutubeEmbedDialog({ editor, open, onOpenChange }: Props) {
+export function YoutubeEmbedDialogAction({ editor, open, onOpenChange }: Props) {
   const [url, setUrl] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
