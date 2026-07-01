@@ -19,7 +19,7 @@ type Props = {
   tag: TagRow;
 };
 
-export function DeleteTagDialog({ open, onOpenChange, tag }: Props) {
+export function DeleteTagDialogAction({ open, onOpenChange, tag }: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
