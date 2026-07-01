@@ -4,14 +4,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { PencilIcon, TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DeletePostDialog } from './delete-post-dialog';
+import { DeletePostDialogAction } from './delete-post-dialog.action';
 
 type Props = {
   postId: number;
   postTitle: string;
 };
 
-export function PostActionsCell({ postId, postTitle }: Props) {
+export function PostActionsCellAction({ postId, postTitle }: Props) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   return (
@@ -27,7 +27,7 @@ export function PostActionsCell({ postId, postTitle }: Props) {
         <span className="sr-only">삭제</span>
       </Button>
 
-      <DeletePostDialog
+      <DeletePostDialogAction
         postId={postId}
         postTitle={postTitle}
         open={isDeleteOpen}

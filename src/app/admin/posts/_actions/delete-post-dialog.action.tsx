@@ -19,7 +19,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function DeletePostDialog({ postId, postTitle, open, onOpenChange }: Props) {
+export function DeletePostDialogAction({ postId, postTitle, open, onOpenChange }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
