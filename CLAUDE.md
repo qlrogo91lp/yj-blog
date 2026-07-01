@@ -42,12 +42,16 @@ npm run test:e2e    # Playwright E2E 테스트
 ## 브랜치 전략
 
 - `main` — 프로덕션 배포 브랜치
-- `develop` — 통합 개발 브랜치. 기능 브랜치의 merge 대상
-- `feature/*` — 기능 단위 개발 브랜치. 작업 완료 후 `develop`에 merge. merge된 feature 브랜치는 제거
+- `develop` — 통합 개발 브랜치. 작업 브랜치의 merge 대상
+- `feature/*` — **새 기능 추가** 전용 브랜치. 예: `feature/comment-report`
+- `refactor/*` — 동작 변경 없이 구조·컨벤션을 정리하는 브랜치. 예: `refactor/posts-pure-component`
+- `fix/*` — 버그 수정 브랜치. 예: `fix/comment-delete-error`
 
-흐름: `feature/xxx` → `develop` → `main`
+작업 완료 후 `develop`에 merge하고, merge된 브랜치는 제거한다.
 
-> 새 기능 작업 시 `develop`에서 `feature/*` 브랜치를 생성하고, 완료 후 `develop`으로 PR을 올린다.
+흐름: `feature|refactor|fix/xxx` → `develop` → `main`
+
+> 작업 시작 시 `develop`에서 성격에 맞는 접두사(`feature/`·`refactor/`·`fix/`)로 브랜치를 생성하고, 완료 후 `develop`으로 PR을 올린다.
 
 ### 머지 규칙
 
