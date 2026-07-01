@@ -17,6 +17,7 @@ import {
 import { selectPopularPosts } from '@/db/queries/statistics';
 import { StatCard } from './_components/stat-card';
 import { StatsChart } from './_components/stats-chart';
+import { AnalyticsLinkButton } from './_components/analytics-link-button';
 
 export default async function AdminStatisticsPage() {
   const [summary, dailyStats, popularPosts] = await Promise.all([
@@ -39,7 +40,10 @@ export default async function AdminStatisticsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">방문 통계</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">방문 통계</h1>
+        <AnalyticsLinkButton />
+      </div>
 
       {/* 통계 카드 */}
       <Card className="mb-6">
