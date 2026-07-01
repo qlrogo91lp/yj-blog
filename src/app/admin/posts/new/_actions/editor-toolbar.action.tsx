@@ -34,7 +34,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { ImageUploadDialog } from '../_components/_image-upload';
+import { ImageUploadDialogAction } from './_image-upload/image-upload.action';
 import { YoutubeEmbedDialog } from '../_components/_youtube';
 import { LinkDialog } from '../_components/_link';
 import { ColorPicker } from '../_components/color-picker';
@@ -306,7 +306,7 @@ export function EditorToolbarAction() {
         open={isLinkOpen}
         onOpenChange={setIsLinkOpen}
       />
-      <ImageUploadDialog
+      <ImageUploadDialogAction
         editor={editor}
         open={isImageOpen}
         onOpenChange={setIsImageOpen}

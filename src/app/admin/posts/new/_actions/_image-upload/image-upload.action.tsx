@@ -23,7 +23,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function ImageUploadDialog({ editor, open, onOpenChange }: Props) {
+export function ImageUploadDialogAction({ editor, open, onOpenChange }: Props) {
   const [url, setUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const postId = useNewPostStore((s) => s.postId);
