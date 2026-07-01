@@ -12,7 +12,7 @@ type Props = {
   current: string;
 };
 
-export function ReferrerPeriodFilter({ options, current }: Props) {
+export function ReferrerPeriodFilterAction({ options, current }: Props) {
   const router = useRouter();
 
   const handleChange = (value: string) => {

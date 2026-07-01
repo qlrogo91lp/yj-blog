@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import { selectTopReferrers } from '@/db/queries/statistics';
 import { AnalyticsLinkButton } from '../_components/analytics-link-button';
-import { ReferrerPeriodFilter } from './_components/referrer-period-filter';
+import { ReferrerPeriodFilterAction } from './_actions/referrer-period-filter.action';
 
 export const revalidate = 60;
 
@@ -45,7 +45,7 @@ export default async function AdminReferrersPage({ searchParams }: Props) {
         <h1 className="text-2xl font-bold">유입 경로</h1>
         <div className="flex items-center gap-2">
           <AnalyticsLinkButton />
-          <ReferrerPeriodFilter options={PERIOD_OPTIONS} current={currentPeriod} />
+          <ReferrerPeriodFilterAction options={PERIOD_OPTIONS} current={currentPeriod} />
         </div>
       </div>
 
