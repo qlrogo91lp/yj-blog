@@ -6,7 +6,7 @@ import { ko } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Comment } from '@/types';
-import { DeleteCommentDialog } from './_delete-comment';
+import { DeleteCommentDialogAction } from './delete-comment-dialog.action';
 
 type AdminComment = Comment & { postTitle: string; postSlug: string };
 
@@ -14,7 +14,7 @@ type Props = {
   comments: AdminComment[];
 };
 
-export function CommentTable({ comments }: Props) {
+export function CommentTableAction({ comments }: Props) {
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   if (comments.length === 0) {
@@ -82,7 +82,7 @@ export function CommentTable({ comments }: Props) {
         </table>
       </div>
 
-      <DeleteCommentDialog
+      <DeleteCommentDialogAction
         commentId={deletingId}
         onClose={() => setDeletingId(null)}
       />

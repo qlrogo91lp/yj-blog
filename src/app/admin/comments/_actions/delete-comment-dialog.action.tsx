@@ -9,14 +9,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { removeComment } from './_services/remove-comment';
+import { removeComment } from '../_services/remove-comment';
 
 type Props = {
   commentId: number | null;
   onClose: () => void;
 };
 
-export function DeleteCommentDialog({ commentId, onClose }: Props) {
+export function DeleteCommentDialogAction({ commentId, onClose }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
