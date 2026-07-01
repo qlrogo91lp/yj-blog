@@ -124,6 +124,8 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
       lastSavedAt: null,
     }),
   submitPost: async (status) => {
+    // 동적 import: save-post.ts는 'use server' 파일로 db/index.ts(neon 호출)를 정적 참조하면
+    // DATABASE_URL 없는 Vitest 환경에서 스토어 import만으로도 크래시난다.
     const { savePost } = await import('./_services/save-post');
     const state = get();
     const slug = state.slug || generateSlug(state.title);

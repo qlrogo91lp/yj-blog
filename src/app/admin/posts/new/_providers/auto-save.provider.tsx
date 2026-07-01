@@ -28,7 +28,7 @@ export function AutoSaveProvider() {
 				clearTimeout(timerRef.current);
 			}
 		};
-	}, [title, content, status]);
+	}, [title, content, status, submitPost]);
 
 	return null;
 }
