@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { generateSlug } from '@/lib/slugify';
 
 type EditorMode = 'wysiwyg' | 'markdown';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -54,9 +55,12 @@ type Action = {
     status: 'draft' | 'published';
     publishedAt: Date | null;
   }) => void;
+  submitPost: (status: 'draft' | 'published') => Promise<
+    { success: true; slug: string } | { success: false; error: string }
+  >;
 };
 
-export const useNewPostStore = create<State & Action>((set) => ({
+export const useNewPostStore = create<State & Action>((set, get) => ({
   postId: null,
   title: '',
   content: '',
@@ -119,4 +123,39 @@ export const useNewPostStore = create<State & Action>((set) => ({
       saveStatus: 'idle',
       lastSavedAt: null,
     }),
+  submitPost: async (status) => {
+    const { savePost } = await import('./_services/save-post');
+    const state = get();
+    const slug = state.slug || generateSlug(state.title);
+
+    set({ saveStatus: 'saving' });
+
+    const result = await savePost({
+      postId: state.postId,
+      title: state.title,
+      slug,
+      content: state.content,
+      contentFormat: state.contentFormat,
+      excerpt: state.excerpt,
+      metaTitle: state.metaTitle,
+      categoryId: state.categoryId,
+      tagIds: state.tagIds,
+      thumbnailUrl: state.thumbnailUrl,
+      status,
+      publishedAt: state.publishedAt,
+    });
+
+    if (result.success) {
+      set({
+        postId: result.postId,
+        slug,
+        saveStatus: 'saved',
+        lastSavedAt: new Date(),
+      });
+      return { success: true, slug };
+    } else {
+      set({ saveStatus: 'error' });
+      return { success: false, error: result.error };
+    }
+  },
 }));
