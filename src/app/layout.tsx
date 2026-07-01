@@ -44,6 +44,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       images: ['/og-default.png'],
     },
+    verification: {
+      other: {
+        'naver-site-verification': '7d25909aa6a6b6fedab3de9a116a4bc44e315dc4',
+      },
+    },
   };
 }
 
