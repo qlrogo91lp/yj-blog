@@ -16,7 +16,7 @@
   - **실행 전 확인**: 두 조치안 중 어느 쪽으로 할지 사용자에게 먼저 확인.
 
 - [ ] **`posts/_actions/infinite-post-list.action.tsx`** — 무한스크롤 데이터를 `useState`/`useEffect`로 직접 `fetch('/api/posts?...')` 호출해 읽어옴. `page-folder.md`가 명시한 `_queries` 도입 트리거("무한 스크롤처럼 클라이언트에서 추가로 데이터를 읽는 경우가 늘어나면 도입한다")에 정확히 해당.
-  - 조치: `posts/_queries/get-posts.ts`(fetch 함수 + 응답 타입, tanstack-query 미사용) + `posts/_queries/use-infinite-posts.ts`(위 함수를 감싸는 상태 훅) 신설. `infinite-post-list.action.tsx`는 훅을 사용해 렌더링만 담당.
+  - 조치: `posts/_queries/get-posts.ts`(fetch 함수 + 응답 타입, tanstack-query 미사용) + `posts/_queries/useInfinitePosts.ts`(위 함수를 감싸는 상태 훅) 신설. `infinite-post-list.action.tsx`는 훅을 사용해 렌더링만 담당.
   - 참고: 이 프로젝트에서 `_queries` 폴더의 첫 실사용 사례가 됨.
 
 ## 참고(이번 plan 범위 밖, 별도 판단 필요)

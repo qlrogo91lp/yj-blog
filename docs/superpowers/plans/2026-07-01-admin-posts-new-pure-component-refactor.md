@@ -19,7 +19,7 @@
 
 ## 위반 목록 — 레이어 재분류
 
-- [ ] `_hooks/use-editor-image-upload.ts` — `_hooks`(API 무관 순수 상태 로직)인데 `_services/upload-image`의 `uploadImage` Server Action을 직접 호출. → 이 훅을 사용하는 `_actions/wysiwyg-editor.action.tsx` 쪽으로 오케스트레이션 로직을 옮기거나, `_hooks`가 아닌 별도 클라이언트 오케스트레이션 파일로 재분류할지 결정 필요.
+- [ ] `_hooks/useEditorImageUpload.ts` — `_hooks`(API 무관 순수 상태 로직)인데 `_services/upload-image`의 `uploadImage` Server Action을 직접 호출. → 이 훅을 사용하는 `_actions/wysiwyg-editor.action.tsx` 쪽으로 오케스트레이션 로직을 옮기거나, `_hooks`가 아닌 별도 클라이언트 오케스트레이션 파일로 재분류할지 결정 필요.
 - [ ] `_services/submit-post.ts` — 최상단에 `'use server'` 없음. 대신 `useNewPostStore.getState()`로 zustand 클라이언트 스토어를 직접 조작(`store.setSaveStatus('saving')` 등). 실제 Server Action이 아님. → `_services`에서 제외하고 클라이언트 오케스트레이션 레이어로 재배치(예: `_actions` 보조 유틸 또는 각 액션 컴포넌트에 인라인화).
 
 ## 참고 — 재검토가 필요하나 기존 결정과 상충 가능
@@ -35,7 +35,7 @@
 
 1. `_image-block`류 하위 사적 폴더(`_image-upload`, `_image-uploading`, `_link`, `_preview`, `_youtube`)는 `_actions` 하위에 동일 구조로 이동(`page-folder.md`가 `_actions` 하위 폴더 생성을 허용).
 2. `git mv` → 컴포넌트명에 `Action` 접미사 부여 → 파일명 개명(`index.tsx` 제거) → import 경로 갱신.
-3. `use-editor-image-upload.ts`, `submit-post.ts`는 재분류 방향을 먼저 확정한 뒤 이동.
+3. `useEditorImageUpload.ts`, `submit-post.ts`는 재분류 방향을 먼저 확정한 뒤 이동.
 4. `save-post.ts`/`upload-image.ts`/`generate-excerpt.ts`는 기본적으로 손대지 않음(위 참고 항목 참조).
 
 ## 검증
