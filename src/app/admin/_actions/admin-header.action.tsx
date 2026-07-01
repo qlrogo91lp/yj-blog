@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { SITE_NAME } from '@/lib/constants';
 
-export function AdminHeader() {
+export function AdminHeaderAction() {
   const pathname = usePathname();
   const isEditing =
     pathname === '/admin/posts/new' || pathname.includes('/admin/posts/') && pathname.endsWith('/edit');

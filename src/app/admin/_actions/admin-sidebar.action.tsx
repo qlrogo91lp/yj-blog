@@ -57,7 +57,7 @@ const menuGroups = [
   },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebarAction() {
   const pathname = usePathname();
 
   function isActive(href: string) {
