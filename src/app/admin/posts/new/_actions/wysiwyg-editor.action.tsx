@@ -19,7 +19,7 @@ import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { useEditorContext } from '../_providers/editor.provider';
 import { useNewPostStore } from '../_store';
-import { useEditorImageUpload } from '../_hooks/use-editor-image-upload';
+import { useEditorImageUpload } from '../_hooks/useEditorImageUpload';
 import { removeImage } from '../_services/remove-image';
 
 export function WysiwygEditorAction() {
