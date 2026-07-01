@@ -36,7 +36,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { ImageUploadDialogAction } from './_image-upload/image-upload.action';
 import { YoutubeEmbedDialog } from '../_components/_youtube';
-import { LinkDialog } from '../_components/_link';
+import { LinkDialogAction } from './_link/link.action';
 import { ColorPicker } from '../_components/color-picker';
 import { TableInsertAction } from './table-insert.action';
 import { ToolbarButton } from '../_components/toolbar-button';
@@ -301,7 +301,7 @@ export function EditorToolbarAction() {
       />
 
       {/* 다이얼로그 */}
-      <LinkDialog
+      <LinkDialogAction
         editor={editor}
         open={isLinkOpen}
         onOpenChange={setIsLinkOpen}

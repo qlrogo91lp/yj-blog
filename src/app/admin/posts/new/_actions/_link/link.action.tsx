@@ -20,7 +20,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function LinkDialog({ editor, open, onOpenChange }: Props) {
+export function LinkDialogAction({ editor, open, onOpenChange }: Props) {
   const [url, setUrl] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
