@@ -5,8 +5,8 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { type CommentWithReplies } from '@/types';
-import { DeleteCommentDialogAction } from '../_actions/delete-comment-dialog.action';
-import { CommentForm } from './comment-form';
+import { DeleteCommentDialogAction } from './delete-comment-dialog.action';
+import { CommentFormAction } from './comment-form.action';
 
 type Props = {
   comment: CommentWithReplies;
@@ -14,7 +14,7 @@ type Props = {
   isReply?: boolean;
 };
 
-export function CommentItem({ comment, postSlug, isReply = false }: Props) {
+export function CommentItemAction({ comment, postSlug, isReply = false }: Props) {
   const [isReplying, setIsReplying] = useState(false);
 
   const formattedDate = format(new Date(comment.createdAt), 'yyyy.M.d HH:mm', {
@@ -30,7 +30,7 @@ export function CommentItem({ comment, postSlug, isReply = false }: Props) {
         {comment.replies.length > 0 && (
           <div className="space-y-4">
             {comment.replies.map((reply) => (
-              <CommentItem
+              <CommentItemAction
                 key={reply.id}
                 comment={reply}
                 postSlug={postSlug}
@@ -66,7 +66,7 @@ export function CommentItem({ comment, postSlug, isReply = false }: Props) {
 
       {isReplying && (
         <div className="mt-3 ml-8">
-          <CommentForm
+          <CommentFormAction
             postId={comment.postId}
             postSlug={postSlug}
             parentId={comment.id}
@@ -78,7 +78,7 @@ export function CommentItem({ comment, postSlug, isReply = false }: Props) {
       {comment.replies.length > 0 && (
         <div className="space-y-4">
           {comment.replies.map((reply) => (
-            <CommentItem
+            <CommentItemAction
               key={reply.id}
               comment={reply}
               postSlug={postSlug}

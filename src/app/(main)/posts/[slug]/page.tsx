@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { selectPostBySlug } from '@/db/queries/posts';
+import { selectCommentsByPostId } from '@/db/queries/comments';
 import { getBlogSettings } from '@/db/queries/settings';
 import { markdownToHtmlWithToc, htmlToHtmlWithToc } from '@/lib/markdown';
 import { SITE_NAME } from '@/lib/constants';
 import { CommentSection } from './_components/comment-section';
-import { PostToc } from './_components/post-toc';
 import { PostHeader } from './_components/post-header';
-import { PostContent } from './_components/post-content';
 import { ArticleJsonLd } from './_components/article-json-ld';
+import { PostTocAction } from './_actions/post-toc.action';
+import { PostContentAction } from './_actions/post-content.action';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -60,10 +61,12 @@ export default async function PostPage({ params }: Props) {
 
   if (!post || post.status !== 'published') notFound();
 
-  const { html: contentHtml, toc } =
+  const [{ html: contentHtml, toc }, comments] = await Promise.all([
     post.contentFormat === 'html'
-      ? await htmlToHtmlWithToc(post.content)
-      : await markdownToHtmlWithToc(post.content);
+      ? htmlToHtmlWithToc(post.content)
+      : markdownToHtmlWithToc(post.content),
+    selectCommentsByPostId(post.id),
+  ]);
 
   return (
     <>
@@ -75,17 +78,17 @@ export default async function PostPage({ params }: Props) {
       <div className="relative mx-auto max-w-3xl px-4 py-8">
         <article>
           <PostHeader post={post} />
-          <PostContent html={contentHtml} />
+          <PostContentAction html={contentHtml} />
         </article>
 
         {toc.length > 0 && (
           <div className="absolute left-[calc(100%+2rem)] top-0 hidden h-full w-55 min-[1340px]:block">
-            <PostToc toc={toc} />
+            <PostTocAction toc={toc} />
           </div>
         )}
       </div>
 
-      <CommentSection postId={post.id} postSlug={post.slug} />
+      <CommentSection comments={comments} postId={post.id} postSlug={post.slug} />
     </>
   );
 }
