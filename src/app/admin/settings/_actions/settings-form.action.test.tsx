@@ -29,7 +29,7 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
-import { SettingsForm } from './settings-form';
+import { SettingsFormAction } from './settings-form.action';
 import { editSettings } from '../_services/edit-settings';
 import { toast } from 'sonner';
 
@@ -120,12 +120,12 @@ describe('blogSettingsSchema', () => {
 });
 
 // -------------------------------------------------------------------
-// SettingsForm 컴포넌트 테스트
+// SettingsFormAction 컴포넌트 테스트
 // -------------------------------------------------------------------
 
-describe('SettingsForm', () => {
+describe('SettingsFormAction', () => {
   it('기본 필드들이 렌더링된다', () => {
-    render(<SettingsForm />);
+    render(<SettingsFormAction />);
 
     expect(screen.getByLabelText('블로그 이름 *')).toBeInTheDocument();
     expect(screen.getByLabelText('태그라인')).toBeInTheDocument();
@@ -138,7 +138,7 @@ describe('SettingsForm', () => {
   });
 
   it('저장 버튼이 렌더링된다', () => {
-    render(<SettingsForm />);
+    render(<SettingsFormAction />);
     expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
   });
 
@@ -154,7 +154,7 @@ describe('SettingsForm', () => {
       updatedAt: new Date(),
     };
 
-    render(<SettingsForm defaultValues={defaultValues} />);
+    render(<SettingsFormAction defaultValues={defaultValues} />);
 
     expect(screen.getByLabelText('블로그 이름 *')).toHaveValue('My Blog');
     expect(screen.getByLabelText('태그라인')).toHaveValue('기록하는 블로그');
@@ -165,7 +165,7 @@ describe('SettingsForm', () => {
   });
 
   it('blogName이 없으면 유효성 에러가 표시된다', async () => {
-    render(<SettingsForm />);
+    render(<SettingsFormAction />);
 
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
@@ -177,7 +177,7 @@ describe('SettingsForm', () => {
   });
 
   it('유효한 데이터 제출 시 editSettings가 호출된다', async () => {
-    render(<SettingsForm />);
+    render(<SettingsFormAction />);
 
     fireEvent.change(screen.getByLabelText('블로그 이름 *'), {
       target: { value: 'YJlogs' },
@@ -193,7 +193,7 @@ describe('SettingsForm', () => {
   });
 
   it('저장 성공 시 toast.success가 호출된다', async () => {
-    render(<SettingsForm />);
+    render(<SettingsFormAction />);
 
     fireEvent.change(screen.getByLabelText('블로그 이름 *'), {
       target: { value: 'YJlogs' },

@@ -42,7 +42,7 @@ type Props = {
   defaultValues?: BlogSettings | null;
 };
 
-export function SettingsForm({ defaultValues }: Props) {
+export function SettingsFormAction({ defaultValues }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const {
