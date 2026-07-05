@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { ImageBlock } from '../_utils/image-extension';
@@ -19,17 +20,18 @@ import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { useEditorContext } from '../_providers/editor.provider';
 import { useNewPostStore } from '../_store';
-import { useEditorImageUpload } from '../_hooks/use-editor-image-upload';
+import { uploadImage } from '../_services/upload-image';
 import { removeImage } from '../_services/remove-image';
+import { replaceUploadingNode } from '../_utils/replace-uploading-node';
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
   const setContentFormat = useNewPostStore((s) => s.setContentFormat);
+  const setPostId = useNewPostStore((s) => s.setPostId);
   const content = useNewPostStore((s) => s.content);
   const { setEditor } = useEditorContext();
   const isInitialMount = useRef(true);
   const prevImageSrcs = useRef<Set<string>>(new Set());
-  const { uploadAndInsert } = useEditorImageUpload();
 
   const getImageSrcs = useCallback((editorInstance: Editor): Set<string> => {
     const srcs = new Set<string>();
@@ -40,6 +42,51 @@ export function WysiwygEditorAction() {
     });
     return srcs;
   }, []);
+
+  const uploadAndInsert = useCallback(
+    async (editorInstance: Editor, file: File) => {
+      if (!file.type.startsWith('image/')) return false;
+
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('파일 크기는 10MB 이하여야 합니다');
+        return true;
+      }
+
+      const id = crypto.randomUUID();
+      const previewUrl = URL.createObjectURL(file);
+
+      editorInstance
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'imageUploading',
+          attrs: { id, previewUrl },
+        })
+        .run();
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const currentPostId = useNewPostStore.getState().postId;
+      const result = await uploadImage(formData, currentPostId, 'content');
+
+      if (result.url) {
+        replaceUploadingNode(editorInstance, id, {
+          type: 'image',
+          attrs: { src: result.url },
+        });
+        if (result.postId && !currentPostId) {
+          setPostId(result.postId);
+        }
+      } else {
+        replaceUploadingNode(editorInstance, id, null);
+        toast.error(result.error ?? '업로드 실패');
+      }
+
+      return true;
+    },
+    [setPostId],
+  );
 
   const editor = useEditor({
     immediatelyRender: false,

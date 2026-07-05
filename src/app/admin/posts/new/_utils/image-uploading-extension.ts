@@ -1,6 +1,6 @@
 import { Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { ImageUploadingNodeView } from '../_components/_image-uploading/image-uploading-node-view';
+import { ImageUploadingNodeViewAction } from '../_actions/_image-uploading/image-uploading-node-view.action';
 
 export const ImageUploading = Node.create({
   name: 'imageUploading',
@@ -25,6 +25,6 @@ export const ImageUploading = Node.create({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(ImageUploadingNodeView);
+    return ReactNodeViewRenderer(ImageUploadingNodeViewAction);
   },
 });

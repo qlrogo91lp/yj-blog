@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { cn } from '@/lib/utils';
 import { ClerkProvider } from '@clerk/nextjs';
 import { PageTracker } from '@/components/page-tracker';
@@ -44,6 +45,11 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       images: ['/og-default.png'],
     },
+    verification: {
+      other: {
+        'naver-site-verification': '7d25909aa6a6b6fedab3de9a116a4bc44e315dc4',
+      },
+    },
   };
 }
 
@@ -65,6 +71,9 @@ export default function RootLayout({
               <Toaster />
             </TooltipProvider>
           </ThemeProvider>
+          {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+          )}
         </body>
       </html>
     </ClerkProvider>

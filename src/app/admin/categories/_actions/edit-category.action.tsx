@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Category } from '@/types';
-import { CategoryFormDialog } from '../_components/_category-form';
+import { CategoryFormDialogAction } from './category-form-dialog.action';
 
 type Props = {
   category: Category;
@@ -19,7 +19,7 @@ export function EditCategoryAction({ category }: Props) {
         <PencilIcon size={16} />
         <span className="sr-only">수정</span>
       </Button>
-      <CategoryFormDialog
+      <CategoryFormDialogAction
         open={isOpen}
         onOpenChange={setIsOpen}
         category={category}

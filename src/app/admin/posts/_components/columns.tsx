@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import type { PostWithCategory } from '@/types';
-import { PostActionsCell } from './post-actions-cell';
+import { PostActionsCellAction } from '../_actions/post-actions-cell.action';
 
 const columnHelper = createColumnHelper<PostWithCategory>();
 
@@ -51,7 +51,7 @@ export const postColumns = [
     id: 'actions',
     header: '관리',
     cell: (info) => (
-      <PostActionsCell postId={info.row.original.id} postTitle={info.row.original.title} />
+      <PostActionsCellAction postId={info.row.original.id} postTitle={info.row.original.title} />
     ),
   }),
 ];

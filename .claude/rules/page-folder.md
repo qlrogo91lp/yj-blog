@@ -25,8 +25,8 @@
 | `_providers` | `*.provider.tsx` | `auto-save.provider.tsx` |
 | `_suspenses` | `*.suspense.tsx` | `post-list.suspense.tsx` |
 | `_services` | 동사+명사 kebab (접미사 없음) | `add-comment.ts` |
-| `_queries` | `get-*.ts`(통신) / `use-*.ts`(소비) | `get-posts.ts`, `use-posts.ts` |
-| `_hooks` | `use-*.ts` | `use-toggle.ts` |
+| `_queries` | `get-*.ts`(통신, kebab-case) / `use*.ts`(소비, camelCase) | `get-posts.ts`, `usePosts.ts` |
+| `_hooks` | `use*.ts` (camelCase, 함수명과 동일) | `useToggle.ts` |
 | `_utils` | kebab-case | `replace-uploading-node.ts` |
 
 > 폴더명(분류)과 dot-suffix(역할)는 짝을 이룬다 — `_actions/*.action.tsx`, `_handlers/*.handler.tsx`처럼 위치와 표기가 일관된다.
@@ -57,7 +57,7 @@
 App Router에서 초기 읽기는 RSC, 쓰기는 Server Action이 담당하므로 현재는 사용하지 않는다. 무한 스크롤처럼 **클라이언트에서 추가로 데이터를 읽는** 경우가 늘어나면 도입한다.
 
 - **통신 계층** (`get-*.ts`): `fetch()` 호출 함수 + 응답 모델/타입 정의. tanstack-query를 직접 쓰지 않는 순수 함수.
-- **소비·가공 계층** (`use-*.ts`): 위 통신 함수를 `useQuery({ queryFn })`로 감싸고 `select`로 가공하는 hook. tanstack-query는 이 계층에서 사용한다.
+- **소비·가공 계층** (`use*.ts`, camelCase): 위 통신 함수를 `useQuery({ queryFn })`로 감싸고 `select`로 가공하는 hook. tanstack-query는 이 계층에서 사용한다.
 
 ### `_actions` 하위 분류
 
@@ -98,3 +98,5 @@ export default async function NewPostPage() {
 | 상태에 따른 조건부 렌더링 | `EditorViewHandler` — mode에 따라 에디터 컴포넌트 전환 |
 | `useEffect` 초기화/정리 | `PostInitHandler` — 글 데이터 로드 및 cleanup 시 reset |
 | 사이드바·UI 상태 제어 | `SidebarCollapseHandler` — 진입 시 사이드바 닫기 |
+
+> **예외**: `post-list-view.handler.tsx`는 현재 클라이언트 훅·사이드이펙트 없이 props만으로 렌더링하는 순수 컴포넌트 형태다. 향후 조건부 렌더링/사이드이펙트 확장이 예정되어 있어 `_handlers` 위치를 유지한다. 확장 계획이 사라지면 `_components`로 재이동을 검토한다.
