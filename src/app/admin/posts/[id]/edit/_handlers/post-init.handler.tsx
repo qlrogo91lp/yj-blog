@@ -17,6 +17,7 @@ export function PostInitHandler({ post, initialTagIds }: Props) {
       content: post.content,
       contentFormat: post.contentFormat as 'markdown' | 'html',
       categoryId: post.categoryId,
+      seriesId: post.seriesId,
       tagIds: initialTagIds,
       slug: post.slug,
       excerpt: post.excerpt ?? '',

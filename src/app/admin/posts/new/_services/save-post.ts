@@ -18,6 +18,7 @@ type SavePostInput = {
   metaTitle?: string;
   thumbnailUrl?: string | null;
   categoryId: number | null;
+  seriesId: number | null;
   tagIds?: number[];
   status: 'draft' | 'published';
   publishedAt?: Date | null;
@@ -45,6 +46,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
     contentFormat,
     excerpt,
     categoryId,
+    seriesId,
     status,
     metaTitle,
   } = parsed.data;
@@ -63,6 +65,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
         metaTitle: metaTitle && metaTitle.length > 0 ? metaTitle : null,
         thumbnailUrl: input.thumbnailUrl ?? null,
         categoryId,
+        seriesId,
         status,
         updatedAt: new Date(),
       };
@@ -77,6 +80,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
       await syncPostTags(input.postId, tagIds);
 
       revalidateTag(CACHE_TAGS.posts, 'max');
+      revalidateTag(CACHE_TAGS.series, 'max');
       revalidatePath('/admin/posts');
       return { success: true, postId: input.postId };
     } else {
@@ -93,6 +97,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
           metaTitle: metaTitle && metaTitle.length > 0 ? metaTitle : null,
           thumbnailUrl: input.thumbnailUrl ?? null,
           categoryId,
+          seriesId,
           status,
           publishedAt,
         })
@@ -101,6 +106,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
       await syncPostTags(newPost.id, tagIds);
 
       revalidateTag(CACHE_TAGS.posts, 'max');
+      revalidateTag(CACHE_TAGS.series, 'max');
       revalidatePath('/admin/posts');
       return { success: true, postId: newPost.id };
     }

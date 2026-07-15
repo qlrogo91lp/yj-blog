@@ -40,6 +40,7 @@ export const postFormSchema = z.object({
   thumbnailUrl: z.string().optional(),
   status: z.enum(['draft', 'published']),
   categoryId: z.number().int().positive().nullable(),
+  seriesId: z.number().int().positive().nullable(),
   metaTitle: z
     .string()
     .max(100, 'meta 제목은 100자 이하여야 합니다')
