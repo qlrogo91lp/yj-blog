@@ -13,3 +13,14 @@ export type {
 export { commentFormSchema, commentPasswordSchema } from './comment';
 
 export type { Tag, TagSummary } from './tag';
+
+export type {
+  Series,
+  SeriesWithMeta,
+  SeriesPostItem,
+  SeriesDetailPost,
+  SeriesDetail,
+  SeriesNav,
+  SeriesFormValues,
+} from './series';
+export { seriesFormSchema } from './series';

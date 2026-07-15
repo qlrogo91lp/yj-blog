@@ -8,6 +8,7 @@ import {
   FileText,
   FolderOpen,
   Globe,
+  Layers,
   LayoutDashboard,
   MessageSquare,
   Settings,
@@ -36,6 +37,7 @@ const menuGroups = [
     items: [
       { label: '글 관리', icon: FileText, href: '/admin/posts' },
       { label: '카테고리 관리', icon: FolderOpen, href: '/admin/categories' },
+      { label: '시리즈 관리', icon: Layers, href: '/admin/series' },
       { label: '태그 관리', icon: Tag, href: '/admin/tags' },
       { label: '댓글 관리', icon: MessageSquare, href: '/admin/comments' },
     ],

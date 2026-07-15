@@ -8,6 +8,7 @@ const validData = {
   contentFormat: 'markdown' as const,
   status: 'draft' as const,
   categoryId: null,
+  seriesId: null,
 };
 
 describe('postFormSchema', () => {
@@ -93,6 +94,25 @@ describe('postFormSchema', () => {
     });
   });
 
+  describe('seriesId', () => {
+    it('null이면 성공', () => {
+      expect(
+        postFormSchema.safeParse({ ...validData, seriesId: null }).success
+      ).toBe(true);
+    });
+
+    it('양의 정수면 성공', () => {
+      expect(
+        postFormSchema.safeParse({ ...validData, seriesId: 3 }).success
+      ).toBe(true);
+    });
+
+    it('키가 없으면 실패 (required)', () => {
+      const { seriesId: _, ...withoutSeriesId } = validData;
+      expect(postFormSchema.safeParse(withoutSeriesId).success).toBe(false);
+    });
+  });
+
   describe('excerpt', () => {
     it('없어도 성공 (optional)', () => {
       const { excerpt: _, ...withoutExcerpt } = {
@@ -128,6 +148,7 @@ describe('postFormSchema', () => {
       excerpt: '요약',
       status: 'published',
       categoryId: 1,
+      seriesId: 1,
       metaTitle: 'SEO 제목',
       metaDescription: 'SEO 설명',
       thumbnailUrl: 'https://example.com/thumb.jpg',
