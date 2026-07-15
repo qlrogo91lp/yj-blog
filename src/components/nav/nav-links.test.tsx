@@ -24,10 +24,11 @@ vi.mock('next/navigation', () => ({
 }));
 
 describe('NavLinks', () => {
-  it('Home·블로그·Tags·Apps 링크를 렌더하고 플레이그라운드는 없다', () => {
+  it('Home·블로그·시리즈·Tags·Apps 링크를 렌더하고 플레이그라운드는 없다', () => {
     render(<NavLinks />);
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     expect(screen.getByRole('link', { name: '블로그' })).toHaveAttribute('href', '/posts');
+    expect(screen.getByRole('link', { name: '시리즈' })).toHaveAttribute('href', '/series');
     expect(screen.getByRole('link', { name: 'Tags' })).toHaveAttribute('href', '/tags');
     expect(screen.getByRole('link', { name: 'Apps' })).toHaveAttribute('href', '/apps');
     expect(screen.queryByRole('link', { name: '플레이그라운드' })).not.toBeInTheDocument();
