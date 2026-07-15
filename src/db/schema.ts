@@ -33,6 +33,18 @@ export const categories = pgTable('categories', {
 });
 
 // -----------------------------------------------
+// series (연재 시리즈)
+// -----------------------------------------------
+
+export const series = pgTable('series', {
+  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar('name', { length: 100 }).notNull(),
+  slug: varchar('slug', { length: 100 }).notNull().unique(), // URL: /series/[slug]
+  description: text('description'), // 시리즈 소개 + meta description
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// -----------------------------------------------
 // posts
 // -----------------------------------------------
 
@@ -51,6 +63,11 @@ export const posts = pgTable('posts', {
 
   // 분류
   categoryId: integer('category_id').references(() => categories.id, {
+    onDelete: 'set null',
+  }),
+
+  // 시리즈 (연재). 순서는 publishedAt ASC로 결정
+  seriesId: integer('series_id').references(() => series.id, {
     onDelete: 'set null',
   }),
 
@@ -173,10 +190,18 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
   posts: many(posts),
 }));
 
+export const seriesRelations = relations(series, ({ many }) => ({
+  posts: many(posts),
+}));
+
 export const postsRelations = relations(posts, ({ one, many }) => ({
   category: one(categories, {
     fields: [posts.categoryId],
     references: [categories.id],
+  }),
+  series: one(series, {
+    fields: [posts.seriesId],
+    references: [series.id],
   }),
   comments: many(comments),
   referrers: many(referrers),

@@ -45,6 +45,7 @@ const basePost = {
   status: 'published' as const,
   views: 0,
   categoryId: null,
+  seriesId: null,
   metaTitle: null,
   metaDescription: null,
   category: null,

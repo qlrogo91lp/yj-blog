@@ -4,4 +4,5 @@ export const CACHE_TAGS = {
   comments: 'comments',
   settings: 'settings',
   tags: 'tags',
+  series: 'series',
 } as const;
