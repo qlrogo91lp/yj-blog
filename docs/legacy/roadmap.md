@@ -52,7 +52,7 @@
 | Playground | ⚠️ placeholder | "곧 업데이트" 메시지만 표시 |
 | 태그 시스템 | ❌ 미구현 | 현재 카테고리(1:N)만 지원. 다중 태그 필요 시 posts_tags 중간 테이블 추가 |
 | 글 목차(TOC) | ❌ 미구현 | 글 상세 페이지 heading 기반 사이드 목차 |
-| 시리즈/연재 | ❌ 미구현 | 관련 글 묶기 기능 |
+| 시리즈/연재 | ✅ 완료 | `series` 테이블 + 관리자 CRUD + 에디터 연동 + 글 상세 시리즈 박스/이전·다음 + `/series` 목록·상세. [설계](../superpowers/specs/2026-07-15-series-design.md) · [계획](../superpowers/plans/2026-07-15-series.md) |
 | RSS 피드 | ❌ 미구현 | `/feed.xml` 또는 `/rss` 엔드포인트 |
 | 이전/다음 글 네비게이션 | ❌ 미구현 | 글 상세 하단에 이전/다음 글 링크 |
 | 글 공유 버튼 | ❌ 미구현 | 링크 복사, SNS 공유 등 |
@@ -96,6 +96,19 @@
 - 인기 글은 기존 통계 쿼리가 있다면 그대로 활용. 없으면 별도 캐시 태그(`CACHE_TAGS.popularPosts` 등)로 `unstable_cache` 처리.
 - `/`는 Server Component 유지. 인터랙션이 필요한 부분만 `_actions`로 분리.
 - `_actions/view-toggle-action.tsx`, `_handlers/post-list-view-handler.tsx`는 더 이상 홈에서 필요 없으므로 `/posts` 전용으로 이동 검토.
+
+---
+
+## 시리즈 기능 후속 개선 (2026-07-15 리뷰에서 발견, 비차단)
+
+시리즈 연재 기능([계획](../superpowers/plans/2026-07-15-series.md)) 구현·리뷰 중 발견됐으나 머지를 막을 정도는 아니어서 이월한 항목.
+
+| 항목 | 설명 |
+|------|------|
+| 시리즈 삭제 토스트 | 관리자에서 시리즈 삭제 성공 시 `toast.success` 없음 (스펙엔 명시됐으나 카테고리 삭제도 동일하게 없어 관행상 보류) |
+| 한글 이름 자동 slug | `generateSlug`(`src/lib/slugify.ts`)가 한글을 제거하고 `post-<timestamp>`로 fallback — 시리즈·카테고리 공용 유틸이라 한글 보존 방식으로 개선 시 두 곳 다 혜택 |
+| 시리즈 상세 SNS 메타 | `/series/[slug]`에 twitter 카드·`og:type` 메타 미적용 (글 상세는 있음) |
+| `updateSeries` 방어 | 존재하지 않는 id 수정 시 `undefined`를 `Series` 타입으로 반환 — `if (!updated) throw` 필요 |
 
 ---
 
