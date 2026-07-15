@@ -20,6 +20,7 @@ export function SeriesCard({ series }: Props) {
             src={series.thumbnailUrl}
             alt={series.name}
             fill
+            sizes="(max-width: 640px) calc(100vw - 32px), 360px"
             className="object-cover transition-transform group-hover:scale-105"
           />
         </div>
