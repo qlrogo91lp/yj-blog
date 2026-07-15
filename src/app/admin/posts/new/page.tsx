@@ -1,12 +1,14 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import { getCategories } from '@/db/queries/categories';
+import { selectSeriesList } from '@/db/queries/series';
 import { getAllTags } from '@/db/queries/tags';
 import { BottomBar } from './_components/bottom-bar';
 import { EditorProvider } from './_providers/editor.provider';
 import { EditorViewHandler } from './_handlers/editor-view.handler';
 import { EditorToolbarAction } from './_actions/editor-toolbar.action';
 import { CategorySelectorAction } from './_actions/category-selector.action';
+import { SeriesSelectorAction } from './_actions/series-selector.action';
 import { TagSelectorAction } from './_actions/tag-selector.action';
 import { TitleInputAction } from './_actions/title-input.action';
 import { ThumbnailUploadAction } from './_actions/thumbnail-upload.action';
@@ -17,7 +19,11 @@ export default async function NewPostPage() {
   const { userId } = await auth();
   if (!userId) redirect('/sign-in');
 
-  const [categories, tags] = await Promise.all([getCategories(), getAllTags()]);
+  const [categories, tags, seriesList] = await Promise.all([
+    getCategories(),
+    getAllTags(),
+    selectSeriesList(),
+  ]);
 
   return (
     <EditorProvider>
@@ -25,6 +31,7 @@ export default async function NewPostPage() {
         <EditorToolbarAction />
         <div className="flex-1 mx-auto w-full max-w-4xl px-6 py-6">
           <CategorySelectorAction categories={categories} />
+          <SeriesSelectorAction seriesList={seriesList} />
           <TagSelectorAction allTags={tags} />
           <ThumbnailUploadAction />
           <TitleInputAction />

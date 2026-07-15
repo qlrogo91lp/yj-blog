@@ -2,10 +2,12 @@ import { notFound, redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import { getCategories } from '@/db/queries/categories';
 import { selectPostById } from '@/db/queries/posts';
+import { selectSeriesList } from '@/db/queries/series';
 import { getAllTags, selectTagsByPostId } from '@/db/queries/tags';
 import { BottomBar } from '../../new/_components/bottom-bar';
 import { EditorToolbarAction } from '../../new/_actions/editor-toolbar.action';
 import { CategorySelectorAction } from '../../new/_actions/category-selector.action';
+import { SeriesSelectorAction } from '../../new/_actions/series-selector.action';
 import { TagSelectorAction } from '../../new/_actions/tag-selector.action';
 import { TitleInputAction } from '../../new/_actions/title-input.action';
 import { ThumbnailUploadAction } from '../../new/_actions/thumbnail-upload.action';
@@ -27,12 +29,14 @@ export default async function EditPostPage({ params }: Props) {
   const postId = Number(id);
   if (Number.isNaN(postId)) notFound();
 
-  const [post, categories, allTags, postTagList] = await Promise.all([
-    selectPostById(postId),
-    getCategories(),
-    getAllTags(),
-    selectTagsByPostId(postId),
-  ]);
+  const [post, categories, allTags, postTagList, seriesList] =
+    await Promise.all([
+      selectPostById(postId),
+      getCategories(),
+      getAllTags(),
+      selectTagsByPostId(postId),
+      selectSeriesList(),
+    ]);
 
   if (!post) notFound();
 
@@ -43,6 +47,7 @@ export default async function EditPostPage({ params }: Props) {
         <EditorToolbarAction />
         <div className="flex-1 mx-auto w-full max-w-4xl px-6 py-6">
           <CategorySelectorAction categories={categories} />
+          <SeriesSelectorAction seriesList={seriesList} />
           <TagSelectorAction allTags={allTags} />
           <ThumbnailUploadAction />
           <TitleInputAction />

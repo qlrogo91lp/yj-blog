@@ -3,13 +3,16 @@ import { notFound } from 'next/navigation';
 import { selectPostBySlug } from '@/db/queries/posts';
 import { selectCommentsByPostId } from '@/db/queries/comments';
 import { getBlogSettings } from '@/db/queries/settings';
+import { selectSeriesPosts } from '@/db/queries/series';
 import { markdownToHtmlWithToc, htmlToHtmlWithToc } from '@/lib/markdown';
 import { SITE_NAME } from '@/lib/constants';
 import { CommentSection } from './_components/comment-section';
 import { PostHeader } from './_components/post-header';
 import { ArticleJsonLd } from './_components/article-json-ld';
+import { SeriesPrevNext } from './_components/series-prev-next';
 import { PostTocAction } from './_actions/post-toc.action';
 import { PostContentAction } from './_actions/post-content.action';
+import { SeriesBoxAction } from './_actions/series-box.action';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -61,12 +64,18 @@ export default async function PostPage({ params }: Props) {
 
   if (!post || post.status !== 'published') notFound();
 
-  const [{ html: contentHtml, toc }, comments] = await Promise.all([
+  const [{ html: contentHtml, toc }, comments, seriesNav] = await Promise.all([
     post.contentFormat === 'html'
       ? htmlToHtmlWithToc(post.content)
       : markdownToHtmlWithToc(post.content),
     selectCommentsByPostId(post.id),
+    post.seriesId ? selectSeriesPosts(post.seriesId) : Promise.resolve(null),
   ]);
+
+  const seriesIndex = seriesNav
+    ? seriesNav.posts.findIndex((p) => p.id === post.id)
+    : -1;
+  const hasSeries = seriesNav !== null && seriesIndex !== -1;
 
   return (
     <>
@@ -78,7 +87,21 @@ export default async function PostPage({ params }: Props) {
       <div className="relative mx-auto max-w-3xl px-4 py-8">
         <article>
           <PostHeader post={post} />
+          {hasSeries && (
+            <SeriesBoxAction
+              name={seriesNav.name}
+              slug={seriesNav.slug}
+              posts={seriesNav.posts}
+              currentPostId={post.id}
+            />
+          )}
           <PostContentAction html={contentHtml} />
+          {hasSeries && (
+            <SeriesPrevNext
+              prev={seriesNav.posts[seriesIndex - 1] ?? null}
+              next={seriesNav.posts[seriesIndex + 1] ?? null}
+            />
+          )}
         </article>
 
         {toc.length > 0 && (

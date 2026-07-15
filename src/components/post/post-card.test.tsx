@@ -31,6 +31,7 @@ const mockPost: PostWithCategory = {
   status: 'published',
   views: 0,
   categoryId: 1,
+  seriesId: null,
   metaTitle: null,
   metaDescription: null,
   publishedAt: new Date('2024-01-15'),

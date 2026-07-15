@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 const links = [
   { href: '/', label: 'Home' },
   { href: '/posts', label: '블로그' },
+  { href: '/series', label: '시리즈' },
   { href: '/tags', label: 'Tags' },
   { href: '/apps', label: 'Apps' },
 ];
