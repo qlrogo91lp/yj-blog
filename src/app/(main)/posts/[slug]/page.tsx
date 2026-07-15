@@ -64,20 +64,18 @@ export default async function PostPage({ params }: Props) {
 
   if (!post || post.status !== 'published') notFound();
 
-  const seriesNav = post.seriesId
-    ? await selectSeriesPosts(post.seriesId)
-    : null;
-  const seriesIndex = seriesNav
-    ? seriesNav.posts.findIndex((p) => p.id === post.id)
-    : -1;
-  const hasSeries = seriesNav !== null && seriesIndex !== -1;
-
-  const [{ html: contentHtml, toc }, comments] = await Promise.all([
+  const [{ html: contentHtml, toc }, comments, seriesNav] = await Promise.all([
     post.contentFormat === 'html'
       ? htmlToHtmlWithToc(post.content)
       : markdownToHtmlWithToc(post.content),
     selectCommentsByPostId(post.id),
+    post.seriesId ? selectSeriesPosts(post.seriesId) : Promise.resolve(null),
   ]);
+
+  const seriesIndex = seriesNav
+    ? seriesNav.posts.findIndex((p) => p.id === post.id)
+    : -1;
+  const hasSeries = seriesNav !== null && seriesIndex !== -1;
 
   return (
     <>
