@@ -72,9 +72,11 @@ export default async function SeriesDetailPage({ params }: Props) {
                 )}
                 {post.publishedAt && (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {format(new Date(post.publishedAt), 'yyyy년 M월 d일', {
-                      locale: ko,
-                    })}
+                    <time dateTime={new Date(post.publishedAt).toISOString()}>
+                      {format(new Date(post.publishedAt), 'yyyy년 M월 d일', {
+                        locale: ko,
+                      })}
+                    </time>
                   </p>
                 )}
               </div>

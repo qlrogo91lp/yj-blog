@@ -35,6 +35,8 @@ export function SeriesBoxAction({ name, slug, posts, currentPostId }: Props) {
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? '목록 접기' : '목록 펼치기'}
+          aria-expanded={isOpen}
+          aria-controls="series-box-list"
           className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
         >
           {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -42,7 +44,7 @@ export function SeriesBoxAction({ name, slug, posts, currentPostId }: Props) {
       </div>
 
       {isOpen && (
-        <ol className="mt-3 space-y-1.5">
+        <ol id="series-box-list" className="mt-3 space-y-1.5">
           {posts.map((p, i) => (
             <li key={p.id} className="flex gap-2 text-sm">
               <span className="shrink-0 text-muted-foreground">{i + 1}.</span>
