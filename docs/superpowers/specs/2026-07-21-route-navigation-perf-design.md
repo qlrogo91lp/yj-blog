@@ -80,7 +80,17 @@
 
 **기대 효과**: `/`, `/apps`, `/apps/ralli`, `/apps/ralli/privacy`, `/playground`, `/series`, `/tags`가 정적으로, `/apps/[slug]`가 SSG로 전환된다. 이 라우트들은 prefetch가 정상 동작하고 전환이 즉시 이루어진다.
 
-### 3.2 [2단계] `(main)` 그룹에 `loading.tsx` 추가
+### 3.2 [2단계] `(main)` 그룹에 `loading.tsx` 추가 — ⏪ **적용 후 되돌림**
+
+> **결론 (2026-07-21): 이 방향은 채택하지 않는다.**
+>
+> `loading.tsx`는 Suspense 경계를 만들어 응답을 스트리밍하게 한다. HTTP 상태(200)가 헤더 플러시 시점에 확정된 뒤 `notFound()`가 실행되므로, 존재하지 않는 페이지가 **본문만 404 UI이고 상태 코드는 200인 soft 404**가 된다.
+>
+> 부모 세그먼트의 `loading.tsx`가 자식 라우트까지 덮으므로 "404가 불가능한 목록 페이지에만 둔다"는 절충도 성립하지 않는다. `loading.tsx`와 올바른 404 상태는 **양립 불가**다.
+>
+> 3.3의 쿼리 캐싱으로 warm 렌더가 2~3ms가 되어 로딩 셸의 이득이 미미해진 반면, 글 상세 URL의 soft 404는 이 블로그의 SEO 과제(`2026-07-04-gsc-index-coverage-분석.md`)와 정면 충돌한다. **정확한 404 상태를 택한다.**
+>
+> 아래 원래 내용은 히스토리로 남겨둔다.
 
 1단계 이후에도 동적으로 남는 라우트(`/posts`, `/posts/[slug]`, `/categories/[slug]`, `/series/[slug]`, `/tags/[slug]`)에 Suspense 경계를 만든다. 경계가 생기면 Next.js가 해당 경계까지의 셸을 prefetch할 수 있고, 클릭 즉시 로딩 UI가 표시된다.
 
