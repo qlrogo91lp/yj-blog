@@ -1,5 +1,30 @@
 # 라우트 전환 성능 개선 Implementation Plan
 
+> **✅ 완료 (2026-07-21)**: Task 1·3 적용, **Task 2는 적용 후 되돌림**.
+>
+> **최종 성과 (프로덕션 빌드 + `next start`, warm)**
+>
+> | 라우트 | 개선 전 | 최종 | 렌더링 |
+> |---|---:|---:|:---:|
+> | `/` | 3 ms | 3 ms | ƒ → **○** |
+> | `/series`·`/tags`·`/apps`·`/playground` | 2~5 ms | 2~5 ms | ƒ → **○** |
+> | `/apps/[slug]` | — | — | ƒ → **● SSG** |
+> | `/posts` | 342 ms | **3 ms** | ƒ (searchParams) |
+> | `/posts/[slug]` | 422 ms | **2 ms** | ƒ → **● SSG** |
+> | `/categories/[slug]` | 242 ms | **3 ms** | ƒ |
+>
+> **근본 원인**: `Header`가 서버 컴포넌트로 `@clerk/nextjs`의 서버 버전 `<SignedIn>`/`<SignedOut>`을 렌더 → 내부 `auth()` 호출 → `(main)` 그룹 전체가 동적 렌더링으로 강제 → 프리렌더 페이로드가 없어 `<Link>` prefetch 무력화.
+>
+> **되돌린 항목**: Task 2(`loading.tsx`)는 soft 404를 유발해 제거했다. 상세는 Task 2 섹션 참조.
+>
+> **계획이 틀렸던 지점 2건** (모두 실측으로 발견)
+> - Step 9 검증 절차가 dev 서버 기준이었다. dev는 정적 프리렌더를 하지 않아 이 개선을 관측할 수 없다 → 프로덕션 빌드 기준으로 정정 (`1bee6b4`)
+> - Task 3 Step 6을 "캐시 무효화 코드 변경 불필요"로 예상했으나, 공개 댓글 서비스 2건에 `revalidateTag`가 없어 **댓글 캐싱 시 새 댓글이 반영되지 않는 버그**가 있었다 → `revalidateTag(CACHE_TAGS.comments, 'max')` 추가
+>
+> **미검증 항목**: 댓글 작성/삭제의 캐시 무효화를 end-to-end로 확인하지 못했다. `addComment`가 Discord 알림을 발송하고 실제 DB에 기록되어 테스트 댓글을 남기지 않았다. 코드상 관리자쪽 검증된 패턴과 동일하나 실제 동작 확인 필요.
+>
+> **기존 실패 이월**: `e2e/home.spec.ts` 2건은 홈 리뉴얼 이후 갱신되지 않아 `develop`에서도 실패한다. 이번 작업과 무관하며 별도 과제로 분리했다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 공개 페이지를 다시 정적 렌더링 대상으로 되돌리고 `<Link>` prefetch를 복원해 라우트 전환 체감 지연을 제거한다 (스펙: `docs/superpowers/specs/2026-07-21-route-navigation-perf-design.md`).
@@ -695,7 +720,7 @@ EOF
 - Modify: `docs/superpowers/plans/2026-07-21-route-navigation-perf.md`
 - Modify: `docs/legacy/roadmap.md` (해당 시)
 
-- [ ] **Step 1: plan 문서에 완료 요약 추가**
+- [x] **Step 1: plan 문서에 완료 요약 추가**
 
 이 문서 상단에 완료 일자, 실제 적용한 Task 범위, 빌드 라우트 표 before/after, 미적용으로 남긴 항목을 기록한다.
 
