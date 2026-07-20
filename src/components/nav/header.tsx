@@ -1,9 +1,8 @@
 import Link from 'next/link';
-import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/nav/logo';
 import { NavLinks } from '@/components/nav/nav-links';
 import { MobileMenu } from '@/components/nav/mobile-menu';
+import { HeaderAdminLink, HeaderAuthButtons } from '@/components/nav/header-auth';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SITE_NAME } from '@/lib/constants';
 
@@ -18,25 +17,10 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <NavLinks className="hidden md:flex" />
-          <SignedIn>
-            <Link href="/admin" className="mr-1">
-              <Button variant="default" size="sm">
-                대시보드
-              </Button>
-            </Link>
-          </SignedIn>
+          <HeaderAdminLink />
           <ThemeToggle />
           <MobileMenu />
-          <SignedOut>
-            <SignInButton mode="modal">
-              <Button variant="ghost" size="sm">
-                로그인
-              </Button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          <HeaderAuthButtons />
         </div>
       </div>
     </header>
