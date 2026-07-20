@@ -1,7 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import bcrypt from 'bcryptjs';
+import { CACHE_TAGS } from '@/db/cache-tags';
 import { selectCommentById, softDeleteComment } from '@/db/queries/comments';
 import { commentPasswordSchema } from '@/types/comment';
 
@@ -28,6 +29,9 @@ export async function removeComment(
     return { success: false, error: '비밀번호가 올바르지 않습니다' };
 
   await softDeleteComment(commentId);
+  // selectCommentsByPostId가 unstable_cache로 감싸져 있어 revalidatePath만으로는
+  // 캐시 엔트리가 무효화되지 않는다. 태그 무효화가 반드시 함께 필요하다.
+  revalidateTag(CACHE_TAGS.comments, 'max');
   revalidatePath(`/posts/${postSlug}`);
   return { success: true };
 }

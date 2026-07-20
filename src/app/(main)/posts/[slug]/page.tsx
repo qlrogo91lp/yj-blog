@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { selectPostBySlug } from '@/db/queries/posts';
+import { selectPostBySlug, selectPosts } from '@/db/queries/posts';
 import { selectCommentsByPostId } from '@/db/queries/comments';
 import { getBlogSettings } from '@/db/queries/settings';
 import { selectSeriesPosts } from '@/db/queries/series';
@@ -17,6 +17,16 @@ import { SeriesBoxAction } from './_actions/series-box.action';
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+/**
+ * 발행 글 slug를 빌드 타임에 프리렌더한다.
+ * 마크다운 → HTML 변환(highlight.js) 비용도 빌드 타임으로 이동한다.
+ */
+export async function generateStaticParams() {
+  const { items } = await selectPosts({ limit: 1000 });
+
+  return items.map((post) => ({ slug: post.slug }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

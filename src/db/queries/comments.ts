@@ -5,11 +5,7 @@ import { CACHE_TAGS } from '@/db/cache-tags';
 import { comments, posts } from '@/db/schema';
 import type { Comment, CommentWithReplies } from '@/types';
 
-/**
- * 특정 글의 댓글 목록을 트리 구조로 반환
- * 소프트 삭제된 댓글은 포함 (대댓글이 있으면 "삭제된 댓글"로 표시해야 하므로)
- */
-export async function selectCommentsByPostId(
+async function selectCommentsByPostIdUncached(
   postId: number
 ): Promise<CommentWithReplies[]> {
   const allComments = await db
@@ -35,6 +31,20 @@ export async function selectCommentsByPostId(
   }
 
   return roots;
+}
+
+/**
+ * 특정 글의 댓글 목록을 트리 구조로 반환
+ * 소프트 삭제된 댓글은 포함 (대댓글이 있으면 "삭제된 댓글"로 표시해야 하므로)
+ */
+export async function selectCommentsByPostId(
+  postId: number
+): Promise<CommentWithReplies[]> {
+  return unstable_cache(
+    () => selectCommentsByPostIdUncached(postId),
+    ['comments-by-post', String(postId)],
+    { tags: [CACHE_TAGS.comments] }
+  )();
 }
 
 /**

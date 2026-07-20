@@ -13,10 +13,7 @@ interface GetPostsOptions {
   search?: string;
 }
 
-/**
- * 발행된 글 목록 (카테고리 join, 페이지네이션, 검색)
- */
-export async function selectPosts({
+async function selectPostsUncached({
   categoryId,
   tagId,
   page = 1,
@@ -75,9 +72,29 @@ export async function selectPosts({
 }
 
 /**
- * slug로 글 상세 조회 (category + tags join)
+ * 발행된 글 목록 (카테고리 join, 페이지네이션, 검색)
+ *
+ * search는 카디널리티가 높아 캐시 키가 발산하므로 캐시를 우회한다.
  */
-export async function selectPostBySlug(
+export async function selectPosts(options: GetPostsOptions = {}) {
+  const { categoryId, tagId, page = 1, limit = 10, search } = options;
+
+  if (search) return selectPostsUncached(options);
+
+  return unstable_cache(
+    () => selectPostsUncached(options),
+    [
+      'posts-list',
+      String(categoryId ?? ''),
+      String(tagId ?? ''),
+      String(page),
+      String(limit),
+    ],
+    { tags: [CACHE_TAGS.posts] }
+  )();
+}
+
+async function selectPostBySlugUncached(
   slug: string
 ): Promise<PostWithCategoryAndTags | null> {
   const result = await db
@@ -97,6 +114,19 @@ export async function selectPostBySlug(
     .where(eq(postTags.postId, post.id));
 
   return { ...post, category, tags: tagRows };
+}
+
+/**
+ * slug로 글 상세 조회 (category + tags join)
+ */
+export async function selectPostBySlug(
+  slug: string
+): Promise<PostWithCategoryAndTags | null> {
+  return unstable_cache(
+    () => selectPostBySlugUncached(slug),
+    ['post-by-slug', slug],
+    { tags: [CACHE_TAGS.posts] }
+  )();
 }
 
 /**
