@@ -17,10 +17,7 @@ export const getCategories = unstable_cache(
   { tags: [CACHE_TAGS.categories] }
 );
 
-/**
- * slug로 카테고리 단건 조회
- */
-export async function selectCategoryBySlug(
+async function selectCategoryBySlugUncached(
   slug: string
 ): Promise<Category | null> {
   const result = await db
@@ -30,6 +27,19 @@ export async function selectCategoryBySlug(
     .limit(1);
 
   return result[0] ?? null;
+}
+
+/**
+ * slug로 카테고리 단건 조회
+ */
+export async function selectCategoryBySlug(
+  slug: string
+): Promise<Category | null> {
+  return unstable_cache(
+    () => selectCategoryBySlugUncached(slug),
+    ['category-by-slug', slug],
+    { tags: [CACHE_TAGS.categories] }
+  )();
 }
 
 /**
