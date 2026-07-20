@@ -1,7 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import bcrypt from 'bcryptjs';
+import { CACHE_TAGS } from '@/db/cache-tags';
 import { insertComment, selectCommentById } from '@/db/queries/comments';
 import { selectPostBySlug } from '@/db/queries/posts';
 import { sendCommentNotification } from '@/lib/discord';
@@ -58,6 +59,9 @@ export async function addComment(
       }
     }
 
+    // selectCommentsByPostId가 unstable_cache로 감싸져 있어 revalidatePath만으로는
+    // 캐시 엔트리가 무효화되지 않는다. 태그 무효화가 반드시 함께 필요하다.
+    revalidateTag(CACHE_TAGS.comments, 'max');
     revalidatePath(`/posts/${postSlug}`);
     return { success: true };
   } catch {

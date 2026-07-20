@@ -96,12 +96,13 @@ export async function selectTagsByPostId(postId: number): Promise<TagSummary[]> 
 }
 
 /**
- * 여러 글의 태그를 일괄 조회 → Map<postId, TagSummary[]>
+ * unstable_cache는 결과를 직렬화하므로 Map을 그대로 통과시킬 수 없다.
+ * 캐시 내부에서는 entry 배열을 반환하고 바깥 래퍼에서 Map으로 복원한다.
  */
-export async function selectTagsByPostIds(
+async function selectTagsByPostIdsUncached(
   postIds: number[]
-): Promise<Map<number, TagSummary[]>> {
-  if (postIds.length === 0) return new Map();
+): Promise<[number, TagSummary[]][]> {
+  if (postIds.length === 0) return [];
 
   const rows = await db
     .select({
@@ -120,7 +121,27 @@ export async function selectTagsByPostIds(
     list.push({ id: row.id, name: row.name, slug: row.slug });
     map.set(row.postId, list);
   }
-  return map;
+  return [...map];
+}
+
+/**
+ * 여러 글의 태그를 일괄 조회 → Map<postId, TagSummary[]>
+ */
+export async function selectTagsByPostIds(
+  postIds: number[]
+): Promise<Map<number, TagSummary[]>> {
+  if (postIds.length === 0) return new Map();
+
+  // 같은 글 집합이면 순서가 달라도 같은 캐시 키를 쓰도록 정렬한다
+  const sorted = [...postIds].sort((a, b) => a - b);
+
+  const entries = await unstable_cache(
+    () => selectTagsByPostIdsUncached(sorted),
+    ['tags-by-post-ids', sorted.join(',')],
+    { tags: [CACHE_TAGS.tags, CACHE_TAGS.posts] }
+  )();
+
+  return new Map(entries);
 }
 
 /**
