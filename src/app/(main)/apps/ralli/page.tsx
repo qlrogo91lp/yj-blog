@@ -7,15 +7,36 @@ import { RalliHero } from './_components/ralli-hero';
 import { RalliFeatureSection } from './_components/ralli-feature-section';
 import { RalliScreenshotGallery } from './_components/ralli-screenshot-gallery';
 import { RalliSupport } from './_components/ralli-support';
+import { RalliJsonLd } from './_components/ralli-json-ld';
+
+const ralliDescription =
+  'Ralli — a wrist-first tennis score & workout companion for Apple Watch and iPhone.';
 
 export const metadata: Metadata = {
   title: `${ralliMeta.name} — Tennis Score | ${SITE_NAME}`,
-  description: 'Ralli — a wrist-first tennis score & workout companion for Apple Watch and iPhone.',
+  description: ralliDescription,
+  alternates: {
+    canonical: '/apps/ralli',
+  },
+  openGraph: {
+    title: `${ralliMeta.name} — Tennis Score`,
+    description: ralliDescription,
+    url: '/apps/ralli',
+    type: 'website',
+    images: [{ url: ralliMeta.iconSrc, width: 1024, height: 1024, alt: `${ralliMeta.name} app icon` }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${ralliMeta.name} — Tennis Score`,
+    description: ralliDescription,
+    images: [ralliMeta.iconSrc],
+  },
 };
 
 export default function RalliPage() {
   return (
     <div className="bg-black text-white">
+      <RalliJsonLd />
       <div className="mx-auto max-w-5xl px-4 pt-6">
         <Link
           href="/apps"
