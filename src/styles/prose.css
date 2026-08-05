@@ -133,7 +133,10 @@
 }
 .prose figure[data-size="full"],
 .prose img[data-size="full"] {
-  width: 100%;
+  width: var(--content-width);
+  max-width: calc(100vw - 2rem);
+  margin-left: 50%;
+  transform: translateX(-50%);
 }
 .prose figure[data-size] img {
   width: 100%;
@@ -156,6 +159,19 @@
   margin-right: 0;
 }
 
+/*
+ * data-size="full" bleed은 data-align 값(left/center/right)과 무관하게
+ * 항상 콘텐츠 폭(--content-width) 기준 중앙 정렬을 유지해야 한다.
+ * 위 data-align 규칙과 specificity가 동일(.prose img[attr])하면 소스 순서상
+ * data-align 규칙이 margin-left를 덮어써 좌우 비대칭 bleed가 발생하므로,
+ * [data-size="full"][data-align] 복합 셀렉터로 specificity를 높여 재정의한다.
+ */
+.prose figure[data-size="full"][data-align],
+.prose img[data-size="full"][data-align] {
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
 /* ProseMirror 노드 선택 시의 파란 outline 제거 */
 .ProseMirror .ProseMirror-selectednode {
   outline: none;
@@ -165,5 +181,10 @@
   .prose figure[data-size],
   .prose img[data-size] {
     width: 100%;
+  }
+  .prose figure[data-size="full"][data-align],
+  .prose img[data-size="full"][data-align] {
+    margin-left: 0;
+    transform: none;
   }
 }

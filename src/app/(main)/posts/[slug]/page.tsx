@@ -94,7 +94,7 @@ export default async function PostPage({ params }: Props) {
         blogName={settings?.blogName ?? SITE_NAME}
         baseUrl={process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com'}
       />
-      <div className="relative mx-auto max-w-3xl px-4 py-8">
+      <div className="relative mx-auto max-w-[var(--article-width)] px-4 py-8">
         <article>
           <PostHeader post={post} />
           {hasSeries && (
