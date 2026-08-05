@@ -55,15 +55,15 @@ export function PostTileVertical({ post, tags, priority = false, size }: Props) 
 
         <h2
           className={cn(
-            'line-clamp-2 font-bold leading-snug tracking-tight',
+            'font-bold leading-snug tracking-tight',
             size === 'md' ? 'text-lg' : 'text-base'
           )}
         >
           <Link
             href={`/posts/${post.slug}`}
-            className="after:absolute after:inset-0 after:content-['']"
+            className="block after:absolute after:inset-0 after:content-['']"
           >
-            {post.title}
+            <span className="line-clamp-2">{post.title}</span>
           </Link>
         </h2>
 
