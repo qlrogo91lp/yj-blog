@@ -182,6 +182,11 @@
   .prose img[data-size] {
     width: 100%;
   }
+  .prose figure[data-size="full"],
+  .prose img[data-size="full"] {
+    margin-left: 0;
+    transform: none;
+  }
   .prose figure[data-size="full"][data-align],
   .prose img[data-size="full"][data-align] {
     margin-left: 0;
