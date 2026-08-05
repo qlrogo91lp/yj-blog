@@ -38,12 +38,12 @@ export function PostTileHero({ post, priority = false }: Props) {
           {post.category && publishedAt && <span className="text-white/40">·</span>}
           {publishedAt && <time>{publishedAt}</time>}
         </div>
-        <h2 className="line-clamp-2 max-w-2xl text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl">
+        <h2 className="max-w-2xl text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl">
           <Link
             href={`/posts/${post.slug}`}
-            className="after:absolute after:inset-0 after:content-['']"
+            className="block after:absolute after:inset-0 after:content-['']"
           >
-            {post.title}
+            <span className="line-clamp-2">{post.title}</span>
           </Link>
         </h2>
       </div>
