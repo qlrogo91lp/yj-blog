@@ -1,5 +1,7 @@
 # Newsroom 디자인 정렬 구현 계획
 
+> **완료: 2026-08-06.** Task 1~10 전부 구현·리뷰·머지 완료. 실제 브라우저 검증 중 코드 리뷰만으로는 드러나지 않던 CSS 버그 3건을 추가로 발견해 수정했다: (1) `line-clamp-2`의 `overflow:hidden`이 스트레치드링크 가상요소를 클리핑해 카드 제목 텍스트만 클릭되던 문제(`PostTileVertical`/`PostTileHero`), (2) `PostTileHero`의 하단 텍스트 오버레이 div가 그 자체로 `position:absolute`라 containing block이 `article` 전체가 아닌 오버레이 높이(126px)로 좁아져 이미지 영역이 클릭되지 않던 문제, (3) `prose.css`의 `data-size="full"` bleed 규칙이 `data-align`과 specificity 동률로 충돌해 좌우 비대칭 bleed가 나던 문제(추가로 `data-align` 없는 이미지의 모바일 리셋 누락도 발견해 수정). 세 건 모두 fix round를 거쳐 재검토 통과했으며 상세 경위는 `.superpowers/sdd/2026-08-05-newsroom-design-alignment/progress.md` 원장에 기록되어 있다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Apple Newsroom를 오마주해 콘텐츠 폭(980px)·radius(32px)·카드 3종·아카이브 행·다크 헤더를 하나의 일관된 시스템으로 정렬한다.
@@ -34,7 +36,7 @@
   - CSS 변수 `--content-width: 980px`, `--article-width: 653px`, `--radius-card: 2rem`(→ `rounded-card` 유틸)
   - `ContentContainer({ className?: string; children: React.ReactNode }): JSX.Element`
 
-- [ ] **Step 1: 토큰 추가** — `src/app/globals.css`
+- [x] **Step 1: 토큰 추가** — `src/app/globals.css`
 
 `:root { ... }` 블록 안, `--radius: 0.625rem;` 바로 아래에 추가:
 ```css
@@ -46,7 +48,7 @@
   --radius-card: 2rem;
 ```
 
-- [ ] **Step 2: 실패 테스트 작성** — `src/components/layout/content-container.test.tsx`
+- [x] **Step 2: 실패 테스트 작성** — `src/components/layout/content-container.test.tsx`
 
 ```tsx
 import React from 'react';
@@ -72,12 +74,12 @@ describe('ContentContainer', () => {
 });
 ```
 
-- [ ] **Step 3: 테스트 실패 확인**
+- [x] **Step 3: 테스트 실패 확인**
 
 Run: `npm run test:run -- content-container`
 Expected: FAIL — `Cannot find module './content-container'`
 
-- [ ] **Step 4: 구현** — `src/components/layout/content-container.tsx`
+- [x] **Step 4: 구현** — `src/components/layout/content-container.tsx`
 
 ```tsx
 import { cn } from '@/lib/utils';
@@ -96,12 +98,12 @@ export function ContentContainer({ className, children }: Props) {
 }
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 Run: `npm run test:run -- content-container`
 Expected: PASS (3 tests)
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/app/globals.css src/components/layout/content-container.tsx src/components/layout/content-container.test.tsx
@@ -123,7 +125,7 @@ git commit -m "🎨 콘텐츠 폭·radius 토큰 및 ContentContainer 추가"
   - `PostTileVertical({ post: PostWithCategory; tags?: TagSummary[]; priority?: boolean; size: 'md' | 'sm' })` — 내부 공용 세로형 타일
   - `PostTile2up({ post: PostWithCategory; tags?: TagSummary[]; priority?: boolean })`
 
-- [ ] **Step 1: 베이스 구현** — `src/components/post/post-tile-vertical.tsx`
+- [x] **Step 1: 베이스 구현** — `src/components/post/post-tile-vertical.tsx`
 
 ```tsx
 import Image from 'next/image';
@@ -214,7 +216,7 @@ export function PostTileVertical({ post, tags, priority = false, size }: Props) 
 }
 ```
 
-- [ ] **Step 2: 실패 테스트 작성** — `src/components/post/post-tile-2up.test.tsx`
+- [x] **Step 2: 실패 테스트 작성** — `src/components/post/post-tile-2up.test.tsx`
 
 ```tsx
 import React from 'react';
@@ -272,12 +274,12 @@ describe('PostTile2up', () => {
 });
 ```
 
-- [ ] **Step 3: 테스트 실패 확인**
+- [x] **Step 3: 테스트 실패 확인**
 
 Run: `npm run test:run -- post-tile-2up`
 Expected: FAIL — `Cannot find module './post-tile-2up'`
 
-- [ ] **Step 4: 구현** — `src/components/post/post-tile-2up.tsx`
+- [x] **Step 4: 구현** — `src/components/post/post-tile-2up.tsx`
 
 ```tsx
 import { PostTileVertical } from './post-tile-vertical';
@@ -294,12 +296,12 @@ export function PostTile2up(props: Props) {
 }
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 Run: `npm run test:run -- post-tile-2up`
 Expected: PASS (3 tests)
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/components/post/post-tile-vertical.tsx src/components/post/post-tile-2up.tsx src/components/post/post-tile-2up.test.tsx
@@ -318,7 +320,7 @@ git commit -m "✨ 세로형 타일 베이스 및 PostTile2up 추가"
 - Consumes: `PostTileVertical` (Task 2)
 - Produces: `PostTile3up({ post: PostWithCategory; tags?: TagSummary[]; priority?: boolean })`
 
-- [ ] **Step 1: 실패 테스트 작성** — `src/components/post/post-tile-3up.test.tsx`
+- [x] **Step 1: 실패 테스트 작성** — `src/components/post/post-tile-3up.test.tsx`
 
 ```tsx
 import React from 'react';
@@ -365,12 +367,12 @@ describe('PostTile3up', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 Run: `npm run test:run -- post-tile-3up`
 Expected: FAIL — `Cannot find module './post-tile-3up'`
 
-- [ ] **Step 3: 구현** — `src/components/post/post-tile-3up.tsx`
+- [x] **Step 3: 구현** — `src/components/post/post-tile-3up.tsx`
 
 ```tsx
 import { PostTileVertical } from './post-tile-vertical';
@@ -387,12 +389,12 @@ export function PostTile3up(props: Props) {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 Run: `npm run test:run -- post-tile-3up`
 Expected: PASS (1 test)
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/components/post/post-tile-3up.tsx src/components/post/post-tile-3up.test.tsx
@@ -411,7 +413,7 @@ git commit -m "✨ PostTile3up(3-col 축소 타일) 추가"
 - Consumes: `rounded-card` (Task 1)
 - Produces: `PostTileHero({ post: PostWithCategory; tags?: TagSummary[]; priority?: boolean })`
 
-- [ ] **Step 1: 실패 테스트 작성** — `src/components/post/post-tile-hero.test.tsx`
+- [x] **Step 1: 실패 테스트 작성** — `src/components/post/post-tile-hero.test.tsx`
 
 ```tsx
 import React from 'react';
@@ -468,12 +470,12 @@ describe('PostTileHero', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 Run: `npm run test:run -- post-tile-hero`
 Expected: FAIL — `Cannot find module './post-tile-hero'`
 
-- [ ] **Step 3: 구현** — `src/components/post/post-tile-hero.tsx`
+- [x] **Step 3: 구현** — `src/components/post/post-tile-hero.tsx`
 
 이미지 풀블리드 배경 + 하단 그라데이션 위 eyebrow·제목 오버레이. 카테고리는 오버레이 z-index 충돌을 피하려 링크가 아닌 텍스트로 표기(타일 전체가 제목 링크의 `after:inset-0`로 클릭됨).
 
@@ -532,12 +534,12 @@ export function PostTileHero({ post, priority = false }: Props) {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 Run: `npm run test:run -- post-tile-hero`
 Expected: PASS (3 tests)
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/components/post/post-tile-hero.tsx src/components/post/post-tile-hero.test.tsx
@@ -556,7 +558,7 @@ git commit -m "✨ PostTileHero(가로 대형 타일) 추가"
 - Consumes: 없음
 - Produces: `PostArchiveRow({ post: PostWithCategory; tags?: TagSummary[] })`
 
-- [ ] **Step 1: 실패 테스트 작성** — `src/components/post/post-archive-row.test.tsx`
+- [x] **Step 1: 실패 테스트 작성** — `src/components/post/post-archive-row.test.tsx`
 
 ```tsx
 import React from 'react';
@@ -608,12 +610,12 @@ describe('PostArchiveRow', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 Run: `npm run test:run -- post-archive-row`
 Expected: FAIL — `Cannot find module './post-archive-row'`
 
-- [ ] **Step 3: 구현** — `src/components/post/post-archive-row.tsx`
+- [x] **Step 3: 구현** — `src/components/post/post-archive-row.tsx`
 
 ```tsx
 import Image from 'next/image';
@@ -668,12 +670,12 @@ export function PostArchiveRow({ post }: Props) {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 Run: `npm run test:run -- post-archive-row`
 Expected: PASS (2 tests)
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/components/post/post-archive-row.tsx src/components/post/post-archive-row.test.tsx
@@ -693,7 +695,7 @@ git commit -m "✨ PostArchiveRow(아카이브 행) 추가"
 - Consumes: `PostTileHero` (Task 4), `PostTile2up` (Task 2), `ContentContainer` (Task 1)
 - Produces: 없음 (페이지 조합)
 
-- [ ] **Step 1: 실패 테스트 작성** — `src/app/(main)/_components/recent-posts-section.test.tsx`
+- [x] **Step 1: 실패 테스트 작성** — `src/app/(main)/_components/recent-posts-section.test.tsx`
 
 ```tsx
 import React from 'react';
@@ -747,14 +749,14 @@ describe('RecentPostsSection', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 Run: `npm run test:run -- recent-posts-section`
 Expected: FAIL — 현재 구현은 `sm:grid-cols-2`에 `PostCard`만 사용하므로 히어로 링크 단언은 통과할 수 있으나, 구현 교체 후를 기준으로 작성됨. 실패하면 다음 단계로.
 
 > 참고: 이 테스트는 교체 전에도 우연히 통과할 수 있다. 그럴 경우 Step 3 구현 후 재실행으로 회귀만 방지한다.
 
-- [ ] **Step 3: 구현** — `src/app/(main)/_components/recent-posts-section.tsx`
+- [x] **Step 3: 구현** — `src/app/(main)/_components/recent-posts-section.tsx`
 
 ```tsx
 import Link from 'next/link';
@@ -799,7 +801,7 @@ export function RecentPostsSection({ posts }: Props) {
 }
 ```
 
-- [ ] **Step 4: 홈 컨테이너 교체** — `src/app/(main)/page.tsx`
+- [x] **Step 4: 홈 컨테이너 교체** — `src/app/(main)/page.tsx`
 
 `import { RecentPostsSection } ...` 아래에 추가:
 ```tsx
@@ -817,12 +819,12 @@ import { ContentContainer } from '@/components/layout/content-container';
     </ContentContainer>
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 Run: `npm run test:run -- recent-posts-section`
 Expected: PASS (2 tests)
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add "src/app/(main)/_components/recent-posts-section.tsx" "src/app/(main)/_components/recent-posts-section.test.tsx" "src/app/(main)/page.tsx"
@@ -842,7 +844,7 @@ git commit -m "💄 홈 최근 글을 히어로+2up 그리드로 재구성"
 - Consumes: `PostTile2up` (Task 2), `PostArchiveRow` (Task 5), `ContentContainer` (Task 1)
 - Produces: 없음
 
-- [ ] **Step 1: 핸들러 구현 교체** — `src/app/(main)/_handlers/post-list-view.handler.tsx`
+- [x] **Step 1: 핸들러 구현 교체** — `src/app/(main)/_handlers/post-list-view.handler.tsx`
 
 ```tsx
 import { PostTile2up } from '@/components/post/post-tile-2up';
@@ -882,7 +884,7 @@ export function PostListViewHandler({ posts, viewType, tagsMap = {} }: Props) {
 
 > 기존 핸들러 테스트(`post-list-view.handler.test.tsx`)는 `.grid`(card)와 `.flex.flex-col`(list) 및 제목 렌더를 검증한다. 위 구현은 두 클래스와 제목을 그대로 유지하므로 수정 불필요.
 
-- [ ] **Step 2: 목록 페이지 컨테이너 교체** — `src/app/(main)/posts/page.tsx`
+- [x] **Step 2: 목록 페이지 컨테이너 교체** — `src/app/(main)/posts/page.tsx`
 
 import 목록에 추가:
 ```tsx
@@ -890,12 +892,12 @@ import { ContentContainer } from '@/components/layout/content-container';
 ```
 `return (`의 최상위 `<div className="mx-auto max-w-3xl px-4 py-8"> ... </div>`에서 여는 태그를 `<ContentContainer className="py-8">`로, 닫는 태그를 `</ContentContainer>`로 교체 (내부 내용은 그대로).
 
-- [ ] **Step 3: 테스트 실행** — 핸들러 회귀 확인
+- [x] **Step 3: 테스트 실행** — 핸들러 회귀 확인
 
 Run: `npm run test:run -- post-list-view.handler`
 Expected: PASS (5 tests)
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add "src/app/(main)/_handlers/post-list-view.handler.tsx" "src/app/(main)/posts/page.tsx"
@@ -915,18 +917,18 @@ git commit -m "💄 글 목록 카드뷰 2up·리스트뷰 아카이브 행으�
 - Consumes: 없음
 - Produces: 없음
 
-- [ ] **Step 1: 잔여 참조 확인**
+- [x] **Step 1: 잔여 참조 확인**
 
 Run: `grep -rn "post-card\|post-list-item\|PostCard\|PostListItem" src`
 Expected: **매치 없음** (Task 6·7에서 모두 교체됨). 매치가 있으면 해당 파일을 신규 컴포넌트로 먼저 교체한 뒤 진행.
 
-- [ ] **Step 2: 파일 삭제**
+- [x] **Step 2: 파일 삭제**
 
 ```bash
 git rm src/components/post/post-card.tsx src/components/post/post-card.test.tsx src/components/post/post-list-item.tsx
 ```
 
-- [ ] **Step 3: 전체 테스트 + 빌드 확인**
+- [x] **Step 3: 전체 테스트 + 빌드 확인**
 
 Run: `npm run test:run`
 Expected: 전체 PASS
@@ -934,7 +936,7 @@ Expected: 전체 PASS
 Run: `npm run build`
 Expected: 빌드 성공 (타입 에러 없음)
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git commit -m "🔥 신규 타일로 대체된 PostCard·PostListItem 제거"
@@ -953,12 +955,12 @@ git commit -m "🔥 신규 타일로 대체된 PostCard·PostListItem 제거"
 - Consumes: `ContentContainer` (Task 1)
 - Produces: 없음
 
-- [ ] **Step 1: pill 변형 사용처 확인**
+- [x] **Step 1: pill 변형 사용처 확인**
 
 Run: `grep -rn "NavLinks" src`
 Expected: `header.tsx`(pill 기본), `mobile-menu`(variant plain 예상). pill 변형이 Header에서만 쓰이는지 확인한 뒤 Step 2 진행.
 
-- [ ] **Step 2: 헤더 구현 교체** — `src/components/nav/header.tsx`
+- [x] **Step 2: 헤더 구현 교체** — `src/components/nav/header.tsx`
 
 `import { ContentContainer } from '@/components/layout/content-container';` 추가 후, `Header` 함수를 다음으로 교체:
 
@@ -987,7 +989,7 @@ export function Header() {
 
 > `dark` 스코프로 `Logo`의 `dark:bg-zinc-100 dark:text-zinc-900`가 자동 활성화되어 밝은 배경으로 반전된다. `text-white`로 사이트명·기본 상속 텍스트를 밝게 만든다.
 
-- [ ] **Step 3: pill active 대비 조정** — `src/components/nav/nav-links.tsx`
+- [x] **Step 3: pill active 대비 조정** — `src/components/nav/nav-links.tsx`
 
 `variant === 'pill'`의 active 배경 `bg-background`(다크 스코프에서 어두워 대비 약함)을 밝은 반투명으로 교체. 아래 라인의 `bg-background`를 `bg-white/15`로 변경:
 
@@ -999,7 +1001,7 @@ export function Header() {
               />
 ```
 
-- [ ] **Step 4: 푸터 폭 통일** — `src/components/layout/footer.tsx`
+- [x] **Step 4: 푸터 폭 통일** — `src/components/layout/footer.tsx`
 
 ```tsx
 import { SITE_NAME } from '@/lib/constants';
@@ -1016,13 +1018,13 @@ export function Footer() {
 }
 ```
 
-- [ ] **Step 5: 브라우저 시각 검증**
+- [x] **Step 5: 브라우저 시각 검증**
 
 - `preview_start`로 dev 서버(`.claude/launch.json`의 dev 설정, 없으면 생성) 실행 후 `/` 접속.
 - 확인 항목: 헤더가 검정 서페이스 + blur, 로고 밝은 배경으로 반전, nav 텍스트·pill active 대비 양호, 콘텐츠·푸터가 980px 폭. 라이트/다크 페이지 테마 모두에서 헤더는 검정 유지.
 - `read_console_messages`로 에러 없음 확인. 스크린샷으로 결과 공유.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/components/nav/header.tsx src/components/nav/nav-links.tsx src/components/layout/footer.tsx
@@ -1041,7 +1043,7 @@ git commit -m "💄 헤더 다크 서페이스 적용 및 푸터 폭 980px 통�
 - Consumes: `--article-width`, `--content-width` (Task 1)
 - Produces: 없음
 
-- [ ] **Step 1: 본문 컨테이너 폭 변경** — `src/app/(main)/posts/[slug]/page.tsx`
+- [x] **Step 1: 본문 컨테이너 폭 변경** — `src/app/(main)/posts/[slug]/page.tsx`
 
 본문 래퍼의 `max-w-3xl`을 본문 폭 토큰으로 교체. 아래 라인을 변경:
 ```tsx
@@ -1049,7 +1051,7 @@ git commit -m "💄 헤더 다크 서페이스 적용 및 푸터 폭 980px 통�
 ```
 (기존: `<div className="relative mx-auto max-w-3xl px-4 py-8">`)
 
-- [ ] **Step 2: 이미지 bleed 규칙 추가** — `src/styles/prose.css`
+- [x] **Step 2: 이미지 bleed 규칙 추가** — `src/styles/prose.css`
 
 `figure[data-size="full"]` / `img[data-size="full"]`가 653 본문을 넘어 콘텐츠 폭(980)까지 확장되도록 교체. 기존 블록:
 ```css
@@ -1093,13 +1095,13 @@ git commit -m "💄 헤더 다크 서페이스 적용 및 푸터 폭 980px 통�
 }
 ```
 
-- [ ] **Step 3: 브라우저 시각 검증**
+- [x] **Step 3: 브라우저 시각 검증**
 
 - dev 서버에서 발행된 글 상세(`/posts/<slug>`) 접속.
 - 확인: 본문 텍스트 컬럼 653px, `data-size="full"` 이미지가 좌우로 대칭 bleed(≈980px), 데스크톱/모바일 모두 뷰포트 넘침 없음, TOC(≥1340px) 위치 정상.
 - `read_console_messages` 에러 없음 확인. 스크린샷 공유.
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add "src/app/(main)/posts/[slug]/page.tsx" src/styles/prose.css
