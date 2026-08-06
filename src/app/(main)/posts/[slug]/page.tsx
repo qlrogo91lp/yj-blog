@@ -94,7 +94,7 @@ export default async function PostPage({ params }: Props) {
         blogName={settings?.blogName ?? SITE_NAME}
         baseUrl={process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com'}
       />
-      <div className="relative mx-auto max-w-3xl px-4 py-8">
+      <div className="relative mx-auto max-w-[calc(var(--article-width)+2rem)] px-4 py-8">
         <article>
           <PostHeader post={post} />
           {hasSeries && (
@@ -115,7 +115,7 @@ export default async function PostPage({ params }: Props) {
         </article>
 
         {toc.length > 0 && (
-          <div className="absolute left-[calc(100%+2rem)] top-0 hidden h-full w-55 min-[1340px]:block">
+          <div className="absolute left-[calc(100%+((var(--content-width)-var(--article-width))/2)+2rem)] top-0 hidden h-full w-55 min-[1500px]:block">
             <PostTocAction toc={toc} />
           </div>
         )}

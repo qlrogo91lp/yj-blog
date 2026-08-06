@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { PostCard } from '@/components/post/post-card';
+import { PostTileHero } from '@/components/post/post-tile-hero';
+import { PostTile2up } from '@/components/post/post-tile-2up';
 import type { PostWithCategory } from '@/types';
 
 type Props = {
@@ -7,6 +8,8 @@ type Props = {
 };
 
 export function RecentPostsSection({ posts }: Props) {
+  const [hero, ...rest] = posts;
+
   return (
     <section className="pb-16">
       <div className="mb-6 flex items-center justify-between">
@@ -21,10 +24,15 @@ export function RecentPostsSection({ posts }: Props) {
       {posts.length === 0 ? (
         <p className="py-12 text-center text-muted-foreground">아직 작성된 글이 없습니다.</p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2">
-          {posts.map((post, index) => (
-            <PostCard key={post.id} post={post} priority={index === 0} />
-          ))}
+        <div className="flex flex-col gap-9">
+          <PostTileHero post={hero} priority />
+          {rest.length > 0 && (
+            <div className="grid gap-9 sm:grid-cols-2">
+              {rest.map((post) => (
+                <PostTile2up key={post.id} post={post} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </section>
