@@ -7,6 +7,7 @@ import { CategoryFilterAction } from './_actions/category-filter.action';
 import { SearchAction } from './_actions/search.action';
 import { TagFilterAction } from './_actions/tag-filter.action';
 import { InfinitePostListAction } from './_actions/infinite-post-list.action';
+import { ContentContainer } from '@/components/layout/content-container';
 
 type Props = {
   searchParams: Promise<{
@@ -40,7 +41,7 @@ export default async function PostsPage({ searchParams }: Props) {
   const serializedTagsMap = Object.fromEntries(postTagsMap);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <ContentContainer className="py-8">
       <div className="mb-6 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="text-sm font-bold text-primary">총 {total}개</span>
@@ -76,6 +77,6 @@ export default async function PostsPage({ searchParams }: Props) {
           initialTagsMap={serializedTagsMap}
         />
       </Suspense>
-    </div>
+    </ContentContainer>
   );
 }

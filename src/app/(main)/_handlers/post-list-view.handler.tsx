@@ -1,5 +1,5 @@
-import { PostCard } from '@/components/post/post-card';
-import { PostListItem } from '@/components/post/post-list-item';
+import { PostTile2up } from '@/components/post/post-tile-2up';
+import { PostArchiveRow } from '@/components/post/post-archive-row';
 import type { PostWithCategory, TagSummary } from '@/types';
 
 type Props = {
@@ -18,15 +18,15 @@ export function PostListViewHandler({ posts, viewType, tagsMap = {} }: Props) {
   }
 
   return viewType === 'card' ? (
-    <div className="grid gap-6 sm:grid-cols-2">
+    <div className="grid gap-9 sm:grid-cols-2">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} tags={tagsMap[post.id]} />
+        <PostTile2up key={post.id} post={post} tags={tagsMap[post.id]} />
       ))}
     </div>
   ) : (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       {posts.map((post) => (
-        <PostListItem key={post.id} post={post} tags={tagsMap[post.id]} />
+        <PostArchiveRow key={post.id} post={post} tags={tagsMap[post.id]} />
       ))}
     </div>
   );

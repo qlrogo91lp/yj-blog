@@ -38,26 +38,26 @@ describe('NavLinks', () => {
     render(<NavLinks />);
     const activeLink = screen.getByRole('link', { name: '블로그' });
     expect(activeLink).toHaveClass('text-foreground');
-    // 활성 링크 내부에 인디케이터(bg-background)가 존재
-    expect(activeLink.querySelector('.bg-background')).toBeInTheDocument();
+    // 활성 링크 내부에 인디케이터(bg-white/15)가 존재
+    expect(activeLink.querySelector('.bg-white\\/15')).toBeInTheDocument();
   });
 
   it('비활성 링크에는 인디케이터가 없다', () => {
     render(<NavLinks />);
     const inactiveLink = screen.getByRole('link', { name: 'Apps' });
-    expect(inactiveLink.querySelector('.bg-background')).not.toBeInTheDocument();
+    expect(inactiveLink.querySelector('.bg-white\\/15')).not.toBeInTheDocument();
   });
 
   it('홈(/) 링크는 현재 경로가 정확히 /일 때만 활성화된다 (/posts에서는 비활성)', () => {
     render(<NavLinks />);
     const homeLink = screen.getByRole('link', { name: 'Home' });
-    expect(homeLink.querySelector('.bg-background')).not.toBeInTheDocument();
+    expect(homeLink.querySelector('.bg-white\\/15')).not.toBeInTheDocument();
   });
 
   it('plain variant는 인디케이터 없이 텍스트 스타일만 사용한다', () => {
     render(<NavLinks variant="plain" />);
     const activeLink = screen.getByRole('link', { name: '블로그' });
     expect(activeLink).toHaveClass('font-bold');
-    expect(activeLink.querySelector('.bg-background')).not.toBeInTheDocument();
+    expect(activeLink.querySelector('.bg-white\\/15')).not.toBeInTheDocument();
   });
 });

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getTagBySlug, getPostsByTag } from '@/db/queries/tags';
 import { ViewToggleAction } from '../../_actions/view-toggle.action';
 import { PostListViewHandler } from '../../_handlers/post-list-view.handler';
+import { ContentContainer } from '@/components/layout/content-container';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -31,7 +32,7 @@ export default async function TagPage({ params, searchParams }: Props) {
   const { items: posts, total } = await getPostsByTag(tag.id);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <ContentContainer className="py-8">
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
@@ -48,6 +49,6 @@ export default async function TagPage({ params, searchParams }: Props) {
       </div>
 
       <PostListViewHandler posts={posts} viewType={viewType} />
-    </div>
+    </ContentContainer>
   );
 }
