@@ -4,6 +4,7 @@ import { selectCategoryBySlug } from '@/db/queries/categories';
 import { selectPosts } from '@/db/queries/posts';
 import { ViewToggleAction } from '../../_actions/view-toggle.action';
 import { PostListViewHandler } from '../../_handlers/post-list-view.handler';
+import { ContentContainer } from '@/components/layout/content-container';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -32,7 +33,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { items: posts, total } = await selectPosts({ categoryId: category.id });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <ContentContainer className="py-8">
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
@@ -52,6 +53,6 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       </div>
 
       <PostListViewHandler posts={posts} viewType={viewType} />
-    </div>
+    </ContentContainer>
   );
 }

@@ -184,11 +184,13 @@
   }
   .prose figure[data-size="full"],
   .prose img[data-size="full"] {
+    max-width: 100%;
     margin-left: 0;
     transform: none;
   }
   .prose figure[data-size="full"][data-align],
   .prose img[data-size="full"][data-align] {
+    max-width: 100%;
     margin-left: 0;
     transform: none;
   }
