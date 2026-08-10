@@ -57,7 +57,7 @@ describe('uploadImage', () => {
   it('기존 Key·ContentType 동작을 유지한다', async () => {
     await uploadImage(buildFormData(), 42, 'thumbnail');
 
-    expect(putObjectArgs[0].Key).toBe('images/post-42/thumbnail.png');
+    expect(putObjectArgs[0].Key).toMatch(/^images\/post-42\/thumbnail-\d+\.png$/);
     expect(putObjectArgs[0].ContentType).toBe('image/png');
     expect(putObjectArgs[0].Bucket).toBe('test-bucket');
   });
@@ -65,9 +65,9 @@ describe('uploadImage', () => {
   it('업로드된 공개 URL을 반환한다', async () => {
     const result = await uploadImage(buildFormData(), 42, 'thumbnail');
 
-    expect(result).toEqual({
-      url: 'https://assets.example.com/images/post-42/thumbnail.png',
-      postId: 42,
-    });
+    expect(result.postId).toBe(42);
+    expect(result.url).toMatch(
+      /^https:\/\/assets\.example\.com\/images\/post-42\/thumbnail-\d+\.png$/,
+    );
   });
 });
