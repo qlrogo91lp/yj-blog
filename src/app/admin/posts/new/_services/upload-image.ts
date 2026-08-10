@@ -95,6 +95,10 @@ export async function uploadImage(
         Key: key,
         Body: buffer,
         ContentType: file.type,
+        // 업로드 키가 글 ID·인덱스로 고정되고 교체 시 새 키가 생기므로 immutable이 안전하다.
+        // 이 헤더가 없으면 next/image는 minimumCacheTTL로 폴백하고,
+        // 본문 raw <img>는 브라우저 캐시가 아예 걸리지 않는다.
+        CacheControl: 'public, max-age=31536000, immutable',
       }),
     );
 
