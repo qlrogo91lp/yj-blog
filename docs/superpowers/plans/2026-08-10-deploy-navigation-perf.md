@@ -148,7 +148,7 @@ Clerk가 불필요하다. 전역 적용 시 CDN HIT 상태에서도 요청당 �
 - Consumes: 없음
 - Produces: `next.config.test.ts`에 `getCspHeaderValue()` 헬퍼를 정의한다. Task 3이 같은 파일에 테스트를 추가하지만 이 헬퍼를 쓰지는 않는다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `next.config.test.ts`를 새로 만든다.
 
@@ -198,7 +198,7 @@ describe('next.config CSP', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 ```bash
 npx vitest run next.config.test.ts
@@ -206,7 +206,7 @@ npx vitest run next.config.test.ts
 
 기대: 앞 두 테스트가 FAIL. 메시지는 `expected [ ... ] to contain 'https://www.googletagmanager.com'`. 세 번째(`기존 Clerk 허용 항목`)는 PASS.
 
-- [ ] **Step 3: CSP에 도메인 추가**
+- [x] **Step 3: CSP에 도메인 추가**
 
 `next.config.ts`의 `script-src`와 `connect-src` 줄을 수정한다.
 
@@ -220,7 +220,7 @@ npx vitest run next.config.test.ts
 
 `img-src`는 이미 `https:`를 허용하므로 변경하지 않는다.
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npx vitest run next.config.test.ts
@@ -228,7 +228,7 @@ npx vitest run next.config.test.ts
 
 기대: 3개 모두 PASS.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add next.config.ts next.config.test.ts
