@@ -4,6 +4,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import { cn } from '@/lib/utils';
 import { ClerkProvider } from '@clerk/nextjs';
 import { PageTracker } from '@/components/page-tracker';
+import { NavigationProgress } from '@/components/navigation-progress';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -67,6 +68,7 @@ export default function RootLayout({
           <ThemeProvider>
             <TooltipProvider>
               <PageTracker />
+              <NavigationProgress />
               {children}
               <Toaster />
             </TooltipProvider>
