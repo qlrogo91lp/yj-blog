@@ -41,3 +41,26 @@ describe('next.config CSP', () => {
     expect(scriptSrc).toContain("'self'");
   });
 });
+
+describe('next.config images', () => {
+  it('minimumCacheTTL이 1년으로 설정된다', () => {
+    // R2 원본이 Cache-Control을 보내지 않아 Next 기본값(4시간)으로 폴백하던 문제.
+    // 업로드 경로가 타임스탬프 기반이라 같은 URL에 다른 내용이 덮이지 않으므로
+    // 1년이 안전하다.
+    expect(nextConfig.images?.minimumCacheTTL).toBe(31536000);
+  });
+
+  it('deviceSizes를 4종으로 축소해 콜드 미스 표면을 줄인다', () => {
+    // 콘텐츠 폭이 980px이라 2x DPI를 감안해도 1920px 초과 변형은 쓰이지 않는다.
+    expect(nextConfig.images?.deviceSizes).toEqual([640, 828, 1080, 1920]);
+  });
+
+  it('imageSizes는 변경하지 않는다', () => {
+    expect(nextConfig.images?.imageSizes).toBeUndefined();
+  });
+
+  it('기존 remotePatterns가 유지된다', () => {
+    const hostnames = nextConfig.images?.remotePatterns?.map((p) => p.hostname);
+    expect(hostnames).toContain('assets.yjlogs.com');
+  });
+});

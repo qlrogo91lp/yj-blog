@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
         hostname: 'assets.yjlogs.com',
       },
     ],
+    // R2 원본에 Cache-Control이 없어 기본값 4시간으로 폴백하던 것을 1년으로 올린다.
+    // 업로드 키가 `images/post-{id}/...` 고정 경로이고 교체 시 새 글로 관리되므로
+    // 같은 URL에 다른 내용이 덮이지 않는다.
+    minimumCacheTTL: 31536000,
+    // 콘텐츠 폭 980px 기준. 2x DPI를 감안해도 1920px 초과 변형은 사용되지 않는다.
+    // 변형 수를 줄이면 저트래픽 환경에서 캐시 히트율이 올라간다.
+    deviceSizes: [640, 828, 1080, 1920],
   },
   async headers() {
     return [
