@@ -1,5 +1,7 @@
 # 배포 환경 페이지 전환 성능 개선 Implementation Plan
 
+> **완료: 2026-08-10.** Task 1~5 전부 구현·리뷰·커밋 완료. 최종 브랜치 리뷰에서 Important 2건(R2 업로드 키 충돌로 인한 immutable 캐시 무효화 불가, `/api/:path*` matcher 과다 범위)을 발견해 수정 후 재검증까지 마쳤다(commit `7278667`). Task 5는 React 19 타이밍·lint 이슈로 플랜 원안 코드에서 2건 편차가 있었고, 사람 검토 후 구현체를 최종안으로 채택해 Step 4 코드 블록을 갱신했다(commit `7081831`). 배포 전/후 사람이 직접 확인해야 할 항목은 하단 "배포 후 검증" 및 각 태스크의 결과 메모 참고. 브랜치: `fix/deploy-navigation-perf`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 공개 페이지 전환의 상시 오버헤드(Clerk 미들웨어 ~85ms)를 제거하고, 이미지 콜드 스타트 노출 빈도를 낮추며, 남는 대기 구간에 깜빡임 없는 프로그레스 바를 제공한다.
