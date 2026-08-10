@@ -63,7 +63,7 @@ git checkout -b fix/deploy-navigation-perf
 
 > **왜 단위 테스트가 없는가**: matcher는 Next.js 내부 경로 매칭 엔진이 해석한다. 이를 테스트에서 재현하려면 Next의 매칭 구현을 복제해야 하고, 그 테스트는 실제 동작이 아니라 우리가 만든 모조품을 검증하게 된다. 대신 **빌드 산출물과 프로덕션 응답 헤더**로 검증한다 — 이쪽이 실제 동작을 직접 관측한다.
 
-- [ ] **Step 1: 변경 전 기준값 측정 (Before)**
+- [x] **Step 1: 변경 전 기준값 측정 (Before)**
 
 배포된 프로덕션에서 현재 값을 기록해 둔다. 나중에 개선을 증명할 근거다.
 
@@ -74,7 +74,7 @@ for i in 1 2 3; do curl -so /dev/null -w "%{time_total}\n" https://yjlogs.com/ -
 
 기대: `x-clerk-auth-status: signed-out`이 **존재**하고, 시간이 **0.10초 내외**.
 
-- [ ] **Step 2: matcher 축소**
+- [x] **Step 2: matcher 축소**
 
 `src/proxy.ts` 전체를 아래로 교체한다.
 
@@ -98,7 +98,7 @@ export const config = {
 };
 ```
 
-- [ ] **Step 3: 빌드로 미들웨어 적용 범위 확인**
+- [x] **Step 3: 빌드로 미들웨어 적용 범위 확인**
 
 ```bash
 npm run build
@@ -106,7 +106,7 @@ npm run build
 
 기대: 빌드 성공. 라우트 표에서 `(main)` 그룹 라우트들이 기존과 동일하게 `○`/`●`로 유지된다(미들웨어 축소가 정적 판정을 되돌리지 않아야 한다).
 
-- [ ] **Step 4: 로컬 프로덕션 서버로 인증 회귀 확인**
+- [x] **Step 4: 로컬 프로덕션 서버로 인증 회귀 확인** (curl 기반 항목만 검증. 로그인·로그아웃·저장 등 실제 자격증명이 필요한 1~6 중 2·4·5는 사람이 배포 전 직접 확인 필요 — task-1-report.md 참고)
 
 ```bash
 npx next start
@@ -125,7 +125,7 @@ npx next start
 
 확인 후 서버를 종료한다.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/proxy.ts
