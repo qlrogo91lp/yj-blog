@@ -1,5 +1,7 @@
 # 배포 환경 페이지 전환 성능 개선 Implementation Plan
 
+> **완료: 2026-08-10.** Task 1~5 전부 구현·리뷰·커밋 완료. 최종 브랜치 리뷰에서 Important 2건(R2 업로드 키 충돌로 인한 immutable 캐시 무효화 불가, `/api/:path*` matcher 과다 범위)을 발견해 수정 후 재검증까지 마쳤다(commit `7278667`). Task 5는 React 19 타이밍·lint 이슈로 플랜 원안 코드에서 2건 편차가 있었고, 사람 검토 후 구현체를 최종안으로 채택해 Step 4 코드 블록을 갱신했다(commit `7081831`). 배포 전/후 사람이 직접 확인해야 할 항목은 하단 "배포 후 검증" 및 각 태스크의 결과 메모 참고. 브랜치: `fix/deploy-navigation-perf`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 공개 페이지 전환의 상시 오버헤드(Clerk 미들웨어 ~85ms)를 제거하고, 이미지 콜드 스타트 노출 빈도를 낮추며, 남는 대기 구간에 깜빡임 없는 프로그레스 바를 제공한다.
@@ -63,7 +65,7 @@ git checkout -b fix/deploy-navigation-perf
 
 > **왜 단위 테스트가 없는가**: matcher는 Next.js 내부 경로 매칭 엔진이 해석한다. 이를 테스트에서 재현하려면 Next의 매칭 구현을 복제해야 하고, 그 테스트는 실제 동작이 아니라 우리가 만든 모조품을 검증하게 된다. 대신 **빌드 산출물과 프로덕션 응답 헤더**로 검증한다 — 이쪽이 실제 동작을 직접 관측한다.
 
-- [ ] **Step 1: 변경 전 기준값 측정 (Before)**
+- [x] **Step 1: 변경 전 기준값 측정 (Before)**
 
 배포된 프로덕션에서 현재 값을 기록해 둔다. 나중에 개선을 증명할 근거다.
 
@@ -74,7 +76,7 @@ for i in 1 2 3; do curl -so /dev/null -w "%{time_total}\n" https://yjlogs.com/ -
 
 기대: `x-clerk-auth-status: signed-out`이 **존재**하고, 시간이 **0.10초 내외**.
 
-- [ ] **Step 2: matcher 축소**
+- [x] **Step 2: matcher 축소**
 
 `src/proxy.ts` 전체를 아래로 교체한다.
 
@@ -98,7 +100,7 @@ export const config = {
 };
 ```
 
-- [ ] **Step 3: 빌드로 미들웨어 적용 범위 확인**
+- [x] **Step 3: 빌드로 미들웨어 적용 범위 확인**
 
 ```bash
 npm run build
@@ -106,7 +108,7 @@ npm run build
 
 기대: 빌드 성공. 라우트 표에서 `(main)` 그룹 라우트들이 기존과 동일하게 `○`/`●`로 유지된다(미들웨어 축소가 정적 판정을 되돌리지 않아야 한다).
 
-- [ ] **Step 4: 로컬 프로덕션 서버로 인증 회귀 확인**
+- [x] **Step 4: 로컬 프로덕션 서버로 인증 회귀 확인** (curl 기반 항목만 검증. 로그인·로그아웃·저장 등 실제 자격증명이 필요한 1~6 중 2·4·5는 사람이 배포 전 직접 확인 필요 — task-1-report.md 참고)
 
 ```bash
 npx next start
@@ -125,7 +127,7 @@ npx next start
 
 확인 후 서버를 종료한다.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/proxy.ts
@@ -148,7 +150,7 @@ Clerk가 불필요하다. 전역 적용 시 CDN HIT 상태에서도 요청당 �
 - Consumes: 없음
 - Produces: `next.config.test.ts`에 `getCspHeaderValue()` 헬퍼를 정의한다. Task 3이 같은 파일에 테스트를 추가하지만 이 헬퍼를 쓰지는 않는다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `next.config.test.ts`를 새로 만든다.
 
@@ -198,7 +200,7 @@ describe('next.config CSP', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 ```bash
 npx vitest run next.config.test.ts
@@ -206,7 +208,7 @@ npx vitest run next.config.test.ts
 
 기대: 앞 두 테스트가 FAIL. 메시지는 `expected [ ... ] to contain 'https://www.googletagmanager.com'`. 세 번째(`기존 Clerk 허용 항목`)는 PASS.
 
-- [ ] **Step 3: CSP에 도메인 추가**
+- [x] **Step 3: CSP에 도메인 추가**
 
 `next.config.ts`의 `script-src`와 `connect-src` 줄을 수정한다.
 
@@ -220,7 +222,7 @@ npx vitest run next.config.test.ts
 
 `img-src`는 이미 `https:`를 허용하므로 변경하지 않는다.
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npx vitest run next.config.test.ts
@@ -228,7 +230,7 @@ npx vitest run next.config.test.ts
 
 기대: 3개 모두 PASS.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add next.config.ts next.config.test.ts
@@ -250,7 +252,7 @@ script-src에 googletagmanager.com이 없어 GA 스크립트 로드가 배포 �
 - Consumes: Task 2가 만든 `next.config.test.ts` 파일. 기존 import와 헬퍼를 그대로 두고 새 `describe` 블록만 덧붙인다.
 - Produces: 없음
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `next.config.test.ts` **맨 끝에** 아래 블록을 추가한다. 파일 상단의 import는 이미 존재하므로 다시 쓰지 않는다.
 
@@ -279,7 +281,7 @@ describe('next.config images', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 ```bash
 npx vitest run next.config.test.ts
@@ -287,7 +289,7 @@ npx vitest run next.config.test.ts
 
 기대: `minimumCacheTTL`(`undefined`를 받음)과 `deviceSizes`(`undefined`를 받음) 두 개가 FAIL. `imageSizes`·`remotePatterns`는 PASS.
 
-- [ ] **Step 3: images 설정 추가**
+- [x] **Step 3: images 설정 추가**
 
 `next.config.ts`의 `images` 블록을 아래로 교체한다.
 
@@ -309,7 +311,7 @@ npx vitest run next.config.test.ts
   },
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npx vitest run next.config.test.ts
@@ -317,7 +319,7 @@ npx vitest run next.config.test.ts
 
 기대: 7개 모두 PASS (Task 2의 3개 + 이번 4개).
 
-- [ ] **Step 5: 빌드 확인**
+- [x] **Step 5: 빌드 확인**
 
 ```bash
 npm run build
@@ -325,7 +327,7 @@ npm run build
 
 기대: 빌드 성공.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add next.config.ts next.config.test.ts
@@ -350,7 +352,7 @@ deviceSizes도 콘텐츠 폭 980px에 맞춰 8종에서 4종으로 줄인다."
 
 Task 3이 기존 이미지를 구제한다면 이 태스크는 신규 업로드를 원천에서 고친다. 본문 이미지는 `next/image`를 거치지 않고 raw `<img>`로 R2에서 직접 로드되므로, 브라우저 캐시를 걸려면 원본 헤더가 반드시 필요하다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_services/upload-image.test.ts`를 새로 만든다.
 
@@ -427,7 +429,7 @@ describe('uploadImage', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 ```bash
 npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
@@ -435,7 +437,7 @@ npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
 
 기대: 첫 번째 테스트가 FAIL — `expected undefined to be 'public, max-age=31536000, immutable'`. 나머지 두 개는 PASS(기존 동작이므로).
 
-- [ ] **Step 3: CacheControl 추가**
+- [x] **Step 3: CacheControl 추가**
 
 `upload-image.ts`의 `PutObjectCommand` 호출을 수정한다.
 
@@ -454,7 +456,7 @@ npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
     );
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
@@ -462,7 +464,7 @@ npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
 
 기대: 3개 모두 PASS.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_services/upload-image.ts src/app/admin/posts/new/_services/upload-image.test.ts
@@ -489,7 +491,7 @@ git commit -m "⚡️ R2 업로드에 immutable Cache-Control 부여
 
 `loading.tsx`를 쓰지 않는 이유는 설계 문서 3.4 참조 — Suspense 경계가 응답을 스트리밍시켜 `notFound()`가 soft 404(본문 404, 상태 200)를 만든다. 프로그레스 바는 순수 클라이언트라 이 문제가 없다.
 
-- [ ] **Step 1: 패키지 설치**
+- [x] **Step 1: 패키지 설치**
 
 ```bash
 npm install @tanem/react-nprogress
@@ -504,7 +506,7 @@ npm install @tanem/react-nprogress
 - 트리클과 완료 페이드아웃만 `requestAnimationFrame`을 쓴다. `setTimeout`은 쓰지 않는다.
 - `animationDuration` 기본값은 `200`ms.
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `src/components/navigation-progress.test.tsx`를 새로 만든다.
 
@@ -643,7 +645,7 @@ describe('NavigationProgress', () => {
 });
 ```
 
-- [ ] **Step 3: 테스트 실패 확인**
+- [x] **Step 3: 테스트 실패 확인**
 
 ```bash
 npx vitest run src/components/navigation-progress.test.tsx
@@ -651,14 +653,17 @@ npx vitest run src/components/navigation-progress.test.tsx
 
 기대: 전부 FAIL — `Failed to resolve import "./navigation-progress"`.
 
-- [ ] **Step 4: 컴포넌트 구현**
+- [x] **Step 4: 컴포넌트 구현** (원안 대비 2건 편차 — task-5-report.md 참고: 클릭 핸들러에 `flushSync` 추가, pathname 리셋을 `useEffect` 대신 렌더 중 상태 조정 패턴으로 변경. 각각 실패 테스트 1개, lint 에러 1개를 해결하기 위한 최소 수정)
 
 `src/components/navigation-progress.tsx`를 새로 만든다.
+
+> **2026-08-10 업데이트**: 아래 코드는 실제 구현과 2건 다르다(원안 대비 편차, task-5-report.md 참고) — ①클릭 핸들러의 `setIsPending(true)`가 `flushSync`로 감싸져 있다(React 19 자동 배칭 때문에 원안 그대로는 클릭 직후 짧은 전환에서 타이머 등록이 한 박자 밀리는 테스트 실패가 발생했다). ②pathname 리셋이 `useEffect` 대신 [React 공식 "렌더 중 상태 조정" 패턴](https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)이다(`useEffect`에서 `setState`를 직접 호출하면 `react-hooks/set-state-in-effect` lint 에러가 발생했다). `shouldStartProgress` 순수 함수는 무변경이다. 사람 검토 후 구현체를 최종안으로 채택했다.
 
 ```tsx
 'use client';
 
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { useNProgress } from '@tanem/react-nprogress';
 
@@ -720,6 +725,17 @@ export function NavigationProgress() {
   const pathname = usePathname();
   const [isPending, setIsPending] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [trackedPathname, setTrackedPathname] = useState(pathname);
+
+  // 경로가 바뀌면 전환이 끝난 것이다. 렌더 중 상태를 조정하는 React 공식 패턴
+  // (https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)을
+  // 쓴다 — useEffect에서 setState를 직접 호출하면 커밋 후 한 번 더 렌더가
+  // 발생해 리액트 컴파일러 경고(react-hooks/set-state-in-effect) 대상이 된다.
+  if (pathname !== trackedPathname) {
+    setTrackedPathname(pathname);
+    setIsPending(false);
+    setIsVisible(false);
+  }
 
   const { animationDuration, isFinished, progress } = useNProgress({
     isAnimating: isVisible,
@@ -730,7 +746,13 @@ export function NavigationProgress() {
       const target = event.target as Element | null;
       const anchor = target?.closest?.('a') ?? null;
       if (shouldStartProgress(event, anchor, window.location.pathname)) {
-        setIsPending(true);
+        // flushSync: 이 클릭 리스너는 document에 등록한 네이티브 이벤트라
+        // React 18+ 자동 배칭 대상이다. 그냥 setIsPending(true)로 두면 다음
+        // effect(setTimeout 등록)가 같은 브라우저 태스크 안에서 곧바로
+        // 실행되지 않아, 클릭 직후 아주 짧은 지연 안에 전환이 끝나는 경우
+        // 타이머 등록 자체가 한 박자 밀릴 수 있다. 클릭은 드물게 발생하는
+        // 이벤트라 동기 플러시 비용은 무시할 만하다.
+        flushSync(() => setIsPending(true));
       }
     };
 
@@ -752,12 +774,6 @@ export function NavigationProgress() {
       clearTimeout(maxTimer);
     };
   }, [isPending]);
-
-  // 경로가 바뀌면 전환이 끝난 것이다.
-  useEffect(() => {
-    setIsPending(false);
-    setIsVisible(false);
-  }, [pathname]);
 
   return (
     <div
@@ -783,7 +799,7 @@ export function NavigationProgress() {
 
 `z-100`은 Tailwind v4 네이티브 유틸리티다(헤더가 `z-50`이므로 그 위에 온다). `motion-reduce:transition-none!`의 후행 `!`는 v4의 important 수식어로, 인라인 `transition`을 이긴다 — 둘 다 실제 컴파일로 확인했다.
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 ```bash
 npx vitest run src/components/navigation-progress.test.tsx
@@ -791,7 +807,7 @@ npx vitest run src/components/navigation-progress.test.tsx
 
 기대: 14개 모두 PASS.
 
-- [ ] **Step 6: 루트 레이아웃에 배치**
+- [x] **Step 6: 루트 레이아웃에 배치**
 
 `src/app/layout.tsx`에서 import를 추가한다.
 
@@ -807,7 +823,7 @@ import { NavigationProgress } from '@/components/navigation-progress';
             {children}
 ```
 
-- [ ] **Step 7: 전체 테스트와 빌드 확인**
+- [x] **Step 7: 전체 테스트와 빌드 확인**
 
 ```bash
 npm run test:run && npm run lint && npm run build
@@ -815,7 +831,7 @@ npm run test:run && npm run lint && npm run build
 
 기대: 테스트 전량 PASS, lint 0 errors, 빌드 성공.
 
-- [ ] **Step 8: 로컬 프로덕션 서버로 육안 확인**
+- [x] **Step 8: 로컬 프로덕션 서버로 육안 확인** (프로그램적으로 가능한 범위만 검증 — 엘리먼트 초기 숨김 상태, 콘솔 에러 없음, 실제 클릭 이벤트로 SPA 네비게이션 후 바 정상 숨김, modifier-key 클릭 제외 동작. Slow 3G 스로틀링으로 바가 나타났다 사라지는 시각적 확인, 뒤로/앞으로 가기, 외부 링크, 연속 클릭은 브라우저 도구 제약으로 미완료 — task-5-report.md 참고, 사람 검증 권장)
 
 ```bash
 npx next start
@@ -832,7 +848,7 @@ npx next start
 
 가장 중요한 확인은 **바가 뜬 채로 남지 않는 것**이다. 확인 후 서버를 종료한다.
 
-- [ ] **Step 9: 커밋**
+- [x] **Step 9: 커밋**
 
 ```bash
 git add package.json package-lock.json src/components/navigation-progress.tsx src/components/navigation-progress.test.tsx src/app/layout.tsx
