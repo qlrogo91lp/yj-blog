@@ -52,6 +52,10 @@ npm run test:e2e    # Playwright E2E 테스트
 흐름: `feature|refactor|fix/xxx` → `develop` → `main`
 
 > 작업 시작 시 `develop`에서 성격에 맞는 접두사(`feature/`·`refactor/`·`fix/`)로 브랜치를 생성하고, 완료 후 `develop`으로 PR을 올린다.
+>
+> **예외**: `docs/superpowers/specs/`·`docs/superpowers/plans/`의 스펙·플랜 문서 작성 단계에서는 브랜치를 만들지 않는다. 문서는 `develop`에 직접 커밋한다. 브랜치는 실제 구현 코드를 작성하기 시작할 때 만든다.
+>
+> **스펙·플랜 문서는 사용자 검토 전 커밋 금지**: 작성 직후 바로 커밋하지 않는다. 사용자가 문서 내용을 검토하고 승인한 뒤에만 커밋한다. 검토 중 수정이 계속 반영되므로, 커밋은 승인 시점 이후로 미룬다.
 
 ### 머지 규칙
 

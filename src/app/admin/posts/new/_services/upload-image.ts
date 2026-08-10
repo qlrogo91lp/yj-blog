@@ -76,7 +76,7 @@ export async function uploadImage(
 
     if (type === 'thumbnail') {
       imageIndex = 0;
-      key = `images/post-${resolvedPostId}/thumbnail${ext}`;
+      key = `images/post-${resolvedPostId}/thumbnail-${Date.now()}${ext}`;
     } else {
       const result = await db
         .select({ maxIndex: max(postImages.index) })
@@ -84,7 +84,7 @@ export async function uploadImage(
         .where(eq(postImages.postId, resolvedPostId));
       const currentMax = result[0]?.maxIndex ?? 0;
       imageIndex = currentMax + 1;
-      key = `images/post-${resolvedPostId}/image${imageIndex}${ext}`;
+      key = `images/post-${resolvedPostId}/image${imageIndex}-${Date.now()}${ext}`;
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -95,6 +95,11 @@ export async function uploadImage(
         Key: key,
         Body: buffer,
         ContentType: file.type,
+        // 업로드 키에 타임스탬프가 포함돼 매 업로드마다 유일한 키가 생성되므로
+        // (썸네일 재업로드·인덱스 재사용 시에도 충돌하지 않는다) immutable이 안전하다.
+        // 이 헤더가 없으면 next/image는 minimumCacheTTL로 폴백하고,
+        // 본문 raw <img>는 브라우저 캐시가 아예 걸리지 않는다.
+        CacheControl: 'public, max-age=31536000, immutable',
       }),
     );
 

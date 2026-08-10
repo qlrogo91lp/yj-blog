@@ -55,6 +55,20 @@ export async function addComment(/* ... */) {
 - `console.log`는 커밋하지 않는다
 - 적절한 semantic tag는 적극적으로 활용한다
 
+## Tailwind CSS v4 문법
+
+이 프로젝트는 Tailwind v4(최신 메이저)를 사용한다. v3 시절의 구문법은 **빌드·린트 어느 단계에서도 경고 없이 조용히 컴파일되므로**, 실수로 섞어 써도 아무도 알려주지 않는다. 신규 작성·수정 시 아래 v4 문법을 사용한다.
+
+| 용도 | ❌ 구문법 (v3, 경고 없이 통과됨) | ✅ v4 문법 |
+|------|------|------|
+| CSS 변수 참조 | `max-w-[var(--content-width)]` | `max-w-(--content-width)` |
+| 그라디언트 방향 | `bg-gradient-to-t` | `bg-linear-to-t` |
+| 비율(고정 값) | `aspect-[980/362]` | `aspect-980/362` |
+
+CSS 변수 shorthand(`(--x)`)는 순수 표기 차이지만, 그라디언트는 **실제 출력이 다르다** — `bg-gradient-to-t`는 `oklab` 색공간을 무조건 가정하는 반면 `bg-linear-to-t`는 `@supports`로 구형 브라우저 폴백을 포함한다. 직접 컴파일해 확인된 차이이므로 반드시 `bg-linear-*` 계열을 쓴다.
+
+새 유틸리티를 쓸 때 v3 기억에 의존해 `[...]` 임의값부터 떠올렸다면, 먼저 [Tailwind v4 문서](https://tailwindcss.com/docs)에 네이티브 문법이 있는지 확인한다.
+
 ## Lucid-Icon
 
 - 사이즈는 `className`이 아닌 `size` 속성으로 지정한다
