@@ -489,7 +489,7 @@ git commit -m "⚡️ R2 업로드에 immutable Cache-Control 부여
 
 `loading.tsx`를 쓰지 않는 이유는 설계 문서 3.4 참조 — Suspense 경계가 응답을 스트리밍시켜 `notFound()`가 soft 404(본문 404, 상태 200)를 만든다. 프로그레스 바는 순수 클라이언트라 이 문제가 없다.
 
-- [ ] **Step 1: 패키지 설치**
+- [x] **Step 1: 패키지 설치**
 
 ```bash
 npm install @tanem/react-nprogress
@@ -504,7 +504,7 @@ npm install @tanem/react-nprogress
 - 트리클과 완료 페이드아웃만 `requestAnimationFrame`을 쓴다. `setTimeout`은 쓰지 않는다.
 - `animationDuration` 기본값은 `200`ms.
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `src/components/navigation-progress.test.tsx`를 새로 만든다.
 
@@ -643,7 +643,7 @@ describe('NavigationProgress', () => {
 });
 ```
 
-- [ ] **Step 3: 테스트 실패 확인**
+- [x] **Step 3: 테스트 실패 확인**
 
 ```bash
 npx vitest run src/components/navigation-progress.test.tsx
@@ -651,7 +651,7 @@ npx vitest run src/components/navigation-progress.test.tsx
 
 기대: 전부 FAIL — `Failed to resolve import "./navigation-progress"`.
 
-- [ ] **Step 4: 컴포넌트 구현**
+- [x] **Step 4: 컴포넌트 구현** (원안 대비 2건 편차 — task-5-report.md 참고: 클릭 핸들러에 `flushSync` 추가, pathname 리셋을 `useEffect` 대신 렌더 중 상태 조정 패턴으로 변경. 각각 실패 테스트 1개, lint 에러 1개를 해결하기 위한 최소 수정)
 
 `src/components/navigation-progress.tsx`를 새로 만든다.
 
@@ -783,7 +783,7 @@ export function NavigationProgress() {
 
 `z-100`은 Tailwind v4 네이티브 유틸리티다(헤더가 `z-50`이므로 그 위에 온다). `motion-reduce:transition-none!`의 후행 `!`는 v4의 important 수식어로, 인라인 `transition`을 이긴다 — 둘 다 실제 컴파일로 확인했다.
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 ```bash
 npx vitest run src/components/navigation-progress.test.tsx
@@ -791,7 +791,7 @@ npx vitest run src/components/navigation-progress.test.tsx
 
 기대: 14개 모두 PASS.
 
-- [ ] **Step 6: 루트 레이아웃에 배치**
+- [x] **Step 6: 루트 레이아웃에 배치**
 
 `src/app/layout.tsx`에서 import를 추가한다.
 
@@ -807,7 +807,7 @@ import { NavigationProgress } from '@/components/navigation-progress';
             {children}
 ```
 
-- [ ] **Step 7: 전체 테스트와 빌드 확인**
+- [x] **Step 7: 전체 테스트와 빌드 확인**
 
 ```bash
 npm run test:run && npm run lint && npm run build
@@ -815,7 +815,7 @@ npm run test:run && npm run lint && npm run build
 
 기대: 테스트 전량 PASS, lint 0 errors, 빌드 성공.
 
-- [ ] **Step 8: 로컬 프로덕션 서버로 육안 확인**
+- [x] **Step 8: 로컬 프로덕션 서버로 육안 확인** (프로그램적으로 가능한 범위만 검증 — 엘리먼트 초기 숨김 상태, 콘솔 에러 없음, 실제 클릭 이벤트로 SPA 네비게이션 후 바 정상 숨김, modifier-key 클릭 제외 동작. Slow 3G 스로틀링으로 바가 나타났다 사라지는 시각적 확인, 뒤로/앞으로 가기, 외부 링크, 연속 클릭은 브라우저 도구 제약으로 미완료 — task-5-report.md 참고, 사람 검증 권장)
 
 ```bash
 npx next start
@@ -832,7 +832,7 @@ npx next start
 
 가장 중요한 확인은 **바가 뜬 채로 남지 않는 것**이다. 확인 후 서버를 종료한다.
 
-- [ ] **Step 9: 커밋**
+- [x] **Step 9: 커밋**
 
 ```bash
 git add package.json package-lock.json src/components/navigation-progress.tsx src/components/navigation-progress.test.tsx src/app/layout.tsx
