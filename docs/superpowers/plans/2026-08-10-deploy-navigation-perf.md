@@ -350,7 +350,7 @@ deviceSizes도 콘텐츠 폭 980px에 맞춰 8종에서 4종으로 줄인다."
 
 Task 3이 기존 이미지를 구제한다면 이 태스크는 신규 업로드를 원천에서 고친다. 본문 이미지는 `next/image`를 거치지 않고 raw `<img>`로 R2에서 직접 로드되므로, 브라우저 캐시를 걸려면 원본 헤더가 반드시 필요하다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_services/upload-image.test.ts`를 새로 만든다.
 
@@ -427,7 +427,7 @@ describe('uploadImage', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 ```bash
 npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
@@ -435,7 +435,7 @@ npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
 
 기대: 첫 번째 테스트가 FAIL — `expected undefined to be 'public, max-age=31536000, immutable'`. 나머지 두 개는 PASS(기존 동작이므로).
 
-- [ ] **Step 3: CacheControl 추가**
+- [x] **Step 3: CacheControl 추가**
 
 `upload-image.ts`의 `PutObjectCommand` 호출을 수정한다.
 
@@ -454,7 +454,7 @@ npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
     );
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
@@ -462,7 +462,7 @@ npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
 
 기대: 3개 모두 PASS.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_services/upload-image.ts src/app/admin/posts/new/_services/upload-image.test.ts
