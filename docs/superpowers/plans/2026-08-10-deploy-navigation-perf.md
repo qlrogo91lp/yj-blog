@@ -250,7 +250,7 @@ script-src에 googletagmanager.com이 없어 GA 스크립트 로드가 배포 �
 - Consumes: Task 2가 만든 `next.config.test.ts` 파일. 기존 import와 헬퍼를 그대로 두고 새 `describe` 블록만 덧붙인다.
 - Produces: 없음
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `next.config.test.ts` **맨 끝에** 아래 블록을 추가한다. 파일 상단의 import는 이미 존재하므로 다시 쓰지 않는다.
 
@@ -279,7 +279,7 @@ describe('next.config images', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실패 확인**
+- [x] **Step 2: 테스트 실패 확인**
 
 ```bash
 npx vitest run next.config.test.ts
@@ -287,7 +287,7 @@ npx vitest run next.config.test.ts
 
 기대: `minimumCacheTTL`(`undefined`를 받음)과 `deviceSizes`(`undefined`를 받음) 두 개가 FAIL. `imageSizes`·`remotePatterns`는 PASS.
 
-- [ ] **Step 3: images 설정 추가**
+- [x] **Step 3: images 설정 추가**
 
 `next.config.ts`의 `images` 블록을 아래로 교체한다.
 
@@ -309,7 +309,7 @@ npx vitest run next.config.test.ts
   },
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npx vitest run next.config.test.ts
@@ -317,7 +317,7 @@ npx vitest run next.config.test.ts
 
 기대: 7개 모두 PASS (Task 2의 3개 + 이번 4개).
 
-- [ ] **Step 5: 빌드 확인**
+- [x] **Step 5: 빌드 확인**
 
 ```bash
 npm run build
@@ -325,7 +325,7 @@ npm run build
 
 기대: 빌드 성공.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add next.config.ts next.config.test.ts
