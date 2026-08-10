@@ -655,10 +655,13 @@ npx vitest run src/components/navigation-progress.test.tsx
 
 `src/components/navigation-progress.tsx`를 새로 만든다.
 
+> **2026-08-10 업데이트**: 아래 코드는 실제 구현과 2건 다르다(원안 대비 편차, task-5-report.md 참고) — ①클릭 핸들러의 `setIsPending(true)`가 `flushSync`로 감싸져 있다(React 19 자동 배칭 때문에 원안 그대로는 클릭 직후 짧은 전환에서 타이머 등록이 한 박자 밀리는 테스트 실패가 발생했다). ②pathname 리셋이 `useEffect` 대신 [React 공식 "렌더 중 상태 조정" 패턴](https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)이다(`useEffect`에서 `setState`를 직접 호출하면 `react-hooks/set-state-in-effect` lint 에러가 발생했다). `shouldStartProgress` 순수 함수는 무변경이다. 사람 검토 후 구현체를 최종안으로 채택했다.
+
 ```tsx
 'use client';
 
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { useNProgress } from '@tanem/react-nprogress';
 
@@ -720,6 +723,17 @@ export function NavigationProgress() {
   const pathname = usePathname();
   const [isPending, setIsPending] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [trackedPathname, setTrackedPathname] = useState(pathname);
+
+  // 경로가 바뀌면 전환이 끝난 것이다. 렌더 중 상태를 조정하는 React 공식 패턴
+  // (https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)을
+  // 쓴다 — useEffect에서 setState를 직접 호출하면 커밋 후 한 번 더 렌더가
+  // 발생해 리액트 컴파일러 경고(react-hooks/set-state-in-effect) 대상이 된다.
+  if (pathname !== trackedPathname) {
+    setTrackedPathname(pathname);
+    setIsPending(false);
+    setIsVisible(false);
+  }
 
   const { animationDuration, isFinished, progress } = useNProgress({
     isAnimating: isVisible,
@@ -730,7 +744,13 @@ export function NavigationProgress() {
       const target = event.target as Element | null;
       const anchor = target?.closest?.('a') ?? null;
       if (shouldStartProgress(event, anchor, window.location.pathname)) {
-        setIsPending(true);
+        // flushSync: 이 클릭 리스너는 document에 등록한 네이티브 이벤트라
+        // React 18+ 자동 배칭 대상이다. 그냥 setIsPending(true)로 두면 다음
+        // effect(setTimeout 등록)가 같은 브라우저 태스크 안에서 곧바로
+        // 실행되지 않아, 클릭 직후 아주 짧은 지연 안에 전환이 끝나는 경우
+        // 타이머 등록 자체가 한 박자 밀릴 수 있다. 클릭은 드물게 발생하는
+        // 이벤트라 동기 플러시 비용은 무시할 만하다.
+        flushSync(() => setIsPending(true));
       }
     };
 
@@ -752,12 +772,6 @@ export function NavigationProgress() {
       clearTimeout(maxTimer);
     };
   }, [isPending]);
-
-  // 경로가 바뀌면 전환이 끝난 것이다.
-  useEffect(() => {
-    setIsPending(false);
-    setIsVisible(false);
-  }, [pathname]);
 
   return (
     <div
