@@ -4,7 +4,7 @@
 
 **Goal:** `/apps/ralli`를 다크 · 스크롤 연동 몰입형 랜딩(A 시안)으로 전면 교체한다.
 
-**Architecture:** 설계 문서 [`2026-08-12-ralli-landing-a-design.md`](../specs/2026-08-12-ralli-landing-a-design.md)를 따른다. 시안의 명령형 `rAF` 루프를 framer-motion의 `useScroll`/`useTransform`으로 재구성하고, 스크롤 애니메이션 섹션을 `_actions/*.action.tsx`에 통째로 둔다. 순수 함수(`_utils`)와 훅(`_hooks`)을 먼저 만들고, 재사용 조각(`_components`) → 섹션(`_actions`) → 조립(`page.tsx`) 순으로 쌓는다. `(main)` 레이아웃과 공용 `Header`는 유지한다.
+**Architecture:** 설계 문서 [`2026-08-12-ralli-landing-a-design.md`](../specs/2026-08-12-ralli-landing-a-design.md)를 따른다. 시안의 명령형 `rAF` 루프를 framer-motion의 `useScroll`/`useTransform`으로 재구성하고, 세로 구간 하나를 `_areas/*.area.tsx` 하나에 대응시킨다. 순수 함수(`_utils`)와 훅(`_hooks`)을 먼저 만들고, 재사용 조각(`_components`·`_actions`) → 영역(`_areas`) → 조립(`page.tsx`) 순으로 쌓는다. `(main)` 레이아웃과 공용 `Header`는 유지한다.
 
 **Tech Stack:** Next.js 16.1.6 (App Router), React 19.2.3, TypeScript strict, Tailwind CSS v4, framer-motion 12.42.0 (기존 의존성), Vitest + @testing-library/react, Playwright
 
@@ -17,8 +17,8 @@
 - **컴포넌트 규칙** — 파일명 kebab-case, 함수명 PascalCase, props 타입은 `type Props = {}`, 조건부 클래스는 `cn()` (`@/lib/utils`)
 - **Import 규칙** — React hook은 named import (`import { useState } from 'react'`). `React.useState`·`import * as React` 금지
 - **lucide-react 아이콘은 `size` 속성으로 크기 지정** (`className="w-4 h-4"` 금지)
-- **파일 확장자 규칙** — `_components`·`_actions`는 `.tsx`, `_utils`·`_hooks`는 `.ts`
-- **네이밍** — `_actions`는 `*.action.tsx`, `_hooks`는 `use*.ts` camelCase, `_utils`·`_components`는 kebab-case
+- **파일 확장자 규칙** — `_areas`·`_components`·`_actions`는 `.tsx`, `_utils`·`_hooks`는 `.ts`
+- **네이밍** — `_areas`는 `*.area.tsx`, `_actions`는 `*.action.tsx`, `_hooks`는 `use*.ts` camelCase, `_utils`·`_components`는 kebab-case
 - **정확한 색상값** (시안에서 그대로 옮김)
   - `--color-ralli-bg`: `#07100b`
   - `--color-ralli-fg`: `#f2f5f0`
@@ -60,15 +60,30 @@ git checkout -b feature/ralli-landing-a
 | `_components/ralli-section-label.tsx` | `01 — ON THE COURT` 라벨 | 5 |
 | `_components/ralli-marquee.tsx` | CSS 무한 루프 마퀴 | 5 |
 | `_components/ralli-court-svg.tsx` | 히어로 코트 라인 SVG (정적 마크업) | 5 |
-| `_actions/hero-scroll.action.tsx` | 280vh sticky 히어로 전체 | 6 |
-| `_actions/pinned-features.action.tsx` | 300vh pin 섹션 3-step | 7 |
-| `_actions/workout-stats.action.tsx` | 카운트업 스탯 + 이미지 2장 | 8 |
-| `_actions/replay-gallery.action.tsx` | 가로 드리프트 / 모바일 네이티브 스크롤 | 9 |
-| `_actions/rules-section.action.tsx` | 04 룰 칩 섹션 | 10 |
+| `_areas/hero.area.tsx` | 280vh sticky 히어로 전체 | 6 |
+| `_areas/watch.area.tsx` | 300vh pin 섹션 3-step | 7 |
+| `_areas/workout.area.tsx` | 카운트업 스탯 + 이미지 2장 | 8 |
+| `_areas/replay.area.tsx` | 가로 드리프트 / 모바일 네이티브 스크롤 | 9 |
+| `_areas/rules.area.tsx` | 04 룰 칩 섹션 | 10 |
 | `_actions/ralli-section-nav.action.tsx` | 앵커 pill 내비 + 모바일 하단 CTA 바 | 11 |
-| `_actions/final-cta.action.tsx` | 최종 CTA (시안 푸터) | 12 |
-| `page.tsx` | 서버 컴포넌트 — metadata + 섹션 조립 | 13 |
+| `_areas/final-cta.area.tsx` | 최종 CTA (시안 푸터) | 12 |
+| `page.tsx` | 서버 컴포넌트 — metadata + 영역 조립 | 13 |
 | `e2e/ralli.spec.ts` | E2E 재작성 (기존 단언이 전부 깨진다) | 13 |
+
+### `_areas`에 무엇이 들어가고 무엇이 안 들어가는가
+
+`page-folder.md`에 신설된 `_areas` 규칙을 따른다 — **`page.tsx`가 직접 조립하는 세로 구간 하나**가 `*.area.tsx` 하나에 대응한다.
+
+| 대상 | 위치 | 이유 |
+|---|---|---|
+| 히어로 · 01~04 섹션 · 최종 CTA | `_areas/*.area.tsx` | 여러 조각을 묶어 화면 한 구간을 완성한다 |
+| 마퀴 | `_components/ralli-marquee.tsx` | 조각 하나로 끝나는 단일 위젯. `page.tsx`가 직접 렌더한다 |
+| 앵커 내비 · 모바일 하단 CTA 바 | `_actions/ralli-section-nav.action.tsx` | 화면에 고정된 오버레이라 세로 구간이 아니다 |
+| `Reveal` 래퍼 | `_actions/reveal.action.tsx` | 영역 여러 곳에서 재사용한다 |
+
+영역 파일 안에서만 쓰이는 하위 컴포넌트(`HeroLetter`, `StatCard`)는 **같은 파일 안에 private으로 둔다**. 둘 다 부모의 `progress` MotionValue나 뷰포트 상태에 묶여 있어 밖으로 빼면 재사용 가능한 것처럼 보이지만 실제로는 그렇지 않다.
+
+영역 파일은 `_areas/` 한 단계 깊이라 `../_hooks`·`../_utils`·`../_components`·`../_actions` 상대 경로가 그대로 유효하다.
 
 ---
 
@@ -1114,29 +1129,29 @@ git commit -m "✨ Ralli 섹션 라벨·마퀴·코트 SVG 순수 컴포넌트 �
 
 ---
 
-### Task 6: 히어로 (`hero-scroll.action.tsx`)
+### Task 6: 히어로 영역 (`hero.area.tsx`)
 
 시안에서 가장 복잡한 구간이다. `RALLI` 5글자 비산 · 워치 확대 · 코트 3D 회전 · 글로우 · 태그라인/스코어 등장 · 스코어 시퀀스 · 스크롤 힌트를 한 sticky 컨테이너에서 처리한다.
 
 글자별 `useTransform`은 `.map()` 콜백 안에서 호출하면 `react-hooks/rules-of-hooks` 위반이므로, 글자 하나를 자식 컴포넌트(`HeroLetter`)로 분리해 각자 훅을 호출하게 한다.
 
 **Files:**
-- Create: `src/app/(main)/apps/ralli/_actions/hero-scroll.action.tsx`
-- Test: `src/app/(main)/apps/ralli/_actions/hero-scroll.test.tsx`
+- Create: `src/app/(main)/apps/ralli/_areas/hero.area.tsx`
+- Test: `src/app/(main)/apps/ralli/_areas/hero.area.test.tsx`
 
 **Interfaces:**
 - Consumes: `useSectionProgress` (Task 4), `scoreAt` · `RalliScore` (Task 2), `ralliHeroLetters` · `ralliHeroShot` · `ralliMeta` (Task 3), `RalliCourtSvg` (Task 5), `RalliShot` (Task 1), `RalliCtaButton` (기존)
-- Produces: `HeroScrollAction()` — Task 13이 `page.tsx`에서 사용. props 없음(콘텐츠를 직접 import).
+- Produces: `HeroArea()` — Task 13이 `page.tsx`에서 사용. props 없음(콘텐츠를 직접 import).
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 jsdom에는 레이아웃이 없어 `useScroll`이 진행도를 만들지 못한다. 정적 구조와 접근성만 검증한다.
 
-`src/app/(main)/apps/ralli/_actions/hero-scroll.test.tsx`:
+`src/app/(main)/apps/ralli/_areas/hero.area.test.tsx`:
 
 ```tsx
 import { render, screen } from '@testing-library/react';
-import { HeroScrollAction } from './hero-scroll.action';
+import { HeroArea } from './hero.area';
 
 vi.mock('next/image', () => ({
   default: ({ src, alt, className }: { src: string; alt: string; className?: string }) => (
@@ -1144,16 +1159,16 @@ vi.mock('next/image', () => ({
   ),
 }));
 
-describe('HeroScrollAction', () => {
+describe('HeroArea', () => {
   it('h1으로 태그라인을 렌더한다', () => {
-    render(<HeroScrollAction />);
+    render(<HeroArea />);
     const heading = screen.getByRole('heading', { level: 1 });
     expect(heading).toHaveTextContent('Tennis scores,');
     expect(heading).toHaveTextContent('right on your wrist.');
   });
 
   it('App Store CTA를 렌더한다', () => {
-    render(<HeroScrollAction />);
+    render(<HeroArea />);
     expect(screen.getByRole('link', { name: /App Store/i })).toHaveAttribute(
       'href',
       'https://apps.apple.com/us/app/ralli/id6449350578',
@@ -1161,12 +1176,12 @@ describe('HeroScrollAction', () => {
   });
 
   it('장식용 RALLI 글자는 스크린 리더에서 숨긴다', () => {
-    const { container } = render(<HeroScrollAction />);
+    const { container } = render(<HeroArea />);
     expect(container.querySelector('[data-ralli-wordmark]')).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('초기 스코어는 0이다', () => {
-    render(<HeroScrollAction />);
+    render(<HeroArea />);
     expect(screen.getByTestId('ralli-hero-score')).toHaveTextContent('0');
   });
 });
@@ -1175,10 +1190,10 @@ describe('HeroScrollAction', () => {
 - [ ] **Step 2: 테스트 실패 확인**
 
 ```bash
-npm run test:run -- hero-scroll
+npm run test:run -- hero.area
 ```
 
-Expected: FAIL — `Failed to resolve import "./hero-scroll.action"`
+Expected: FAIL — `Failed to resolve import "./hero.area"`
 
 - [ ] **Step 3: 구현**
 
@@ -1229,7 +1244,7 @@ function HeroLetter({ char, direction, progress, isAccent, isStatic }: HeroLette
   );
 }
 
-export function HeroScrollAction() {
+export function HeroArea() {
   const { ref, progress, isStatic } = useSectionProgress(['start start', 'end end']);
   const [score, setScore] = useState<RalliScore>('0');
 
@@ -1382,7 +1397,7 @@ export function HeroScrollAction() {
 - [ ] **Step 4: 테스트 통과 확인**
 
 ```bash
-npm run test:run -- hero-scroll
+npm run test:run -- hero.area
 ```
 
 Expected: PASS (4 tests)
@@ -1390,55 +1405,55 @@ Expected: PASS (4 tests)
 - [ ] **Step 5: 커밋**
 
 ```bash
-git add "src/app/(main)/apps/ralli/_actions/hero-scroll.action.tsx" "src/app/(main)/apps/ralli/_actions/hero-scroll.test.tsx"
+git add "src/app/(main)/apps/ralli/_areas/hero.area.tsx" "src/app/(main)/apps/ralli/_areas/hero.area.test.tsx"
 git commit -m "✨ Ralli 히어로 스크롤 시퀀스 구현"
 ```
 
 ---
 
-### Task 7: Pin 섹션 (`pinned-features.action.tsx`)
+### Task 7: 01 On the court 영역 (`watch.area.tsx`)
 
 300vh 동안 sticky 상태로 3개 스텝을 순회하며 이미지를 교체하고 해당 스텝 카드를 강조한다.
 
 **Files:**
-- Create: `src/app/(main)/apps/ralli/_actions/pinned-features.action.tsx`
-- Test: `src/app/(main)/apps/ralli/_actions/pinned-features.test.tsx`
+- Create: `src/app/(main)/apps/ralli/_areas/watch.area.tsx`
+- Test: `src/app/(main)/apps/ralli/_areas/watch.area.test.tsx`
 
 **Interfaces:**
 - Consumes: `useSectionProgress` (Task 4), `stepIndexAt` (Task 2), `ralliWatchSection` (Task 3), `RalliSectionLabel` (Task 5), `RalliShot` (Task 1)
-- Produces: `PinnedFeaturesAction()` — Task 13이 사용
+- Produces: `WatchArea()` — Task 13이 사용
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```tsx
 import { render, screen } from '@testing-library/react';
-import { PinnedFeaturesAction } from './pinned-features.action';
+import { WatchArea } from './watch.area';
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
 }));
 
-describe('PinnedFeaturesAction', () => {
+describe('WatchArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
-    render(<PinnedFeaturesAction />);
+    render(<WatchArea />);
     expect(screen.getByRole('heading', { name: 'All on your wrist.' })).toBeInTheDocument();
     expect(screen.getByText('01 — ON THE COURT')).toBeInTheDocument();
   });
 
   it('3개 스텝을 모두 렌더한다', () => {
-    render(<PinnedFeaturesAction />);
+    render(<WatchArea />);
     expect(screen.getByText('Score without your phone')).toBeInTheDocument();
     expect(screen.getByText('One tap from your watch face')).toBeInTheDocument();
     expect(screen.getByText('Live on the Lock Screen')).toBeInTheDocument();
   });
 
   it('앵커 이동을 위해 섹션 id를 노출한다', () => {
-    const { container } = render(<PinnedFeaturesAction />);
+    const { container } = render(<WatchArea />);
     expect(container.querySelector('#watch')).toBeInTheDocument();
   });
 
   it('초기 활성 스텝은 첫 번째다', () => {
-    render(<PinnedFeaturesAction />);
+    render(<WatchArea />);
     expect(screen.getByTestId('ralli-step-score')).toHaveAttribute('data-active', 'true');
     expect(screen.getByTestId('ralli-step-live')).toHaveAttribute('data-active', 'false');
   });
@@ -1448,7 +1463,7 @@ describe('PinnedFeaturesAction', () => {
 - [ ] **Step 2: 테스트 실패 확인**
 
 ```bash
-npm run test:run -- pinned-features
+npm run test:run -- watch.area
 ```
 
 Expected: FAIL — 모듈 미존재
@@ -1467,7 +1482,7 @@ import { ralliWatchSection } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
 
-export function PinnedFeaturesAction() {
+export function WatchArea() {
   const { ref, progress, isStatic } = useSectionProgress(['start start', 'end end']);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -1545,7 +1560,7 @@ export function PinnedFeaturesAction() {
 - [ ] **Step 4: 테스트 통과 확인**
 
 ```bash
-npm run test:run -- pinned-features
+npm run test:run -- watch.area
 ```
 
 Expected: PASS (4 tests)
@@ -1553,37 +1568,37 @@ Expected: PASS (4 tests)
 - [ ] **Step 5: 커밋**
 
 ```bash
-git add "src/app/(main)/apps/ralli/_actions/pinned-features.action.tsx" "src/app/(main)/apps/ralli/_actions/pinned-features.test.tsx"
+git add "src/app/(main)/apps/ralli/_areas/watch.area.tsx" "src/app/(main)/apps/ralli/_areas/watch.area.test.tsx"
 git commit -m "✨ Ralli 01 On the court pin 섹션 구현"
 ```
 
 ---
 
-### Task 8: Workout 스탯 (`workout-stats.action.tsx`)
+### Task 8: 02 Health 영역 (`workout.area.tsx`)
 
 스탯 3장의 숫자를 뷰포트 진입 시 1회 카운트업하고, 워크아웃 이미지 2장을 배치한다.
 
 **Files:**
-- Create: `src/app/(main)/apps/ralli/_actions/workout-stats.action.tsx`
-- Test: `src/app/(main)/apps/ralli/_actions/workout-stats.test.tsx`
+- Create: `src/app/(main)/apps/ralli/_areas/workout.area.tsx`
+- Test: `src/app/(main)/apps/ralli/_areas/workout.area.test.tsx`
 
 **Interfaces:**
 - Consumes: `ralliWorkoutSection` (Task 3), `Reveal` (Task 4), `RalliSectionLabel` (Task 5), `RalliShot` (Task 1)
-- Produces: `WorkoutStatsAction()` — Task 13이 사용
+- Produces: `WorkoutArea()` — Task 13이 사용
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```tsx
 import { render, screen } from '@testing-library/react';
-import { WorkoutStatsAction } from './workout-stats.action';
+import { WorkoutArea } from './workout.area';
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
 }));
 
-describe('WorkoutStatsAction', () => {
+describe('WorkoutArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
-    render(<WorkoutStatsAction />);
+    render(<WorkoutArea />);
     expect(
       screen.getByRole('heading', { name: 'A match is a workout — logged automatically.' }),
     ).toBeInTheDocument();
@@ -1591,7 +1606,7 @@ describe('WorkoutStatsAction', () => {
   });
 
   it('스탯 3개의 단위와 설명을 렌더한다', () => {
-    render(<WorkoutStatsAction />);
+    render(<WorkoutArea />);
     expect(screen.getByText('kcal')).toBeInTheDocument();
     expect(screen.getByText('bpm')).toBeInTheDocument();
     expect(screen.getByText('min')).toBeInTheDocument();
@@ -1599,7 +1614,7 @@ describe('WorkoutStatsAction', () => {
   });
 
   it('앵커 이동을 위해 섹션 id를 노출한다', () => {
-    const { container } = render(<WorkoutStatsAction />);
+    const { container } = render(<WorkoutArea />);
     expect(container.querySelector('#workout')).toBeInTheDocument();
   });
 });
@@ -1608,7 +1623,7 @@ describe('WorkoutStatsAction', () => {
 - [ ] **Step 2: 테스트 실패 확인**
 
 ```bash
-npm run test:run -- workout-stats
+npm run test:run -- workout.area
 ```
 
 Expected: FAIL — 모듈 미존재
@@ -1624,7 +1639,7 @@ import { cn } from '@/lib/utils';
 import { ralliWorkoutSection, type RalliStat } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from './reveal.action';
+import { Reveal } from '../_actions/reveal.action';
 
 const toneClassName: Record<RalliStat['tone'], string> = {
   lime: 'text-ralli-lime',
@@ -1680,7 +1695,7 @@ function StatCard({ stat }: StatCardProps) {
   );
 }
 
-export function WorkoutStatsAction() {
+export function WorkoutArea() {
   return (
     <section
       id={ralliWorkoutSection.id}
@@ -1721,7 +1736,7 @@ export function WorkoutStatsAction() {
 - [ ] **Step 4: 테스트 통과 확인**
 
 ```bash
-npm run test:run -- workout-stats
+npm run test:run -- workout.area
 ```
 
 Expected: PASS (3 tests)
@@ -1729,23 +1744,23 @@ Expected: PASS (3 tests)
 - [ ] **Step 5: 커밋**
 
 ```bash
-git add "src/app/(main)/apps/ralli/_actions/workout-stats.action.tsx" "src/app/(main)/apps/ralli/_actions/workout-stats.test.tsx"
+git add "src/app/(main)/apps/ralli/_areas/workout.area.tsx" "src/app/(main)/apps/ralli/_areas/workout.area.test.tsx"
 git commit -m "✨ Ralli 02 Health 카운트업 스탯 섹션 구현"
 ```
 
 ---
 
-### Task 9: Replay 갤러리 (`replay-gallery.action.tsx`)
+### Task 9: 03 Replay 영역 (`replay.area.tsx`)
 
 데스크톱은 스크롤 연동 가로 드리프트, 모바일은 네이티브 가로 스크롤 + `scroll-snap`. 두 방식이 같은 축에서 충돌하므로 `useIsMobile`로 분기하는 유일한 지점이다.
 
 **Files:**
-- Create: `src/app/(main)/apps/ralli/_actions/replay-gallery.action.tsx`
-- Test: `src/app/(main)/apps/ralli/_actions/replay-gallery.test.tsx`
+- Create: `src/app/(main)/apps/ralli/_areas/replay.area.tsx`
+- Test: `src/app/(main)/apps/ralli/_areas/replay.area.test.tsx`
 
 **Interfaces:**
 - Consumes: `useSectionProgress` · `useIsMobile` (Task 4), `ralliReplaySection` (Task 3), `RalliSectionLabel` (Task 5), `RalliShot` (Task 1), `Reveal` (Task 4)
-- Produces: `ReplayGalleryAction()` — Task 13이 사용
+- Produces: `ReplayArea()` — Task 13이 사용
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
@@ -1753,7 +1768,7 @@ git commit -m "✨ Ralli 02 Health 카운트업 스탯 섹션 구현"
 
 ```tsx
 import { render, screen } from '@testing-library/react';
-import { ReplayGalleryAction } from './replay-gallery.action';
+import { ReplayArea } from './replay.area';
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
@@ -1775,9 +1790,9 @@ afterAll(() => {
   vi.unstubAllGlobals();
 });
 
-describe('ReplayGalleryAction', () => {
+describe('ReplayArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
-    render(<ReplayGalleryAction />);
+    render(<ReplayArea />);
     expect(
       screen.getByRole('heading', { name: 'Every match, back on your iPhone.' }),
     ).toBeInTheDocument();
@@ -1785,19 +1800,19 @@ describe('ReplayGalleryAction', () => {
   });
 
   it('갤러리 이미지 5장을 렌더한다', () => {
-    render(<ReplayGalleryAction />);
+    render(<ReplayArea />);
     expect(screen.getAllByRole('img')).toHaveLength(5);
   });
 
   it('설명 노트 3개를 렌더한다', () => {
-    render(<ReplayGalleryAction />);
+    render(<ReplayArea />);
     expect(screen.getByText('Set-by-set detail')).toBeInTheDocument();
     expect(screen.getByText('A calendar that fills itself')).toBeInTheDocument();
     expect(screen.getByText('Monthly & lifetime stats')).toBeInTheDocument();
   });
 
   it('앵커 이동을 위해 섹션 id를 노출한다', () => {
-    const { container } = render(<ReplayGalleryAction />);
+    const { container } = render(<ReplayArea />);
     expect(container.querySelector('#iphone')).toBeInTheDocument();
   });
 });
@@ -1806,7 +1821,7 @@ describe('ReplayGalleryAction', () => {
 - [ ] **Step 2: 테스트 실패 확인**
 
 ```bash
-npm run test:run -- replay-gallery
+npm run test:run -- replay.area
 ```
 
 Expected: FAIL — 모듈 미존재
@@ -1823,12 +1838,12 @@ import { useIsMobile } from '../_hooks/useIsMobile';
 import { ralliReplaySection } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from './reveal.action';
+import { Reveal } from '../_actions/reveal.action';
 
 /** 데스크톱 드리프트 이동 거리. 갤러리 전체 폭에서 뷰포트를 뺀 만큼 왼쪽으로 민다. */
 const DRIFT_VW = -55;
 
-export function ReplayGalleryAction() {
+export function ReplayArea() {
   const { ref, progress, isStatic } = useSectionProgress(['start end', 'end start'], false);
   const isMobile = useIsMobile();
   const driftX = useTransform(progress, [0, 1], ['0vw', `${DRIFT_VW}vw`]);
@@ -1885,7 +1900,7 @@ export function ReplayGalleryAction() {
 - [ ] **Step 4: 테스트 통과 확인**
 
 ```bash
-npm run test:run -- replay-gallery
+npm run test:run -- replay.area
 ```
 
 Expected: PASS (4 tests)
@@ -1893,48 +1908,48 @@ Expected: PASS (4 tests)
 - [ ] **Step 5: 커밋**
 
 ```bash
-git add "src/app/(main)/apps/ralli/_actions/replay-gallery.action.tsx" "src/app/(main)/apps/ralli/_actions/replay-gallery.test.tsx"
+git add "src/app/(main)/apps/ralli/_areas/replay.area.tsx" "src/app/(main)/apps/ralli/_areas/replay.area.test.tsx"
 git commit -m "✨ Ralli 03 Replay 갤러리 구현"
 ```
 
 ---
 
-### Task 10: Rules 섹션 (`rules-section.action.tsx`)
+### Task 10: 04 Your rules 영역 (`rules.area.tsx`)
 
 **Files:**
-- Create: `src/app/(main)/apps/ralli/_actions/rules-section.action.tsx`
-- Test: `src/app/(main)/apps/ralli/_actions/rules-section.test.tsx`
+- Create: `src/app/(main)/apps/ralli/_areas/rules.area.tsx`
+- Test: `src/app/(main)/apps/ralli/_areas/rules.area.test.tsx`
 
 **Interfaces:**
 - Consumes: `ralliRulesSection` (Task 3), `Reveal` (Task 4), `RalliSectionLabel` (Task 5), `RalliShot` (Task 1)
-- Produces: `RulesSectionAction()` — Task 13이 사용
+- Produces: `RulesArea()` — Task 13이 사용
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```tsx
 import { render, screen } from '@testing-library/react';
-import { RulesSectionAction } from './rules-section.action';
+import { RulesArea } from './rules.area';
 
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
 }));
 
-describe('RulesSectionAction', () => {
+describe('RulesArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
-    render(<RulesSectionAction />);
+    render(<RulesArea />);
     expect(screen.getByRole('heading', { name: 'Play by your own rules.' })).toBeInTheDocument();
     expect(screen.getByText('04 — YOUR RULES')).toBeInTheDocument();
   });
 
   it('룰 칩 6개를 렌더한다', () => {
-    render(<RulesSectionAction />);
+    render(<RulesArea />);
     for (const chip of ['4 games', '5 games', '6 games', 'No-ad', 'No-tie', 'Tiebreak']) {
       expect(screen.getByText(chip)).toBeInTheDocument();
     }
   });
 
   it('첫 칩만 강조 스타일을 갖는다', () => {
-    render(<RulesSectionAction />);
+    render(<RulesArea />);
     expect(screen.getByText('4 games')).toHaveClass('bg-ralli-lime');
     expect(screen.getByText('5 games')).not.toHaveClass('bg-ralli-lime');
   });
@@ -1944,7 +1959,7 @@ describe('RulesSectionAction', () => {
 - [ ] **Step 2: 테스트 실패 확인**
 
 ```bash
-npm run test:run -- rules-section
+npm run test:run -- rules.area
 ```
 
 Expected: FAIL — 모듈 미존재
@@ -1958,9 +1973,9 @@ import { cn } from '@/lib/utils';
 import { ralliRulesSection } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from './reveal.action';
+import { Reveal } from '../_actions/reveal.action';
 
-export function RulesSectionAction() {
+export function RulesArea() {
   return (
     <section id={ralliRulesSection.id} className="bg-ralli-bg px-[max(6vw,32px)] pb-24 md:pb-32">
       <div className="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 rounded-[34px] border border-ralli-fg/9 bg-linear-150 from-ralli-lime/9 via-ralli-green/5 to-transparent p-7 md:grid-cols-2 md:p-14">
@@ -2007,7 +2022,7 @@ export function RulesSectionAction() {
 - [ ] **Step 4: 테스트 통과 확인**
 
 ```bash
-npm run test:run -- rules-section
+npm run test:run -- rules.area
 ```
 
 Expected: PASS (3 tests)
@@ -2015,7 +2030,7 @@ Expected: PASS (3 tests)
 - [ ] **Step 5: 커밋**
 
 ```bash
-git add "src/app/(main)/apps/ralli/_actions/rules-section.action.tsx" "src/app/(main)/apps/ralli/_actions/rules-section.test.tsx"
+git add "src/app/(main)/apps/ralli/_areas/rules.area.tsx" "src/app/(main)/apps/ralli/_areas/rules.area.test.tsx"
 git commit -m "✨ Ralli 04 Your rules 섹션 구현"
 ```
 
@@ -2135,24 +2150,24 @@ git commit -m "✨ Ralli 섹션 앵커 내비와 모바일 하단 CTA 바 추가
 
 ---
 
-### Task 12: 최종 CTA (`final-cta.action.tsx`)
+### Task 12: 최종 CTA 영역 (`final-cta.area.tsx`)
 
 시안 푸터를 최종 CTA 섹션으로 옮긴다. **`© 2026 YJlogs` 줄은 넣지 않는다** — 공용 `Footer`가 이미 렌더한다.
 
 **Files:**
-- Create: `src/app/(main)/apps/ralli/_actions/final-cta.action.tsx`
-- Test: `src/app/(main)/apps/ralli/_actions/final-cta.test.tsx`
+- Create: `src/app/(main)/apps/ralli/_areas/final-cta.area.tsx`
+- Test: `src/app/(main)/apps/ralli/_areas/final-cta.area.test.tsx`
 
 **Interfaces:**
 - Consumes: `ralliMeta` · `ralliFinalCta` (Task 3), `Reveal` (Task 4), `RalliCtaButton` (기존)
-- Produces: `FinalCtaAction()` — Task 13이 사용
+- Produces: `FinalCtaArea()` — Task 13이 사용
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 ```tsx
 import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
-import { FinalCtaAction } from './final-cta.action';
+import { FinalCtaArea } from './final-cta.area';
 
 vi.mock('next/link', () => ({
   default: ({
@@ -2174,9 +2189,9 @@ vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
 }));
 
-describe('FinalCtaAction', () => {
+describe('FinalCtaArea', () => {
   it('최종 CTA 카피와 App Store 버튼을 렌더한다', () => {
-    render(<FinalCtaAction />);
+    render(<FinalCtaArea />);
     expect(screen.getByRole('heading', { name: 'Go win the next one.' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /App Store/i })).toHaveAttribute(
       'href',
@@ -2185,7 +2200,7 @@ describe('FinalCtaAction', () => {
   });
 
   it('Privacy와 Support 링크를 렌더한다', () => {
-    render(<FinalCtaAction />);
+    render(<FinalCtaArea />);
     expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute(
       'href',
       '/apps/ralli/privacy',
@@ -2197,7 +2212,7 @@ describe('FinalCtaAction', () => {
   });
 
   it('공용 Footer와 중복되는 저작권 문구를 넣지 않는다', () => {
-    render(<FinalCtaAction />);
+    render(<FinalCtaArea />);
     expect(screen.queryByText(/YJlogs/)).not.toBeInTheDocument();
   });
 });
@@ -2206,7 +2221,7 @@ describe('FinalCtaAction', () => {
 - [ ] **Step 2: 테스트 실패 확인**
 
 ```bash
-npm run test:run -- final-cta
+npm run test:run -- final-cta.area
 ```
 
 Expected: FAIL — 모듈 미존재
@@ -2220,9 +2235,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ralliFinalCta, ralliMeta } from '../_utils/ralli-content';
 import { RalliCtaButton } from '../_components/ralli-cta-button';
-import { Reveal } from './reveal.action';
+import { Reveal } from '../_actions/reveal.action';
 
-export function FinalCtaAction() {
+export function FinalCtaArea() {
   return (
     <section className="bg-ralli-bg px-[max(6vw,32px)] pb-24 md:pb-15">
       <Reveal className="mx-auto max-w-[1180px] border-t border-ralli-fg/8 py-14 text-center md:py-17">
@@ -2258,7 +2273,7 @@ export function FinalCtaAction() {
 - [ ] **Step 4: 테스트 통과 확인**
 
 ```bash
-npm run test:run -- final-cta
+npm run test:run -- final-cta.area
 ```
 
 Expected: PASS (3 tests)
@@ -2266,7 +2281,7 @@ Expected: PASS (3 tests)
 - [ ] **Step 5: 커밋**
 
 ```bash
-git add "src/app/(main)/apps/ralli/_actions/final-cta.action.tsx" "src/app/(main)/apps/ralli/_actions/final-cta.test.tsx"
+git add "src/app/(main)/apps/ralli/_areas/final-cta.area.tsx" "src/app/(main)/apps/ralli/_areas/final-cta.area.test.tsx"
 git commit -m "✨ Ralli 최종 CTA 섹션 구현"
 ```
 
@@ -2293,12 +2308,12 @@ import { ralliMarqueeItems, ralliMeta } from './_utils/ralli-content';
 import { RalliJsonLd } from './_components/ralli-json-ld';
 import { RalliMarquee } from './_components/ralli-marquee';
 import { RalliSectionNavAction } from './_actions/ralli-section-nav.action';
-import { HeroScrollAction } from './_actions/hero-scroll.action';
-import { PinnedFeaturesAction } from './_actions/pinned-features.action';
-import { WorkoutStatsAction } from './_actions/workout-stats.action';
-import { ReplayGalleryAction } from './_actions/replay-gallery.action';
-import { RulesSectionAction } from './_actions/rules-section.action';
-import { FinalCtaAction } from './_actions/final-cta.action';
+import { HeroArea } from './_areas/hero.area';
+import { WatchArea } from './_areas/watch.area';
+import { WorkoutArea } from './_areas/workout.area';
+import { ReplayArea } from './_areas/replay.area';
+import { RulesArea } from './_areas/rules.area';
+import { FinalCtaArea } from './_areas/final-cta.area';
 
 export const metadata: Metadata = {
   title: `${ralliMeta.name} — Tennis Score | ${SITE_NAME}`,
@@ -2329,13 +2344,13 @@ export default function RalliPage() {
       <RalliJsonLd />
       <RalliSectionNavAction />
 
-      <HeroScrollAction />
+      <HeroArea />
       <RalliMarquee items={ralliMarqueeItems} />
-      <PinnedFeaturesAction />
-      <WorkoutStatsAction />
-      <ReplayGalleryAction />
-      <RulesSectionAction />
-      <FinalCtaAction />
+      <WatchArea />
+      <WorkoutArea />
+      <ReplayArea />
+      <RulesArea />
+      <FinalCtaArea />
     </div>
   );
 }
@@ -2486,7 +2501,7 @@ gh pr create --base develop --title "✨ Ralli 랜딩 A 시안 적용" --body "$
 
 ## 주요 변경
 - 시안의 명령형 rAF 루프를 framer-motion `useScroll`/`useTransform`으로 재구성
-- 스크롤 애니메이션 섹션 7개를 `_actions/*.action.tsx`로 분리
+- 세로 구간 6개를 `_areas/*.area.tsx`로 분리 (신설 폴더 룰)
 - 모바일 전용 레이아웃 + 하단 고정 CTA 바 추가 (시안에는 미디어 쿼리가 없었음)
 - `prefers-reduced-motion` 정적 폴백 경로 추가
 - 구 컴포넌트 5개 제거

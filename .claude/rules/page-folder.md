@@ -8,10 +8,10 @@
 
 | 확장자 | 허용 폴더 |
 |--------|-----------|
-| `*.tsx` | `_components`, `_actions`, `_handlers`, `_providers`, `_suspenses` |
+| `*.tsx` | `_areas`, `_components`, `_actions`, `_handlers`, `_providers`, `_suspenses` |
 | `*.ts` | `_queries`, `_services`, `_hooks`, `_utils` |
 
-> **핵심**: 컴포넌트가 아닌 로직(`.ts`)은 `_queries`·`_services`·`_hooks`·`_utils`에 둔다. `_actions`·`_handlers`·`_providers`·`_suspenses`에는 컴포넌트 파일(`.tsx`)만 존재한다.
+> **핵심**: 컴포넌트가 아닌 로직(`.ts`)은 `_queries`·`_services`·`_hooks`·`_utils`에 둔다. `_areas`·`_actions`·`_handlers`·`_providers`·`_suspenses`에는 컴포넌트 파일(`.tsx`)만 존재한다.
 
 ## 네이밍 규칙
 
@@ -19,6 +19,7 @@
 
 | 폴더 | 파일명 형식 | 예시 |
 |------|-------------|------|
+| `_areas` | `*.area.tsx` | `hero.area.tsx`, `footer.area.tsx` |
 | `_components` | kebab-case (본체명만) | `comment-form.tsx` |
 | `_actions` | `*.action.tsx` | `view-toggle.action.tsx` |
 | `_handlers` | `*.handler.tsx` | `editor-view.handler.tsx` |
@@ -35,6 +36,7 @@
 
 | 폴더 | 역할 | 외부 의존 |
 |------|------|-----------|
+| `_areas` | 페이지의 **세로 영역** 하나. 여러 조각을 묶어 화면 한 구간을 완성하는 조립 단위 | 조각들 |
 | `_components` | 순수 컴포넌트. props만 받아 렌더링 | 없음 |
 | `_actions` | 클라이언트 인터랙션 컴포넌트. form 전송·zustand 상태·input/button 액션 등 클라이언트 로직이 필요한 컴포넌트. 최대한 모듈화 | 상태/Server Action |
 | `_handlers` | 렌더링 결과 없이 사이드이펙트·조건부 렌더링만 담당하는 클라이언트 컴포넌트 | 상태 |
@@ -44,6 +46,27 @@
 | `_queries` | 클라이언트 **서버 데이터 읽기**. 통신 계층(`fetch` + 모델/타입) + 소비·가공 계층(tanstack-query `useQuery`). 도입 시 사용 | API |
 | `_hooks` | **순수 상태/UI 로직** + props로 받은 데이터의 동기 `useMemo` 가공. API에 의존하지 않음 | 없음 |
 | `_utils` | 해당 페이지 전용 순수 함수 | 없음 |
+
+### `_areas` — 페이지 세로 영역
+
+`page.tsx`가 직접 조립하는 **세로 구간 하나**에 1:1 대응한다. 랜딩·소개 페이지처럼 세로로 길고 구간이 명확히 나뉘는 페이지에서, 조각을 늘어놓는 대신 구간 단위로 묶어 추적을 쉽게 만든다.
+
+- 여러 조각(`_components`·`_actions`)을 묶어 화면 한 구간을 완성하는 **조립 단위**다. 다른 페이지에서 재사용하지 않는다.
+- 서버·클라이언트 어느 쪽이든 될 수 있다. `'use client'` 필요 여부는 영역 내부 사정이며 분류 기준이 아니다.
+- **조각 하나로 끝나면 area가 아니다.** 단일 위젯은 `_components`·`_actions`에 두고 `page.tsx`가 직접 렌더한다.
+- 화면 전체를 덮는 **오버레이**(고정 내비, 모달, 하단 CTA 바)는 세로 구간이 아니므로 area가 아니다.
+- 구간이 2~3개뿐인 평범한 페이지에는 만들지 않는다. 조각을 `page.tsx`에서 바로 조립하는 편이 낫다.
+
+```
+_areas/
+  hero.area.tsx        # 여러 조각을 묶음 → area
+  workout.area.tsx
+  footer.area.tsx
+_components/
+  marquee.tsx          # 단일 위젯 → area 아님. page.tsx가 직접 렌더
+_actions/
+  section-nav.action.tsx   # 고정 오버레이 → area 아님
+```
 
 ### `_services` — Server Action
 
@@ -65,7 +88,7 @@ App Router에서 초기 읽기는 RSC, 쓰기는 Server Action이 담당하므�
 
 ## page.tsx 구성 원칙
 
-`page.tsx`는 서버 컴포넌트로 유지하고, 중간 `*PageAction` 래퍼 컴포넌트를 만들지 않는다. 대신 `page.tsx`에서 직접 Provider·Handler·Action 컴포넌트를 조합한다.
+`page.tsx`는 서버 컴포넌트로 유지하고, 중간 `*PageAction` 래퍼 컴포넌트를 만들지 않는다. 대신 `page.tsx`에서 직접 Provider·Handler·Action 컴포넌트를 조합한다. 세로로 긴 페이지라면 `_areas`의 Area 컴포넌트를 순서대로 나열한다 — 이때 `page.tsx`를 읽는 것만으로 페이지의 세로 구성이 드러나야 한다.
 
 ```tsx
 // ✅ GOOD — page.tsx가 직접 구성

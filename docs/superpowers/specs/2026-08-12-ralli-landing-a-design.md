@@ -80,7 +80,7 @@ framer-motion 12는 이미 `src/components/nav/nav-links.tsx`(공용 Header)에�
 
 ```
 src/app/(main)/apps/ralli/
-├── page.tsx                          ✏️  Server Component — 섹션 조립 + metadata
+├── page.tsx                          ✏️  Server Component — 영역 조립 + metadata
 ├── _utils/
 │   ├── ralli-content.ts              ✏️  시안 카피로 재작성 (섹션 라벨·헤딩·스탯·룰 칩)
 │   ├── ralli-content.test.ts         ✏️  확장
@@ -96,15 +96,16 @@ src/app/(main)/apps/ralli/
 │   ├── ralli-cta-button.tsx          ♻️  유지
 │   ├── ralli-cta-button.test.tsx     ♻️  유지
 │   └── ralli-json-ld.tsx             ♻️  유지
-├── _actions/
-│   ├── ralli-section-nav.action.tsx  ✨  pill 앵커 내비 + active 추적
-│   ├── hero-scroll.action.tsx        ✨  280vh sticky 히어로
-│   ├── pinned-features.action.tsx    ✨  300vh pin 섹션 (3-step 크로스페이드)
-│   ├── workout-stats.action.tsx      ✨  카운트업 스탯 + 이미지 2장
-│   ├── replay-gallery.action.tsx     ✨  가로 드리프트 갤러리
-│   ├── rules-section.action.tsx      ✨  04 — YOUR RULES
-│   ├── final-cta.action.tsx          ✨  시안 푸터 = 최종 CTA 섹션
+├── _actions/                         재사용 인터랙션 조각
+│   ├── ralli-section-nav.action.tsx  ✨  pill 앵커 내비 + 모바일 하단 CTA 바 (고정 오버레이)
 │   └── reveal.action.tsx             ✨  범용 whileInView 래퍼
+├── _areas/                           page.tsx가 조립하는 세로 구간
+│   ├── hero.area.tsx                 ✨  280vh sticky 히어로
+│   ├── watch.area.tsx                ✨  01 — 300vh pin 섹션 (3-step 크로스페이드)
+│   ├── workout.area.tsx              ✨  02 — 카운트업 스탯 + 이미지 2장
+│   ├── replay.area.tsx               ✨  03 — 가로 드리프트 갤러리
+│   ├── rules.area.tsx                ✨  04 — YOUR RULES
+│   └── final-cta.area.tsx            ✨  시안 푸터 = 최종 CTA
 └── privacy/page.tsx                  ♻️  그대로
 
 🗑️  ralli-hero.tsx · ralli-feature-section.tsx · ralli-screenshot-gallery.tsx
@@ -113,13 +114,22 @@ src/app/(main)/apps/ralli/
 
 `ralli-support.tsx`는 지원 이메일과 Privacy 링크만 담고 있어 시안 푸터의 `Privacy Policy · Support` 링크로 완전히 흡수된다.
 
-### 4.1 폴더 배치 근거
+### 4.1 폴더 배치 근거 — `_areas` 신설
 
-스크롤 애니메이션 섹션은 `_actions/*.action.tsx`에 **섹션 통째로** 둔다. `page-folder.md`의 `_actions` 정의는 "클라이언트 로직이 필요한 컴포넌트"이며, 이 섹션들은 `'use client'` + `useScroll` 의존이라 여기에 해당한다. `_handlers`는 "렌더링 결과 없이 사이드이펙트만" 담당하는 폴더이므로 대상이 아니다.
+이 랜딩은 세로로 길고 구간이 명확히 나뉜다. 각 구간을 `_actions`에 넣으면 `_actions`의 정의("form 전송·zustand 상태·input/button 액션 등 클라이언트 로직이 필요한 컴포넌트")와 어긋난다 — 이 구간들의 공통점은 인터랙션이 아니라 **페이지에서 차지하는 세로 위치**다.
 
-마크업과 모션을 순수/모션 2층으로 쪼개지 않는 이유는, 히어로의 글자 비산처럼 **마크업 자체가 애니메이션 단위**인 구간이 많아 분리 시 오히려 추적이 어려워지기 때문이다. 대신 재사용되는 조각(`RalliShot`, `RalliSectionLabel`, `RalliMarquee`, `RalliCourtSvg`)만 `_components`에 순수 컴포넌트로 뽑는다.
+그래서 `page-folder.md`에 `_areas/*.area.tsx` 역할을 신설했다. 기존 dot-suffix 컨벤션(`*.action.tsx`, `*.handler.tsx`)과 폴더↔suffix 짝 규칙을 그대로 따른다.
 
-`page.tsx`는 서버 컴포넌트를 유지하고 중간 `*PageAction` 래퍼 없이 섹션을 직접 조립한다. 카피는 `ralli-content.ts`에서 읽어 props로 내려주므로 `_actions` 컴포넌트도 콘텐츠를 하드코딩하지 않는다.
+| 대상 | 위치 | 이유 |
+|---|---|---|
+| 히어로 · 01~04 · 최종 CTA | `_areas/*.area.tsx` | 여러 조각을 묶어 화면 한 구간을 완성한다 |
+| 마퀴 | `_components/ralli-marquee.tsx` | 조각 하나로 끝나는 단일 위젯 |
+| 앵커 내비 · 하단 CTA 바 | `_actions/ralli-section-nav.action.tsx` | 고정 오버레이라 세로 구간이 아니다 |
+| `Reveal` 래퍼 | `_actions/reveal.action.tsx` | 영역 여러 곳에서 재사용한다 |
+
+영역 안의 마크업과 모션을 순수/모션 2층으로 다시 쪼개지는 않는다. 히어로의 글자 비산처럼 **마크업 자체가 애니메이션 단위**인 구간이 많아 분리하면 오히려 추적이 어려워진다. 영역 파일 안에서만 쓰이는 하위 컴포넌트(`HeroLetter`, `StatCard`)는 부모의 `progress` MotionValue에 묶여 있어 재사용 가능하지 않으므로 같은 파일 안에 private으로 둔다. 실제로 재사용되는 조각(`RalliShot`, `RalliSectionLabel`, `RalliMarquee`, `RalliCourtSvg`)만 `_components`로 뽑는다.
+
+`page.tsx`는 서버 컴포넌트를 유지하고 중간 `*PageAction` 래퍼 없이 Area를 순서대로 나열한다. `page.tsx`를 읽는 것만으로 페이지의 세로 구성이 드러나야 한다. 카피는 `ralli-content.ts`에서 읽으므로 Area 컴포넌트도 콘텐츠를 하드코딩하지 않는다.
 
 ## 5. 이미지 자산
 
@@ -176,7 +186,7 @@ JS 분기가 필요한 곳은 **03 Replay 갤러리 한 곳뿐**이다. 데스�
 - 모든 모션 요소를 최종 상태(글자 원위치, 워치 확대 완료, 스텝 전부 표시)로 렌더한다
 - 카운트업은 최종 숫자를 즉시 표시한다
 
-각 `_actions` 섹션은 `useSectionProgress`가 반환하는 `isStatic` 분기 하나를 갖는다. 즉 분기는 **뷰포트(`md`) × reduced-motion 2축**이며 서로 독립이다.
+각 Area는 `useSectionProgress`가 반환하는 `isStatic` 분기 하나를 갖는다. 즉 분기는 **뷰포트(`md`) × reduced-motion 2축**이며 서로 독립이다.
 
 ## 7. 스타일 토큰 · 마스크
 
@@ -225,7 +235,7 @@ Tailwind v4 문법을 지킨다 — 그라디언트는 `bg-linear-to-*`(v3의 `b
 | `ralli-shot.test.tsx` | 마스크 클래스 적용, `alt`·`width`·`height` 전달 |
 | `ralli-cta-button.test.tsx` | 기존 유지 |
 
-`_actions` 섹션은 jsdom에 레이아웃이 없어 `useScroll`이 정상 동작하지 않는다. **정적 폴백(reduced-motion) 경로만** 렌더 테스트한다.
+`_areas` 컴포넌트는 jsdom에 레이아웃이 없어 `useScroll`이 정상 동작하지 않는다. **정적 폴백(reduced-motion) 경로만** 렌더 테스트한다.
 
 ### 8.2 Playwright — E2E
 
