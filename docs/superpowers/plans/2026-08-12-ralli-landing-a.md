@@ -81,6 +81,8 @@ git checkout -b feature/ralli-landing-a
 | 앵커 내비 · 모바일 하단 CTA 바 | `_actions/ralli-section-nav.action.tsx` | 화면에 고정된 오버레이라 세로 구간이 아니다 |
 | `Reveal` 래퍼 | `_actions/reveal.action.tsx` | 영역 여러 곳에서 재사용한다 |
 
+`_areas`에는 서버 데이터 페칭(`_queries`·`_services` 호출)과 전역 상태(zustand·tanstack-query)를 두지 않는다. 이 랜딩은 콘텐츠가 전부 `_utils/ralli-content.ts` 정적 import라 자연히 만족한다. Area가 갖는 상태는 스크롤 진행도와 활성 스텝 인덱스뿐이며 영역 밖으로 나가지 않는 뷰 로컬 상태다.
+
 영역 파일 안에서만 쓰이는 하위 컴포넌트(`HeroLetter`, `StatCard`)는 **같은 파일 안에 private으로 둔다**. 둘 다 부모의 `progress` MotionValue나 뷰포트 상태에 묶여 있어 밖으로 빼면 재사용 가능한 것처럼 보이지만 실제로는 그렇지 않다.
 
 영역 파일은 `_areas/` 한 단계 깊이라 `../_hooks`·`../_utils`·`../_components`·`../_actions` 상대 경로가 그대로 유효하다.

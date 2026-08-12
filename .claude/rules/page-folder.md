@@ -1,5 +1,7 @@
 # 페이지별 폴더 역할
 
+> **기존 코드**: 레거시 폴더·파일명은 유지한다. **신규로 추가하거나 손대는 구조**부터 아래 규칙을 적용한다. 일괄 리네이밍은 하지 않는다.
+
 ## 폴더 생성 규칙
 
 - `_` 접두사를 붙여 해당 페이지에서만 사용하는 **private 폴더**로 구분
@@ -36,7 +38,7 @@
 
 | 폴더 | 역할 | 외부 의존 |
 |------|------|-----------|
-| `_areas` | 페이지의 **세로 영역** 하나. 여러 조각을 묶어 화면 한 구간을 완성하는 조립 단위 | 조각들 |
+| `_areas` | 페이지의 **시각적 구역** 하나. 조각을 배치·조합하는 레이아웃 단위 | 뷰 로컬 상태만 (데이터·전역 상태 금지) |
 | `_components` | 순수 컴포넌트. props만 받아 렌더링 | 없음 |
 | `_actions` | 클라이언트 인터랙션 컴포넌트. form 전송·zustand 상태·input/button 액션 등 클라이언트 로직이 필요한 컴포넌트. 최대한 모듈화 | 상태/Server Action |
 | `_handlers` | 렌더링 결과 없이 사이드이펙트·조건부 렌더링만 담당하는 클라이언트 컴포넌트 | 상태 |
@@ -47,25 +49,71 @@
 | `_hooks` | **순수 상태/UI 로직** + props로 받은 데이터의 동기 `useMemo` 가공. API에 의존하지 않음 | 없음 |
 | `_utils` | 해당 페이지 전용 순수 함수 | 없음 |
 
-### `_areas` — 페이지 세로 영역
+### `_areas` — 페이지 영역 조립
 
-`page.tsx`가 직접 조립하는 **세로 구간 하나**에 1:1 대응한다. 랜딩·소개 페이지처럼 세로로 길고 구간이 명확히 나뉘는 페이지에서, 조각을 늘어놓는 대신 구간 단위로 묶어 추적을 쉽게 만든다.
+`page.tsx`가 직접 조립하는 **시각적 구역 하나**에 1:1 대응한다. 헤더·필터·테이블처럼 구역이 뚜렷한 관리 화면이나, 랜딩처럼 세로로 긴 페이지에서 쓴다.
 
-- 여러 조각(`_components`·`_actions`)을 묶어 화면 한 구간을 완성하는 **조립 단위**다. 다른 페이지에서 재사용하지 않는다.
-- 서버·클라이언트 어느 쪽이든 될 수 있다. `'use client'` 필요 여부는 영역 내부 사정이며 분류 기준이 아니다.
-- **조각 하나로 끝나면 area가 아니다.** 단일 위젯은 `_components`·`_actions`에 두고 `page.tsx`가 직접 렌더한다.
-- 화면 전체를 덮는 **오버레이**(고정 내비, 모달, 하단 CTA 바)는 세로 구간이 아니므로 area가 아니다.
-- 구간이 2~3개뿐인 평범한 페이지에는 만들지 않는다. 조각을 `page.tsx`에서 바로 조립하는 편이 낫다.
+**역할**
+
+- `_components`·`_actions`·`_handlers`를 배치·조합하고, 고정 문구와 마크업 구조를 담당한다
+- 다른 페이지에서 재사용하지 않는다. 재사용이 필요해지면 `_components`로 내린다
+- 서버·클라이언트 어느 쪽이든 될 수 있다. `'use client'` 필요 여부는 분류 기준이 아니다
+
+**두지 않는 것**
+
+- **서버 데이터 페칭** — `_queries` hook 호출, Server Action 호출
+- **전역 상태** — zustand store 구독, tanstack-query
+
+이런 로직은 `_actions`가 갖고 area는 그 Action을 **배치만** 한다. 여러 area가 공유하는 상태를 area 하나가 소유하면 페이지의 God component가 된다.
+
+> 반대로 **그 영역 밖으로 나가지 않는 뷰 로컬 상태**(스크롤 진행도, 활성 탭 인덱스, 열림/닫힘)는 area에 두어도 된다. 위 금지의 목적은 데이터 소유권이 area로 새는 것을 막는 데 있지, 모든 `useState`를 몰아내는 데 있지 않다.
+
+**area가 아닌 것**
+
+| 대상 | 위치 |
+|---|---|
+| 조각 하나로 끝나는 단일 위젯 | `_components`·`_actions` — `page.tsx`가 직접 렌더 |
+| 화면 고정 오버레이 (내비, 모달, 하단 바) | `_actions` — 구역이 아니다 |
+| 구간이 2~3개뿐인 평범한 페이지 | 만들지 않는다. `page.tsx`에서 바로 조립 |
+
+**예시**
 
 ```
-_areas/
-  hero.area.tsx        # 여러 조각을 묶음 → area
-  workout.area.tsx
-  footer.area.tsx
-_components/
-  marquee.tsx          # 단일 위젯 → area 아님. page.tsx가 직접 렌더
-_actions/
-  section-nav.action.tsx   # 고정 오버레이 → area 아님
+apps/ralli/
+├── page.tsx
+├── _areas/
+│   ├── hero.area.tsx
+│   ├── watch.area.tsx
+│   └── final-cta.area.tsx
+├── _actions/
+│   ├── ralli-section-nav.action.tsx   # 고정 오버레이 → area 아님
+│   └── reveal.action.tsx              # 재사용 래퍼
+└── _components/
+    └── ralli-marquee.tsx              # 단일 위젯 → area 아님
+```
+
+```tsx
+// page.tsx — 영역을 순서대로 나열. 읽는 것만으로 페이지 구성이 드러난다
+<div className="bg-ralli-bg">
+  <RalliSectionNavAction />
+  <HeroArea />
+  <RalliMarquee items={ralliMarqueeItems} />
+  <WatchArea />
+  <FinalCtaArea />
+</div>
+```
+
+```tsx
+// _areas/header.area.tsx — 레이아웃 + Action 배치. 데이터는 Action이 가져온다
+export function HeaderArea() {
+  return (
+    <header>
+      <h1>{year}년 학년 업데이트</h1>
+      <StudentTotalAction />
+      <PromoteAllAction />
+    </header>
+  );
+}
 ```
 
 ### `_services` — Server Action

@@ -127,6 +127,8 @@ src/app/(main)/apps/ralli/
 | 앵커 내비 · 하단 CTA 바 | `_actions/ralli-section-nav.action.tsx` | 고정 오버레이라 세로 구간이 아니다 |
 | `Reveal` 래퍼 | `_actions/reveal.action.tsx` | 영역 여러 곳에서 재사용한다 |
 
+`_areas`에는 **서버 데이터 페칭과 전역 상태를 두지 않는다**는 제약이 붙는다. 이 랜딩은 이를 자연히 만족한다 — 콘텐츠가 전부 `_utils/ralli-content.ts` 정적 모듈 import이고, `_queries`·`_services` 호출이나 zustand·tanstack-query 구독이 한 곳도 없다. 각 Area가 갖는 상태는 스크롤 진행도와 활성 스텝 인덱스뿐이며 영역 밖으로 나가지 않는 뷰 로컬 상태다.
+
 영역 안의 마크업과 모션을 순수/모션 2층으로 다시 쪼개지는 않는다. 히어로의 글자 비산처럼 **마크업 자체가 애니메이션 단위**인 구간이 많아 분리하면 오히려 추적이 어려워진다. 영역 파일 안에서만 쓰이는 하위 컴포넌트(`HeroLetter`, `StatCard`)는 부모의 `progress` MotionValue에 묶여 있어 재사용 가능하지 않으므로 같은 파일 안에 private으로 둔다. 실제로 재사용되는 조각(`RalliShot`, `RalliSectionLabel`, `RalliMarquee`, `RalliCourtSvg`)만 `_components`로 뽑는다.
 
 `page.tsx`는 서버 컴포넌트를 유지하고 중간 `*PageAction` 래퍼 없이 Area를 순서대로 나열한다. `page.tsx`를 읽는 것만으로 페이지의 세로 구성이 드러나야 한다. 카피는 `ralli-content.ts`에서 읽으므로 Area 컴포넌트도 콘텐츠를 하드코딩하지 않는다.
