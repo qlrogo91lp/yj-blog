@@ -179,12 +179,6 @@ export const ralliRulesSection = {
   ],
 };
 
-export const ralliNavLinks = [
-  { href: `#${ralliWatchSection.id}`, label: 'Watch' },
-  { href: `#${ralliWorkoutSection.id}`, label: 'Workout' },
-  { href: `#${ralliReplaySection.id}`, label: 'iPhone' },
-] as const;
-
 export const ralliFinalCta = {
   heading: 'Go win the next one.',
   body: 'Free on the App Store for Apple Watch and iPhone.',

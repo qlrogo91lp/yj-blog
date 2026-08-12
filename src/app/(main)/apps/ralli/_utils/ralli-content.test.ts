@@ -1,6 +1,5 @@
 import {
   ralliMeta,
-  ralliNavLinks,
   ralliHeroLetters,
   ralliHeroShot,
   ralliWatchSection,
@@ -50,11 +49,6 @@ describe('ralli-content', () => {
       ralliRulesSection.label,
     ];
     expect(labels.map((l) => l.slice(0, 2))).toEqual(['01', '02', '03', '04']);
-  });
-
-  it('앵커 내비 href가 실제 섹션 id와 일치한다', () => {
-    const sectionIds = [ralliWatchSection.id, ralliWorkoutSection.id, ralliReplaySection.id];
-    expect(ralliNavLinks.map((l) => l.href)).toEqual(sectionIds.map((id) => `#${id}`));
   });
 
   it('히어로 글자는 RALLI 5자다', () => {

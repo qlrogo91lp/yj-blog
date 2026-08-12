@@ -3,7 +3,6 @@ import { SITE_NAME } from '@/lib/constants';
 import { ralliMarqueeItems, ralliMeta } from './_utils/ralli-content';
 import { RalliJsonLd } from './_components/ralli-json-ld';
 import { RalliMarquee } from './_components/ralli-marquee';
-import { RalliSectionNavAction } from './_actions/ralli-section-nav.action';
 import { HeroArea } from './_areas/hero.area';
 import { WatchArea } from './_areas/watch.area';
 import { WorkoutArea } from './_areas/workout.area';
@@ -36,9 +35,8 @@ export const metadata: Metadata = {
 
 export default function RalliPage() {
   return (
-    <div className="dark relative overflow-x-clip bg-ralli-bg pb-20 text-ralli-fg md:pb-0">
+    <div className="dark relative overflow-x-clip bg-ralli-bg text-ralli-fg">
       <RalliJsonLd />
-      <RalliSectionNavAction />
 
       <HeroArea />
       <RalliMarquee items={ralliMarqueeItems} />

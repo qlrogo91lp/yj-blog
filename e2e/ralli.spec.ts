@@ -20,15 +20,7 @@ test('모든 App Store CTA가 동일한 URL을 가리킨다', async ({ page }) =
   await page.goto('/apps/ralli');
 
   const ctas = page.locator(`a[href="${APP_STORE_URL}"]`);
-  expect(await ctas.count()).toBeGreaterThanOrEqual(3);
-});
-
-test('앵커 내비로 섹션에 이동한다', async ({ page }) => {
-  await page.goto('/apps/ralli');
-
-  await page.getByRole('navigation', { name: 'Ralli 섹션' }).getByRole('link', { name: 'Workout' }).click();
-  await expect(page).toHaveURL(/#workout$/);
-  await expect(page.locator('#workout')).toBeInViewport();
+  expect(await ctas.count()).toBeGreaterThanOrEqual(2);
 });
 
 test('개인정보 처리방침으로 이동한다', async ({ page }) => {
@@ -58,14 +50,6 @@ test.describe('모바일', () => {
       () => document.documentElement.scrollWidth > window.innerWidth + 1,
     );
     expect(overflows).toBe(false);
-  });
-
-  test('하단 고정 CTA 바가 보인다', async ({ page }) => {
-    await page.goto('/apps/ralli');
-
-    await expect(
-      page.getByTestId('ralli-mobile-cta-bar').getByRole('link', { name: 'Download on the App Store' }),
-    ).toBeVisible();
   });
 });
 
