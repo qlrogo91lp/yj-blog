@@ -27,13 +27,8 @@ function StatCard({ stat }: StatCardProps) {
   useEffect(() => {
     if (!isInView) return;
 
-    if (prefersReducedMotion) {
-      setDisplayed(stat.value);
-      return;
-    }
-
     const controls = animate(0, stat.value, {
-      duration: 1.1,
+      duration: prefersReducedMotion ? 0 : 1.1,
       ease: 'easeOut',
       onUpdate: (value) => setDisplayed(Math.round(value)),
     });
