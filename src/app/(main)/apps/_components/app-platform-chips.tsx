@@ -19,7 +19,7 @@ export function AppPlatformChips({ platforms }: Props) {
         return (
           <li
             key={platform}
-            className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
+            className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
           >
             <Icon size={12} />
             {label}
