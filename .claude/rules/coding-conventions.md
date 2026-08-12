@@ -69,6 +69,20 @@ CSS 변수 shorthand(`(--x)`)는 순수 표기 차이지만, 그라디언트는 
 
 새 유틸리티를 쓸 때 v3 기억에 의존해 `[...]` 임의값부터 떠올렸다면, 먼저 [Tailwind v4 문서](https://tailwindcss.com/docs)에 네이티브 문법이 있는지 확인한다.
 
+### 임의값(`[Npx]`) 대신 spacing 스케일 숫자 유틸리티
+
+Tailwind v4는 `width`·`height`·`max-width`·`min-width`·`padding`·`margin`·`gap`·`inset`(`top`/`right`/`bottom`/`left`)·`translate`·`size` 등 **spacing 스케일 기반 속성**에서 `--spacing`(기본 `0.25rem` = `4px`) 배수를 바로 숫자로 받는다. 임의값 `px`가 4의 배수면 반드시 이 숫자 유틸리티로 쓴다.
+
+```
+max-w-[1180px]  →  max-w-295     (1180 ÷ 4 = 295)
+top-[70px]      →  top-17.5      (70 ÷ 4 = 17.5, 소수도 유효)
+gap-[14px]      →  gap-3.5       (14 ÷ 4 = 3.5)
+```
+
+4의 배수가 아니면(디자인 시안의 임의 px 값 등) 대체 수단이 없으므로 `[Npx]` 임의값을 그대로 쓴다. `font-size`(`text-*`)·`border-radius`(`rounded-*`)는 이름 기반 스케일이라 이 변환 대상이 아니다.
+
+이 프로젝트는 `eslint-plugin-tailwindcss`를 쓰지 않아 CI에서 이 차이를 잡아내지 못한다 — VS Code의 Tailwind CSS IntelliSense 확장이 편집기에서만 "can be written as `max-w-295`" 힌트로 알려준다. 즉 **써보고 힌트가 뜨면 고치는 방식이 아니라, 처음부터 이 표로 판단해서 쓴다.**
+
 ## Lucid-Icon
 
 - 사이즈는 `className`이 아닌 `size` 속성으로 지정한다

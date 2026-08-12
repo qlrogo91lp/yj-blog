@@ -1302,7 +1302,7 @@ export function HeroArea() {
                   transformPerspective: 900,
                 }
           }
-          className="absolute w-[150%] max-w-[1600px]"
+          className="absolute w-[150%] max-w-400"
         >
           <RalliCourtSvg className="w-full" />
         </motion.div>
@@ -1703,7 +1703,7 @@ export function WorkoutArea() {
       id={ralliWorkoutSection.id}
       className="relative bg-linear-to-b from-ralli-bg via-[#0B1710] to-ralli-bg px-[max(6vw,32px)] py-24 md:py-32"
     >
-      <div className="mx-auto max-w-[1180px]">
+      <div className="mx-auto max-w-295">
         <Reveal className="mb-14 max-w-160">
           <RalliSectionLabel>{ralliWorkoutSection.label}</RalliSectionLabel>
           <h2 className="mb-3.5 text-[clamp(30px,4vw,54px)] font-bold leading-[1.02] tracking-[-0.04em] text-pretty">
@@ -1858,7 +1858,7 @@ export function ReplayArea() {
       ref={ref}
       className="relative overflow-hidden bg-ralli-bg py-24 md:py-28"
     >
-      <Reveal className="mx-auto mb-13 max-w-[1180px] px-[max(6vw,32px)]">
+      <Reveal className="mx-auto mb-13 max-w-295 px-[max(6vw,32px)]">
         <RalliSectionLabel>{ralliReplaySection.label}</RalliSectionLabel>
         <h2 className="max-w-155 text-[clamp(30px,4vw,54px)] font-bold leading-[1.02] tracking-[-0.04em] text-pretty">
           {ralliReplaySection.heading}
@@ -1886,7 +1886,7 @@ export function ReplayArea() {
         </motion.div>
       </div>
 
-      <div className="mx-auto mt-13 grid max-w-[1180px] grid-cols-1 gap-9 px-[max(6vw,32px)] md:grid-cols-3">
+      <div className="mx-auto mt-13 grid max-w-295 grid-cols-1 gap-9 px-[max(6vw,32px)] md:grid-cols-3">
         {ralliReplaySection.notes.map((note, index) => (
           <Reveal key={note.id} delay={index * 0.08}>
             <p className="mb-1.25 text-[16.5px] font-semibold">{note.title}</p>
@@ -1980,7 +1980,7 @@ import { Reveal } from '../_actions/reveal.action';
 export function RulesArea() {
   return (
     <section id={ralliRulesSection.id} className="bg-ralli-bg px-[max(6vw,32px)] pb-24 md:pb-32">
-      <div className="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-12 rounded-[34px] border border-ralli-fg/9 bg-linear-150 from-ralli-lime/9 via-ralli-green/5 to-transparent p-7 md:grid-cols-2 md:p-14">
+      <div className="mx-auto grid max-w-295 grid-cols-1 items-center gap-12 rounded-[34px] border border-ralli-fg/9 bg-linear-150 from-ralli-lime/9 via-ralli-green/5 to-transparent p-7 md:grid-cols-2 md:p-14">
         <Reveal>
           <RalliSectionLabel>{ralliRulesSection.label}</RalliSectionLabel>
           <h2 className="mb-4 text-[clamp(28px,3.4vw,44px)] font-bold leading-[1.05] tracking-[-0.04em] text-pretty">
@@ -2099,7 +2099,7 @@ export function RalliSectionNavAction() {
     <>
       <nav
         aria-label="Ralli 섹션"
-        className="fixed left-1/2 top-[70px] z-60 hidden -translate-x-1/2 items-center gap-4.5 rounded-full border border-ralli-fg/10 bg-[rgba(16,26,19,0.62)] py-2.25 pl-4.5 pr-2.5 shadow-[0_8px_40px_rgba(0,0,0,0.45)] backdrop-blur-3xl backdrop-saturate-150 md:flex"
+        className="fixed left-1/2 top-17.5 z-60 hidden -translate-x-1/2 items-center gap-4.5 rounded-full border border-ralli-fg/10 bg-[rgba(16,26,19,0.62)] py-2.25 pl-4.5 pr-2.5 shadow-[0_8px_40px_rgba(0,0,0,0.45)] backdrop-blur-3xl backdrop-saturate-150 md:flex"
       >
         <ul className="flex gap-4 text-[13px] font-medium text-ralli-fg/62">
           {ralliNavLinks.map((link) => (
@@ -2242,7 +2242,7 @@ import { Reveal } from '../_actions/reveal.action';
 export function FinalCtaArea() {
   return (
     <section className="bg-ralli-bg px-[max(6vw,32px)] pb-24 md:pb-15">
-      <Reveal className="mx-auto max-w-[1180px] border-t border-ralli-fg/8 py-14 text-center md:py-17">
+      <Reveal className="mx-auto max-w-295 border-t border-ralli-fg/8 py-14 text-center md:py-17">
         <Image
           src={ralliMeta.iconSrc}
           alt={`${ralliMeta.name} app icon`}

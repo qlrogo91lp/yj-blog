@@ -37,7 +37,7 @@
 
 | 시안 요소 | 처리 |
 |---|---|
-| fixed pill 내비 (`Ralli` 워드마크 + 앵커 3개 + CTA) | 워드마크 제거, **섹션 앵커 서브 내비**로 축소. 공용 Header 아래 `top-[70px]`에 fixed |
+| fixed pill 내비 (`Ralli` 워드마크 + 앵커 3개 + CTA) | 워드마크 제거, **섹션 앵커 서브 내비**로 축소. 공용 Header 아래 `top-17.5`에 fixed |
 | 시안 푸터 | **최종 CTA 섹션**으로 렌더. 아이콘 · "Go win the next one." · CTA · Privacy/Support 링크 유지 |
 | 시안 푸터의 `© 2026 YJlogs` | **제거**. 공용 `Footer`가 이미 동일 문구를 렌더하므로 중복 |
 | 기존 `page.tsx`의 `← Apps` 백링크 | **제거**. 공용 Header의 `NavLinks`에 `Apps`가 이미 있다 |
