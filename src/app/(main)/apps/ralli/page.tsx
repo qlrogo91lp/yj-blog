@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function RalliPage() {
   return (
-    <div className="dark relative overflow-x-clip bg-ralli-bg text-ralli-fg">
+    <div className="dark relative overflow-x-clip bg-ralli-bg pb-20 text-ralli-fg md:pb-0">
       <RalliJsonLd />
       <RalliSectionNavAction />
 

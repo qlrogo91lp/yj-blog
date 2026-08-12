@@ -105,22 +105,24 @@ export function HeroArea() {
           <RalliCourtSvg className="w-full" />
         </motion.div>
 
-        <div
-          data-ralli-wordmark
-          aria-hidden="true"
-          className="pointer-events-none absolute flex -translate-y-[20vh] items-center gap-[min(2vw,26px)]"
-        >
-          {ralliHeroLetters.map((char, index) => (
-            <HeroLetter
-              key={`${char}-${index}`}
-              char={char}
-              direction={LETTER_DIRECTIONS[index]}
-              progress={progress}
-              isAccent={index === ralliHeroLetters.length - 1}
-              isStatic={isStatic}
-            />
-          ))}
-        </div>
+        {!isStatic && (
+          <div
+            data-ralli-wordmark
+            aria-hidden="true"
+            className="pointer-events-none absolute flex -translate-y-[20vh] items-center gap-[min(2vw,26px)]"
+          >
+            {ralliHeroLetters.map((char, index) => (
+              <HeroLetter
+                key={`${char}-${index}`}
+                char={char}
+                direction={LETTER_DIRECTIONS[index]}
+                progress={progress}
+                isAccent={index === ralliHeroLetters.length - 1}
+                isStatic={isStatic}
+              />
+            ))}
+          </div>
+        )}
 
         <motion.div
           style={

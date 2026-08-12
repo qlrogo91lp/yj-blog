@@ -63,7 +63,9 @@ test.describe('모바일', () => {
   test('하단 고정 CTA 바가 보인다', async ({ page }) => {
     await page.goto('/apps/ralli');
 
-    await expect(page.getByRole('link', { name: 'Download on the App Store' }).last()).toBeVisible();
+    await expect(
+      page.getByTestId('ralli-mobile-cta-bar').getByRole('link', { name: 'Download on the App Store' }),
+    ).toBeVisible();
   });
 });
 

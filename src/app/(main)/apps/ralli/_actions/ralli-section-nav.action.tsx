@@ -1,8 +1,27 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 import { ralliMeta, ralliNavLinks } from '../_utils/ralli-content';
 
 export function RalliSectionNavAction() {
+  // 모바일 고정 바는 fixed라서 페이지 하단 padding만으로는 공용 Footer를 가리는 문제가 해결되지 않는다
+  // (Footer는 이 div의 조상 밖 형제 요소라 padding-bottom이 Footer 뒤 공간을 만들지 못한다).
+  // Footer가 뷰포트에 들어오면 바를 페이드아웃해 가리지 않도록 한다.
+  const [footerVisible, setFooterVisible] = useState(false);
+
+  useEffect(() => {
+    const footer = document.querySelector('footer');
+    if (!footer) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setFooterVisible(entry.isIntersecting);
+    });
+    observer.observe(footer);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
       <nav
@@ -28,7 +47,13 @@ export function RalliSectionNavAction() {
         </a>
       </nav>
 
-      <div className="fixed inset-x-0 bottom-0 z-60 border-t border-ralli-fg/10 bg-[rgba(7,16,11,0.88)] px-4 py-3 backdrop-blur-xl md:hidden">
+      <div
+        data-testid="ralli-mobile-cta-bar"
+        className={cn(
+          'fixed inset-x-0 bottom-0 z-60 border-t border-ralli-fg/10 bg-[rgba(7,16,11,0.88)] px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-xl transition-opacity duration-200 md:hidden',
+          footerVisible && 'pointer-events-none opacity-0',
+        )}
+      >
         <a
           href={ralliMeta.appStoreUrl}
           target="_blank"
