@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Globe, Smartphone } from 'lucide-react';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { apps, getApp } from '../_utils/apps-data';
+import { AppPlatformChips } from '../_components/app-platform-chips';
 import { SITE_NAME } from '@/lib/constants';
 
 type Props = {
@@ -36,34 +38,36 @@ export default async function AppDetailPage({ params }: Props) {
         href="/apps"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <ArrowLeft size={16} />
         Apps 목록
       </Link>
 
-      <div className="mt-6">
-        <div className="flex items-center gap-2">
-          {app.type === 'web' ? (
-            <Globe className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <Smartphone className="h-4 w-4 text-muted-foreground" />
-          )}
-          <span className="text-xs text-muted-foreground">
-            {app.type === 'web' ? '웹앱' : '앱스토어'}
-          </span>
-        </div>
+      <div className="mt-6 flex items-start gap-4">
+        <Image
+          src={app.iconSrc}
+          alt={`${app.name} 앱 아이콘`}
+          width={72}
+          height={72}
+          sizes="72px"
+          className="size-18 flex-none rounded-2xl"
+        />
 
-        <h1 className="mt-2 text-3xl font-bold">{app.name}</h1>
-        <p className="mt-2 text-muted-foreground">{app.description}</p>
+        <div className="min-w-0">
+          <AppPlatformChips platforms={app.platforms} />
 
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {app.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
-            >
-              {tag}
-            </span>
-          ))}
+          <h1 className="mt-2 text-3xl font-bold">{app.name}</h1>
+          <p className="mt-2 text-muted-foreground">{app.description}</p>
+
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {app.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -81,7 +85,7 @@ export default async function AppDetailPage({ params }: Props) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-md border px-4 py-2 text-sm hover:bg-muted transition-colors"
             >
-              <ExternalLink className="h-4 w-4" />
+              <ExternalLink size={16} />
               {link.label}
             </a>
           ))}

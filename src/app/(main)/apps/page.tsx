@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { apps } from './_utils/apps-data';
-import { AppCard } from './_components/app-card';
+import { AppListItem } from './_components/app-list-item';
 import { SITE_NAME } from '@/lib/constants';
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default function AppsPage() {
       <p className="mt-2 text-muted-foreground">개발한 웹앱과 앱스토어 앱을 소개합니다.</p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {apps.map((app) => (
-          <AppCard key={app.slug} app={app} />
+          <AppListItem key={app.slug} app={app} />
         ))}
       </div>
     </div>

@@ -9,7 +9,7 @@ export function RalliCtaButton({ appStoreUrl }: Props) {
         href={appStoreUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center justify-center rounded-full bg-lime-400 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-lime-300"
+        className="inline-flex items-center justify-center rounded-full bg-ralli-lime px-6 py-3 text-sm font-semibold text-ralli-bg transition-colors hover:bg-ralli-lime/85"
       >
         Download on the App Store
       </a>
