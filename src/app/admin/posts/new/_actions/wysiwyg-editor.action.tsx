@@ -23,6 +23,7 @@ import { useNewPostStore } from '../_store';
 import { uploadImage } from '../_services/upload-image';
 import { removeImage } from '../_services/remove-image';
 import { replaceUploadingNode } from '../_utils/replace-uploading-node';
+import { collectImageSrcs } from '../_utils/collect-image-srcs';
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
@@ -32,16 +33,6 @@ export function WysiwygEditorAction() {
   const { setEditor } = useEditorContext();
   const isInitialMount = useRef(true);
   const prevImageSrcs = useRef<Set<string>>(new Set());
-
-  const getImageSrcs = useCallback((editorInstance: Editor): Set<string> => {
-    const srcs = new Set<string>();
-    editorInstance.state.doc.descendants((node) => {
-      if (node.type.name === 'imageBlock' && node.attrs.src) {
-        srcs.add(node.attrs.src as string);
-      }
-    });
-    return srcs;
-  }, []);
 
   const uploadAndInsert = useCallback(
     async (editorInstance: Editor, file: File) => {
@@ -143,7 +134,7 @@ export function WysiwygEditorAction() {
       },
     },
     onUpdate: ({ editor }) => {
-      const currentSrcs = getImageSrcs(editor);
+      const currentSrcs = collectImageSrcs(editor.state.doc);
       prevImageSrcs.current.forEach((src) => {
         if (!currentSrcs.has(src)) {
           removeImage(src);
@@ -159,10 +150,10 @@ export function WysiwygEditorAction() {
   useEffect(() => {
     setEditor(editor);
     if (editor) {
-      prevImageSrcs.current = getImageSrcs(editor);
+      prevImageSrcs.current = collectImageSrcs(editor.state.doc);
     }
     return () => setEditor(null);
-  }, [editor, setEditor, getImageSrcs]);
+  }, [editor, setEditor]);
 
   // content가 외부에서 변경되었을 때 (모드 전환 등) 에디터 내용 동기화
   useEffect(() => {
