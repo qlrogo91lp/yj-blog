@@ -2,6 +2,18 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+## 완료 (2026-08-17)
+
+Task 0~8 전체 완료, 서브에이전트 기반(subagent-driven-development)으로 실행. 태스크별 리뷰 전부 clean 통과(Task 1은 fix round 1회 — 코드 결함 아닌 보고서 정확성 문제).
+
+- 본문 폭 653px → 720px, 목록 폭 컨테이너 실폭 948px → 980px로 통일. `ArticleContainer` 신규 추가.
+- `max-w-3xl`·`max-w-2xl` 하드코딩 6곳 제거, 시리즈·태그·apps·playground를 `ContentContainer`로 흡수.
+- 이미지 크기 3단계(`small`/`default`/`full`) 재정의, radius 16px 적용. 툴바 정렬 버튼은 `small`에서만 활성화하도록 변경.
+- 에디터·미리보기 폭을 발행 폭(720px)에 맞춤.
+- 프로덕션 DB `posts.id=1`(dell-s2725qc)의 `data-size="medium"` 6곳을 `default`로 치환, 잔여 0건 확인.
+- 최종 검증: 단위 테스트 224/224, 린트 clean(사전 존재 이슈 2건 제외), 빌드 성공, E2E 10/11(`ralli.spec.ts:45` 모바일 가로 스크롤 실패는 `develop`에서도 재현되는 사전 존재 결함으로 확정, 이 브랜치와 무관).
+- Task 6 진행 중 계획에 없던 `image-toolbar.test.tsx` 갱신 필요성을 발견해 범위에 포함(계획 누락, 컨트롤러 보완).
+
 **Goal:** 블로그의 폭 기준을 `--content-width`(980px) / `--article-width`(720px) 두 개로 통일하고, 본문 이미지를 3단계(small/default/full) + radius 16px 체계로 재정의한다.
 
 **Architecture:** CSS 변수의 의미를 "패딩 제외 콘텐츠 실폭"으로 못 박고, 두 개의 컨테이너 컴포넌트(`ContentContainer`·`ArticleContainer`)가 같은 `max-w-[calc(var(--X)+2rem)] px-4` 규칙을 공유한다. 페이지는 컨테이너를 고르기만 한다. 이미지 크기는 `data-size` 속성 하나로 결정되며, 그 정의는 `image-extension.ts`(타입·기본값)와 `prose.css`(폭·radius) 두 곳에만 존재한다.
@@ -638,22 +650,22 @@ SELECT count(*) AS remaining FROM posts WHERE content LIKE '%data-size="medium"%
 
 Expected: `remaining = 0`
 
-- [ ] **Step 5: 전체 테스트와 빌드 확인**
+- [x] **Step 5: 전체 테스트와 빌드 확인**
 
 Run: `npm run test:run && npm run lint && npm run build`
 Expected: 모두 PASS
 
-- [ ] **Step 6: 발행 화면 최종 확인**
+- [x] **Step 6: 발행 화면 최종 확인**
 
 `npm run dev` 후 마이그레이션한 글의 상세 페이지를 연다.
 확인 항목: 이전에 `medium`이던 이미지가 본문 폭(720px)으로 렌더되고, `full` 이미지는 980px bleed를 유지하며, 모든 이미지에 16px radius가 적용되어 있다.
 
-- [ ] **Step 7: E2E 회귀 확인**
+- [x] **Step 7: E2E 회귀 확인**
 
 Run: `npm run test:e2e`
 Expected: PASS — 기존 E2E(홈 목록, 뷰 전환 등)가 폭 변경으로 깨지지 않는지 확인한다. 실패하면 셀렉터가 폭에 의존하고 있다는 뜻이므로 해당 테스트를 수정한다.
 
-- [ ] **Step 8: 계획 문서 체크박스 정리와 완료 표기**
+- [x] **Step 8: 계획 문서 체크박스 정리와 완료 표기**
 
 이 문서의 모든 `- [ ]`가 `- [x]`인지 확인하고, 문서 상단에 완료 일자와 결과 요약을 추가한 뒤 커밋한다.
 
