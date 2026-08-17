@@ -1,4 +1,6 @@
 import { Node } from '@tiptap/core';
+import { ReactNodeViewRenderer } from '@tiptap/react';
+import { GalleryNodeView } from '../_components/_gallery/gallery-node-view';
 
 export type GalleryImage = {
   src: string;
@@ -69,5 +71,9 @@ export const Gallery = Node.create({
           : ['figure', {}, img];
       }),
     ];
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(GalleryNodeView);
   },
 });
