@@ -263,6 +263,6 @@
     transform: none;
   }
   .prose [data-gallery] img {
-    height: 260px;
+    height: 300px;
   }
 }
