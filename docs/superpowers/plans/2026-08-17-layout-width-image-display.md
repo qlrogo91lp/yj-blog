@@ -27,19 +27,19 @@
 
 **Files:** 없음
 
-- [ ] **Step 1: develop 최신 상태 확인**
+- [x] **Step 1: develop 최신 상태 확인**
 
 ```bash
 git checkout develop && git pull
 ```
 
-- [ ] **Step 2: 브랜치 생성**
+- [x] **Step 2: 브랜치 생성**
 
 ```bash
 git checkout -b refactor/layout-width-image-display
 ```
 
-- [ ] **Step 3: 테스트가 현재 전부 통과하는지 확인**
+- [x] **Step 3: 테스트가 현재 전부 통과하는지 확인**
 
 Run: `npm run test:run`
 Expected: PASS (변경 전 기준선 확보)
@@ -59,7 +59,7 @@ Expected: PASS (변경 전 기준선 확보)
 - Produces: `ArticleContainer({ className?: string; children: React.ReactNode })` — `@/components/layout/article-container`에서 named export. Task 2가 이 컴포넌트를 사용한다.
 - Produces: CSS 변수 `--radius-image` — Task 5의 `prose.css`가 `var(--radius-image)`로 참조한다.
 
-- [ ] **Step 1: 기존 테스트의 기대값을 새 규칙으로 수정 (실패하는 상태로)**
+- [x] **Step 1: 기존 테스트의 기대값을 새 규칙으로 수정 (실패하는 상태로)**
 
 `src/components/layout/content-container.test.tsx`의 두 번째 테스트를 이렇게 바꾼다.
 
@@ -72,12 +72,12 @@ Expected: PASS (변경 전 기준선 확보)
   });
 ```
 
-- [ ] **Step 2: 테스트를 돌려 실패를 확인**
+- [x] **Step 2: 테스트를 돌려 실패를 확인**
 
 Run: `npm run test:run -- src/components/layout/content-container.test.tsx`
 Expected: FAIL — 현재 클래스는 `max-w-[var(--content-width)]`이므로 `toContain`이 어긋난다.
 
-- [ ] **Step 3: ContentContainer를 새 규칙으로 수정**
+- [x] **Step 3: ContentContainer를 새 규칙으로 수정**
 
 `src/components/layout/content-container.tsx`의 className을 교체한다.
 
@@ -85,12 +85,12 @@ Expected: FAIL — 현재 클래스는 `max-w-[var(--content-width)]`이므로 `
     <div className={cn('mx-auto w-full max-w-[calc(var(--content-width)+2rem)] px-4', className)}>
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 Run: `npm run test:run -- src/components/layout/content-container.test.tsx`
 Expected: PASS
 
-- [ ] **Step 5: ArticleContainer 테스트를 먼저 작성**
+- [x] **Step 5: ArticleContainer 테스트를 먼저 작성**
 
 `src/components/layout/article-container.test.tsx` 신규 생성.
 
@@ -120,12 +120,12 @@ describe('ArticleContainer', () => {
 });
 ```
 
-- [ ] **Step 6: 테스트를 돌려 실패를 확인**
+- [x] **Step 6: 테스트를 돌려 실패를 확인**
 
 Run: `npm run test:run -- src/components/layout/article-container.test.tsx`
 Expected: FAIL — `./article-container` 모듈이 없어 import 에러
 
-- [ ] **Step 7: ArticleContainer 구현**
+- [x] **Step 7: ArticleContainer 구현**
 
 `src/components/layout/article-container.tsx` 신규 생성.
 
@@ -146,12 +146,12 @@ export function ArticleContainer({ className, children }: Props) {
 }
 ```
 
-- [ ] **Step 8: 테스트 통과 확인**
+- [x] **Step 8: 테스트 통과 확인**
 
 Run: `npm run test:run -- src/components/layout/article-container.test.tsx`
 Expected: PASS
 
-- [ ] **Step 9: 토큰 값 변경**
+- [x] **Step 9: 토큰 값 변경**
 
 `src/app/globals.css`의 `@theme` 블록에서 `--radius-card: 2rem;` 바로 아래 줄에 추가한다.
 
@@ -165,12 +165,12 @@ Expected: PASS
   --article-width: 720px;
 ```
 
-- [ ] **Step 10: 전체 테스트와 린트 확인**
+- [x] **Step 10: 전체 테스트와 린트 확인**
 
 Run: `npm run test:run && npm run lint`
 Expected: PASS
 
-- [ ] **Step 11: 커밋**
+- [x] **Step 11: 커밋**
 
 ```bash
 git add src/app/globals.css src/components/layout/
@@ -189,7 +189,7 @@ git commit -m "🎨 폭 토큰을 콘텐츠 실폭 기준으로 통일하고 Art
 **Interfaces:**
 - Consumes: `ArticleContainer` (Task 1)
 
-- [ ] **Step 1: 글 상세 본문 래퍼 교체**
+- [x] **Step 1: 글 상세 본문 래퍼 교체**
 
 `src/app/(main)/posts/[slug]/page.tsx`에 import를 추가한다.
 
@@ -205,7 +205,7 @@ import { ArticleContainer } from '@/components/layout/article-container';
 
 > `relative`는 TOC(`absolute`)의 기준이므로 반드시 유지한다. TOC의 `left-[calc(...)]` 계산식은 그대로 둔다 — 설계 문서 §6의 검산대로 `--article-width`가 소거되어 영향이 없다.
 
-- [ ] **Step 2: 댓글 섹션 교체**
+- [x] **Step 2: 댓글 섹션 교체**
 
 `src/app/(main)/posts/[slug]/_components/comment-section.tsx`에 import를 추가하고,
 
@@ -222,7 +222,7 @@ import { ArticleContainer } from '@/components/layout/article-container';
 
 > `section`을 유지해 semantic을 보존하고, 폭·구분선은 `ArticleContainer`가 갖는다. 구분선 폭이 621px → 752px로 넓어지며 본문과 정렬이 맞는다.
 
-- [ ] **Step 3: ralli privacy 교체**
+- [x] **Step 3: ralli privacy 교체**
 
 `src/app/(main)/apps/ralli/privacy/page.tsx`에 import를 추가하고, 14행 `<div className="mx-auto max-w-2xl px-4 py-12">`를 바꾼다. 닫는 `</div>`는 `</ArticleContainer>`가 된다.
 
@@ -230,17 +230,17 @@ import { ArticleContainer } from '@/components/layout/article-container';
       <ArticleContainer className="py-12">
 ```
 
-- [ ] **Step 4: 타입·린트 확인**
+- [x] **Step 4: 타입·린트 확인**
 
 Run: `npm run lint`
 Expected: PASS (닫는 태그 불일치가 있으면 여기서 파싱 에러로 잡힌다)
 
-- [ ] **Step 5: 개발 서버로 육안 확인**
+- [x] **Step 5: 개발 서버로 육안 확인**
 
 `npm run dev` 실행 후 `/posts/<발행된 slug>`, `/apps/ralli/privacy`를 연다.
 확인 항목: 본문 텍스트 컬럼이 720px, 댓글 영역이 본문과 같은 좌우 정렬, 1500px 이상 창에서 우측 TOC가 이전과 같은 위치.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add "src/app/(main)/posts/[slug]/page.tsx" "src/app/(main)/posts/[slug]/_components/comment-section.tsx" "src/app/(main)/apps/ralli/privacy/page.tsx"
@@ -262,7 +262,7 @@ git commit -m "🎨 산문 페이지를 ArticleContainer(720px)로 전환"
 **Interfaces:**
 - Consumes: `ContentContainer` (기존, Task 1에서 규칙 변경됨)
 
-- [ ] **Step 1: 여섯 파일의 래퍼를 교체**
+- [x] **Step 1: 여섯 파일의 래퍼를 교체**
 
 각 파일에 import를 추가한다.
 
@@ -281,21 +281,21 @@ import { ContentContainer } from '@/components/layout/content-container';
 | `apps/[slug]/page.tsx:36` | `<div className="mx-auto max-w-3xl px-4 py-10">` | `<ContentContainer className="py-10">` |
 | `playground/page.tsx:11` | `<div className="mx-auto max-w-3xl px-4 py-10">` | `<ContentContainer className="py-10">` |
 
-- [ ] **Step 2: 하드코딩 잔여가 없는지 검증**
+- [x] **Step 2: 하드코딩 잔여가 없는지 검증**
 
 Run: `grep -rn "max-w-3xl\|max-w-2xl" "src/app/(main)"`
 Expected: 출력 없음 (0건)
 
-- [ ] **Step 3: 린트 확인**
+- [x] **Step 3: 린트 확인**
 
 Run: `npm run lint`
 Expected: PASS
 
-- [ ] **Step 4: 개발 서버로 육안 확인**
+- [x] **Step 4: 개발 서버로 육안 확인**
 
 `/series`, `/tags`, `/apps`, `/apps/<slug>`, `/playground`를 열어 헤더·푸터와 좌우 정렬선이 일치하는지 본다.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add "src/app/(main)"
@@ -316,7 +316,7 @@ git commit -m "🎨 목록 페이지 폭을 ContentContainer(980px)로 통일"
 - Produces: `type ImageSize = 'small' | 'default' | 'full'` — Task 6의 툴바가 이 타입을 import한다.
 - Produces: 직렬화 HTML의 `data-size="default"` — Task 5의 CSS 선택자, Task 8의 마이그레이션 SQL이 이 문자열에 의존한다.
 
-- [ ] **Step 1: 테스트 기대값을 새 값으로 수정 (실패하는 상태로)**
+- [x] **Step 1: 테스트 기대값을 새 값으로 수정 (실패하는 상태로)**
 
 `src/app/admin/posts/new/_utils/image-extension.test.ts`에서 두 곳을 바꾼다.
 
@@ -335,7 +335,7 @@ git commit -m "🎨 목록 페이지 폭을 ContentContainer(980px)로 통일"
       '<p><img src="a.png" data-size="default" data-align="center" data-caption="강남역 저녁" /></p>',
 ```
 
-- [ ] **Step 2: 알 수 없는 값이 default로 폴백되는지 검증하는 테스트 추가**
+- [x] **Step 2: 알 수 없는 값이 default로 폴백되는지 검증하는 테스트 추가**
 
 같은 파일의 `describe` 블록 안에 새 테스트를 추가한다. 기존 글에 남아 있을 수 있는 `medium` 문자열이 안전하게 수렴하는지 확인하는 회귀 테스트다.
 
@@ -347,12 +347,12 @@ git commit -m "🎨 목록 페이지 폭을 ContentContainer(980px)로 통일"
   });
 ```
 
-- [ ] **Step 3: 테스트를 돌려 실패를 확인**
+- [x] **Step 3: 테스트를 돌려 실패를 확인**
 
 Run: `npm run test:run -- src/app/admin/posts/new/_utils/image-extension.test.ts`
 Expected: FAIL — 현재 기본값·폴백이 `medium`이라 3개 테스트가 깨진다.
 
-- [ ] **Step 4: ImageBlock의 타입과 기본값을 수정**
+- [x] **Step 4: ImageBlock의 타입과 기본값을 수정**
 
 `src/app/admin/posts/new/_utils/image-extension.ts`에서 타입, 가드, size 속성 세 곳을 바꾼다.
 
@@ -375,21 +375,21 @@ function isImageSize(v: string | null): v is ImageSize {
       },
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 Run: `npm run test:run -- src/app/admin/posts/new/_utils/image-extension.test.ts`
 Expected: PASS
 
-- [ ] **Step 6: markdown 테스트의 픽스처를 갱신**
+- [x] **Step 6: markdown 테스트의 픽스처를 갱신**
 
 `src/lib/markdown.test.ts`의 두 곳에서 `data-size="medium"`을 `data-size="default"`로 바꾼다 (7행 캡션 변환 테스트, 23행 캡션 없는 img 테스트). 단언문은 그대로 둔다.
 
-- [ ] **Step 7: markdown 테스트 통과 확인**
+- [x] **Step 7: markdown 테스트 통과 확인**
 
 Run: `npm run test:run -- src/lib/markdown.test.ts`
 Expected: PASS
 
-- [ ] **Step 8: 노드 뷰의 폴백 값 수정**
+- [x] **Step 8: 노드 뷰의 폴백 값 수정**
 
 `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx:15`를 바꾼다.
 
@@ -397,12 +397,12 @@ Expected: PASS
   const size = (node.attrs.size as ImageSize) ?? 'default';
 ```
 
-- [ ] **Step 9: 전체 테스트와 린트 확인**
+- [x] **Step 9: 전체 테스트와 린트 확인**
 
 Run: `npm run test:run && npm run lint`
 Expected: PASS
 
-- [ ] **Step 10: 커밋**
+- [x] **Step 10: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_utils/ src/app/admin/posts/new/_components/_image-block/image-node-view.tsx src/lib/markdown.test.ts
@@ -419,7 +419,7 @@ git commit -m "♻️ 이미지 크기 기본값을 medium에서 default로 재�
 **Interfaces:**
 - Consumes: `--radius-image` (Task 1), `data-size="default"` (Task 4)
 
-- [ ] **Step 1: 크기 선택자와 radius를 수정**
+- [x] **Step 1: 크기 선택자와 radius를 수정**
 
 `src/styles/prose.css`의 `/* ── 이미지 블록 (data-size / data-align) ── */` 아래 블록을 아래로 교체한다. `medium`(70%) 규칙이 `default`(100%)로 바뀌고, 이미지에 radius가 붙는다.
 
@@ -455,12 +455,12 @@ git commit -m "♻️ 이미지 크기 기본값을 medium에서 default로 재�
 
 > `data-align` 규칙, `[data-size="full"][data-align]` specificity 재정의, `@media (max-width: 640px)` 블록은 **건드리지 않는다.** 모바일 블록의 선택자는 `[data-size]`와 `[data-size="full"]`만 쓰므로 값 이름 변경의 영향을 받지 않는다.
 
-- [ ] **Step 2: medium 잔여가 없는지 확인**
+- [x] **Step 2: medium 잔여가 없는지 확인**
 
 Run: `grep -n "medium" src/styles/prose.css`
 Expected: 출력 없음
 
-- [ ] **Step 3: 개발 서버로 세 단계를 육안 확인**
+- [x] **Step 3: 개발 서버로 세 단계를 육안 확인**
 
 `npm run dev` 후 발행된 글 상세를 연다. 확인 항목:
 - `default` 이미지의 좌우 끝이 본문 텍스트의 좌우 끝과 일치(720px)
@@ -468,7 +468,7 @@ Expected: 출력 없음
 - 세 단계 모두 모서리가 16px 둥글게
 - 브라우저 창을 640px 이하로 줄이면 전부 100% 폭이 되고 `full`의 bleed가 사라짐
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add src/styles/prose.css
@@ -485,7 +485,7 @@ git commit -m "💄 이미지 기본 폭을 본문 폭에 맞추고 radius 16px 
 **Interfaces:**
 - Consumes: `ImageSize` (Task 4)
 
-- [ ] **Step 1: sizeOptions를 3단계로 교체**
+- [x] **Step 1: sizeOptions를 3단계로 교체**
 
 `src/app/admin/posts/new/_components/_image-block/image-toolbar.tsx`의 `sizeOptions`를 바꾼다.
 
@@ -499,7 +499,7 @@ const sizeOptions: { value: ImageSize; label: string, icon?: LucideIcon }[] = [
 
 > `full`의 라벨을 `100%`에서 `전체 폭`으로 바꾼다. 실제 폭은 본문의 136%(980/720)라 `100%`는 사실과 다르다. 라벨은 `aria-label`로만 쓰이고 화면에는 아이콘이 표시된다.
 
-- [ ] **Step 2: 정렬 버튼의 비활성 조건을 변경**
+- [x] **Step 2: 정렬 버튼의 비활성 조건을 변경**
 
 같은 파일 46행을 바꾼다.
 
@@ -509,19 +509,19 @@ const sizeOptions: { value: ImageSize; label: string, icon?: LucideIcon }[] = [
 
 > `default`(100%)와 `full`은 폭이 컨테이너를 가득 채워 `margin: auto` 정렬이 아무 효과가 없다. 정렬은 `small`에서만 의미를 갖는다.
 
-- [ ] **Step 3: 린트 확인**
+- [x] **Step 3: 린트 확인**
 
 Run: `npm run lint`
 Expected: PASS
 
-- [ ] **Step 4: 에디터에서 동작 확인**
+- [x] **Step 4: 에디터에서 동작 확인**
 
 `npm run dev` 후 `/admin/posts/new`에서 이미지를 하나 삽입하고 확인한다.
 - 삽입 직후 기본값이 `기본`으로 선택되어 있고 폭이 본문을 채운다
 - `40%` 선택 시에만 정렬 3버튼이 활성화된다
 - `전체 폭` 선택 시 이미지가 편집 영역 밖으로 넓게 펼쳐진다
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_components/_image-block/image-toolbar.tsx
@@ -540,7 +540,7 @@ git commit -m "💄 이미지 툴바를 3단계로 정리하고 정렬은 small�
 **Interfaces:**
 - Consumes: `ArticleContainer` (Task 1)
 
-- [ ] **Step 1: 새 글 작성 페이지의 폭 교체**
+- [x] **Step 1: 새 글 작성 페이지의 폭 교체**
 
 `src/app/admin/posts/new/page.tsx:31`을 바꾼다. `px-6`(좌우 24px씩)에 맞춰 `+3rem`을 더한다.
 
@@ -548,7 +548,7 @@ git commit -m "💄 이미지 툴바를 3단계로 정리하고 정렬은 small�
         <div className="flex-1 mx-auto w-full max-w-[calc(var(--article-width)+3rem)] px-6 py-6">
 ```
 
-- [ ] **Step 2: 수정 페이지의 폭 교체**
+- [x] **Step 2: 수정 페이지의 폭 교체**
 
 `src/app/admin/posts/[id]/edit/page.tsx:48`을 같은 값으로 바꾼다.
 
@@ -556,7 +556,7 @@ git commit -m "💄 이미지 툴바를 3단계로 정리하고 정렬은 small�
         <div className="flex-1 mx-auto w-full max-w-[calc(var(--article-width)+3rem)] px-6 py-6">
 ```
 
-- [ ] **Step 3: 미리보기 다이얼로그의 본문 컬럼을 720px로 제한**
+- [x] **Step 3: 미리보기 다이얼로그의 본문 컬럼을 720px로 제한**
 
 `src/app/admin/posts/new/_actions/_preview/preview.action.tsx`에 import를 추가하고,
 
@@ -578,19 +578,19 @@ import { ArticleContainer } from '@/components/layout/article-container';
         </ArticleContainer>
 ```
 
-- [ ] **Step 4: 린트 확인**
+- [x] **Step 4: 린트 확인**
 
 Run: `npm run lint`
 Expected: PASS
 
-- [ ] **Step 5: 편집 화면과 발행 결과의 폭이 같은지 확인**
+- [x] **Step 5: 편집 화면과 발행 결과의 폭이 같은지 확인**
 
 `npm run dev` 후 `/admin/posts/new`에서 이미지가 포함된 내용을 작성하고 미리보기를 연다.
 확인 항목: 에디터 본문 · 미리보기 본문 · 발행된 글 상세 세 곳의 텍스트 컬럼 폭이 모두 720px로 같다.
 
 > **알려진 제약**: `full` 이미지의 `max-width: calc(100vw - 2rem)`은 관리자 사이드바 폭을 계산에 넣지 못한다. 사이드바가 열린 상태에서 창이 좁으면 에디터 안에서만 이미지가 살짝 넘칠 수 있다. 발행 화면에는 영향이 없으며 이번 범위에서 대응하지 않는다.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/app/admin/posts/
@@ -606,7 +606,7 @@ git commit -m "🎨 에디터·미리보기 폭을 발행 본문 폭(720px)에 �
 **Interfaces:**
 - Consumes: `data-size="default"` 직렬화 규칙 (Task 4), CSS 선택자 (Task 5)
 
-- [ ] **Step 1: 마이그레이션 대상 건수를 먼저 확인**
+- [x] **Step 1: 마이그레이션 대상 건수를 먼저 확인**
 
 Neon 프로젝트 `patient-snow-09565096`(yj-blog)에 아래 조회를 실행한다.
 
@@ -619,18 +619,18 @@ WHERE content LIKE '%data-size="medium"%';
 
 Expected: 1행 (2026-08-17 기준). 결과가 0행이면 Step 2·3을 건너뛴다.
 
-- [ ] **Step 2: 사용자에게 실행 승인을 받는다**
+- [x] **Step 2: 사용자에게 실행 승인을 받는다**
 
 프로덕션 DB의 글 본문을 수정하는 작업이다. Step 1의 조회 결과(대상 글 slug와 치환 건수)를 사용자에게 보여주고 승인을 받은 뒤에만 다음 단계로 넘어간다.
 
-- [ ] **Step 3: 치환 실행**
+- [x] **Step 3: 치환 실행**
 
 ```sql
 UPDATE posts SET content = replace(content, 'data-size="medium"', 'data-size="default"')
 WHERE content LIKE '%data-size="medium"%';
 ```
 
-- [ ] **Step 4: 잔여 0건 확인**
+- [x] **Step 4: 잔여 0건 확인**
 
 ```sql
 SELECT count(*) AS remaining FROM posts WHERE content LIKE '%data-size="medium"%';
