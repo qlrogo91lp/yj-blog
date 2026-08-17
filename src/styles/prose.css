@@ -238,6 +238,12 @@
   .prose img[data-size] {
     width: 100%;
   }
+  .prose img[data-size="default"],
+  .prose img[data-size="small"],
+  .prose figure[data-size="default"] img,
+  .prose figure[data-size="small"] img {
+    width: auto;
+  }
   .prose figure[data-size="full"],
   .prose img[data-size="full"] {
     max-width: 100%;
