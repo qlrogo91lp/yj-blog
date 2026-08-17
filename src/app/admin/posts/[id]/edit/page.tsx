@@ -45,7 +45,7 @@ export default async function EditPostPage({ params }: Props) {
       <PostInitHandler post={post} initialTagIds={postTagList.map((t) => t.id)} />
       <div className="flex flex-1 flex-col">
         <EditorToolbarAction />
-        <div className="flex-1 mx-auto w-full max-w-4xl px-6 py-6">
+        <div className="flex-1 mx-auto w-full max-w-[calc(var(--article-width)+3rem)] px-6 py-6">
           <CategorySelectorAction categories={categories} />
           <SeriesSelectorAction seriesList={seriesList} />
           <TagSelectorAction allTags={allTags} />
