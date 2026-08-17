@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AlignCenter,
   AlignJustify,
@@ -12,6 +12,7 @@ import {
   Heading3,
   Highlighter,
   ImageIcon,
+  Images,
   Italic,
   Youtube,
   Link as LinkIcon,
@@ -49,9 +50,10 @@ function useForceUpdate() {
 }
 
 export function EditorToolbarAction() {
-  const { editor } = useEditorContext();
+  const { editor, uploadFiles } = useEditorContext();
   const mode = useNewPostStore((s) => s.mode);
   const forceUpdate = useForceUpdate();
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   // editor 내부 상태 변경(커서 이동, 서식 적용 등) 시 리렌더링 트리거
   useEffect(() => {
@@ -273,6 +275,23 @@ export function EditorToolbarAction() {
         icon={ImageIcon}
         tooltip="이미지"
         onClick={() => setIsImageOpen(true)}
+      />
+      <ToolbarButton
+        icon={Images}
+        tooltip="갤러리"
+        onClick={() => galleryInputRef.current?.click()}
+      />
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          const files = Array.from(e.target.files ?? []);
+          if (files.length > 0) uploadFiles?.(files);
+          e.target.value = '';
+        }}
       />
       <ToolbarButton
         icon={Youtube}

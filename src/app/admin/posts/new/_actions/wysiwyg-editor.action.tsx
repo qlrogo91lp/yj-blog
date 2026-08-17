@@ -32,7 +32,7 @@ export function WysiwygEditorAction() {
   const setContentFormat = useNewPostStore((s) => s.setContentFormat);
   const setPostId = useNewPostStore((s) => s.setPostId);
   const content = useNewPostStore((s) => s.content);
-  const { setEditor } = useEditorContext();
+  const { setEditor, setUploadFiles } = useEditorContext();
   const isInitialMount = useRef(true);
   const prevImageSrcs = useRef<Set<string>>(new Set());
 
@@ -215,11 +215,15 @@ export function WysiwygEditorAction() {
   // context에 editor 인스턴스 공유 + 초기 이미지 src 추적 시작
   useEffect(() => {
     setEditor(editor);
+    setUploadFiles(editor ? (files: File[]) => void uploadFiles(editor, files) : null);
     if (editor) {
       prevImageSrcs.current = collectImageSrcs(editor.state.doc);
     }
-    return () => setEditor(null);
-  }, [editor, setEditor]);
+    return () => {
+      setEditor(null);
+      setUploadFiles(null);
+    };
+  }, [editor, setEditor, setUploadFiles, uploadFiles]);
 
   // content가 외부에서 변경되었을 때 (모드 전환 등) 에디터 내용 동기화
   useEffect(() => {
