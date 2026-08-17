@@ -33,3 +33,25 @@ describe('htmlToHtmlWithToc — 이미지 캡션', () => {
     expect(result).not.toContain('<figure');
   });
 });
+
+describe('htmlToHtmlWithToc — 갤러리', () => {
+  const gallery =
+    '<div data-gallery>' +
+    '<figure><img src="a.png" alt="가" width="1600" height="1067"><figcaption>거실</figcaption></figure>' +
+    '<figure><img src="b.png" alt="나" width="1067" height="1600"></figure>' +
+    '</div>';
+
+  it('data-gallery 구조를 그대로 통과시킨다', async () => {
+    const { html } = await htmlToHtmlWithToc(gallery);
+    expect(html).toContain('data-gallery');
+    expect(html).toContain('src="a.png"');
+    expect(html).toContain('src="b.png"');
+    expect(html).toContain('width="1600"');
+  });
+
+  it('갤러리 안의 figure를 rehypeImageCaption이 건드리지 않는다', async () => {
+    const { html } = await htmlToHtmlWithToc(gallery);
+    expect((html.match(/<figure/g) ?? []).length).toBe(2);
+    expect(html).toContain('<figcaption>거실</figcaption>');
+  });
+});
