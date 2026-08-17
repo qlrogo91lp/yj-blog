@@ -2,11 +2,11 @@ import { Image } from '@tiptap/extension-image';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { ImageNodeView } from '../_components/_image-block/image-node-view';
 
-export type ImageSize = 'small' | 'medium' | 'full';
+export type ImageSize = 'small' | 'default' | 'full';
 export type ImageAlign = 'left' | 'center' | 'right';
 
 function isImageSize(v: string | null): v is ImageSize {
-  return v === 'small' || v === 'medium' || v === 'full';
+  return v === 'small' || v === 'default' || v === 'full';
 }
 
 function isImageAlign(v: string | null): v is ImageAlign {
@@ -20,12 +20,12 @@ export const ImageBlock = Image.extend({
     return {
       ...this.parent?.(),
       size: {
-        default: 'medium' as ImageSize,
+        default: 'default' as ImageSize,
         parseHTML: (el) => {
           const v = el.getAttribute('data-size');
-          return isImageSize(v) ? v : 'medium';
+          return isImageSize(v) ? v : 'default';
         },
-        renderHTML: (attrs) => ({ 'data-size': attrs.size ?? 'medium' }),
+        renderHTML: (attrs) => ({ 'data-size': attrs.size ?? 'default' }),
       },
       align: {
         default: 'center' as ImageAlign,

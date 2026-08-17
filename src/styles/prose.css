@@ -123,13 +123,16 @@
 .prose img[data-size] {
   display: block;
 }
+.prose img {
+  border-radius: var(--radius-image);
+}
 .prose figure[data-size="small"],
 .prose img[data-size="small"] {
   width: 40%;
 }
-.prose figure[data-size="medium"],
-.prose img[data-size="medium"] {
-  width: 70%;
+.prose figure[data-size="default"],
+.prose img[data-size="default"] {
+  width: 100%;
 }
 .prose figure[data-size="full"],
 .prose img[data-size="full"] {
@@ -141,6 +144,7 @@
 .prose figure[data-size] img {
   width: 100%;
   height: auto;
+  border-radius: var(--radius-image);
 }
 
 .prose figure[data-align="left"],

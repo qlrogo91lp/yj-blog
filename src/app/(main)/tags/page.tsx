@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllTags } from '@/db/queries/tags';
+import { ContentContainer } from '@/components/layout/content-container';
 import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export default async function TagsPage() {
   const tags = await getAllTags();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <ContentContainer className="py-8">
       <h1 className="text-2xl font-bold mb-6">태그 목록</h1>
       {tags.length === 0 ? (
         <p className="text-muted-foreground">등록된 태그가 없습니다.</p>
@@ -28,6 +29,6 @@ export default async function TagsPage() {
           ))}
         </div>
       )}
-    </div>
+    </ContentContainer>
   );
 }
