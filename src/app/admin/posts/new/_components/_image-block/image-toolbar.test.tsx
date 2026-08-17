@@ -4,7 +4,7 @@ import { ImageToolbar } from './image-toolbar';
 
 describe('ImageToolbar', () => {
   const baseProps = {
-    size: 'medium' as const,
+    size: 'default' as const,
     align: 'center' as const,
     alt: '',
     onSizeChange: vi.fn(),
@@ -19,8 +19,8 @@ describe('ImageToolbar', () => {
     expect(screen.getByRole('button', { name: '가운데 정렬' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '오른쪽 정렬' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '40%' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '70%' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '100%' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '기본' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '전체 폭' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '이미지 삭제' })).toBeInTheDocument();
   });
 
@@ -33,7 +33,7 @@ describe('ImageToolbar', () => {
 
   it('정렬 버튼 클릭 시 onAlignChange 호출', () => {
     const onAlignChange = vi.fn();
-    render(<ImageToolbar {...baseProps} onAlignChange={onAlignChange} />);
+    render(<ImageToolbar {...baseProps} size="small" onAlignChange={onAlignChange} />);
     fireEvent.click(screen.getByRole('button', { name: '오른쪽 정렬' }));
     expect(onAlignChange).toHaveBeenCalledWith('right');
   });
@@ -52,13 +52,20 @@ describe('ImageToolbar', () => {
     expect(screen.getByRole('button', { name: '오른쪽 정렬' })).toBeDisabled();
   });
 
+  it('size=default이면 정렬 버튼 3개 모두 disabled', () => {
+    render(<ImageToolbar {...baseProps} />);
+    expect(screen.getByRole('button', { name: '왼쪽 정렬' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '가운데 정렬' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '오른쪽 정렬' })).toBeDisabled();
+  });
+
   it('현재 size에 해당하는 버튼은 aria-pressed=true', () => {
     render(<ImageToolbar {...baseProps} size="small" />);
     expect(screen.getByRole('button', { name: '40%' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    expect(screen.getByRole('button', { name: '70%' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '기본' })).toHaveAttribute(
       'aria-pressed',
       'false',
     );
