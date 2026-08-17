@@ -6,6 +6,7 @@ import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 
 export function ImageUploadingNodeViewAction({ node }: NodeViewProps) {
   const previewUrl = (node.attrs.previewUrl as string) ?? '';
+  const total = (node.attrs.total as number) ?? 1;
 
   useEffect(() => {
     return () => {
@@ -21,7 +22,9 @@ export function ImageUploadingNodeViewAction({ node }: NodeViewProps) {
       <img src={previewUrl} alt="업로드 미리보기" />
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 text-white">
         <Loader2 size={24} className="animate-spin" />
-        <span className="text-sm">업로드 중...</span>
+        <span className="text-sm">
+          {total > 1 ? `${total}장 업로드 중...` : '업로드 중...'}
+        </span>
       </div>
     </NodeViewWrapper>
   );
