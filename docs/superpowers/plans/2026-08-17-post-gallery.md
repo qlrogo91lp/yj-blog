@@ -2,6 +2,19 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+## 완료 (2026-08-17)
+
+Task 0~8 전체 완료, 서브에이전트 기반(subagent-driven-development)으로 실행. 태스크별 리뷰 전부 clean 통과(Task 4는 fix round 1회 — 모바일 미디어쿼리에서 캡션 없는 세로 사진이 찌그러지던 실제 결함).
+
+- 이미지 정리 로직이 `imageBlock` 노드명 오타로 한 번도 동작하지 않던 기존 버그 수정. 뮤테이션 테스트로 회귀 방지 확인.
+- `gallery` Tiptap 노드(원자 노드 + `images` 배열) 신규, NodeView·슬라이드별 캡션·순서 이동·삭제 UI 추가.
+- 공개 페이지에 네이티브 가로 스크롤 갤러리(980px full-bleed, 높이 고정) CSS 추가. 단일 이미지 세로 길이 상한(`max-height: 80vh`)도 함께 반영.
+- 다중 파일 드롭·붙여넣기 시 자동 갤러리 생성(1장은 기존 단일 이미지 유지), 툴바에 갤러리 버튼 추가.
+- 화살표 버튼을 점진적 향상으로 추가, 갤러리 드래그 스크롤과 이미지 확대 다이얼로그 충돌(5px 이동 판정) 해소.
+- 모바일 갤러리 높이는 실측 사진 비율 계산치를 사용자와 함께 검토해 300px로 확정(스펙 초안 260px에서 상향 — 세로 사진이 지나치게 작아 보이는 문제).
+- 최종 검증: 단위 테스트 245/245, 린트 clean(사전 존재 이슈 2건 제외), 빌드 성공, 실제 `htmlToHtmlWithToc` 파이프라인에 갤러리 HTML을 직접 투입해 무손상 확인, E2E 10/11(`ralli.spec.ts:45` 실패는 `develop`에서도 재현되는 사전 존재 결함으로 확정).
+- 이 세션의 브라우저 프리뷰 도구가 워크트리가 아닌 메인 저장소에 고정되는 툴링 제약(선행 스펙 작업에서 최초 발견)과 `/admin`의 Clerk 인증 게이트로, 에디터 UI의 실제 클릭·드래그 확인은 코드 경로 추적으로 대체했다 — 각 태스크 리뷰어가 diff·소스 대조로 독립 검증.
+
 **Goal:** 본문에 이미지 여러 장을 가로로 넘겨 보는 갤러리를 추가하고, 함께 드러난 이미지 정리 버그와 세로 사진 높이 문제를 고친다.
 
 **Architecture:** Tiptap에 `gallery` 원자 노드를 추가하고 `images` 배열 속성 하나로 슬라이드를 관리한다. 편집 UI 전체는 React NodeView가 소유하고, 모든 편집은 `updateAttributes({ images })` 한 경로로 수렴한다. 공개 페이지는 CSS `scroll-snap`만으로 스크롤되고, 화살표 버튼은 마운트 후 DOM에 덧붙이는 점진적 향상으로 처리한다.
@@ -30,19 +43,19 @@
 
 **Files:** 없음
 
-- [ ] **Step 1: develop 최신 상태 확인**
+- [x] **Step 1: develop 최신 상태 확인**
 
 ```bash
 git checkout develop && git pull
 ```
 
-- [ ] **Step 2: 브랜치 생성**
+- [x] **Step 2: 브랜치 생성**
 
 ```bash
 git checkout -b feature/post-gallery
 ```
 
-- [ ] **Step 3: 기준선 확보**
+- [x] **Step 3: 기준선 확보**
 
 Run: `npm run test:run`
 Expected: PASS — 이 시점의 파일 수와 테스트 수를 기록해 두고, 이후 태스크에서 증가분을 대조한다.
@@ -63,7 +76,7 @@ Expected: PASS — 이 시점의 파일 수와 테스트 수를 기록해 두고
 
 로직을 컴포넌트 밖 순수 함수로 꺼내야 테스트할 수 있다. 현재는 `wysiwyg-editor.action.tsx` 안 `useCallback`에 묶여 있어 에디터 전체를 띄우지 않으면 검증이 불가능하다.
 
-- [ ] **Step 1: 실패하는 테스트를 먼저 작성**
+- [x] **Step 1: 실패하는 테스트를 먼저 작성**
 
 `src/app/admin/posts/new/_utils/collect-image-srcs.test.ts` 신규 생성.
 
@@ -97,12 +110,12 @@ describe('collectImageSrcs', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트를 돌려 실패를 확인**
+- [x] **Step 2: 테스트를 돌려 실패를 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/collect-image-srcs.test.ts`
 Expected: FAIL — `./collect-image-srcs` 모듈이 없어 import 에러
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `src/app/admin/posts/new/_utils/collect-image-srcs.ts` 신규 생성.
 
@@ -127,12 +140,12 @@ export function collectImageSrcs(doc: ProseMirrorNode): Set<string> {
 
 > 기존 코드는 `node.type.name === 'imageBlock'`을 검사했는데, `ImageBlock = Image.extend({...})`는 `name`을 재정의하지 않으므로 실제 노드 이름은 `image`다. 이 오타 때문에 정리 로직이 한 번도 동작한 적이 없다.
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/collect-image-srcs.test.ts`
 Expected: PASS (3 tests)
 
-- [ ] **Step 5: 에디터가 새 함수를 쓰도록 교체**
+- [x] **Step 5: 에디터가 새 함수를 쓰도록 교체**
 
 `wysiwyg-editor.action.tsx`에서 `getImageSrcs` `useCallback` 정의(36-44행)를 삭제하고 import를 추가한다.
 
@@ -142,12 +155,12 @@ import { collectImageSrcs } from '../_utils/collect-image-srcs';
 
 `useEffect`와 `onUpdate` 안의 `getImageSrcs(editor)` 호출을 `collectImageSrcs(editor.state.doc)`로 바꾼다. `getImageSrcs`를 참조하던 `useEffect` 의존성 배열에서도 해당 항목을 제거한다.
 
-- [ ] **Step 6: 전체 테스트와 린트 확인**
+- [x] **Step 6: 전체 테스트와 린트 확인**
 
 Run: `npm run test:run && npm run lint`
 Expected: PASS. `docs/design/ralli/support.js`의 사전 존재 에러 2건은 이 브랜치와 무관하다.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_utils/collect-image-srcs.ts src/app/admin/posts/new/_utils/collect-image-srcs.test.ts src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx
@@ -166,7 +179,7 @@ git commit -m "🐛 이미지 정리 로직이 동작하지 않던 노드명 오
 - Produces: `type GalleryImage = { src: string; alt: string; caption: string; width: number; height: number }`
 - Produces: `Gallery` — Tiptap Node. 노드명 `gallery`, 속성 `images: GalleryImage[]`. Task 3의 NodeView, Task 5의 삽입 로직, Task 6의 정리 로직이 이 이름과 속성에 의존한다.
 
-- [ ] **Step 1: 실패하는 테스트를 먼저 작성**
+- [x] **Step 1: 실패하는 테스트를 먼저 작성**
 
 `src/app/admin/posts/new/_utils/gallery-extension.test.ts` 신규 생성.
 
@@ -239,12 +252,12 @@ describe('Gallery extension', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트를 돌려 실패를 확인**
+- [x] **Step 2: 테스트를 돌려 실패를 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/gallery-extension.test.ts`
 Expected: FAIL — `./gallery-extension` 모듈이 없어 import 에러
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `src/app/admin/posts/new/_utils/gallery-extension.ts` 신규 생성.
 
@@ -326,12 +339,12 @@ export const Gallery = Node.create({
 
 > `images` 속성의 `renderHTML`이 빈 객체를 반환하는 것이 중요하다. 그러지 않으면 Tiptap이 배열을 `images="[object Object]"` 형태로 `div`에 덧붙인다. 실제 직렬화는 노드 레벨 `renderHTML`이 담당한다.
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/gallery-extension.test.ts`
 Expected: PASS (5 tests)
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_utils/gallery-extension.ts src/app/admin/posts/new/_utils/gallery-extension.test.ts
@@ -353,7 +366,7 @@ git commit -m "✨ 갤러리 Tiptap 노드 추가"
 - Produces: `GalleryNodeView` — `ReactNodeViewRenderer`에 넘길 컴포넌트
 - Produces: `GallerySlideToolbar({ index, total, caption, alt, onMove, onCaptionChange, onAltChange, onDelete })` — 슬라이드별 조작 바
 
-- [ ] **Step 1: 슬라이드 툴바를 먼저 구현**
+- [x] **Step 1: 슬라이드 툴바를 먼저 구현**
 
 `src/app/admin/posts/new/_components/_gallery/gallery-slide-toolbar.tsx` 신규 생성. 기존 `image-toolbar.tsx`의 디자인 언어(작은 아이콘 버튼 + 팝오버)를 따른다.
 
@@ -455,7 +468,7 @@ export function GallerySlideToolbar({
 }
 ```
 
-- [ ] **Step 2: NodeView 테스트를 먼저 작성**
+- [x] **Step 2: NodeView 테스트를 먼저 작성**
 
 `src/app/admin/posts/new/_components/_gallery/gallery-node-view.test.tsx` 신규 생성.
 
@@ -535,12 +548,12 @@ describe('GalleryNodeView', () => {
 });
 ```
 
-- [ ] **Step 3: 테스트를 돌려 실패를 확인**
+- [x] **Step 3: 테스트를 돌려 실패를 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_components/_gallery/gallery-node-view.test.tsx`
 Expected: FAIL — `./gallery-node-view` 모듈이 없어 import 에러
 
-- [ ] **Step 4: NodeView 구현**
+- [x] **Step 4: NodeView 구현**
 
 `src/app/admin/posts/new/_components/_gallery/gallery-node-view.tsx` 신규 생성.
 
@@ -620,12 +633,12 @@ export function GalleryNodeView({
 
 > `data-gallery`를 NodeViewWrapper에도 붙여 Task 4의 `prose.css` 스크롤 규칙이 에디터 안에서도 그대로 적용되게 한다. 편집 화면과 발행 결과가 같은 모양으로 보인다.
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_components/_gallery/gallery-node-view.test.tsx`
 Expected: PASS (6 tests)
 
-- [ ] **Step 6: 확장에 NodeView 연결**
+- [x] **Step 6: 확장에 NodeView 연결**
 
 `gallery-extension.ts` 상단에 import를 추가한다.
 
@@ -642,12 +655,12 @@ import { GalleryNodeView } from '../_components/_gallery/gallery-node-view';
   },
 ```
 
-- [ ] **Step 7: 전체 테스트와 린트 확인**
+- [x] **Step 7: 전체 테스트와 린트 확인**
 
 Run: `npm run test:run && npm run lint`
 Expected: PASS
 
-- [ ] **Step 8: 커밋**
+- [x] **Step 8: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_components/_gallery/ src/app/admin/posts/new/_utils/gallery-extension.ts
@@ -666,7 +679,7 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
 - Consumes: `--content-width`, `--radius-image` (선행 스펙에서 확정된 토큰)
 - Produces: `--gallery-height` CSS 변수, `[data-gallery]` / `[data-gallery-wrap]` 스타일 계약. Task 7의 화살표 핸들러가 `data-gallery-wrap`을 생성한다.
 
-- [ ] **Step 1: 높이 토큰 추가**
+- [x] **Step 1: 높이 토큰 추가**
 
 `src/app/globals.css`의 `:root` 블록에서 `--article-width: 720px;` 바로 아래 줄에 추가한다.
 
@@ -674,7 +687,7 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
   --gallery-height: 460px;
 ```
 
-- [ ] **Step 2: 갤러리 스크롤 규칙 추가**
+- [x] **Step 2: 갤러리 스크롤 규칙 추가**
 
 `src/styles/prose.css`의 `@media (max-width: 640px)` 블록 **앞에** 아래를 추가한다.
 
@@ -725,7 +738,7 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
 
 > `max-width: none`이 반드시 필요하다. Tailwind preflight의 `img { max-width: 100% }`가 걸리면 가로로 긴 사진이 컨테이너 폭에 맞춰 찌그러져 높이 고정이 무너진다.
 
-- [ ] **Step 3: 단일 이미지 세로 길이 상한 추가**
+- [x] **Step 3: 단일 이미지 세로 길이 상한 추가**
 
 같은 파일, 방금 추가한 갤러리 블록 **앞**(단일 이미지 규칙들 아래)에 추가한다.
 
@@ -741,7 +754,7 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
 
 > `width: auto`가 함께 있어야 한다. 선행 스펙의 `width: 100%` / `.prose figure[data-size] img { width: 100% }`가 남아 있으면 `max-height`가 걸려도 폭이 고정돼 이미지가 찌그러진다. `data-size="full"`은 "크게 보여주려는" 의도적 선택이므로 제외한다.
 
-- [ ] **Step 4: 모바일 규칙 추가**
+- [x] **Step 4: 모바일 규칙 추가**
 
 `@media (max-width: 640px)` 블록 **안쪽 끝**에 추가한다.
 
@@ -757,12 +770,12 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
   }
 ```
 
-- [ ] **Step 5: 빌드 확인**
+- [x] **Step 5: 빌드 확인**
 
 Run: `npm run build`
 Expected: 성공. CSS 문법 오류가 있으면 여기서 잡힌다.
 
-- [ ] **Step 6: 컴파일된 CSS에 규칙이 실렸는지 확인**
+- [x] **Step 6: 컴파일된 CSS에 규칙이 실렸는지 확인**
 
 ```bash
 CSS=$(find .next/static -name "*.css" | xargs grep -l "gallery-height" | head -1)
@@ -772,7 +785,7 @@ grep -o 'max-height:80vh[^}]*}' "$CSS" | head -1
 
 Expected: 갤러리 flex/scroll 규칙과 `max-height:80vh`가 모두 출력된다.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add src/app/globals.css src/styles/prose.css
@@ -795,7 +808,7 @@ git commit -m "💄 갤러리 가로 스크롤 스타일과 단일 이미지 세
 - Produces: `readImageSize(file: File): Promise<{ width: number; height: number }>` — 측정 실패 시 `{ width: 0, height: 0 }`
 - Produces: `imageUploading` 노드의 `total` 속성 (기본값 `1`)
 
-- [ ] **Step 1: 이미지 크기 측정 함수 구현**
+- [x] **Step 1: 이미지 크기 측정 함수 구현**
 
 `src/app/admin/posts/new/_utils/read-image-size.ts` 신규 생성.
 
@@ -824,7 +837,7 @@ export function readImageSize(file: File): Promise<{ width: number; height: numb
 
 > 단위 테스트를 두지 않는다. jsdom은 이미지를 디코딩하지 않아 목만 검증하는 껍데기 테스트가 되고, 프로젝트 테스트 규칙("실제 브라우저가 필요한가 → Playwright")에도 어긋난다. 실패해도 `{0, 0}`으로 폴백해 갤러리가 깨지지 않는다는 점을 구현으로 보장한다.
 
-- [ ] **Step 2: placeholder 노드에 total 속성 추가**
+- [x] **Step 2: placeholder 노드에 total 속성 추가**
 
 `src/app/admin/posts/new/_utils/image-uploading-extension.ts`의 `addAttributes`를 수정한다.
 
@@ -838,7 +851,7 @@ export function readImageSize(file: File): Promise<{ width: number; height: numb
   },
 ```
 
-- [ ] **Step 3: placeholder 표시 테스트를 먼저 추가**
+- [x] **Step 3: placeholder 표시 테스트를 먼저 추가**
 
 `image-uploading-node-view.action.test.tsx`의 `describe` 블록 안에 추가한다.
 
@@ -852,12 +865,12 @@ export function readImageSize(file: File): Promise<{ width: number; height: numb
   });
 ```
 
-- [ ] **Step 4: 테스트를 돌려 실패를 확인**
+- [x] **Step 4: 테스트를 돌려 실패를 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_actions/_image-uploading/image-uploading-node-view.action.test.tsx`
 Expected: FAIL — "3장 업로드 중..." 텍스트가 없다
 
-- [ ] **Step 5: placeholder 표시 구현**
+- [x] **Step 5: placeholder 표시 구현**
 
 `image-uploading-node-view.action.tsx`에서 `total`을 읽어 문구를 분기한다.
 
@@ -874,12 +887,12 @@ Expected: FAIL — "3장 업로드 중..." 텍스트가 없다
       </span>
 ```
 
-- [ ] **Step 6: 테스트 통과 확인**
+- [x] **Step 6: 테스트 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_actions/_image-uploading/image-uploading-node-view.action.test.tsx`
 Expected: PASS (4 tests)
 
-- [ ] **Step 7: 다중 파일 업로드 로직 구현**
+- [x] **Step 7: 다중 파일 업로드 로직 구현**
 
 `wysiwyg-editor.action.tsx`에 import를 추가한다.
 
@@ -959,7 +972,7 @@ import { readImageSize } from '../_utils/read-image-size';
   );
 ```
 
-- [ ] **Step 8: 드롭·붙여넣기 핸들러를 다중 파일로 확장**
+- [x] **Step 8: 드롭·붙여넣기 핸들러를 다중 파일로 확장**
 
 `editorProps`의 `handleDrop`을 아래로 교체한다.
 
@@ -988,19 +1001,19 @@ import { readImageSize } from '../_utils/read-image-size';
       },
 ```
 
-- [ ] **Step 9: 전체 테스트와 빌드 확인**
+- [x] **Step 9: 전체 테스트와 빌드 확인**
 
 Run: `npm run test:run && npm run lint && npm run build`
 Expected: 모두 PASS
 
-- [ ] **Step 10: 에디터에서 동작 확인**
+- [x] **Step 10: 에디터에서 동작 확인**
 
 `npm run dev` 후 `/admin/posts/new`에서 확인한다.
 - 사진 1장 드래그 → 기존처럼 단일 이미지로 삽입
 - 사진 3장 동시 드래그 → "3장 업로드 중..." 표시 후 갤러리로 교체, 가로로 스크롤됨
 - 갤러리 클릭 → 각 슬라이드에 조작 바 표시, 캡션 입력·순서 이동·삭제 동작
 
-- [ ] **Step 11: 커밋**
+- [x] **Step 11: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_utils/read-image-size.ts src/app/admin/posts/new/_utils/image-uploading-extension.ts src/app/admin/posts/new/_actions/
@@ -1020,7 +1033,7 @@ git commit -m "✨ 이미지 여러 장 드롭 시 갤러리로 삽입"
 **Interfaces:**
 - Consumes: `collectImageSrcs` (Task 1), `uploadFiles` (Task 5), `GalleryImage` (Task 2)
 
-- [ ] **Step 1: 갤러리 src 수집 테스트를 먼저 추가**
+- [x] **Step 1: 갤러리 src 수집 테스트를 먼저 추가**
 
 `collect-image-srcs.test.ts` 상단 import에 `Gallery`를 더한다.
 
@@ -1062,12 +1075,12 @@ function docOf(html: string) {
   });
 ```
 
-- [ ] **Step 2: 테스트를 돌려 실패를 확인**
+- [x] **Step 2: 테스트를 돌려 실패를 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/collect-image-srcs.test.ts`
 Expected: FAIL — 갤러리 src가 수집되지 않아 빈 Set이 반환된다
 
-- [ ] **Step 3: 수집 함수 확장**
+- [x] **Step 3: 수집 함수 확장**
 
 `collect-image-srcs.ts`에 import를 추가하고 갤러리 분기를 넣는다.
 
@@ -1093,12 +1106,12 @@ export function collectImageSrcs(doc: ProseMirrorNode): Set<string> {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/collect-image-srcs.test.ts`
 Expected: PASS (5 tests)
 
-- [ ] **Step 5: 파일 선택 핸들러를 context에 노출**
+- [x] **Step 5: 파일 선택 핸들러를 context에 노출**
 
 `src/app/admin/posts/new/_providers/editor.provider.tsx`를 아래로 교체한다.
 
@@ -1169,7 +1182,7 @@ editor를 context에 공유하는 기존 `useEffect`를 아래로 교체한다.
   }, [editor, setEditor, setUploadFiles, uploadFiles]);
 ```
 
-- [ ] **Step 6: 툴바 버튼 추가**
+- [x] **Step 6: 툴바 버튼 추가**
 
 `editor-toolbar.action.tsx`에서 lucide import에 `Images`를 더하고, context에서 `uploadFiles`를 받는다.
 
@@ -1207,16 +1220,16 @@ const { editor, uploadFiles } = useEditorContext();
 
 > 마크다운 모드는 `if (mode === 'markdown')`에서 축약 툴바를 반환하고 끝나므로, 갤러리 버튼은 자동으로 노출되지 않는다. 별도 분기가 필요 없다.
 
-- [ ] **Step 7: 전체 테스트·린트·빌드 확인**
+- [x] **Step 7: 전체 테스트·린트·빌드 확인**
 
 Run: `npm run test:run && npm run lint && npm run build`
 Expected: 모두 PASS
 
-- [ ] **Step 8: 에디터에서 동작 확인**
+- [x] **Step 8: 에디터에서 동작 확인**
 
 `npm run dev` 후 `/admin/posts/new`에서 툴바의 갤러리 버튼을 눌러 사진 3장을 선택하면 갤러리가 삽입되는지 확인한다. 모드를 마크다운으로 바꾸면 버튼이 사라지는지도 함께 본다.
 
-- [ ] **Step 9: 커밋**
+- [x] **Step 9: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/
@@ -1236,7 +1249,7 @@ git commit -m "✨ 툴바 갤러리 버튼 추가하고 정리 로직에 갤러�
 - Consumes: `[data-gallery]` / `[data-gallery-wrap]` 스타일 계약 (Task 4)
 - Produces: `GalleryNavHandler({ containerRef }: { containerRef: RefObject<HTMLElement | null> })` — 렌더 결과 없이 DOM에 화살표를 붙이는 사이드이펙트 전용 컴포넌트
 
-- [ ] **Step 1: 화살표 핸들러 구현**
+- [x] **Step 1: 화살표 핸들러 구현**
 
 `src/app/(main)/posts/[slug]/_handlers/gallery-nav.handler.tsx` 신규 생성. `_handlers` 폴더도 이 태스크에서 처음 생긴다.
 
@@ -1323,7 +1336,7 @@ export function GalleryNavHandler({ containerRef }: Props) {
 }
 ```
 
-- [ ] **Step 2: 확대 충돌 테스트를 먼저 추가**
+- [x] **Step 2: 확대 충돌 테스트를 먼저 추가**
 
 `post-content.action.test.tsx`의 `describe` 블록 안에 추가한다.
 
@@ -1349,12 +1362,12 @@ export function GalleryNavHandler({ containerRef }: Props) {
 
 > 기존 "이미지 클릭 시 확대 다이얼로그가 열린다" 테스트는 `pointerDown` 없이 바로 `click`한다. `clickOrigin` 초기값이 `{ x: 0, y: 0 }`이고 `fireEvent.click`의 기본 좌표도 `0`이라 이동 거리는 0으로 계산되어 그대로 통과한다.
 
-- [ ] **Step 3: 테스트를 돌려 실패를 확인**
+- [x] **Step 3: 테스트를 돌려 실패를 확인**
 
 Run: `npx vitest run "src/app/(main)/posts/[slug]/_actions/post-content.action.test.tsx"`
 Expected: FAIL — 드래그 후 클릭에서도 다이얼로그가 열린다
 
-- [ ] **Step 4: 확대 충돌 처리와 핸들러 연결 구현**
+- [x] **Step 4: 확대 충돌 처리와 핸들러 연결 구현**
 
 `post-content.action.tsx`를 수정한다. import와 ref를 추가한다.
 
@@ -1404,17 +1417,17 @@ import { GalleryNavHandler } from '../_handlers/gallery-nav.handler';
       <GalleryNavHandler containerRef={contentRef} />
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 Run: `npx vitest run "src/app/(main)/posts/[slug]/_actions/post-content.action.test.tsx"`
 Expected: PASS
 
-- [ ] **Step 6: 전체 테스트·린트·빌드 확인**
+- [x] **Step 6: 전체 테스트·린트·빌드 확인**
 
 Run: `npm run test:run && npm run lint && npm run build`
 Expected: 모두 PASS
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add "src/app/(main)/posts/[slug]/"
@@ -1431,7 +1444,7 @@ git commit -m "✨ 갤러리 화살표 버튼과 드래그·확대 충돌 처리
 **Interfaces:**
 - Consumes: Task 2가 정의한 갤러리 HTML 구조
 
-- [ ] **Step 1: 갤러리 HTML이 변형되지 않는지 테스트 추가**
+- [x] **Step 1: 갤러리 HTML이 변형되지 않는지 테스트 추가**
 
 `src/lib/markdown.test.ts` 끝에 새 `describe` 블록을 추가한다.
 
@@ -1461,17 +1474,17 @@ describe('htmlToHtmlWithToc — 갤러리', () => {
 
 > `rehypeImageCaption`은 `<p>` 안에 `<img>` 하나만 있는 경우에만 `figure`로 변환한다. 갤러리의 `figure`는 `div` 안에 있어 대상이 아니지만, 파이프라인이 바뀌어도 깨지지 않도록 잠가둔다.
 
-- [ ] **Step 2: 테스트 실행**
+- [x] **Step 2: 테스트 실행**
 
 Run: `npx vitest run src/lib/markdown.test.ts`
 Expected: PASS — 이미 통과하는 것이 정상이다(회귀 방지용 잠금).
 
-- [ ] **Step 3: 전체 검증**
+- [x] **Step 3: 전체 검증**
 
 Run: `npm run test:run && npm run lint && npm run build`
 Expected: 모두 PASS
 
-- [ ] **Step 4: 발행 화면에서 갤러리 최종 확인**
+- [x] **Step 4: 발행 화면에서 갤러리 최종 확인**
 
 `npm run dev` 후 갤러리를 넣은 글을 발행해 상세 페이지에서 확인한다.
 - 갤러리가 본문(720px) 밖으로 980px까지 펼쳐진다
@@ -1480,19 +1493,19 @@ Expected: 모두 PASS
 - 이미지를 드래그한 뒤 놓아도 확대 다이얼로그가 열리지 않고, 제자리 클릭에서는 열린다
 - 세로로 긴 단일 이미지가 화면 높이의 80%에서 멈춘다
 
-- [ ] **Step 5: 모바일 폭에서 확인하고 높이를 확정**
+- [x] **Step 5: 모바일 폭에서 확인하고 높이를 확정**
 
 브라우저 창을 375px로 줄여 확인한다.
 - 갤러리 bleed가 해제되고 컨테이너 폭에 맞는다
 - 슬라이드 높이 `260px`에서 세로 사진이 지나치게 작지 않은지 본다. 작다면 `prose.css`의 모바일 `height`를 `280px` 또는 `320px`로 조정하고 다시 확인한다.
 - 조정했다면 그 값으로 커밋한다.
 
-- [ ] **Step 6: E2E 회귀 확인**
+- [x] **Step 6: E2E 회귀 확인**
 
 Run: `npm run test:e2e`
 Expected: `e2e/ralli.spec.ts:45`("모바일 › 가로 스크롤이 발생하지 않는다")를 제외하고 통과. 이 1건은 `develop`에서도 재현되는 사전 존재 실패로 확인된 항목이다. **다른 테스트가 새로 깨지면 갤러리의 `overflow-x`가 페이지 전체 가로 스크롤을 유발한 것이므로 반드시 조사한다.**
 
-- [ ] **Step 7: 계획 문서 완료 표기와 커밋**
+- [x] **Step 7: 계획 문서 완료 표기와 커밋**
 
 이 문서의 모든 `- [ ]`를 `- [x]`로 바꾸고 상단에 완료 일자와 결과 요약을 추가한다.
 
