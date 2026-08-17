@@ -4,7 +4,7 @@ import { htmlToHtmlWithToc } from './markdown';
 describe('htmlToHtmlWithToc — 이미지 캡션', () => {
   it('data-caption이 있는 img를 figure + figcaption으로 변환한다', async () => {
     const html =
-      '<p><img src="a.png" data-size="medium" data-align="center" data-caption="강남역 저녁" /></p>';
+      '<p><img src="a.png" data-size="default" data-align="center" data-caption="강남역 저녁" /></p>';
     const { html: result } = await htmlToHtmlWithToc(html);
     expect(result).toContain('<figure');
     expect(result).toContain('<figcaption>강남역 저녁</figcaption>');
@@ -20,7 +20,7 @@ describe('htmlToHtmlWithToc — 이미지 캡션', () => {
   });
 
   it('data-caption이 없는 img는 변환하지 않는다', async () => {
-    const html = '<p><img src="a.png" data-size="medium" data-align="center" /></p>';
+    const html = '<p><img src="a.png" data-size="default" data-align="center" /></p>';
     const { html: result } = await htmlToHtmlWithToc(html);
     expect(result).not.toContain('<figure');
     expect(result).not.toContain('<figcaption>');

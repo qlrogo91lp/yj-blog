@@ -21,10 +21,10 @@ describe('ImageBlock extension', () => {
     expect(html).toContain('src="a.png"');
   });
 
-  it('속성이 없는 기존 이미지는 기본값(medium/center)으로 직렬화된다', () => {
+  it('속성이 없는 기존 이미지는 기본값(default/center)으로 직렬화된다', () => {
     const editor = createEditor('<p><img src="a.png" /></p>');
     const html = editor.getHTML();
-    expect(html).toContain('data-size="medium"');
+    expect(html).toContain('data-size="default"');
     expect(html).toContain('data-align="center"');
   });
 
@@ -36,7 +36,7 @@ describe('ImageBlock extension', () => {
 
   it('data-caption 속성이 있는 이미지를 파싱하고 직렬화한다', () => {
     const editor = createEditor(
-      '<p><img src="a.png" data-size="medium" data-align="center" data-caption="강남역 저녁" /></p>',
+      '<p><img src="a.png" data-size="default" data-align="center" data-caption="강남역 저녁" /></p>',
     );
     const html = editor.getHTML();
     expect(html).toContain('data-caption="강남역 저녁"');
@@ -46,5 +46,11 @@ describe('ImageBlock extension', () => {
     const editor = createEditor('<p><img src="a.png" /></p>');
     const html = editor.getHTML();
     expect(html).not.toContain('data-caption');
+  });
+
+  it('알 수 없는 data-size 값은 default로 폴백된다', () => {
+    const editor = createEditor('<p><img src="a.png" data-size="medium" /></p>');
+    const html = editor.getHTML();
+    expect(html).toContain('data-size="default"');
   });
 });
