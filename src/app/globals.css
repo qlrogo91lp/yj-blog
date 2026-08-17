@@ -53,12 +53,13 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
   --radius-card: 2rem;
+  --radius-image: 1rem;
 }
 
 :root {
   --radius: 0.625rem;
   --content-width: 980px;
-  --article-width: 653px;
+  --article-width: 720px;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
