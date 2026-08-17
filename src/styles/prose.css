@@ -176,9 +176,61 @@
   transform: translateX(-50%);
 }
 
+/* ── 단일 이미지 세로 길이 상한 ── */
+.prose img[data-size="default"],
+.prose img[data-size="small"],
+.prose figure[data-size="default"] img,
+.prose figure[data-size="small"] img {
+  max-height: 80vh;
+  width: auto;
+}
+
 /* ProseMirror 노드 선택 시의 파란 outline 제거 */
 .ProseMirror .ProseMirror-selectednode {
   outline: none;
+}
+
+/* ── 갤러리 (data-gallery) ── */
+.prose [data-gallery] {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  width: var(--content-width);
+  max-width: calc(100vw - 2rem);
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+.prose [data-gallery] figure {
+  flex: none;
+  scroll-snap-align: start;
+  margin: 0;
+}
+.prose [data-gallery] img {
+  height: var(--gallery-height);
+  width: auto;
+  max-width: none;
+  border-radius: var(--radius-image);
+}
+
+/*
+ * 화살표 버튼이 붙으면 bleed 소유권이 래퍼로 넘어간다.
+ * 갤러리 자신이 bleed를 유지하면 래퍼는 본문 폭(720px)에 머물러,
+ * 래퍼 기준으로 배치한 버튼이 갤러리(980px) 가장자리와 어긋난다.
+ * 갤러리 안쪽에 넣는 것도 불가능하다 — overflow-x: auto라 버튼이 콘텐츠와 함께 스크롤된다.
+ */
+.prose [data-gallery-wrap] {
+  position: relative;
+  width: var(--content-width);
+  max-width: calc(100vw - 2rem);
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+.prose [data-gallery-wrap] [data-gallery] {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  transform: none;
 }
 
 @media (max-width: 640px) {
@@ -197,5 +249,14 @@
     max-width: 100%;
     margin-left: 0;
     transform: none;
+  }
+  .prose [data-gallery],
+  .prose [data-gallery-wrap] {
+    max-width: 100%;
+    margin-left: 0;
+    transform: none;
+  }
+  .prose [data-gallery] img {
+    height: 260px;
   }
 }
