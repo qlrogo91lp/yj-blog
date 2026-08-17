@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { selectSeriesList } from '@/db/queries/series';
+import { ContentContainer } from '@/components/layout/content-container';
 import { SeriesCard } from './_components/series-card';
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export default async function SeriesPage() {
   const seriesList = (await selectSeriesList()).filter((s) => s.postCount > 0);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <ContentContainer className="py-8">
       <h1 className="mb-6 text-2xl font-bold">시리즈</h1>
       {seriesList.length === 0 ? (
         <p className="text-muted-foreground">아직 연재 중인 시리즈가 없습니다.</p>
@@ -22,6 +23,6 @@ export default async function SeriesPage() {
           ))}
         </div>
       )}
-    </div>
+    </ContentContainer>
   );
 }
