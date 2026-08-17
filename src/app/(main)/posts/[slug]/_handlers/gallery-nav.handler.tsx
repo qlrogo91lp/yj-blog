@@ -63,9 +63,21 @@ export function GalleryNavHandler({ containerRef }: Props) {
       const observer = new ResizeObserver(sync);
       observer.observe(gallery);
 
+      // width/height 정보가 없어 측정에 실패한 이미지(0x0 폴백)는 브라우저가
+      // 로드 전까지 기본 크기(약 300px)로 렌더한다. 갤러리 박스 크기는
+      // 그대로라 ResizeObserver가 감지하지 못하므로, 이미지 load 시점에
+      // 직접 다시 동기화한다. 이미 로드된 이미지는 load 이벤트가 발생하지
+      // 않으므로 img.complete로 그 경우를 건너뛴다.
+      const images = Array.from(gallery.querySelectorAll('img'));
+      const onImageLoad = () => sync();
+      images.forEach((img) => {
+        if (!img.complete) img.addEventListener('load', onImageLoad);
+      });
+
       cleanups.push(() => {
         gallery.removeEventListener('scroll', sync);
         observer.disconnect();
+        images.forEach((img) => img.removeEventListener('load', onImageLoad));
         prev.remove();
         next.remove();
         wrap.parentNode?.insertBefore(gallery, wrap);

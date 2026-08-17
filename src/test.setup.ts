@@ -34,3 +34,23 @@ Object.defineProperty(window, 'IntersectionObserver', {
   configurable: true,
   value: MockIntersectionObserver,
 });
+
+// jsdom은 ResizeObserver를 구현하지 않으므로 전역 mock 추가
+class MockResizeObserver {
+  constructor(public callback: ResizeObserverCallback) {}
+  observe() {
+    return null;
+  }
+  disconnect() {
+    return null;
+  }
+  unobserve() {
+    return null;
+  }
+}
+
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  configurable: true,
+  value: MockResizeObserver,
+});
