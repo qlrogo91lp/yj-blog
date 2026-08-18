@@ -14,7 +14,7 @@ import {
 import { CHIP_OFFSETS, chipRangeAt, stageRangeOf } from '../_utils/golf-motion';
 
 const CHIP_POSITION = [
-  'left-3 top-[27vh] md:left-[9vw] md:top-[34vh]',
+  'left-3 top-[31vh] md:left-[9vw] md:top-[34vh]',
   'right-3 top-[33vh] md:right-[8vw] md:top-[30vh]',
   'right-3 bottom-[27vh] md:right-[13vw] md:bottom-[20vh]',
   'left-3 bottom-[30vh] md:left-[11vw] md:bottom-[23vh]',
