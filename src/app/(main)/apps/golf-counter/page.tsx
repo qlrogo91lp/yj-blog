@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { HeroArea } from './_areas/hero.area';
 import { GolfJsonLd } from './_components/golf-json-ld';
 import { golfCounterMeta } from './_utils/golf-counter-content';
 
@@ -22,7 +23,9 @@ export default function GolfCounterPage() {
         <div className="absolute -top-1/4 left-1/4 size-[60vw] rounded-full bg-golf-green/12 blur-[120px]" />
         <div className="absolute top-1/2 -right-[16%] size-[50vw] rounded-full bg-golf-orange/8 blur-[140px]" />
       </div>
-      <div className="relative z-[1]">{/* area가 여기에 순서대로 들어간다 */}</div>
+      <div className="relative z-[1]">
+        <HeroArea />
+      </div>
     </div>
   );
 }
