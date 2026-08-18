@@ -7,6 +7,10 @@
   --color-ralli-fg: #f2f5f0;
   --color-ralli-lime: #c8ff3d;
   --color-ralli-green: #34c759;
+  --color-golf-bg: #050a06;
+  --color-golf-fg: #f1f5f1;
+  --color-golf-green: #34c759;
+  --color-golf-orange: #ff9f0a;
 }
 
 @custom-variant dark (&:is(.dark *));
