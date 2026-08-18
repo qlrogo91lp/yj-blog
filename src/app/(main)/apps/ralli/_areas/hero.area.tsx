@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useSectionProgress } from '../_hooks/useSectionProgress';
+import { useSectionProgress } from '../../_hooks/useSectionProgress';
 import { scoreAt, type RalliScore } from '../_utils/ralli-motion';
 import { ralliHeroLetters, ralliHeroShot, ralliMeta } from '../_utils/ralli-content';
 import { RalliCourtSvg } from '../_components/ralli-court-svg';
