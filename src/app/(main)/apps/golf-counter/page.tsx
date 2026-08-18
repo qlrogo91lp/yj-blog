@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { CourseArea } from './_areas/course.area';
 import { HeroArea } from './_areas/hero.area';
 import { GolfJsonLd } from './_components/golf-json-ld';
 import { golfCounterMeta } from './_utils/golf-counter-content';
@@ -25,6 +26,7 @@ export default function GolfCounterPage() {
       </div>
       <div className="relative z-[1]">
         <HeroArea />
+        <CourseArea />
       </div>
     </div>
   );
