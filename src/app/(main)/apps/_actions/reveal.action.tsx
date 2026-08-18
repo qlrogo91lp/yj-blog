@@ -1,7 +1,8 @@
 'use client';
 
-import { useSyncExternalStore, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { useMounted } from '../_hooks/useMounted';
 
 type Props = {
   children: ReactNode;
@@ -9,18 +10,9 @@ type Props = {
   delay?: number;
 };
 
-function subscribe() {
-  return () => {};
-}
-
 /** 시안의 `[data-reveal]` 매 프레임 계산을 IntersectionObserver 1회 발화로 대체한다. */
 export function Reveal({ children, className, delay = 0 }: Props) {
-  // 서버/클라이언트 첫 렌더는 항상 애니메이션 경로로 맞춰 hydration mismatch를 막는다.
-  const mounted = useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useMounted();
   const prefersReducedMotion = useReducedMotion();
 
   const isStatic = Boolean(prefersReducedMotion) && mounted;

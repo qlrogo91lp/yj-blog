@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ralliFinalCta, ralliMeta } from '../_utils/ralli-content';
 import { RalliCtaButton } from '../_components/ralli-cta-button';
-import { Reveal } from '../_actions/reveal.action';
+import { Reveal } from '../../_actions/reveal.action';
 
 export function FinalCtaArea() {
   return (

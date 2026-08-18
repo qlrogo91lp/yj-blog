@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { motion, useMotionValueEvent } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useSectionProgress } from '../_hooks/useSectionProgress';
-import { stepIndexAt } from '../_utils/ralli-motion';
+import { useSectionProgress } from '../../_hooks/useSectionProgress';
+import { stepIndexAt } from '../../_utils/landing-motion';
 import { ralliWatchSection } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { ralliWorkoutSection, type RalliStat } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from '../_actions/reveal.action';
+import { Reveal } from '../../_actions/reveal.action';
 
 const toneClassName: Record<RalliStat['tone'], string> = {
   lime: 'text-ralli-lime',
