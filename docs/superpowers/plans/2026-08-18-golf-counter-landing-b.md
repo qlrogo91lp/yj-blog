@@ -1779,7 +1779,7 @@ stepIndexAt(value, 2)로 2단 크로스페이드를 만든다.
 - Consumes: `Reveal` (Task 1), `golfAfterSection`·`golfHolesSection` (Task 2), `GolfShot` (Task 4)
 - Produces: `<AfterRoundArea />` · `<HolesArea />`
 
-- [ ] **Step 1: 두 테스트를 먼저 작성한다 (실패 예정)**
+- [x] **Step 1: 두 테스트를 먼저 작성한다 (실패 예정)**
 
 `after-round.area.test.tsx`:
 
@@ -1842,12 +1842,12 @@ describe('HolesArea', () => {
 });
 ```
 
-- [ ] **Step 2: 실패를 확인한다**
+- [x] **Step 2: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/after-round.area.test.tsx src/app/\(main\)/apps/golf-counter/_areas/holes.area.test.tsx`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 3: `after-round.area.tsx`를 만든다**
+- [x] **Step 3: `after-round.area.tsx`를 만든다**
 
 ```tsx
 import { Reveal } from '../../_actions/reveal.action';
@@ -1887,7 +1887,7 @@ export function AfterRoundArea() {
 }
 ```
 
-- [ ] **Step 4: `holes.area.tsx`를 만든다**
+- [x] **Step 4: `holes.area.tsx`를 만든다**
 
 ```tsx
 import { Reveal } from '../../_actions/reveal.action';
@@ -1936,14 +1936,14 @@ export function HolesArea() {
 }
 ```
 
-- [ ] **Step 5: 통과를 확인한다**
+- [x] **Step 5: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/after-round.area.test.tsx src/app/\(main\)/apps/golf-counter/_areas/holes.area.test.tsx`
 Expected: PASS (6 tests)
 
-- [ ] **Step 6: `page.tsx`에 붙인다**
+- [x] **Step 6: `page.tsx`에 붙인다**
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add -A
@@ -1963,7 +1963,7 @@ git commit -m "✨ feat: GolfCounter 랜딩 After the round·Holes 영역 추가
 - Consumes: `Reveal` (Task 1), `golfFinalCta`·`golfCounterMeta` (Task 2), `GolfShot` 미사용 — 아이콘은 `next/image` 직접 사용
 - Produces: `<FinalCtaArea />`
 
-- [ ] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
+- [x] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
 
 ```tsx
 import { render, screen } from '@testing-library/react';
@@ -2015,12 +2015,12 @@ describe('FinalCtaArea', () => {
 });
 ```
 
-- [ ] **Step 2: 실패를 확인한다**
+- [x] **Step 2: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/final-cta.area.test.tsx`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 3: `final-cta.area.tsx`를 만든다**
+- [x] **Step 3: `final-cta.area.tsx`를 만든다**
 
 시안 푸터의 `© 2026 YJlogs`는 넣지 않는다 — 공용 `Footer`가 이미 렌더한다 (설계 2절).
 
@@ -2063,12 +2063,12 @@ export function FinalCtaArea() {
 }
 ```
 
-- [ ] **Step 4: 통과를 확인한다**
+- [x] **Step 4: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/final-cta.area.test.tsx`
 Expected: PASS (4 tests)
 
-- [ ] **Step 5: `page.tsx`를 완성한다**
+- [x] **Step 5: `page.tsx`를 완성한다**
 
 area 6개가 모두 들어간 최종 형태:
 
@@ -2110,7 +2110,7 @@ export default function GolfCounterPage() {
 }
 ```
 
-- [ ] **Step 6: 전체 검증**
+- [x] **Step 6: 전체 검증**
 
 Run: `npm run test:run`
 Expected: PASS
@@ -2121,7 +2121,7 @@ Expected: 통과
 Run: `npm run build`
 Expected: 성공
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add -A
