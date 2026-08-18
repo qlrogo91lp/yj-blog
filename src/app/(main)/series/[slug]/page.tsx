@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { ContentContainer } from '@/components/layout/content-container';
 import { selectSeriesBySlug } from '@/db/queries/series';
 
 type Props = {
@@ -39,7 +40,7 @@ export default async function SeriesDetailPage({ params }: Props) {
   if (!seriesDetail || seriesDetail.posts.length === 0) notFound();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <ContentContainer className="py-8">
       <header className="mb-8">
         <p className="text-sm text-muted-foreground">시리즈</p>
         <h1 className="mt-1 text-2xl font-bold">{seriesDetail.name}</h1>
@@ -84,6 +85,6 @@ export default async function SeriesDetailPage({ params }: Props) {
           </li>
         ))}
       </ol>
-    </div>
+    </ContentContainer>
   );
 }

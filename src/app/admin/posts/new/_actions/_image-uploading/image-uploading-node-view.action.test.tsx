@@ -35,4 +35,12 @@ describe('ImageUploadingNodeViewAction', () => {
     unmount();
     expect(revoke).toHaveBeenCalledWith('blob:preview');
   });
+
+  it('total이 2 이상이면 장수를 표시한다', () => {
+    const props = {
+      node: { attrs: { id: 'abc', previewUrl: 'blob:preview', total: 3 } },
+    } as unknown as NodeViewProps;
+    render(<ImageUploadingNodeViewAction {...props} />);
+    expect(screen.getByText('3장 업로드 중...')).toBeInTheDocument();
+  });
 });

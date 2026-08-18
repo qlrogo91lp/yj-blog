@@ -1,18 +1,19 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { selectPostBySlug, selectPosts } from '@/db/queries/posts';
+import { ArticleContainer } from '@/components/layout/article-container';
 import { selectCommentsByPostId } from '@/db/queries/comments';
-import { getBlogSettings } from '@/db/queries/settings';
+import { selectPostBySlug, selectPosts } from '@/db/queries/posts';
 import { selectSeriesPosts } from '@/db/queries/series';
-import { markdownToHtmlWithToc, htmlToHtmlWithToc } from '@/lib/markdown';
+import { getBlogSettings } from '@/db/queries/settings';
 import { SITE_NAME } from '@/lib/constants';
+import { htmlToHtmlWithToc, markdownToHtmlWithToc } from '@/lib/markdown';
+import { PostContentAction } from './_actions/post-content.action';
+import { PostTocAction } from './_actions/post-toc.action';
+import { SeriesBoxAction } from './_actions/series-box.action';
+import { ArticleJsonLd } from './_components/article-json-ld';
 import { CommentSection } from './_components/comment-section';
 import { PostHeader } from './_components/post-header';
-import { ArticleJsonLd } from './_components/article-json-ld';
 import { SeriesPrevNext } from './_components/series-prev-next';
-import { PostTocAction } from './_actions/post-toc.action';
-import { PostContentAction } from './_actions/post-content.action';
-import { SeriesBoxAction } from './_actions/series-box.action';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -94,7 +95,7 @@ export default async function PostPage({ params }: Props) {
         blogName={settings?.blogName ?? SITE_NAME}
         baseUrl={process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com'}
       />
-      <div className="relative mx-auto max-w-[calc(var(--article-width)+2rem)] px-4 py-8">
+      <ArticleContainer className="relative py-8">
         <article>
           <PostHeader post={post} />
           {hasSeries && (
@@ -119,9 +120,13 @@ export default async function PostPage({ params }: Props) {
             <PostTocAction toc={toc} />
           </div>
         )}
-      </div>
+      </ArticleContainer>
 
-      <CommentSection comments={comments} postId={post.id} postSlug={post.slug} />
+      <CommentSection
+        comments={comments}
+        postId={post.id}
+        postSlug={post.slug}
+      />
     </>
   );
 }

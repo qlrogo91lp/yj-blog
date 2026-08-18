@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { ralliRulesSection } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from '../_actions/reveal.action';
+import { Reveal } from '../../_actions/reveal.action';
 
 export function RulesArea() {
   return (

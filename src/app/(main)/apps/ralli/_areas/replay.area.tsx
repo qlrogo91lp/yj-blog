@@ -2,12 +2,12 @@
 
 import { motion, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useSectionProgress } from '../_hooks/useSectionProgress';
-import { useIsMobile } from '../_hooks/useIsMobile';
+import { useSectionProgress } from '../../_hooks/useSectionProgress';
+import { useIsMobile } from '../../_hooks/useIsMobile';
 import { ralliReplaySection } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from '../_actions/reveal.action';
+import { Reveal } from '../../_actions/reveal.action';
 
 /** 데스크톱 드리프트 이동 거리. 갤러리 전체 폭에서 뷰포트를 뺀 만큼 왼쪽으로 민다. */
 const DRIFT_VW = -55;

@@ -13,6 +13,7 @@ export const ImageUploading = Node.create({
     return {
       id: { default: '' },
       previewUrl: { default: '' },
+      total: { default: 1 },
     };
   },
 

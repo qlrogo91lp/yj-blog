@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 
-/** Replay 갤러리가 스크롤 연동 드리프트와 네이티브 가로 스크롤을 분기하는 데 사용한다. */
+/**
+ * 뷰포트 분기. CSS로는 나눌 수 없는 경우에만 쓴다.
+ * - ralli: replay 갤러리가 스크롤 연동 드리프트 / 네이티브 가로 스크롤을 분기
+ * - golf-counter: hero의 stage 크기·칩 이동 벡터가 `useTransform` 출력 범위 값이라 CSS로 못 바꾼다
+ */
 export function useIsMobile(query = '(max-width: 767px)'): boolean {
   const [isMobile, setIsMobile] = useState(false);
 

@@ -1,3 +1,5 @@
+import { golfCounterMeta } from '../golf-counter/_utils/golf-counter-content';
+
 export type AppPlatform = 'ios' | 'watch' | 'web';
 
 export type App = {
@@ -12,6 +14,17 @@ export type App = {
 };
 
 export const apps: App[] = [
+  {
+    slug: 'golf-counter',
+    name: 'GolfCounter',
+    description: '골프 라운드 스트로크 카운터 앱',
+    iconSrc: '/golf-counter/golf-counter.png',
+    platforms: ['ios', 'watch'],
+    tags: ['골프', '스포츠'],
+    longDescription:
+      '라운드 중 스트로크와 퍼팅 수를 애플워치에서 바로 기록하는 앱입니다. 워치가 메인 입력이고, 아이폰에서는 라운드 기록과 통계를 확인합니다.',
+    links: [{ label: 'App Store', url: golfCounterMeta.appStoreUrl }],
+  },
   {
     slug: 'ralli',
     name: 'Ralli',

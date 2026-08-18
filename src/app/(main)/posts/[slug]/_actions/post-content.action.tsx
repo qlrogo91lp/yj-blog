@@ -3,6 +3,7 @@
 import { useState, useRef, MouseEvent, PointerEvent } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ZoomIn, ZoomOut } from 'lucide-react';
+import { GalleryNavHandler } from '../_handlers/gallery-nav.handler';
 
 const minScale = 1;
 const maxScale = 4;
@@ -19,6 +20,8 @@ export function PostContentAction({ html }: Props) {
   // drag.current.active은 ref로 관리해 stale closure 없이 동기적으로 읽는다
   const drag = useRef({ active: false, lastX: 0, lastY: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const clickOrigin = useRef({ x: 0, y: 0 });
 
   const clampPosition = (pos: { x: number; y: number }, s: number) => {
     const el = containerRef.current;
@@ -38,9 +41,17 @@ export function PostContentAction({ html }: Props) {
     drag.current.active = false;
   };
 
+  const handleContentPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    clickOrigin.current = { x: event.clientX, y: event.clientY };
+  };
+
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
     if (target.tagName !== 'IMG') return;
+    const moved =
+      Math.abs(event.clientX - clickOrigin.current.x) > 5 ||
+      Math.abs(event.clientY - clickOrigin.current.y) > 5;
+    if (moved) return;
     if (window.matchMedia('(pointer: coarse)').matches) return;
     const img = target as HTMLImageElement;
     resetDialog();
@@ -87,10 +98,13 @@ export function PostContentAction({ html }: Props) {
   return (
     <>
       <div
+        ref={contentRef}
         className="prose prose-neutral max-w-none dark:prose-invert [&_img]:cursor-zoom-in"
         onClick={handleClick}
+        onPointerDown={handleContentPointerDown}
         dangerouslySetInnerHTML={{ __html: html }}
       />
+      <GalleryNavHandler containerRef={contentRef} />
 
       <Dialog
         open={zoomed !== null}

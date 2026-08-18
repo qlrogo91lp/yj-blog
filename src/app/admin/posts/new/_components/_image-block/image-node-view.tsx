@@ -11,7 +11,7 @@ export function ImageNodeView({
   deleteNode,
   selected,
 }: NodeViewProps) {
-  const size = (node.attrs.size as ImageSize) ?? 'medium';
+  const size = (node.attrs.size as ImageSize) ?? 'default';
   const align = (node.attrs.align as ImageAlign) ?? 'center';
   const src = node.attrs.src as string;
   const alt = (node.attrs.alt as string) ?? '';

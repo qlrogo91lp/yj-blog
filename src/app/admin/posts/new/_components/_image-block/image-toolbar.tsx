@@ -20,8 +20,8 @@ type Props = {
 // prose.css 에 figure 참조
 const sizeOptions: { value: ImageSize; label: string, icon?: LucideIcon }[] = [
   { value: 'small', label: '40%' },
-  { value: 'medium', label: '70%' },
-  { value: 'full', label: '100%', icon: ChevronsLeftRight },
+  { value: 'default', label: '기본' },
+  { value: 'full', label: '전체 폭', icon: ChevronsLeftRight },
 ];
 
 const alignOptions: {
@@ -43,7 +43,7 @@ export function ImageToolbar({
   onAltChange,
   onDelete,
 }: Props) {
-  const alignDisabled = size === 'full';
+  const alignDisabled = size !== 'small';
 
   return (
     <div

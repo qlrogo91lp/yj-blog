@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { apps, getApp } from '../_utils/apps-data';
+import { ContentContainer } from '@/components/layout/content-container';
 import { AppPlatformChips } from '../_components/app-platform-chips';
 import { SITE_NAME } from '@/lib/constants';
 
@@ -33,7 +34,7 @@ export default async function AppDetailPage({ params }: Props) {
   if (!app) notFound();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
+    <ContentContainer className="py-10">
       <Link
         href="/apps"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -95,6 +96,6 @@ export default async function AppDetailPage({ params }: Props) {
       {app.links.length === 0 && (
         <p className="mt-8 text-sm text-muted-foreground">출시 준비 중입니다.</p>
       )}
-    </div>
+    </ContentContainer>
   );
 }

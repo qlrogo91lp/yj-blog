@@ -23,25 +23,18 @@ import { useNewPostStore } from '../_store';
 import { uploadImage } from '../_services/upload-image';
 import { removeImage } from '../_services/remove-image';
 import { replaceUploadingNode } from '../_utils/replace-uploading-node';
+import { collectImageSrcs } from '../_utils/collect-image-srcs';
+import { Gallery, type GalleryImage } from '../_utils/gallery-extension';
+import { readImageSize } from '../_utils/read-image-size';
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
   const setContentFormat = useNewPostStore((s) => s.setContentFormat);
   const setPostId = useNewPostStore((s) => s.setPostId);
   const content = useNewPostStore((s) => s.content);
-  const { setEditor } = useEditorContext();
+  const { setEditor, setUploadFiles } = useEditorContext();
   const isInitialMount = useRef(true);
   const prevImageSrcs = useRef<Set<string>>(new Set());
-
-  const getImageSrcs = useCallback((editorInstance: Editor): Set<string> => {
-    const srcs = new Set<string>();
-    editorInstance.state.doc.descendants((node) => {
-      if (node.type.name === 'imageBlock' && node.attrs.src) {
-        srcs.add(node.attrs.src as string);
-      }
-    });
-    return srcs;
-  }, []);
 
   const uploadAndInsert = useCallback(
     async (editorInstance: Editor, file: File) => {
@@ -88,6 +81,71 @@ export function WysiwygEditorAction() {
     [setPostId],
   );
 
+  const uploadFiles = useCallback(
+    async (editorInstance: Editor, fileList: File[]) => {
+      const images = fileList.filter((f) => f.type.startsWith('image/'));
+      const withinLimit = images.filter((f) => f.size <= 10 * 1024 * 1024);
+      const rejected = images.length - withinLimit.length;
+      if (rejected > 0) {
+        toast.error(`${rejected}장이 10MB를 넘어 제외됐습니다`);
+      }
+      if (withinLimit.length === 0) return true;
+      if (withinLimit.length === 1) {
+        await uploadAndInsert(editorInstance, withinLimit[0]);
+        return true;
+      }
+
+      const id = crypto.randomUUID();
+      const previewUrl = URL.createObjectURL(withinLimit[0]);
+      editorInstance
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'imageUploading',
+          attrs: { id, previewUrl, total: withinLimit.length },
+        })
+        .run();
+
+      const uploaded: GalleryImage[] = [];
+      let failed = 0;
+
+      // R2 키의 index를 서버가 순차 계산하므로 병렬 호출 시 충돌한다
+      for (const file of withinLimit) {
+        const size = await readImageSize(file);
+        const formData = new FormData();
+        formData.append('file', file);
+        const currentPostId = useNewPostStore.getState().postId;
+        const result = await uploadImage(formData, currentPostId, 'content');
+        if (result.url) {
+          uploaded.push({
+            src: result.url,
+            alt: '',
+            caption: '',
+            width: size.width,
+            height: size.height,
+          });
+          if (result.postId && !currentPostId) setPostId(result.postId);
+        } else {
+          failed += 1;
+        }
+      }
+
+      if (uploaded.length === 0) {
+        replaceUploadingNode(editorInstance, id, null);
+        toast.error('업로드에 모두 실패했습니다');
+        return true;
+      }
+
+      replaceUploadingNode(editorInstance, id, {
+        type: 'gallery',
+        attrs: { images: uploaded },
+      });
+      if (failed > 0) toast.error(`${failed}장 업로드에 실패했습니다`);
+      return true;
+    },
+    [uploadAndInsert, setPostId],
+  );
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -103,6 +161,7 @@ export function WysiwygEditorAction() {
       TextStyle,
       Link.configure({ openOnClick: false }),
       ImageBlock,
+      Gallery,
       ImageUploading,
       Youtube.configure({
         nocookie: true,
@@ -124,26 +183,24 @@ export function WysiwygEditorAction() {
       },
       handleDrop: (_view, event, _slice, moved) => {
         if (moved || !event.dataTransfer?.files.length) return false;
-        const file = event.dataTransfer.files[0];
-        if (!file?.type.startsWith('image/')) return false;
+        const files = Array.from(event.dataTransfer.files);
+        if (!files.some((f) => f.type.startsWith('image/'))) return false;
         event.preventDefault();
-        uploadAndInsert(editor!, file);
+        if (editor) uploadFiles(editor, files);
         return true;
       },
       handlePaste: (_view, event) => {
-        const files = event.clipboardData?.files;
-        if (!files?.length) return false;
-        const file = files[0];
-        if (!file?.type.startsWith('image/')) return false;
+        const fileList = event.clipboardData?.files;
+        if (!fileList?.length) return false;
+        const files = Array.from(fileList);
+        if (!files.some((f) => f.type.startsWith('image/'))) return false;
         event.preventDefault();
-        if (editor) {
-          uploadAndInsert(editor, file);
-        }
+        if (editor) uploadFiles(editor, files);
         return true;
       },
     },
     onUpdate: ({ editor }) => {
-      const currentSrcs = getImageSrcs(editor);
+      const currentSrcs = collectImageSrcs(editor.state.doc);
       prevImageSrcs.current.forEach((src) => {
         if (!currentSrcs.has(src)) {
           removeImage(src);
@@ -158,11 +215,15 @@ export function WysiwygEditorAction() {
   // context에 editor 인스턴스 공유 + 초기 이미지 src 추적 시작
   useEffect(() => {
     setEditor(editor);
+    setUploadFiles(editor ? (files: File[]) => void uploadFiles(editor, files) : null);
     if (editor) {
-      prevImageSrcs.current = getImageSrcs(editor);
+      prevImageSrcs.current = collectImageSrcs(editor.state.doc);
     }
-    return () => setEditor(null);
-  }, [editor, setEditor, getImageSrcs]);
+    return () => {
+      setEditor(null);
+      setUploadFiles(null);
+    };
+  }, [editor, setEditor, setUploadFiles, uploadFiles]);
 
   // content가 외부에서 변경되었을 때 (모드 전환 등) 에디터 내용 동기화
   useEffect(() => {
