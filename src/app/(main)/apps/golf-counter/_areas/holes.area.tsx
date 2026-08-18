@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { Reveal } from '../../_actions/reveal.action';
 import { GolfShot } from '../_components/golf-shot';
 import { golfHolesSection } from '../_utils/golf-counter-content';
@@ -20,9 +21,10 @@ export function HolesArea() {
                   <span
                     key={chip.label}
                     data-active={chip.isActive}
-                    className={`rounded-full px-3.75 py-2 text-[13px] font-semibold ${
-                      chip.isActive ? 'bg-golf-green text-black' : 'bg-white/10 text-white/70'
-                    }`}
+                    className={cn(
+                      'rounded-full px-3.75 py-2 text-[13px] font-semibold',
+                      chip.isActive ? 'bg-golf-green text-black' : 'bg-white/10 text-white/70',
+                    )}
                   >
                     {chip.label}
                   </span>
