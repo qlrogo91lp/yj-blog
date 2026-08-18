@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import { AfterRoundArea } from './_areas/after-round.area';
 import { CourseArea } from './_areas/course.area';
 import { HealthArea } from './_areas/health.area';
 import { HeroArea } from './_areas/hero.area';
+import { HolesArea } from './_areas/holes.area';
 import { GolfJsonLd } from './_components/golf-json-ld';
 import { golfCounterMeta } from './_utils/golf-counter-content';
 
@@ -29,6 +31,8 @@ export default function GolfCounterPage() {
         <HeroArea />
         <CourseArea />
         <HealthArea />
+        <AfterRoundArea />
+        <HolesArea />
       </div>
     </div>
   );
