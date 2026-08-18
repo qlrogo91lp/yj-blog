@@ -41,7 +41,10 @@ function HeroHeadline() {
         <br />
         {golfHeroSection.headingLines[1]}
       </h1>
-      <p className="mx-auto max-w-115 text-[17px] leading-[1.45] text-white/55">
+      <p
+        data-testid="golf-hero-body"
+        className="mx-auto max-w-115 text-[17px] leading-[1.45] text-white/55"
+      >
         {golfHeroSection.body}
       </p>
     </>
@@ -101,18 +104,25 @@ function HeroChip({ chip, index, progress, isMobile, isStatic }: ChipProps) {
   // 시안 원본: opacity = clamp(1 - max(0, p - 0.66) * 3.4, 0, 1)
   const opacity = useTransform(progress, [0.66, 0.9541], [1, 0]);
 
-  const className = cn('absolute z-5', CHIP_POSITION[index]);
-
+  // static(reduced-motion) 분기는 pin 레이아웃(sticky + vh 좌표계)을 쓰지 않으므로
+  // vh 기반 CHIP_POSITION을 그대로 적용하면 엉뚱한 위치에 절대 배치되어 본문과 겹친다.
+  // 문서 흐름에 맡기고, 배치는 호출부(HeroArea)의 flex-wrap 컨테이너가 담당한다.
   if (isStatic) {
     return (
-      <div className={className}>
+      <div data-testid="golf-hero-chip">
         <GolfStatChip chip={chip} />
       </div>
     );
   }
 
+  const className = cn('absolute z-5', CHIP_POSITION[index]);
+
   return (
-    <motion.div className={className} style={{ x, y, scale, rotate, opacity }}>
+    <motion.div
+      className={className}
+      style={{ x, y, scale, rotate, opacity }}
+      data-testid="golf-hero-chip"
+    >
       <GolfStatChip chip={chip} />
     </motion.div>
   );
@@ -211,16 +221,33 @@ export function HeroArea() {
           </motion.div>
         )}
 
-        {golfHeroSection.chips.map((chip, index) => (
-          <HeroChip
-            key={chip.id}
-            chip={chip}
-            index={index}
-            progress={progress}
-            isMobile={isMobile}
-            isStatic={isStatic}
-          />
-        ))}
+        {isStatic ? (
+          // vh 기반 CHIP_POSITION은 pin 레이아웃 전용이라 static 컨테이너(h-auto)에서는
+          // 좌표계가 어긋나 본문과 겹친다 — 문서 흐름을 따르는 flex-wrap으로 묶어 배치한다.
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {golfHeroSection.chips.map((chip, index) => (
+              <HeroChip
+                key={chip.id}
+                chip={chip}
+                index={index}
+                progress={progress}
+                isMobile={isMobile}
+                isStatic={isStatic}
+              />
+            ))}
+          </div>
+        ) : (
+          golfHeroSection.chips.map((chip, index) => (
+            <HeroChip
+              key={chip.id}
+              chip={chip}
+              index={index}
+              progress={progress}
+              isMobile={isMobile}
+              isStatic={isStatic}
+            />
+          ))
+        )}
 
         {isStatic ? (
           <div className="flex flex-col items-center gap-3">

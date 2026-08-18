@@ -1,4 +1,49 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
+
+type Box = { x: number; y: number; width: number; height: number };
+
+function boxesIntersect(a: Box, b: Box): boolean {
+  return !(
+    a.x + a.width <= b.x ||
+    b.x + b.width <= a.x ||
+    a.y + a.height <= b.y ||
+    b.y + b.height <= a.y
+  );
+}
+
+/**
+ * `useReducedMotion()`은 hydration 직후 한 번 더 리렌더되며 애니메이션 구조 →
+ * static 구조로 DOM이 바뀐다 (`ralli/README.md` 함정 2 참고). 그 교체 순간에
+ * `boundingBox()`를 호출하면 일시적으로 null이 나올 수 있어, 안정될 때까지 재시도한다.
+ */
+async function stableBoundingBox(locator: Locator): Promise<Box> {
+  let box: Box | null = null;
+  await expect(async () => {
+    box = await locator.boundingBox();
+    expect(box).not.toBeNull();
+  }).toPass();
+  return box as unknown as Box;
+}
+
+/**
+ * 히어로 칩 4개 중 어느 것도 본문 문단(`golf-hero-body`)과 겹치지 않는지 확인한다.
+ * 애니메이션 모드에서 두 번, static(reduced-motion) 모드에서 한 번 발생했던
+ * 모바일 칩-본문 겹침 버그의 회귀 가드다.
+ */
+async function expectHeroChipsDoNotOverlapBody(page: Page) {
+  const body = page.getByTestId('golf-hero-body');
+  await expect(body).toBeVisible();
+  const bodyBox = await stableBoundingBox(body);
+
+  const chips = page.getByTestId('golf-hero-chip');
+  await expect(chips).toHaveCount(4);
+
+  const count = await chips.count();
+  for (let i = 0; i < count; i++) {
+    const chipBox = await stableBoundingBox(chips.nth(i));
+    expect(boxesIntersect(bodyBox, chipBox)).toBe(false);
+  }
+}
 
 test.describe('GolfCounter 랜딩', () => {
   test('히어로가 렌더되고 App Store CTA가 동작한다', async ({ page }) => {
@@ -45,5 +90,20 @@ test.describe('GolfCounter 랜딩', () => {
     const height = await page.evaluate(() => document.body.scrollHeight);
     // pin 껍데기(300vh + 280vh)가 접히면 전체 높이가 크게 줄어든다
     expect(height).toBeLessThan(8000);
+  });
+
+  test('모바일 히어로 칩이 본문과 겹치지 않는다 (애니메이션 모드)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/apps/golf-counter');
+
+    await expectHeroChipsDoNotOverlapBody(page);
+  });
+
+  test('모바일 히어로 칩이 본문과 겹치지 않는다 (reduced-motion)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/apps/golf-counter');
+
+    await expectHeroChipsDoNotOverlapBody(page);
   });
 });
