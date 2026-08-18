@@ -28,16 +28,17 @@ page.tsx                    Server Component. 영역을 세로로 나열만 한�
   ├── RulesArea              │
   └── FinalCtaArea          ─┘
 
-_hooks/useSectionProgress   스크롤 진행도(0~1) 생산 — 3개 area가 사용
-_hooks/useIsMobile          뷰포트 분기 — replay만 사용
-_actions/reveal.action      등장 애니메이션 래퍼 — 4개 area가 사용
-_utils/ralli-motion         진행도 → 값 변환 순수 함수 (테스트 대상)
-_utils/ralli-content        카피·이미지 데이터 (애니메이션과 무관)
+../_hooks/useSectionProgress   스크롤 진행도(0~1) 생산 — 3개 area가 사용 (apps 공용)
+../_hooks/useIsMobile          뷰포트 분기 — replay만 사용 (apps 공용)
+../_actions/reveal.action      등장 애니메이션 래퍼 — 4개 area가 사용 (apps 공용)
+../_utils/landing-motion       clamp·mapRange·stepIndexAt 순수 함수 (apps 공용)
+_utils/ralli-motion            진행도 → 스코어 변환 순수 함수 (scoreAt, 테스트 대상)
+_utils/ralli-content           카피·이미지 데이터 (애니메이션과 무관)
 ```
 
 핵심 설계는 **진행도를 만드는 곳(hook)과 쓰는 곳(area)을 분리**한 것이다. area는 "지금 몇 % 스크롤됐는지"만 받아서 자기 요소에 어떻게 반영할지 결정한다.
 
-그리고 **계산 로직은 순수 함수로 빼서 테스트**한다 ([_utils/ralli-motion.ts](_utils/ralli-motion.ts) — 11개 테스트). DOM도 스크롤도 필요 없는 순수 함수라 jsdom에서 경계값을 촘촘히 검증할 수 있다. 명령형 rAF 루프였다면 불가능했던 부분이다.
+그리고 **계산 로직은 순수 함수로 빼서 테스트**한다 — `scoreAt`은 로컬 [_utils/ralli-motion.ts](_utils/ralli-motion.ts)에 3개, `clamp`·`mapRange`·`stepIndexAt`은 apps 공용 [../_utils/landing-motion.ts](../_utils/landing-motion.ts)에 10개 테스트가 있다. DOM도 스크롤도 필요 없는 순수 함수라 jsdom에서 경계값을 촘촘히 검증할 수 있다. 명령형 rAF 루프였다면 불가능했던 부분이다.
 
 ---
 
@@ -151,7 +152,7 @@ const driftX = useTransform(progress, [0, 1], ['0vw', '-55vw']);
 
 ### 스프링을 거는 이유와, 여기만 끄는 이유
 
-[_hooks/useSectionProgress.ts:40-44](_hooks/useSectionProgress.ts)
+[../_hooks/useSectionProgress.ts:31-35](../_hooks/useSectionProgress.ts)
 
 ```ts
 const smoothed = useSpring(scrollYProgress, {
@@ -209,7 +210,7 @@ useMotionValueEvent(progress, 'change', (value) => {
 변환 로직은 순수 함수로 분리되어 있다:
 
 ```ts
-// _utils/ralli-motion.ts:22-25
+// _utils/ralli-motion.ts:8-11
 export function scoreAt(progress: number): RalliScore {
   const index = Math.floor(clamp(progress, 0, 1) * 5.2);
   return scoreSequence[Math.min(scoreSequence.length - 1, index)];
@@ -218,14 +219,14 @@ export function scoreAt(progress: number): RalliScore {
 
 **왜 5.2인가?** (시안에서 그대로 가져온 값이다) 항목이 5개인데 5.2를 곱하면 각 구간이 `1/5.2 = 19.2%`가 되고, 마지막 `GAME`만 남은 `23.1%`를 가져간다. 즉 **마지막 값이 20% 더 오래 머문다.** 클라이맥스를 좀 더 보여주려는 의도다. 5를 곱했다면 5개가 정확히 균등해진다.
 
-`stepIndexAt`의 `3.02`도 같은 원리다 ([:28-31](_utils/ralli-motion.ts)).
+`stepIndexAt`의 `3.02`도 같은 원리다 ([:18-21](../_utils/landing-motion.ts) — apps 공용).
 
 ### 패턴 C — 뷰포트 진입 시 1회 (`whileInView` / `useInView`)
 
 스크롤 진행도와 무관하게 "보이면 한 번 실행"하는 것들. 원본 시안이 매 프레임 모든 `[data-reveal]`의 `getBoundingClientRect()`를 읽던 걸 **IntersectionObserver 1회 발화**로 대체한 부분이라, 성능 이득이 가장 큰 지점이다.
 
 ```tsx
-// _actions/reveal.action.tsx:33-38
+// ../_actions/reveal.action.tsx:25-31 (apps 공용)
 <motion.div
   initial={{ opacity: 0, y: 46 }}
   whileInView={{ opacity: 1, y: 0 }}
@@ -314,24 +315,31 @@ function HeroLetter({ char, direction, progress, isStatic }: HeroLetterProps) {
 
 framer-motion의 `useReducedMotion()`은 **서버에서 `null`**(→ 애니메이션 켬)을 반환하지만 **클라이언트 첫 렌더에서는 실제 값**을 반환한다. 그런데 `isStatic`은 스타일 값이 아니라 **DOM 구조와 className을 바꾼다**(`<span>` vs `<motion.span>`, `h-auto` vs `h-[280vh]`, 스크롤 힌트 유무). 서버 HTML과 클라이언트 첫 렌더가 달라지니 hydration 에러가 난다.
 
-**해법: 마운트 전에는 무조건 애니메이션 경로로 통일한다.**
+**해법: 마운트 전에는 무조건 애니메이션 경로로 통일한다.** 이 판정은 apps 공용 `useMounted` 훅으로 뽑혀 있고, `useSectionProgress`와 `Reveal` 둘 다 이 훅을 그대로 가져다 쓴다.
 
 ```ts
-// _hooks/useSectionProgress.ts:18-20, 33-37, 49
+// ../_hooks/useMounted.ts (apps 공용)
 function subscribe() { return () => {}; }   // 알림 없음 — 스냅샷만 쓴다
 
-const mounted = useSyncExternalStore(
-  subscribe,
-  () => true,    // getSnapshot — 클라이언트(hydration 이후)
-  () => false,   // getServerSnapshot — 서버 + hydration 중
-);
+export function useMounted(): boolean {
+  return useSyncExternalStore(
+    subscribe,
+    () => true,    // getSnapshot — 클라이언트(hydration 이후)
+    () => false,   // getServerSnapshot — 서버 + hydration 중
+  );
+}
+```
+
+```ts
+// ../_hooks/useSectionProgress.ts:28, 40
+const mounted = useMounted();
 // ...
 isStatic: Boolean(prefersReducedMotion) && mounted
 ```
 
 서버와 hydration 시점에는 `mounted === false` → `isStatic === false` → 양쪽 렌더 결과가 일치한다. hydration이 끝나면 React가 스냅샷 차이를 감지해 한 번 리렌더하고, 그때부터 진짜 `prefersReducedMotion`이 반영된다.
 
-`useState` + `useEffect`로도 같은 걸 만들 수 있지만 이 프로젝트 ESLint의 `react-hooks/set-state-in-effect`에 걸린다. `useSyncExternalStore` 버전은 [src/components/theme-toggle.tsx](../../../../components/theme-toggle.tsx)에 선례가 있다. `Reveal`도 동일 패턴이다 ([reveal.action.tsx:19-26](_actions/reveal.action.tsx)).
+`useState` + `useEffect`로도 같은 걸 만들 수 있지만 이 프로젝트 ESLint의 `react-hooks/set-state-in-effect`에 걸린다. `useSyncExternalStore` 버전은 [src/components/theme-toggle.tsx](../../../../components/theme-toggle.tsx)에 선례가 있다. `Reveal`도 같은 `useMounted` 훅을 쓴다 ([reveal.action.tsx:15](../_actions/reveal.action.tsx)).
 
 > **일반화**: 클라이언트에서만 알 수 있는 값(미디어 쿼리, localStorage, 디바이스 정보)으로 **DOM 구조**를 바꾸면 항상 이 문제가 생긴다. 스타일 값만 바꾸는 경우는 상대적으로 덜 위험하다.
 
@@ -349,7 +357,7 @@ const useNativeScroll = isMobile || isStatic;
 
 모바일이면 CSS 네이티브 가로 스크롤 + `scroll-snap`, 데스크톱이면 스크롤 연동 드리프트. **둘을 동시에 켜면 안 되므로** 클래스와 style이 정확히 배타적으로 적용된다.
 
-`useIsMobile`은 초기값이 `false`고 `useEffect`에서 갱신되므로 SSR에서 안전하다 ([useIsMobile.ts:7-16](_hooks/useIsMobile.ts)).
+`useIsMobile`은 초기값이 `false`고 `useEffect`에서 갱신되므로 SSR에서 안전하다 ([useIsMobile.ts:10-20](../_hooks/useIsMobile.ts) — apps 공용).
 
 ### 함정 4 — `animate()`는 정리(cleanup)해야 한다
 
@@ -393,10 +401,11 @@ return () => controls.stop();   // ← 이게 없으면 누수
 
 | 파일 | 역할 | 라인 |
 |---|---|---|
-| [_utils/ralli-motion.ts](_utils/ralli-motion.ts) | `clamp`·`mapRange`·`scoreAt`·`stepIndexAt` 순수 함수 | 31 |
-| [_hooks/useSectionProgress.ts](_hooks/useSectionProgress.ts) | `useScroll` + `useSpring` + reduced-motion 판정 | 51 |
-| [_hooks/useIsMobile.ts](_hooks/useIsMobile.ts) | `matchMedia` 기반 뷰포트 분기 | 19 |
-| [_actions/reveal.action.tsx](_actions/reveal.action.tsx) | `whileInView` 등장 래퍼 | 43 |
+| [_utils/ralli-motion.ts](_utils/ralli-motion.ts) | `scoreAt` 순수 함수 | 11 |
+| [../_utils/landing-motion.ts](../_utils/landing-motion.ts) | `clamp`·`mapRange`·`stepIndexAt` 순수 함수 (apps 공용) | 21 |
+| [../_hooks/useSectionProgress.ts](../_hooks/useSectionProgress.ts) | `useScroll` + `useSpring` + reduced-motion 판정 (apps 공용) | 42 |
+| [../_hooks/useIsMobile.ts](../_hooks/useIsMobile.ts) | `matchMedia` 기반 뷰포트 분기 (apps 공용) | 23 |
+| [../_actions/reveal.action.tsx](../_actions/reveal.action.tsx) | `whileInView` 등장 래퍼 (apps 공용) | 35 |
 | [_areas/hero.area.tsx](_areas/hero.area.tsx) | 패턴 A+B 총집합. 가장 복잡 | 194 |
 | [_areas/watch.area.tsx](_areas/watch.area.tsx) | pin 3-step 크로스페이드 | 84 |
 | [_areas/workout.area.tsx](_areas/workout.area.tsx) | 카운트업 스탯 | 95 |
@@ -427,7 +436,7 @@ return () => controls.stop();   // ← 이게 없으면 누수
 
 정직하게 적어둔다. 공부용으로 손대볼 만한 지점들이다.
 
-- **`useSectionProgress`는 `smooth=false`여도 스프링을 만든다** ([:40](_hooks/useSectionProgress.ts)) — replay에서 아무도 구독하지 않는 스프링이 스크롤마다 프레임을 돈다. 조건부 생성은 훅 규칙 때문에 간단치 않아 남겨둔 상태.
+- **`useSectionProgress`는 `smooth=false`여도 스프링을 만든다** ([:31](../_hooks/useSectionProgress.ts)) — replay에서 아무도 구독하지 않는 스프링이 스크롤마다 프레임을 돈다. 조건부 생성은 훅 규칙 때문에 간단치 않아 남겨둔 상태.
 - **카운트업이 프레임마다 리렌더한다** — framer-motion은 `<motion.span>{motionValue}</motion.span>` 형태로 MotionValue를 자식으로 렌더하면 리렌더 없이 textContent를 갱신할 수 있다. 패턴 A로 옮길 수 있는 여지가 있다.
 - **watch 섹션의 비활성 이미지 3장이 `opacity: 0`으로만 숨겨져 있다** ([watch.area.tsx:67-79](_areas/watch.area.tsx)) — 스크린 리더에는 3장이 모두 노출된다. `aria-hidden={index !== activeIndex}`가 필요하다.
 - **`isStatic`일 때 이미지의 `scale` wobble이 남는다** — 같은 위치에서 `opacity`만 `isStatic`을 반영하고 `scale`은 `activeIndex`를 계속 따라간다.
