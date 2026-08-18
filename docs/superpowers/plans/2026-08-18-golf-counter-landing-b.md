@@ -1,5 +1,15 @@
 # GolfCounter 랜딩 B 시안 적용 Implementation Plan
 
+> **완료: 2026-08-18.** Task 0~10 전부 subagent-driven-development로 실행 완료, 최종 전체 브랜치
+> 리뷰(Critical 0건 · Important 2건 → fix wave 1회로 전부 해소 · 재검토 클린)까지 마쳤다.
+> 실행 중 발견·수정한 것: (1) 브리프의 `isStatic` 분기 패턴(`style={isStatic ? undefined : {...}}`)이
+> reduced-motion 사용자에게 stale 인라인 스타일을 남기는 실제 접근성 버그였음을 발견해 전 area에
+> plain-엘리먼트 패턴으로 수정, (2) 모바일 히어로 칩 겹침 3건(HOLES·TOTAL·reduced-motion 레이아웃)을
+> 발견·수정하고 회귀 테스트로 고정, (3) `aria-hidden`이 wrapper에서 실제 `<img>`까지 전달 안 되는
+> 문제를 `GolfShot`에 optional prop 추가로 해결. 상세 기록은 최종 커밋 히스토리 참고
+> (`bdb0a02..284af30`, `develop` 기준 `0e322df9` 이후). ralli의 동일 `isStatic` 패턴 잠재 버그는
+> 별도 task로 flag했다(이 플랜 범위 밖).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ralli 랜딩 시안 B(베이토 그리드형)의 레이아웃·모션 구조를 다크 테마로 뒤집어 `/apps/golf-counter` 랜딩을 만든다.
@@ -30,13 +40,13 @@
 
 **Files:** 없음
 
-- [ ] **Step 1: develop 최신화 후 브랜치 생성**
+- [x] **Step 1: develop 최신화 후 브랜치 생성**
 
 ```bash
 git checkout develop && git pull && git checkout -b feature/golf-counter-landing
 ```
 
-- [ ] **Step 2: 기준선 확인 — 현재 테스트가 전부 통과하는지**
+- [x] **Step 2: 기준선 확인 — 현재 테스트가 전부 통과하는지**
 
 Run: `npm run test:run`
 Expected: PASS (실패가 있으면 이 작업과 무관한 기존 문제이므로 먼저 보고할 것)
@@ -63,7 +73,7 @@ ralli 전용이던 훅·래퍼·순수 함수를 `apps/` 층으로 올려 golf-c
 **Interfaces:**
 - Produces: `useMounted(): boolean` · `useSectionProgress(offset?, smooth?): { ref, progress, isStatic }` · `useIsMobile(query?): boolean` · `Reveal({ children, className?, delay? })` · `clamp(v,min,max)` · `mapRange(v,inMin,inMax,outMin,outMax)` · `stepIndexAt(progress, stepCount?)`
 
-- [ ] **Step 1: `landing-motion.test.ts`를 먼저 작성한다 (실패 예정)**
+- [x] **Step 1: `landing-motion.test.ts`를 먼저 작성한다 (실패 예정)**
 
 `src/app/(main)/apps/_utils/landing-motion.test.ts`:
 
@@ -129,12 +139,12 @@ describe('stepIndexAt', () => {
 });
 ```
 
-- [ ] **Step 2: 실패를 확인한다**
+- [x] **Step 2: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/_utils/landing-motion.test.ts`
 Expected: FAIL — `Failed to resolve import "./landing-motion"`
 
-- [ ] **Step 3: `landing-motion.ts`를 만든다**
+- [x] **Step 3: `landing-motion.ts`를 만든다**
 
 `src/app/(main)/apps/_utils/landing-motion.ts` — `ralli-motion.ts`에서 순수 수학·스텝 함수만 옮긴 것:
 
@@ -162,12 +172,12 @@ export function stepIndexAt(progress: number, stepCount = 3): number {
 }
 ```
 
-- [ ] **Step 4: 통과를 확인한다**
+- [x] **Step 4: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/_utils/landing-motion.test.ts`
 Expected: PASS (8 tests)
 
-- [ ] **Step 5: `ralli-motion.ts`에서 옮겨간 함수를 제거하고 재export한다**
+- [x] **Step 5: `ralli-motion.ts`에서 옮겨간 함수를 제거하고 재export한다**
 
 `src/app/(main)/apps/ralli/_utils/ralli-motion.ts` 전문을 아래로 교체한다. `clamp`를 재export하지 않고 import해서 쓰는 이유는, `scoreAt`이 여전히 필요로 하기 때문이다:
 
@@ -185,7 +195,7 @@ export function scoreAt(progress: number): RalliScore {
 }
 ```
 
-- [ ] **Step 6: `ralli-motion.test.ts`에서 옮겨간 테스트를 제거한다**
+- [x] **Step 6: `ralli-motion.test.ts`에서 옮겨간 테스트를 제거한다**
 
 `src/app/(main)/apps/ralli/_utils/ralli-motion.test.ts` 전문을 아래로 교체한다 (`clamp`·`mapRange`·`stepIndexAt` describe 블록 삭제, `scoreAt`만 잔류):
 
@@ -213,7 +223,7 @@ describe('scoreAt', () => {
 });
 ```
 
-- [ ] **Step 7: `useMounted.ts`를 만든다**
+- [x] **Step 7: `useMounted.ts`를 만든다**
 
 `useSectionProgress`와 `Reveal`에 각각 복제돼 있던 hydration 방어 3줄을 한 곳으로 모은다.
 
@@ -245,7 +255,7 @@ export function useMounted(): boolean {
 }
 ```
 
-- [ ] **Step 8: `useSectionProgress.ts`를 `apps/_hooks/`로 옮긴다**
+- [x] **Step 8: `useSectionProgress.ts`를 `apps/_hooks/`로 옮긴다**
 
 `src/app/(main)/apps/_hooks/useSectionProgress.ts` — 기존 ralli 버전에서 `subscribe`/`useSyncExternalStore`를 `useMounted`로 교체한 것:
 
@@ -300,7 +310,7 @@ export function useSectionProgress(
 git rm "src/app/(main)/apps/ralli/_hooks/useSectionProgress.ts"
 ```
 
-- [ ] **Step 9: `useIsMobile.ts`를 옮긴다**
+- [x] **Step 9: `useIsMobile.ts`를 옮긴다**
 
 `src/app/(main)/apps/_hooks/useIsMobile.ts` — 내용은 그대로, 주석만 두 랜딩을 포괄하도록 고친다:
 
@@ -334,7 +344,7 @@ export function useIsMobile(query = '(max-width: 767px)'): boolean {
 git rm "src/app/(main)/apps/ralli/_hooks/useIsMobile.ts"
 ```
 
-- [ ] **Step 10: `reveal.action.tsx`를 옮긴다**
+- [x] **Step 10: `reveal.action.tsx`를 옮긴다**
 
 `src/app/(main)/apps/_actions/reveal.action.tsx` — `useMounted` 사용으로 교체:
 
@@ -376,7 +386,7 @@ export function Reveal({ children, className, delay = 0 }: Props) {
 }
 ```
 
-- [ ] **Step 11: `reveal.test.tsx`를 함께 옮긴다**
+- [x] **Step 11: `reveal.test.tsx`를 함께 옮긴다**
 
 ```bash
 git mv "src/app/(main)/apps/ralli/_actions/reveal.test.tsx" "src/app/(main)/apps/_actions/reveal.test.tsx"
@@ -385,7 +395,7 @@ git rm "src/app/(main)/apps/ralli/_actions/reveal.action.tsx"
 
 이 테스트는 `import { Reveal } from './reveal.action'`로 같은 폴더를 상대 참조하므로 **경로 수정이 필요 없다**. 파일을 옮기기만 하면 그대로 통과한다.
 
-- [ ] **Step 12: ralli area 9줄의 import 경로를 고친다**
+- [x] **Step 12: ralli area 9줄의 import 경로를 고친다**
 
 파일별로 아래와 같이 바꾼다. `scoreAt`은 그대로 둔다.
 
@@ -401,7 +411,7 @@ git rm "src/app/(main)/apps/ralli/_actions/reveal.action.tsx"
 | `_areas/rules.area.tsx` | `from '../_actions/reveal.action'` | `from '../../_actions/reveal.action'` |
 | `_areas/final-cta.area.tsx` | `from '../_actions/reveal.action'` | `from '../../_actions/reveal.action'` |
 
-- [ ] **Step 13: 빈 폴더 정리**
+- [x] **Step 13: 빈 폴더 정리**
 
 `ralli/_hooks/`와 `ralli/_actions/`가 비었으면 삭제한다.
 
@@ -409,7 +419,7 @@ git rm "src/app/(main)/apps/ralli/_actions/reveal.action.tsx"
 rmdir "src/app/(main)/apps/ralli/_hooks" "src/app/(main)/apps/ralli/_actions" 2>/dev/null; true
 ```
 
-- [ ] **Step 14: 전체 검증 — ralli 회귀가 없는지 확인한다**
+- [x] **Step 14: 전체 검증 — ralli 회귀가 없는지 확인한다**
 
 Run: `npm run test:run`
 Expected: PASS. ralli area 테스트 6개가 이 모듈들을 `vi.mock`하지 않고 실제 구현을 쓰므로, 경로가 하나라도 틀리면 여기서 실패한다.
@@ -420,7 +430,7 @@ Expected: 통과
 Run: `npm run build`
 Expected: 성공
 
-- [ ] **Step 15: 커밋**
+- [x] **Step 15: 커밋**
 
 ```bash
 git add -A
@@ -450,7 +460,7 @@ useMounted 하나로 합쳤다. scoreAt은 테니스 전용이라 ralli에 남�
 - Consumes: 없음
 - Produces: `golfCounterMeta` · `golfHeroSection` · `golfCourseSection` · `golfHealthSection` · `golfAfterSection` · `golfHolesSection` · `golfFinalCta` · 타입 `GolfImage`·`GolfChip`·`GolfCard`·`GolfStep`
 
-- [ ] **Step 1: `globals.css`에 토큰을 추가한다**
+- [x] **Step 1: `globals.css`에 토큰을 추가한다**
 
 `src/app/globals.css`의 `@theme` 블록에서 `--color-ralli-green: #34c759;` 바로 아래에 추가한다:
 
@@ -461,7 +471,7 @@ useMounted 하나로 합쳤다. scoreAt은 테니스 전용이라 ralli에 남�
   --color-golf-orange: #ff9f0a;
 ```
 
-- [ ] **Step 2: 콘텐츠 테스트를 먼저 작성한다 (실패 예정)**
+- [x] **Step 2: 콘텐츠 테스트를 먼저 작성한다 (실패 예정)**
 
 `src/app/(main)/apps/golf-counter/_utils/golf-counter-content.test.ts`:
 
@@ -530,12 +540,12 @@ describe('golfHolesSection', () => {
 });
 ```
 
-- [ ] **Step 3: 실패를 확인한다**
+- [x] **Step 3: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_utils/golf-counter-content.test.ts`
 Expected: FAIL — `golfCourseSection` 등이 export되지 않음
 
-- [ ] **Step 4: `golf-counter-content.ts`를 전문 교체한다**
+- [x] **Step 4: `golf-counter-content.ts`를 전문 교체한다**
 
 ```typescript
 export type GolfImageKind = 'ios' | 'watch';
@@ -710,12 +720,12 @@ export const golfFinalCta = {
 } as const;
 ```
 
-- [ ] **Step 5: 통과를 확인한다**
+- [x] **Step 5: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_utils/golf-counter-content.test.ts`
 Expected: PASS (6 tests)
 
-- [ ] **Step 6: `apps-data.ts`의 `links`를 채운다**
+- [x] **Step 6: `apps-data.ts`의 `links`를 채운다**
 
 URL 문자열을 두 곳에 적지 않기 위해 상수를 import한다. `src/app/(main)/apps/_utils/apps-data.ts` 상단에 추가:
 
@@ -729,7 +739,7 @@ import { golfCounterMeta } from '../golf-counter/_utils/golf-counter-content';
     links: [{ label: 'App Store', url: golfCounterMeta.appStoreUrl }],
 ```
 
-- [ ] **Step 7: 기존 privacy 페이지가 깨지지 않았는지 확인한다**
+- [x] **Step 7: 기존 privacy 페이지가 깨지지 않았는지 확인한다**
 
 `privacy/page.tsx`가 `golfCounterMeta`에서 `name`·`iconSrc`·`supportEmail`을 쓰고 있다. 세 필드를 모두 유지했으므로 통과해야 한다.
 
@@ -739,7 +749,7 @@ Expected: PASS
 Run: `npm run build`
 Expected: 성공
 
-- [ ] **Step 8: 커밋**
+- [x] **Step 8: 커밋**
 
 ```bash
 git add -A
@@ -766,7 +776,7 @@ hero 칩 값은 전부 스크린샷에 실제로 찍힌 숫자를 쓴다."
 - Consumes: 없음
 - Produces: `chipRangeAt(index): [number, number]` · `CHIP_OFFSETS: { desktop, mobile }` · `stageRangeOf(isMobile): StageRange`
 
-- [ ] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
+- [x] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
 
 `src/app/(main)/apps/golf-counter/_utils/golf-motion.test.ts`:
 
@@ -837,12 +847,12 @@ describe('stageRangeOf', () => {
 });
 ```
 
-- [ ] **Step 2: 실패를 확인한다**
+- [x] **Step 2: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_utils/golf-motion.test.ts`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 3: `golf-motion.ts`를 만든다**
+- [x] **Step 3: `golf-motion.ts`를 만든다**
 
 ```typescript
 /**
@@ -908,12 +918,12 @@ export function stageRangeOf(isMobile: boolean): StageRange {
 }
 ```
 
-- [ ] **Step 4: 통과를 확인한다**
+- [x] **Step 4: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_utils/golf-motion.test.ts`
 Expected: PASS (11 tests)
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add -A
@@ -940,7 +950,7 @@ useTransform이 흡수하지 못하는 부분만 순수 함수로 남긴다."
 - Consumes: `GolfImage`·`GolfStatChip`·`golfCounterMeta` (Task 2)
 - Produces: `<GolfShot image className? sizes? priority? />` · `<GolfStatChip chip />` · `<GolfJsonLd />`
 
-- [ ] **Step 1: `golf-shot.tsx`를 만든다**
+- [x] **Step 1: `golf-shot.tsx`를 만든다**
 
 `ralli-shot.tsx`와 달리 마스크가 없다 — 설계 3.1에서 이미지 카드 색으로 이음매를 없앴기 때문이다.
 
@@ -976,7 +986,7 @@ export function GolfShot({ image, className, sizes, priority = false }: Props) {
 }
 ```
 
-- [ ] **Step 2: 칩 테스트를 작성한다 (실패 예정)**
+- [x] **Step 2: 칩 테스트를 작성한다 (실패 예정)**
 
 `src/app/(main)/apps/golf-counter/_components/golf-stat-chip.test.tsx`:
 
@@ -1009,12 +1019,12 @@ describe('GolfStatChip', () => {
 });
 ```
 
-- [ ] **Step 3: 실패를 확인한다**
+- [x] **Step 3: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_components/golf-stat-chip.test.tsx`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 4: `golf-stat-chip.tsx`를 만든다**
+- [x] **Step 4: `golf-stat-chip.tsx`를 만든다**
 
 시안의 라이트 유리 칩을 다크로 뒤집은 것이다 (설계 3.1 표).
 
@@ -1056,12 +1066,12 @@ export function GolfStatChip({ chip }: Props) {
 }
 ```
 
-- [ ] **Step 5: 통과를 확인한다**
+- [x] **Step 5: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_components/golf-stat-chip.test.tsx`
 Expected: PASS (3 tests)
 
-- [ ] **Step 6: `golf-json-ld.tsx`를 만든다**
+- [x] **Step 6: `golf-json-ld.tsx`를 만든다**
 
 ```tsx
 import { golfCounterMeta } from '../_utils/golf-counter-content';
@@ -1090,7 +1100,7 @@ export function GolfJsonLd() {
 }
 ```
 
-- [ ] **Step 7: `page.tsx` 셸을 만든다**
+- [x] **Step 7: `page.tsx` 셸을 만든다**
 
 area는 아직 없다. 배경·메시 그라디언트·다크 강제만 세운다. 이후 태스크가 area를 하나씩 이 파일에 추가한다.
 
@@ -1125,12 +1135,12 @@ export default function GolfCounterPage() {
 }
 ```
 
-- [ ] **Step 8: 페이지가 렌더되는지 확인한다**
+- [x] **Step 8: 페이지가 렌더되는지 확인한다**
 
 Run: `npm run build`
 Expected: 성공. `/apps/golf-counter`가 라우트 목록에 나타난다.
 
-- [ ] **Step 9: 커밋**
+- [x] **Step 9: 커밋**
 
 ```bash
 git add -A
@@ -1155,7 +1165,7 @@ GolfShot(마스크 없는 next/image 래퍼)·GolfStatChip·GolfJsonLd와
 - Consumes: `useSectionProgress`·`useIsMobile` (Task 1), `golfHeroSection`·`golfCounterMeta` (Task 2), `chipRangeAt`·`CHIP_OFFSETS`·`stageRangeOf` (Task 3), `GolfShot`·`GolfStatChip` (Task 4)
 - Produces: `<HeroArea />`
 
-- [ ] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
+- [x] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
 
 `src/app/(main)/apps/golf-counter/_areas/hero.area.test.tsx`:
 
@@ -1210,12 +1220,12 @@ describe('HeroArea', () => {
 });
 ```
 
-- [ ] **Step 2: 실패를 확인한다**
+- [x] **Step 2: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/hero.area.test.tsx`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 3: `hero.area.tsx`를 만든다**
+- [x] **Step 3: `hero.area.tsx`를 만든다**
 
 칩은 각자 `useTransform`이 필요하므로 **자식 컴포넌트로 분리**한다 — `.map()` 안에서 훅을 호출하면 `react-hooks/rules-of-hooks` 위반이다.
 
@@ -1394,12 +1404,12 @@ export function HeroArea() {
 }
 ```
 
-- [ ] **Step 4: 통과를 확인한다**
+- [x] **Step 4: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/hero.area.test.tsx`
 Expected: PASS (6 tests)
 
-- [ ] **Step 5: `page.tsx`에 붙인다**
+- [x] **Step 5: `page.tsx`에 붙인다**
 
 import를 추가하고, 주석 자리를 `<HeroArea />`로 바꾼다:
 
@@ -1413,7 +1423,7 @@ import { HeroArea } from './_areas/hero.area';
       </div>
 ```
 
-- [ ] **Step 6: 브라우저에서 확인한다**
+- [x] **Step 6: 브라우저에서 확인한다**
 
 `preview_start`로 dev 서버를 띄우고 `/apps/golf-counter`로 이동해 아래를 눈으로 확인한다:
 
@@ -1423,7 +1433,7 @@ import { HeroArea } from './_areas/hero.area';
 - 워치 이미지가 뿌옇지 않은가 (`max-h-[44vh]` 상한이 동작하는가)
 - 콘솔 에러가 없는가 (`read_console_messages`)
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add -A
@@ -1447,7 +1457,7 @@ sticky pin 안에서 stage가 확대되고 칩 4개가 시차를 두고 흩어�
 - Consumes: `Reveal` (Task 1), `golfCourseSection` (Task 2), `GolfShot` (Task 4)
 - Produces: `<CourseArea />`
 
-- [ ] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
+- [x] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
 
 ```tsx
 import { render, screen } from '@testing-library/react';
@@ -1485,12 +1495,12 @@ describe('CourseArea', () => {
 });
 ```
 
-- [ ] **Step 2: 실패를 확인한다**
+- [x] **Step 2: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/course.area.test.tsx`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 3: `course.area.tsx`를 만든다**
+- [x] **Step 3: `course.area.tsx`를 만든다**
 
 시안의 `1.25fr 1fr` 베이토를 그대로 옮긴다. 첫 카드가 `grid-row: span 2`로 세로로 길다.
 
@@ -1556,20 +1566,20 @@ export function CourseArea() {
 }
 ```
 
-- [ ] **Step 4: 통과를 확인한다**
+- [x] **Step 4: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/course.area.test.tsx`
 Expected: PASS (4 tests)
 
-- [ ] **Step 5: `page.tsx`에 붙인다**
+- [x] **Step 5: `page.tsx`에 붙인다**
 
 `<HeroArea />` 아래에 `<CourseArea />`를 추가하고 import를 더한다.
 
-- [ ] **Step 6: 브라우저에서 확인한다**
+- [x] **Step 6: 브라우저에서 확인한다**
 
 데스크톱에서 tall 카드가 오른쪽 카드 2장 높이를 함께 차지하는지, 모바일(`resize_window` preset `mobile`)에서 1컬럼으로 접히는지 확인한다.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add -A
@@ -1589,7 +1599,7 @@ git commit -m "✨ feat: GolfCounter 랜딩 On the course 베이토 그리드 �
 - Consumes: `useSectionProgress` (Task 1), `stepIndexAt` (Task 1), `golfHealthSection` (Task 2), `GolfShot` (Task 4)
 - Produces: `<HealthArea />`
 
-- [ ] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
+- [x] **Step 1: 테스트를 먼저 작성한다 (실패 예정)**
 
 ```tsx
 import { render, screen } from '@testing-library/react';
@@ -1634,12 +1644,12 @@ describe('HealthArea', () => {
 });
 ```
 
-- [ ] **Step 2: 실패를 확인한다**
+- [x] **Step 2: 실패를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/health.area.test.tsx`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 3: `health.area.tsx`를 만든다**
+- [x] **Step 3: `health.area.tsx`를 만든다**
 
 `stepIndexAt(value, 2)`로 2-step을 만든다. A안 README가 지적한 미해결 이슈(비활성 이미지가 스크린 리더에 노출됨)를 여기서는 처음부터 `aria-hidden`으로 처리한다.
 
@@ -1743,18 +1753,18 @@ export function HealthArea() {
 }
 ```
 
-- [ ] **Step 4: 통과를 확인한다**
+- [x] **Step 4: 통과를 확인한다**
 
 Run: `npx vitest run src/app/\(main\)/apps/golf-counter/_areas/health.area.test.tsx`
 Expected: PASS (5 tests)
 
-- [ ] **Step 5: `page.tsx`에 붙인다**
+- [x] **Step 5: `page.tsx`에 붙인다**
 
-- [ ] **Step 6: 브라우저에서 확인한다**
+- [x] **Step 6: 브라우저에서 확인한다**
 
 스크롤 진행도 50%를 지날 때 이미지와 활성 스텝 카드가 동시에 바뀌는지 확인한다. reduced-motion을 켜고(DevTools → Rendering → Emulate CSS prefers-reduced-motion) 껍데기가 `h-auto`로 접히는지도 본다.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add -A
@@ -2141,7 +2151,7 @@ area 6개를 page.tsx에 순서대로 나열해 랜딩을 완성한다.
 **Interfaces:**
 - Consumes: 완성된 `/apps/golf-counter` 페이지
 
-- [ ] **Step 1: 포트 충돌을 먼저 확인한다**
+- [x] **Step 1: 포트 충돌을 먼저 확인한다**
 
 3000 포트가 다른 프로젝트에 물려 있으면 Playwright의 `webServer`가 엉뚱한 앱에 붙는다.
 
@@ -2151,7 +2161,7 @@ lsof -i :3000
 
 점유 중이면 해당 프로세스를 정리하거나 종료한 뒤 진행한다.
 
-- [ ] **Step 2: E2E 스펙을 작성한다**
+- [x] **Step 2: E2E 스펙을 작성한다**
 
 `e2e/golf-counter.spec.ts`:
 
@@ -2207,12 +2217,12 @@ test.describe('GolfCounter 랜딩', () => {
 });
 ```
 
-- [ ] **Step 3: E2E를 실행한다**
+- [x] **Step 3: E2E를 실행한다**
 
 Run: `npm run test:e2e`
 Expected: PASS (4 tests)
 
-- [ ] **Step 4: 모바일 뷰포트를 직접 확인한다**
+- [x] **Step 4: 모바일 뷰포트를 직접 확인한다**
 
 `resize_window` preset `mobile`로 바꾸고 페이지를 새로고침한 뒤 확인한다:
 
@@ -2221,7 +2231,7 @@ Expected: PASS (4 tests)
 - health pin 패널이 `38vh`로 낮아지는가
 - 가로 스크롤이 생기지 않는가
 
-- [ ] **Step 5: 최종 검증 4종**
+- [x] **Step 5: 최종 검증 4종**
 
 ```bash
 npm run lint && npm run test:run && npm run build && npm run test:e2e
@@ -2229,18 +2239,18 @@ npm run lint && npm run test:run && npm run build && npm run test:e2e
 
 Expected: 전부 통과
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add -A
 git commit -m "✅ test: GolfCounter 랜딩 E2E 테스트 추가"
 ```
 
-- [ ] **Step 7: plan 문서에 완료 기록을 남긴다**
+- [x] **Step 7: plan 문서에 완료 기록을 남긴다**
 
 이 파일 상단에 완료 일자와 결과 요약을 추가한다 (CLAUDE.md의 Plan 파일 실행 규칙).
 
-- [ ] **Step 8: PR 생성**
+- [x] **Step 8: PR 생성**
 
 ```bash
 git push -u origin feature/golf-counter-landing
@@ -2252,9 +2262,9 @@ git push -u origin feature/golf-counter-landing
 
 ## 완료 조건
 
-- [ ] `/apps/golf-counter`가 B안 레이아웃 · 다크 테마로 렌더된다
-- [ ] `/apps/ralli`가 이전과 동일하게 동작한다 (모션 인프라 이동에 따른 회귀 없음)
-- [ ] `npm run lint` · `npm run test:run` · `npm run build` · `npm run test:e2e` 전부 통과
-- [ ] reduced-motion에서 pin 섹션이 접히고 모든 콘텐츠가 최종 상태로 보인다
-- [ ] 모바일에서 가로 스크롤이 발생하지 않는다
-- [ ] App Store URL이 `golfCounterMeta.appStoreUrl` 한 곳에만 존재한다
+- [x] `/apps/golf-counter`가 B안 레이아웃 · 다크 테마로 렌더된다
+- [x] `/apps/ralli`가 이전과 동일하게 동작한다 (모션 인프라 이동에 따른 회귀 없음)
+- [x] `npm run lint` · `npm run test:run` · `npm run build` · `npm run test:e2e` 전부 통과
+- [x] reduced-motion에서 pin 섹션이 접히고 모든 콘텐츠가 최종 상태로 보인다
+- [x] 모바일에서 가로 스크롤이 발생하지 않는다
+- [x] App Store URL이 `golfCounterMeta.appStoreUrl` 한 곳에만 존재한다
