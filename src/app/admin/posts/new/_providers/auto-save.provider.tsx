@@ -1,34 +1,41 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { useNewPostStore } from '../_store';
+import { useEffect } from 'react';
+import { selectIsDirty, useNewPostStore } from '../_store';
 
 const intervalMs = 30000;
 
 export function AutoSaveProvider() {
-	const title = useNewPostStore((s) => s.title);
-	const content = useNewPostStore((s) => s.content);
+	const isDirty = useNewPostStore(selectIsDirty);
+	const changeCount = useNewPostStore((s) => s.changeCount);
+	const hasRequiredFields = useNewPostStore(
+		(s) => s.title.trim().length > 0 && s.content.length > 0,
+	);
 	const status = useNewPostStore((s) => s.status);
 	const submitPost = useNewPostStore((s) => s.submitPost);
-	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+	// 마지막 편집(changeCount) 기준 30초 뒤 저장. dirty가 아니거나 필수값이 없으면 걸지 않는다.
 	useEffect(() => {
-		if (!title && !content) return;
+		if (!isDirty || !hasRequiredFields) return;
 
-		if (timerRef.current) {
-			clearTimeout(timerRef.current);
-		}
-
-		timerRef.current = setTimeout(() => {
+		const timer = setTimeout(() => {
 			submitPost(status);
 		}, intervalMs);
 
-		return () => {
-			if (timerRef.current) {
-				clearTimeout(timerRef.current);
-			}
+		return () => clearTimeout(timer);
+	}, [changeCount, isDirty, hasRequiredFields, status, submitPost]);
+
+	// 미저장 상태로 탭을 닫거나 새로고침하면 브라우저 경고를 띄운다.
+	// (Next.js 클라이언트 라우팅 이동은 잡지 못한다.)
+	useEffect(() => {
+		if (!isDirty) return;
+
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			event.preventDefault();
 		};
-	}, [title, content, status, submitPost]);
+		window.addEventListener('beforeunload', handleBeforeUnload);
+		return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+	}, [isDirty]);
 
 	return null;
 }
