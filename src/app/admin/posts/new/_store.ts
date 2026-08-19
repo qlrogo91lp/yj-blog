@@ -147,6 +147,7 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
     // DATABASE_URL 없는 Vitest 환경에서 스토어 import만으로도 크래시난다.
     const { savePost } = await import('./_services/save-post');
     const state = get();
+    const changeCountAtStart = state.changeCount;
     const slug = state.slug || generateSlug(state.title);
 
     set({ saveStatus: 'saving' });
@@ -164,13 +165,15 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
       tagIds: state.tagIds,
       thumbnailUrl: state.thumbnailUrl,
       status,
-      publishedAt: state.publishedAt,
     });
 
     if (result.success) {
       set({
         postId: result.postId,
         slug,
+        status: result.status,
+        publishedAt: result.publishedAt,
+        savedChangeCount: changeCountAtStart,
         saveStatus: 'saved',
         lastSavedAt: new Date(),
       });
