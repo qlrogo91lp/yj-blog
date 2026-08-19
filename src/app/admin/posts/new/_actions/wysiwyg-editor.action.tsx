@@ -225,14 +225,17 @@ export function WysiwygEditorAction() {
     };
   }, [editor, setEditor, setUploadFiles, uploadFiles]);
 
-  // content가 외부에서 변경되었을 때 (모드 전환 등) 에디터 내용 동기화
+  // content가 외부에서 변경되었을 때 (수정 페이지 초기화, 모드 전환 등) 에디터 내용 동기화.
+  // emitUpdate: false — onUpdate를 타지 않게 해서 초기화가 dirty(changeCount)를 올리지 않도록 한다.
+  // onUpdate가 하던 이미지 src 추적 초기화는 여기서 직접 수행한다.
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
     if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content || '');
+      editor.commands.setContent(content || '', { emitUpdate: false });
+      prevImageSrcs.current = collectImageSrcs(editor.state.doc);
     }
   }, [content, editor]);
 
