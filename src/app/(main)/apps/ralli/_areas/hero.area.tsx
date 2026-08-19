@@ -44,6 +44,63 @@ function HeroLetter({ char, direction, progress, isAccent, isStatic }: HeroLette
   );
 }
 
+const GLOW_CLASS =
+  'absolute size-[120vh] rounded-full bg-[radial-gradient(circle,rgba(200,255,61,0.16)_0%,rgba(52,199,89,0.06)_40%,transparent_68%)] blur-[10px]';
+const WATCH_CLASS = 'relative z-3';
+const SCORE_CLASS =
+  'pointer-events-none absolute right-[max(6vw,32px)] top-[18%] z-4 text-right md:top-1/2';
+const COPY_CLASS =
+  'absolute bottom-[10vh] left-[max(6vw,32px)] right-[max(6vw,32px)] z-4 max-w-100 md:bottom-[14vh] md:right-auto';
+
+function HeroWatchShot() {
+  return (
+    <RalliShot
+      image={ralliHeroShot}
+      priority
+      sizes="(max-width: 768px) 44vh, 64vh"
+      className="h-[44vh] max-h-140 md:h-[64vh]"
+    />
+  );
+}
+
+function HeroScore({ score }: { score: RalliScore }) {
+  return (
+    <>
+      <p className="mb-1.5 text-xs font-bold tracking-[0.22em] text-ralli-fg/45">GAME POINT</p>
+      <p
+        data-testid="ralli-hero-score"
+        className={cn(
+          'font-extrabold leading-[0.85] tracking-[-0.05em] text-ralli-lime tabular-nums',
+          score === 'GAME' ? 'text-[min(7vw,84px)]' : 'text-[min(11vw,132px)]',
+        )}
+      >
+        {score}
+      </p>
+    </>
+  );
+}
+
+function HeroCopy() {
+  return (
+    <>
+      <h1 className="mb-3 text-[clamp(26px,3.4vw,44px)] font-bold leading-[1.05] tracking-[-0.035em] text-pretty">
+        {ralliMeta.taglineLines.map((line) => (
+          <span key={line} className="block">
+            {line}
+          </span>
+        ))}
+      </h1>
+      <p className="mb-5.5 max-w-85 text-base leading-normal text-ralli-fg/60">
+        {ralliMeta.subtitle}
+      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <RalliCtaButton appStoreUrl={ralliMeta.appStoreUrl} />
+        <span className="text-[13px] text-ralli-fg/40">{ralliMeta.platforms}</span>
+      </div>
+    </>
+  );
+}
+
 export function HeroArea() {
   const { ref, progress, isStatic } = useSectionProgress(['start start', 'end end']);
   const [score, setScore] = useState<RalliScore>('0');
@@ -81,11 +138,11 @@ export function HeroArea() {
           isStatic ? 'relative min-h-[80vh] py-24' : 'sticky top-14 h-[calc(100vh-3.5rem)]',
         )}
       >
-        <motion.div
-          aria-hidden="true"
-          style={isStatic ? undefined : { scale: glowScale }}
-          className="absolute size-[120vh] rounded-full bg-[radial-gradient(circle,rgba(200,255,61,0.16)_0%,rgba(52,199,89,0.06)_40%,transparent_68%)] blur-[10px]"
-        />
+        {isStatic ? (
+          <div aria-hidden="true" className={GLOW_CLASS} />
+        ) : (
+          <motion.div aria-hidden="true" style={{ scale: glowScale }} className={GLOW_CLASS} />
+        )}
 
         <motion.div
           aria-hidden="true"
@@ -124,57 +181,38 @@ export function HeroArea() {
           </div>
         )}
 
-        <motion.div
-          style={
-            isStatic
-              ? undefined
-              : { scale: watchScale, rotate: watchRotate, y: watchY, opacity: watchOpacity }
-          }
-          className="relative z-3"
-        >
-          <RalliShot
-            image={ralliHeroShot}
-            priority
-            sizes="(max-width: 768px) 44vh, 64vh"
-            className="h-[44vh] max-h-140 md:h-[64vh]"
-          />
-        </motion.div>
-
-        <motion.div
-          style={isStatic ? undefined : { opacity: scoreOpacity }}
-          className="pointer-events-none absolute right-[max(6vw,32px)] top-[18%] z-4 text-right md:top-1/2"
-        >
-          <p className="mb-1.5 text-xs font-bold tracking-[0.22em] text-ralli-fg/45">GAME POINT</p>
-          <p
-            data-testid="ralli-hero-score"
-            className={cn(
-              'font-extrabold leading-[0.85] tracking-[-0.05em] text-ralli-lime tabular-nums',
-              score === 'GAME' ? 'text-[min(7vw,84px)]' : 'text-[min(11vw,132px)]',
-            )}
-          >
-            {score}
-          </p>
-        </motion.div>
-
-        <motion.div
-          style={isStatic ? undefined : { opacity: copyOpacity, y: copyY }}
-          className="absolute bottom-[10vh] left-[max(6vw,32px)] right-[max(6vw,32px)] z-4 max-w-100 md:bottom-[14vh] md:right-auto"
-        >
-          <h1 className="mb-3 text-[clamp(26px,3.4vw,44px)] font-bold leading-[1.05] tracking-[-0.035em] text-pretty">
-            {ralliMeta.taglineLines.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
-          </h1>
-          <p className="mb-5.5 max-w-85 text-base leading-normal text-ralli-fg/60">
-            {ralliMeta.subtitle}
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <RalliCtaButton appStoreUrl={ralliMeta.appStoreUrl} />
-            <span className="text-[13px] text-ralli-fg/40">{ralliMeta.platforms}</span>
+        {isStatic ? (
+          <div className={WATCH_CLASS}>
+            <HeroWatchShot />
           </div>
-        </motion.div>
+        ) : (
+          <motion.div
+            style={{ scale: watchScale, rotate: watchRotate, y: watchY, opacity: watchOpacity }}
+            className={WATCH_CLASS}
+          >
+            <HeroWatchShot />
+          </motion.div>
+        )}
+
+        {isStatic ? (
+          <div className={SCORE_CLASS}>
+            <HeroScore score={score} />
+          </div>
+        ) : (
+          <motion.div style={{ opacity: scoreOpacity }} className={SCORE_CLASS}>
+            <HeroScore score={score} />
+          </motion.div>
+        )}
+
+        {isStatic ? (
+          <div className={COPY_CLASS}>
+            <HeroCopy />
+          </div>
+        ) : (
+          <motion.div style={{ opacity: copyOpacity, y: copyY }} className={COPY_CLASS}>
+            <HeroCopy />
+          </motion.div>
+        )}
 
         {!isStatic && (
           <motion.div

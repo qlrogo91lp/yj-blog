@@ -64,19 +64,25 @@ export function WatchArea() {
             aria-hidden="true"
             className="absolute aspect-square w-[78%] rounded-full bg-[radial-gradient(circle,rgba(52,199,89,0.16),transparent_66%)]"
           />
-          {ralliWatchSection.steps.map((step, index) => (
-            <motion.div
-              key={step.id}
-              className="absolute"
-              animate={{
-                opacity: isStatic ? (index === 0 ? 1 : 0) : index === activeIndex ? 1 : 0,
-                scale: index === activeIndex ? 1 : 0.94,
-              }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            >
-              <RalliShot image={step.image} className="max-h-[38vh] md:max-h-[58vh]" />
-            </motion.div>
-          ))}
+          {ralliWatchSection.steps.map((step, index) => {
+            // static일 때는 첫 장만 보여준다. scale도 이 판단을 따라야
+            // 정적 모드에서 축소된 채로 남지 않는다.
+            const isShown = isStatic ? index === 0 : index === activeIndex;
+            return (
+              <motion.div
+                key={step.id}
+                className="absolute"
+                animate={{ opacity: isShown ? 1 : 0, scale: isShown ? 1 : 0.94 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <RalliShot
+                  image={step.image}
+                  ariaHidden={!isShown}
+                  className="max-h-[38vh] md:max-h-[58vh]"
+                />
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

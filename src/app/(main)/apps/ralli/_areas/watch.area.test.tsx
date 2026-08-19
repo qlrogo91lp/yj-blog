@@ -1,8 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import { WatchArea } from './watch.area';
+import { ralliWatchSection } from '../_utils/ralli-content';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({
+    src,
+    alt,
+    'aria-hidden': ariaHidden,
+  }: {
+    src: string;
+    alt: string;
+    'aria-hidden'?: boolean;
+  }) => <img src={src} alt={alt} aria-hidden={ariaHidden} />,
 }));
 
 describe('WatchArea', () => {
@@ -28,5 +37,17 @@ describe('WatchArea', () => {
     render(<WatchArea />);
     expect(screen.getByTestId('ralli-step-score')).toHaveAttribute('data-active', 'true');
     expect(screen.getByTestId('ralli-step-live')).toHaveAttribute('data-active', 'false');
+  });
+
+  it('비활성 이미지는 스크린 리더에서 숨긴다', () => {
+    render(<WatchArea />);
+
+    // 이미지 자신에 aria-hidden이 붙어야 한다 — 래퍼 div에 걸면 접근성 트리에서
+    // img 요소 자체는 여전히 노출된다
+    const images = screen.getAllByRole('img', { hidden: true });
+    expect(images).toHaveLength(ralliWatchSection.steps.length);
+    expect(images[0]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(images[1]).toHaveAttribute('aria-hidden', 'true');
+    expect(images[2]).toHaveAttribute('aria-hidden', 'true');
   });
 });
