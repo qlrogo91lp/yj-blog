@@ -145,7 +145,7 @@ useScroll({ target: ref, offset: ['start start', 'end end'] })
 두 번째가 왜 다른 값인지가 포인트다. pin 섹션은 "고정된 동안"만 진행도가 흐르면 되지만, replay 갤러리는 **화면에 보이는 내내** 조금씩 옆으로 흘러야 자연스럽다. 그래서 등장~퇴장 전 구간을 0~1로 잡는다.
 
 ```tsx
-// _areas/replay.area.tsx:16-18
+// _areas/replay.area.tsx:34-36
 const { ref, progress } = useSectionProgress(['start end', 'end start'], false);
 const driftX = useTransform(progress, [0, 1], ['0vw', '-55vw']);
 ```
@@ -348,16 +348,27 @@ isStatic: Boolean(prefersReducedMotion) && mounted
 replay 갤러리는 데스크톱에서 세로 스크롤에 연동해 가로로 흐른다. 그런데 모바일에서 이러면 **손가락으로 가로 스와이프하려는 동작과 충돌**한다. 그래서 여기만 뷰포트로 분기한다.
 
 ```tsx
-// _areas/replay.area.tsx:20, 37-41
+// _areas/replay.area.tsx:38, 53-66
 const useNativeScroll = isMobile || isStatic;
 
 <div className={cn(useNativeScroll && 'snap-x snap-mandatory overflow-x-auto pb-4')}>
-  <motion.div style={useNativeScroll ? undefined : { x: driftX }}>
+  {useNativeScroll ? (
+    <div className={GALLERY_CLASS}>
+      <ReplayGalleryShots />
+    </div>
+  ) : (
+    <motion.div style={{ x: driftX }} className={GALLERY_CLASS}>
+      <ReplayGalleryShots />
+    </motion.div>
+  )}
+</div>
 ```
 
-모바일이면 CSS 네이티브 가로 스크롤 + `scroll-snap`, 데스크톱이면 스크롤 연동 드리프트. **둘을 동시에 켜면 안 되므로** 클래스와 style이 정확히 배타적으로 적용된다.
+모바일이면 CSS 네이티브 가로 스크롤 + `scroll-snap`, 데스크톱이면 스크롤 연동 드리프트. **둘을 동시에 켜면 안 되므로** 바깥 `<div>`의 클래스와 안쪽 갤러리 래퍼는 배타적으로 적용된다.
 
-`useIsMobile`은 초기값이 `false`고 `useEffect`에서 갱신되므로 SSR에서 안전하다 ([useIsMobile.ts:10-20](../_hooks/useIsMobile.ts) — apps 공용).
+바깥 `<div>`는 `className`만 토글하는 평범한 `<div>`라 React의 일반 리컨실리에이션으로 안전하다. 안쪽 갤러리 래퍼는 처음엔 `motion.div style={{ x: driftX }}`였지만, `useNativeScroll`이 `isStatic`을 포함하는 이상 §7.1과 **같은 결함**을 안고 있었다 — `useNativeScroll`이 `false`에서 `true`로 뒤집힐 때 `style`을 `undefined`로 토글하면 framer-motion이 쓴 `transform`이 DOM에 그대로 남는다. 그래서 여기도 §7.1의 해법대로 `isStatic`(을 포함한 `useNativeScroll`) 분기에서 **엘리먼트 타입 자체를 바꾼다** — `motion.div` 대신 평범한 `<div>`를 반환해 React가 노드를 통째로 교체하게 한다. 두 분기가 마크업을 중복하지 않도록 갤러리 내용은 `ReplayGalleryShots` 조각 컴포넌트로 뽑았다.
+
+`useIsMobile`은 초기값이 `false`고 `useEffect`에서 갱신되므로 SSR에서 안전하다 ([useIsMobile.ts:10-20](../_hooks/useIsMobile.ts) — apps 공용). 다만 `isStatic`과 마찬가지로 **첫 렌더는 항상 `false`**이므로, 모바일 사용자도 새로고침 시 스크롤 위치가 남아있는 채로(브라우저의 스크롤 복원, `#replay` 딥링크 등) hydration이 끝나면 잠깐 애니메이션 경로를 거쳐 stale `transform`을 남길 수 있었다 — reduced-motion에 한정된 문제가 아니었다.
 
 ### 함정 4 — `animate()`는 정리(cleanup)해야 한다
 
@@ -421,6 +432,8 @@ return <motion.div style={{ opacity }} className={CLASS}>{children}</motion.div>
 
 이 결함은 2026-08-18에 실제로 발견되어 수정됐다. 당시 히어로의 h1·부제·App Store CTA·스코어가 reduced-motion 사용자에게 보이지 않았다. 회귀 테스트는 [`_areas/hero.area.reduced-motion.test.tsx`](_areas/hero.area.reduced-motion.test.tsx)에 있다 — RTL의 `render()`(`createRoot`)로는 이 시퀀스를 재현할 수 없어 `renderToString` + `hydrateRoot`를 쓴다.
 
+같은 결함이 `replay.area.tsx`의 `useNativeScroll ? undefined : { x: driftX }`에도 있었다 — `isStatic ?` 리터럴만 찾는 정규식 조사(§2)로는 `useNativeScroll = isMobile || isStatic` 같은 별칭을 못 잡아서 최초 조사에서 누락됐다가, 최종 통합 리뷰에서 다시 발견되어 함정 3의 예시와 함께 수정됐다. 회귀 테스트는 [`_areas/replay.area.reduced-motion.test.tsx`](_areas/replay.area.reduced-motion.test.tsx).
+
 
 ---
 
@@ -436,7 +449,7 @@ return <motion.div style={{ opacity }} className={CLASS}>{children}</motion.div>
 | [_areas/hero.area.tsx](_areas/hero.area.tsx) | 패턴 A+B 총집합. 가장 복잡 | 232 |
 | [_areas/watch.area.tsx](_areas/watch.area.tsx) | pin 3-step 크로스페이드 | 84 |
 | [_areas/workout.area.tsx](_areas/workout.area.tsx) | 카운트업 스탯 | 95 |
-| [_areas/replay.area.tsx](_areas/replay.area.tsx) | 가로 드리프트 / 모바일 분기 | 66 |
+| [_areas/replay.area.tsx](_areas/replay.area.tsx) | 가로 드리프트 / 모바일 분기 (§7.1과 동일한 엘리먼트 타입 교체) | 79 |
 | [_areas/rules.area.tsx](_areas/rules.area.tsx) | `Reveal`만 사용 (스크롤 연동 없음) | 50 |
 | [_areas/final-cta.area.tsx](_areas/final-cta.area.tsx) | `Reveal`만 사용 | 39 |
 | [src/styles/ralli.css](../../../../styles/ralli.css) | 마스크 · 마퀴/bob keyframes | 38 |
@@ -451,7 +464,7 @@ return <motion.div style={{ opacity }} className={CLASS}>{children}</motion.div>
 
 1. **`hero.area.tsx:76`의 `h-[280vh]` → `h-[500vh]`** — 연출이 느려지는가? (스크롤 예산 개념)
 2. **`useSectionProgress`의 `damping: 22` → `5`** — 출렁임(overshoot)이 생기는가? ζ가 1 아래로 내려간다
-3. **`replay.area.tsx:16`의 `false` → `true`** — 갤러리에 스프링을 걸면 둔해지는가?
+3. **`replay.area.tsx:34`의 `false` → `true`** — 갤러리에 스프링을 걸면 둔해지는가?
 4. **`ralli-motion.ts`의 `5.2` → `5`** — GAME이 머무는 시간이 다른 스코어와 같아지는가?
 5. **`reveal.action.tsx`의 `once: true` → `false`** — 위아래로 스크롤할 때마다 재발화하는가?
 6. **DevTools에서 reduced-motion 켜기** (Rendering → Emulate CSS prefers-reduced-motion) — 레이아웃이 접히는가?
