@@ -397,6 +397,33 @@ return () => controls.stop();   // ← 이게 없으면 누수
 
 ---
 
+### 7.1 `isStatic` 분기에서 하면 안 되는 것
+
+`motion.*` 요소의 `style`/`animate`를 `undefined`로 토글하는 방식은 **동작하지 않는다.**
+
+```tsx
+// ❌ 결함 — reduced-motion 사용자에게 콘텐츠가 안 보인다
+<motion.div style={isStatic ? undefined : { opacity: copyOpacity }}>
+```
+
+`useMounted`가 hydration mismatch를 피하려고 첫 렌더에 `false`를 반환하므로, reduced-motion 사용자도 **첫 렌더는 반드시 motion 경로를 탄다.** 그때 framer-motion이 인라인 스타일을 DOM에 직접 쓴다(React의 style diffing 밖에서 일어난다). 이후 `isStatic`이 `true`가 되어 `style`이 `undefined`가 되어도, React는 자기가 소유한 적 없는 그 스타일을 지우지 않는다.
+
+안전한 방법은 두 가지다.
+
+```tsx
+// ✅ 엘리먼트 타입을 바꾼다 — React가 노드를 교체해 stale 스타일이 따라오지 않는다
+if (isStatic) return <div className={CLASS}>{children}</div>;
+return <motion.div style={{ opacity }} className={CLASS}>{children}</motion.div>;
+
+// ✅ 구체적인 값을 넘긴다 — framer-motion이 소유권을 유지하며 값을 갱신한다
+<motion.div animate={{ opacity: isShown ? 1 : 0 }} />
+```
+
+이 결함은 2026-08-18에 실제로 발견되어 수정됐다. 당시 히어로의 h1·부제·App Store CTA·스코어가 reduced-motion 사용자에게 보이지 않았다. 회귀 테스트는 [`_areas/hero.area.reduced-motion.test.tsx`](_areas/hero.area.reduced-motion.test.tsx)에 있다 — RTL의 `render()`(`createRoot`)로는 이 시퀀스를 재현할 수 없어 `renderToString` + `hydrateRoot`를 쓴다.
+
+
+---
+
 ## 8. 파일 맵
 
 | 파일 | 역할 | 라인 |
@@ -406,7 +433,7 @@ return () => controls.stop();   // ← 이게 없으면 누수
 | [../_hooks/useSectionProgress.ts](../_hooks/useSectionProgress.ts) | `useScroll` + `useSpring` + reduced-motion 판정 (apps 공용) | 42 |
 | [../_hooks/useIsMobile.ts](../_hooks/useIsMobile.ts) | `matchMedia` 기반 뷰포트 분기 (apps 공용) | 23 |
 | [../_actions/reveal.action.tsx](../_actions/reveal.action.tsx) | `whileInView` 등장 래퍼 (apps 공용) | 35 |
-| [_areas/hero.area.tsx](_areas/hero.area.tsx) | 패턴 A+B 총집합. 가장 복잡 | 194 |
+| [_areas/hero.area.tsx](_areas/hero.area.tsx) | 패턴 A+B 총집합. 가장 복잡 | 232 |
 | [_areas/watch.area.tsx](_areas/watch.area.tsx) | pin 3-step 크로스페이드 | 84 |
 | [_areas/workout.area.tsx](_areas/workout.area.tsx) | 카운트업 스탯 | 95 |
 | [_areas/replay.area.tsx](_areas/replay.area.tsx) | 가로 드리프트 / 모바일 분기 | 66 |
@@ -438,8 +465,6 @@ return () => controls.stop();   // ← 이게 없으면 누수
 
 - **`useSectionProgress`는 `smooth=false`여도 스프링을 만든다** ([:31](../_hooks/useSectionProgress.ts)) — replay에서 아무도 구독하지 않는 스프링이 스크롤마다 프레임을 돈다. 조건부 생성은 훅 규칙 때문에 간단치 않아 남겨둔 상태.
 - **카운트업이 프레임마다 리렌더한다** — framer-motion은 `<motion.span>{motionValue}</motion.span>` 형태로 MotionValue를 자식으로 렌더하면 리렌더 없이 textContent를 갱신할 수 있다. 패턴 A로 옮길 수 있는 여지가 있다.
-- **watch 섹션의 비활성 이미지 3장이 `opacity: 0`으로만 숨겨져 있다** ([watch.area.tsx:67-79](_areas/watch.area.tsx)) — 스크린 리더에는 3장이 모두 노출된다. `aria-hidden={index !== activeIndex}`가 필요하다.
-- **`isStatic`일 때 이미지의 `scale` wobble이 남는다** — 같은 위치에서 `opacity`만 `isStatic`을 반영하고 `scale`은 `activeIndex`를 계속 따라간다.
 - **`LETTER_DIRECTIONS`와 `ralliHeroLetters`의 길이가 타입으로 묶여있지 않다** ([hero.area.tsx:13](_areas/hero.area.tsx)) — 둘 다 5개라 지금은 안전하지만, 한쪽만 바뀌면 `direction`이 `undefined` → `NaN`이 되어 조용히 깨진다.
 
 ---
