@@ -63,4 +63,53 @@ test.describe('reduced-motion', () => {
     await expect(page.getByRole('heading', { name: 'Play by your own rules.' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Go win the next one.' })).toBeVisible();
   });
+
+  test('히어로 태그라인·CTA·스코어가 실제로 보인다', async ({ page }) => {
+    // test.use()의 reducedMotion 컨텍스트 옵션이 첫 goto()에는 적용되지 않는
+    // 환경 이슈가 확인되어, 최초 네비게이션 전에 명시적으로 emulateMedia를 호출한다.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/apps/ralli');
+
+    // toBeVisible()은 opacity:0을 감지하지 못한다.
+    // stale 스타일은 래퍼에 붙으므로 조상의 opacity까지 곱해 실효값을 구한다.
+    const effectiveOpacity = (selector: string) =>
+      page
+        .locator(selector)
+        .first()
+        .evaluate((el) => {
+          let node: HTMLElement | null = el as HTMLElement;
+          let acc = 1;
+          while (node) {
+            acc *= Number(getComputedStyle(node).opacity);
+            node = node.parentElement;
+          }
+          return acc;
+        });
+
+    // isStatic은 hydration 직후 useEffect로 정착하므로 순간값이 아닌 polling으로 확인한다.
+    await expect.poll(() => effectiveOpacity('h1')).toBeGreaterThan(0.9);
+    await expect.poll(() => effectiveOpacity(`a[href="${APP_STORE_URL}"]`)).toBeGreaterThan(0.9);
+    await expect
+      .poll(() => effectiveOpacity('[data-testid="ralli-hero-score"]'))
+      .toBeGreaterThan(0.9);
+  });
+
+  test('히어로 워치 이미지가 축소되지 않는다', async ({ page }) => {
+    // 위 테스트와 동일한 이유로 최초 네비게이션 전에 명시적으로 emulateMedia를 호출한다.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/apps/ralli');
+
+    const wrapperTransform = () =>
+      page
+        .locator('img[alt*="Apple Watch"]')
+        .first()
+        .evaluate((el) => {
+          const wrapper = el.closest('div');
+          return wrapper ? getComputedStyle(wrapper).transform : '';
+        });
+
+    // 결함이 있으면 scale(0.62) rotate(-4deg)가 남는다.
+    // isStatic이 hydration 직후 정착하므로 polling으로 확인한다.
+    await expect.poll(wrapperTransform).toMatch(/^(none)?$/);
+  });
 });
