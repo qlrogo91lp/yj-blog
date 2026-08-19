@@ -6,6 +6,7 @@ import { getAllTags } from '@/db/queries/tags';
 import { BottomBar } from './_components/bottom-bar';
 import { EditorProvider } from './_providers/editor.provider';
 import { EditorViewHandler } from './_handlers/editor-view.handler';
+import { NewPostResetHandler } from './_handlers/new-post-reset.handler';
 import { EditorToolbarAction } from './_actions/editor-toolbar.action';
 import { CategorySelectorAction } from './_actions/category-selector.action';
 import { SeriesSelectorAction } from './_actions/series-selector.action';
@@ -27,6 +28,7 @@ export default async function NewPostPage() {
 
   return (
     <EditorProvider>
+      <NewPostResetHandler />
       <div className="flex flex-1 flex-col">
         <EditorToolbarAction />
         <div className="flex-1 mx-auto w-full max-w-[calc(var(--article-width)+3rem)] px-6 py-6">
