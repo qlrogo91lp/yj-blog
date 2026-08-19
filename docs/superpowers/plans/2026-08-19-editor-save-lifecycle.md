@@ -72,7 +72,7 @@
 
 ### Task 0: 브랜치 생성
 
-- [ ] **Step 1: develop 최신화 후 브랜치 생성**
+- [x] **Step 1: develop 최신화 후 브랜치 생성**
 
 ```bash
 git checkout develop
@@ -80,7 +80,7 @@ git pull origin develop
 git checkout -b fix/editor-save-lifecycle
 ```
 
-- [ ] **Step 2: 기존 테스트가 통과하는지 확인**
+- [x] **Step 2: 기존 테스트가 통과하는지 확인**
 
 Run: `npx vitest run --dir src src/app/admin/posts`
 Expected: 모두 PASS (2026-08-19 기준 12 files / 59 tests)
@@ -102,7 +102,7 @@ Expected: 모두 PASS (2026-08-19 기준 12 files / 59 tests)
   - dirty를 올리지 **않는** setter: `setPostId`, `setStatus`, `setPublishedAt`, `setMode`, `setSaveStatus`, `setLastSavedAt`, `setIsGeneratingExcerpt`
   - `reset()`·`initializePost()`는 두 카운터를 모두 0으로 초기화
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_store.test.ts`:
 
@@ -186,12 +186,12 @@ describe('useNewPostStore dirty 추적', () => {
 });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_store.test.ts`
 Expected: FAIL — `selectIsDirty`가 export되지 않음 / `changeCount`가 undefined
 
-- [ ] **Step 3: 스토어 구현**
+- [x] **Step 3: 스토어 구현**
 
 `src/app/admin/posts/new/_store.ts`에서 다음을 반영한다.
 
@@ -230,17 +230,17 @@ export const selectIsDirty = (s: { changeCount: number; savedChangeCount: number
 
 `setPostId`·`setStatus`·`setPublishedAt`·`setMode`·`setSaveStatus`·`setLastSavedAt`·`setIsGeneratingExcerpt`는 그대로 둔다.
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_store.test.ts`
 Expected: PASS (dirty 추적 describe 전부)
 
-- [ ] **Step 5: 기존 테스트 회귀 확인**
+- [x] **Step 5: 기존 테스트 회귀 확인**
 
 Run: `npx vitest run --dir src src/app/admin/posts`
 Expected: 전부 PASS
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_store.ts src/app/admin/posts/new/_store.test.ts
@@ -263,7 +263,7 @@ git commit -m "✨ feat: 에디터 스토어에 changeCount 기반 dirty 추적 
   - `SavePostResult` 성공형: `{ success: true; postId: number; status: 'draft' | 'published'; publishedAt: Date | null }`
   - `submitPost` 성공 시 스토어에 `status`, `publishedAt`, `savedChangeCount`(호출 시점의 `changeCount`) 반영
 
-- [ ] **Step 1: 실패하는 테스트 작성** — `_store.test.ts`에 describe 추가
+- [x] **Step 1: 실패하는 테스트 작성** — `_store.test.ts`에 describe 추가
 
 ```ts
 import { savePost } from './_services/save-post';
@@ -338,12 +338,12 @@ describe('useNewPostStore.submitPost', () => {
 });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_store.test.ts`
 Expected: FAIL — `status`가 `'draft'`로 남음 / `selectIsDirty`가 true / `publishedAt` 키 존재
 
-- [ ] **Step 3: `save-post.ts` 수정**
+- [x] **Step 3: `save-post.ts` 수정**
 
 타입 변경:
 
@@ -424,7 +424,7 @@ INSERT 분기의 마지막 return을 아래로 교체:
 
 (INSERT 분기의 `const publishedAt = status === 'published' ? new Date() : null;`은 그대로 사용한다.)
 
-- [ ] **Step 4: `_store.ts`의 `submitPost` 수정**
+- [x] **Step 4: `_store.ts`의 `submitPost` 수정**
 
 ```ts
   submitPost: async (status) => {
@@ -470,17 +470,17 @@ INSERT 분기의 마지막 return을 아래로 교체:
   },
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_store.test.ts`
 Expected: PASS
 
-- [ ] **Step 6: 타입 확인**
+- [x] **Step 6: 타입 확인**
 
 Run: `npx tsc --noEmit`
 Expected: 오류 없음 (특히 `save-post.ts`의 `Partial<typeof posts.$inferInsert>`)
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_services/save-post.ts src/app/admin/posts/new/_store.ts src/app/admin/posts/new/_store.test.ts
@@ -500,7 +500,7 @@ git commit -m "🐛 fix: savePost가 publishedAt을 서버에서 결정하고 st
 
 배경: TipTap 3의 `editor.commands.setContent(content)`는 기본값 `emitUpdate: true`라 `onUpdate`가 실행되고, `onUpdate`는 `setContent(editor.getHTML())`을 호출한다. 수정 페이지에서 `initializePost` → 동기화 effect → `onUpdate` → 스토어 `setContent` → `changeCount` +1 로 이어져 **열자마자 dirty**가 된다. 동기화 시에는 update 이벤트를 내지 않게 하고, 이미지 src 추적 세트만 직접 갱신한다.
 
-- [ ] **Step 1: 동기화 effect 수정**
+- [x] **Step 1: 동기화 effect 수정**
 
 기존:
 
@@ -534,17 +534,17 @@ git commit -m "🐛 fix: savePost가 publishedAt을 서버에서 결정하고 st
   }, [content, editor]);
 ```
 
-- [ ] **Step 2: 타입·린트 확인**
+- [x] **Step 2: 타입·린트 확인**
 
 Run: `npx tsc --noEmit && npx eslint src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx`
 Expected: 오류 없음
 
-- [ ] **Step 3: 기존 테스트 회귀 확인**
+- [x] **Step 3: 기존 테스트 회귀 확인**
 
 Run: `npx vitest run --dir src src/app/admin/posts`
 Expected: 전부 PASS
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx
@@ -569,7 +569,7 @@ git commit -m "🐛 fix: 에디터 외부 동기화 시 update 이벤트를 내�
 3. 조건을 만족하면 마지막 변경(`changeCount`)으로부터 30초 뒤 `submitPost(현재 status)`.
 4. dirty인 동안 `beforeunload`에서 `preventDefault()`로 브라우저 이탈 경고를 띄운다. (Next.js 클라이언트 라우팅은 잡지 못한다 — 알려진 한계, PR 4에서 필요 시 별도 처리.)
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_providers/auto-save.provider.test.tsx`:
 
@@ -724,12 +724,12 @@ describe('AutoSaveProvider', () => {
 });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_providers/auto-save.provider.test.tsx`
 Expected: FAIL — "dirty가 아니면 저장하지 않는다", "제목만 있고…", "카테고리만 바꿔도…", beforeunload 테스트가 실패
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `src/app/admin/posts/new/_providers/auto-save.provider.tsx` 전체 교체:
 
@@ -777,12 +777,12 @@ export function AutoSaveProvider() {
 }
 ```
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_providers/auto-save.provider.test.tsx`
 Expected: PASS (7개)
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_providers/auto-save.provider.tsx src/app/admin/posts/new/_providers/auto-save.provider.test.tsx
@@ -802,7 +802,7 @@ git commit -m "🐛 fix: 자동저장을 dirty·필수값 충족 시에만 실�
 - Consumes: Task 2의 `submitPost`
 - Produces: 없음
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_actions/draft.action.test.tsx`:
 
@@ -864,12 +864,12 @@ describe('DraftAction', () => {
 });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_actions/draft.action.test.tsx`
 Expected: FAIL — published 케이스에서 라벨이 "임시저장"이고 status가 `'draft'`로 전달됨
 
-- [ ] **Step 3: `draft.action.tsx` 구현**
+- [x] **Step 3: `draft.action.tsx` 구현**
 
 ```tsx
 'use client';
@@ -903,7 +903,7 @@ export function DraftAction() {
 }
 ```
 
-- [ ] **Step 4: `save-status.action.tsx` 문구 수정**
+- [x] **Step 4: `save-status.action.tsx` 문구 수정**
 
 `{saveStatus === 'saved' && lastSavedAt && (<>자동 저장 완료 {format(...)}</>)}` 를 아래로 교체:
 
@@ -913,12 +913,12 @@ export function DraftAction() {
       )}
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_actions/draft.action.test.tsx`
 Expected: PASS (3개)
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_actions/draft.action.tsx src/app/admin/posts/new/_actions/draft.action.test.tsx src/app/admin/posts/new/_actions/save-status.action.tsx
@@ -940,7 +940,7 @@ git commit -m "🐛 fix: 발행 글의 임시저장 버튼이 발행을 취소�
 
 배경: 수정 페이지는 `PostInitHandler`가 언마운트 시 `reset()`을 호출하지만 신규 페이지에는 대응 로직이 없다. 발행 성공 → `/posts/[slug]` 이동 → 다시 "글쓰기"로 들어오면 이전 글의 `postId`·내용이 남아 있다. 신규 페이지도 언마운트 시 reset한다. (마운트 시 reset은 하지 않는다 — `WysiwygEditorAction`의 `useEditor` 초기 content가 렌더 시점에 결정되므로 마운트 effect에서 reset하면 스토어와 에디터가 어긋난다.)
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_handlers/new-post-reset.handler.test.tsx`:
 
@@ -979,12 +979,12 @@ describe('NewPostResetHandler', () => {
 });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_handlers/new-post-reset.handler.test.tsx`
 Expected: FAIL — 모듈을 찾을 수 없음
 
-- [ ] **Step 3: 핸들러 구현**
+- [x] **Step 3: 핸들러 구현**
 
 `src/app/admin/posts/new/_handlers/new-post-reset.handler.tsx`:
 
@@ -1011,7 +1011,7 @@ export function NewPostResetHandler() {
 }
 ```
 
-- [ ] **Step 4: `page.tsx`에 배치**
+- [x] **Step 4: `page.tsx`에 배치**
 
 `src/app/admin/posts/new/page.tsx` import 추가:
 
@@ -1027,12 +1027,12 @@ JSX에서 `<EditorProvider>` 바로 아래 첫 자식으로 추가:
       <div className="flex flex-1 flex-col">
 ```
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_handlers/new-post-reset.handler.test.tsx`
 Expected: PASS (2개)
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_handlers/new-post-reset.handler.tsx src/app/admin/posts/new/_handlers/new-post-reset.handler.test.tsx src/app/admin/posts/new/page.tsx
