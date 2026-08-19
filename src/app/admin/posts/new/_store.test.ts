@@ -23,6 +23,7 @@ describe('useNewPostStore dirty 추적', () => {
 
   it.each([
     ['setContent', (s: ReturnType<typeof useNewPostStore.getState>) => s.setContent('<p>a</p>')],
+    ['setContentFormat', (s: ReturnType<typeof useNewPostStore.getState>) => s.setContentFormat('markdown')],
     ['setCategoryId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setCategoryId(1)],
     ['setSeriesId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSeriesId(1)],
     ['setTagIds', (s: ReturnType<typeof useNewPostStore.getState>) => s.setTagIds([1])],
@@ -39,6 +40,7 @@ describe('useNewPostStore dirty 추적', () => {
   it.each([
     ['setPostId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setPostId(1)],
     ['setStatus', (s: ReturnType<typeof useNewPostStore.getState>) => s.setStatus('published')],
+    ['setPublishedAt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setPublishedAt(new Date())],
     ['setMode', (s: ReturnType<typeof useNewPostStore.getState>) => s.setMode('markdown')],
     ['setSaveStatus', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSaveStatus('saving')],
     ['setLastSavedAt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setLastSavedAt(new Date())],
