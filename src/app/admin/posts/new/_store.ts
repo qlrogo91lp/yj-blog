@@ -22,6 +22,8 @@ type State = {
   mode: EditorMode;
   saveStatus: SaveStatus;
   lastSavedAt: Date | null;
+  changeCount: number;
+  savedChangeCount: number;
 };
 
 type Action = {
@@ -63,6 +65,9 @@ type Action = {
   >;
 };
 
+export const selectIsDirty = (s: { changeCount: number; savedChangeCount: number }) =>
+  s.changeCount !== s.savedChangeCount;
+
 export const useNewPostStore = create<State & Action>((set, get) => ({
   postId: null,
   title: '',
@@ -82,20 +87,24 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
   mode: 'wysiwyg',
   saveStatus: 'idle',
   lastSavedAt: null,
+  changeCount: 0,
+  savedChangeCount: 0,
 
   setPostId: (postId) => set({ postId }),
-  setTitle: (title) => set({ title }),
-  setContent: (content) => set({ content }),
-  setContentFormat: (contentFormat) => set({ contentFormat }),
-  setCategoryId: (categoryId) => set({ categoryId }),
-  setSeriesId: (seriesId) => set({ seriesId }),
-  setTagIds: (tagIds) => set({ tagIds }),
-  setSlug: (slug) => set({ slug }),
-  setExcerpt: (excerpt) => set({ excerpt }),
-  setMetaTitle: (metaTitle) => set({ metaTitle }),
+  setTitle: (title) => set((s) => ({ title, changeCount: s.changeCount + 1 })),
+  setContent: (content) => set((s) => ({ content, changeCount: s.changeCount + 1 })),
+  setContentFormat: (contentFormat) =>
+    set((s) => ({ contentFormat, changeCount: s.changeCount + 1 })),
+  setCategoryId: (categoryId) => set((s) => ({ categoryId, changeCount: s.changeCount + 1 })),
+  setSeriesId: (seriesId) => set((s) => ({ seriesId, changeCount: s.changeCount + 1 })),
+  setTagIds: (tagIds) => set((s) => ({ tagIds, changeCount: s.changeCount + 1 })),
+  setSlug: (slug) => set((s) => ({ slug, changeCount: s.changeCount + 1 })),
+  setExcerpt: (excerpt) => set((s) => ({ excerpt, changeCount: s.changeCount + 1 })),
+  setMetaTitle: (metaTitle) => set((s) => ({ metaTitle, changeCount: s.changeCount + 1 })),
   setIsGeneratingExcerpt: (isGeneratingExcerpt) =>
     set({ isGeneratingExcerpt }),
-  setThumbnailUrl: (thumbnailUrl) => set({ thumbnailUrl }),
+  setThumbnailUrl: (thumbnailUrl) =>
+    set((s) => ({ thumbnailUrl, changeCount: s.changeCount + 1 })),
   setStatus: (status) => set({ status }),
   setPublishedAt: (publishedAt) => set({ publishedAt }),
   setMode: (mode) => set({ mode }),
@@ -120,6 +129,8 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
       mode: 'wysiwyg',
       saveStatus: 'idle',
       lastSavedAt: null,
+      changeCount: 0,
+      savedChangeCount: 0,
     }),
   initializePost: (data) =>
     set({
@@ -128,6 +139,8 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
       isGeneratingExcerpt: false,
       saveStatus: 'idle',
       lastSavedAt: null,
+      changeCount: 0,
+      savedChangeCount: 0,
     }),
   submitPost: async (status) => {
     // 동적 import: save-post.ts는 'use server' 파일로 db/index.ts(neon 호출)를 정적 참조하면
