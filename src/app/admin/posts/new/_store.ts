@@ -143,6 +143,12 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
       savedChangeCount: 0,
     }),
   submitPost: async (status) => {
+    // 이미 저장이 진행 중이면 새 요청을 받지 않는다 — 자동저장과 수동 저장/발행이
+    // 동시에 서버로 나가 발행 글이 임시저장으로 되돌아가는 레이스를 막는 단일 관문.
+    if (get().saveStatus === 'saving') {
+      return { success: false, error: '이미 저장 중입니다' };
+    }
+
     // 동적 import: save-post.ts는 'use server' 파일로 db/index.ts(neon 호출)를 정적 참조하면
     // DATABASE_URL 없는 Vitest 환경에서 스토어 import만으로도 크래시난다.
     const { savePost } = await import('./_services/save-post');

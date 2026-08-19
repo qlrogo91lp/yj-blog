@@ -150,4 +150,30 @@ describe('useNewPostStore.submitPost', () => {
     expect(useNewPostStore.getState().saveStatus).toBe('error');
     expect(selectIsDirty(useNewPostStore.getState())).toBe(true);
   });
+
+  it('저장이 진행 중일 때 새로운 submitPost 호출은 서버로 나가지 않고 즉시 실패를 반환한다 (자동저장 vs 수동 발행 레이스 방지)', async () => {
+    let resolveSave: (v: Awaited<ReturnType<typeof savePost>>) => void = () => {};
+    vi.mocked(savePost).mockImplementation(
+      () => new Promise((resolve) => { resolveSave = resolve; }),
+    );
+    const s = useNewPostStore.getState();
+    s.setTitle('제목');
+    s.setContent('<p>본문</p>');
+
+    // 자동저장이 먼저 시작돼 아직 서버 응답을 기다리는 중이라고 가정한다.
+    const firstCall = useNewPostStore.getState().submitPost('draft');
+    await vi.waitFor(() => expect(savePost).toHaveBeenCalledTimes(1));
+    expect(useNewPostStore.getState().saveStatus).toBe('saving');
+
+    // 그 사이 사용자가 "완료(발행)" 버튼을 누른다.
+    const secondResult = await useNewPostStore.getState().submitPost('published');
+
+    expect(secondResult).toEqual({ success: false, error: '이미 저장 중입니다' });
+    // savePost는 첫 번째 호출 한 번만 나갔다 — 동시 INSERT/UPDATE 레이스가 없다.
+    expect(savePost).toHaveBeenCalledTimes(1);
+
+    resolveSave({ success: true, postId: 1, status: 'draft', publishedAt: null });
+    await firstCall;
+    expect(useNewPostStore.getState().saveStatus).toBe('saved');
+  });
 });

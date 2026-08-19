@@ -1,13 +1,12 @@
 import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { savePost } from '../_services/save-post';
+import { useNewPostStore } from '../_store';
+import { AutoSaveProvider } from './auto-save.provider';
 
 vi.mock('../_services/save-post', () => ({
   savePost: vi.fn(),
 }));
-
-import { savePost } from '../_services/save-post';
-import { useNewPostStore } from '../_store';
-import { AutoSaveProvider } from './auto-save.provider';
 
 const intervalMs = 30000;
 
@@ -144,5 +143,49 @@ describe('AutoSaveProvider', () => {
     const event = new Event('beforeunload', { cancelable: true });
     window.dispatchEvent(event);
     expect(event.defaultPrevented).toBe(false);
+  });
+
+  it('수동 저장이 진행 중이면 자동저장 타이머가 겹쳐 호출되지 않는다', async () => {
+    let resolveSave: (
+      v: Awaited<ReturnType<typeof savePost>>
+    ) => void = () => {};
+    vi.mocked(savePost).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveSave = resolve;
+        })
+    );
+    render(<AutoSaveProvider />);
+    act(() => {
+      useNewPostStore.getState().setTitle('제목');
+      useNewPostStore.getState().setContent('<p>본문</p>');
+    });
+
+    // 사용자가 발행 버튼 등을 눌러 수동 저장이 진행 중인 상태를 만든다.
+    // submitPost는 'use server' 파일을 동적 import한 뒤에야 savePost를 호출하므로
+    // (fake timer 환경에서 vi.waitFor 대신) 0ms advance로 대기 중인 microtask를 흘려보낸다.
+    let manualSave: Promise<{ success: boolean }>;
+    act(() => {
+      manualSave = useNewPostStore.getState().submitPost('published');
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    // 자동저장 타이머가 30초를 넘겨도 저장이 진행 중이면 추가로 호출하지 않는다.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(intervalMs);
+    });
+    expect(savePost).toHaveBeenCalledTimes(1);
+
+    resolveSave({
+      success: true,
+      postId: 1,
+      status: 'published',
+      publishedAt: new Date(),
+    });
+    await act(async () => {
+      await manualSave;
+    });
   });
 });

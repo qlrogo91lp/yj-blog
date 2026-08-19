@@ -37,7 +37,7 @@ export const postFormSchema = z.object({
   content: z.string().min(1, '내용을 입력해주세요'),
   contentFormat: z.enum(['markdown', 'html']),
   excerpt: z.string().max(500, '요약은 500자 이하여야 합니다').optional(),
-  thumbnailUrl: z.string().optional(),
+  thumbnailUrl: z.string().nullable().optional(),
   status: z.enum(['draft', 'published']),
   categoryId: z.number().int().positive().nullable(),
   seriesId: z.number().int().positive().nullable(),
