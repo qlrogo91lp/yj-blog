@@ -1,5 +1,13 @@
 # Ralli 랜딩 reduced-motion 접근성 결함 수정 Implementation Plan
 
+> **완료: 2026-08-18.** Task 0~4 전부 subagent-driven-development로 실행 완료, 최종 전체 브랜치
+> 리뷰(Critical 0건 · Important 1건 → fix wave 1회로 해소 · 재검토 클린)까지 마쳤다.
+> 계획에 없던 발견: 최종 리뷰에서 `replay.area.tsx`가 `useNativeScroll = isMobile || isStatic`
+> 별칭 뒤에 같은 결함 패턴을 숨기고 있었음을 찾았다 — 스펙 작성 시점의 정규식 조사가 리터럴
+> `isStatic` 토큰만 찾아 놓친 것. 다른 4곳과 동일한 엘리먼트 타입 교체로 함께 고치고, 회귀 테스트와
+> 함께 README §6·§7.1 사이의 자기모순도 해소했다. 상세 기록은 최종 커밋 히스토리 참고
+> (`17a0345..e72da79`, `develop` 기준).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** `prefers-reduced-motion`을 켠 사용자에게 `/apps/ralli` 히어로의 h1·부제·App Store CTA·스코어가 보이지 않는 결함을 고치고, 재발을 막는 회귀 테스트를 남긴다.
@@ -27,18 +35,18 @@
 
 **Files:** 없음
 
-- [ ] **Step 1: develop 최신화 후 브랜치 생성**
+- [x] **Step 1: develop 최신화 후 브랜치 생성**
 
 ```bash
 git checkout develop && git pull && git checkout -b fix/ralli-hero-reduced-motion
 ```
 
-- [ ] **Step 2: 기준선 테스트가 전부 통과하는지 확인**
+- [x] **Step 2: 기준선 테스트가 전부 통과하는지 확인**
 
 Run: `npm run test:run`
 Expected: PASS. 실패가 있으면 이 작업과 무관한 기존 문제이므로 먼저 보고할 것.
 
-- [ ] **Step 3: 결함을 직접 눈으로 확인한다 (수정 전 상태 기록)**
+- [x] **Step 3: 결함을 직접 눈으로 확인한다 (수정 전 상태 기록)**
 
 임시 파일 `src/app/(main)/apps/ralli/_areas/__probe.test.tsx`를 만든다:
 
@@ -107,7 +115,7 @@ style="opacity:0"                                                     ← 스코
 style="opacity:0;transform:translateY(40px)"                          ← h1+부제+CTA (콘텐츠 손실)
 ```
 
-- [ ] **Step 4: 임시 파일 삭제**
+- [x] **Step 4: 임시 파일 삭제**
 
 ```bash
 rm "src/app/(main)/apps/ralli/_areas/__probe.test.tsx"
@@ -127,7 +135,7 @@ rm "src/app/(main)/apps/ralli/_areas/__probe.test.tsx"
 - Consumes: `useSectionProgress(offset)` → `{ ref, progress, isStatic }` (기존), `scoreAt(progress)` → `RalliScore` (기존)
 - Produces: 없음 (외부 인터페이스 변화 없음 — `HeroArea`의 props와 export는 그대로다)
 
-- [ ] **Step 1: 회귀 테스트를 먼저 작성한다 (실패 예정)**
+- [x] **Step 1: 회귀 테스트를 먼저 작성한다 (실패 예정)**
 
 `src/app/(main)/apps/ralli/_areas/hero.area.reduced-motion.test.tsx`:
 
@@ -244,7 +252,7 @@ describe('HeroArea — reduced-motion hydration 회귀', () => {
 });
 ```
 
-- [ ] **Step 2: 실패를 확인한다 — 이게 결함의 증거다**
+- [x] **Step 2: 실패를 확인한다 — 이게 결함의 증거다**
 
 Run: `npx vitest run "src/app/(main)/apps/ralli/_areas/hero.area.reduced-motion.test.tsx"`
 
@@ -258,7 +266,7 @@ expected 'scale(0.62) rotate(-4deg)' to be ''  ← 워치 래퍼
 
 네 번째 테스트(DOM 존재 확인)는 통과한다 — 요소는 있고 `opacity:0`으로 안 보이는 것뿐이기 때문이다. **이 대비가 결함의 성격을 정확히 보여준다.**
 
-- [ ] **Step 3: 공유 마크업을 조각 컴포넌트로 추출한다**
+- [x] **Step 3: 공유 마크업을 조각 컴포넌트로 추출한다**
 
 `hero.area.tsx`의 `HeroLetter` 정의 **바로 아래**에 추가한다. 두 분기가 같은 내용을 중복하지 않게 하는 것이 목적이다:
 
@@ -321,7 +329,7 @@ function HeroCopy() {
 }
 ```
 
-- [ ] **Step 4: glow를 엘리먼트 타입 분기로 바꾼다**
+- [x] **Step 4: glow를 엘리먼트 타입 분기로 바꾼다**
 
 기존:
 
@@ -343,7 +351,7 @@ function HeroCopy() {
         )}
 ```
 
-- [ ] **Step 5: 워치 이미지를 엘리먼트 타입 분기로 바꾼다**
+- [x] **Step 5: 워치 이미지를 엘리먼트 타입 분기로 바꾼다**
 
 기존 (`RalliShot`을 감싼 `motion.div` 블록 전체):
 
@@ -382,7 +390,7 @@ function HeroCopy() {
         )}
 ```
 
-- [ ] **Step 6: 스코어 블록을 엘리먼트 타입 분기로 바꾼다**
+- [x] **Step 6: 스코어 블록을 엘리먼트 타입 분기로 바꾼다**
 
 기존 `style={isStatic ? undefined : { opacity: scoreOpacity }}`를 가진 `motion.div` 블록 전체를 교체:
 
@@ -398,7 +406,7 @@ function HeroCopy() {
         )}
 ```
 
-- [ ] **Step 7: 태그라인·CTA 블록을 엘리먼트 타입 분기로 바꾼다**
+- [x] **Step 7: 태그라인·CTA 블록을 엘리먼트 타입 분기로 바꾼다**
 
 기존 `style={isStatic ? undefined : { opacity: copyOpacity, y: copyY }}`를 가진 `motion.div` 블록 전체를 교체:
 
@@ -414,12 +422,12 @@ function HeroCopy() {
         )}
 ```
 
-- [ ] **Step 8: 회귀 테스트가 통과하는지 확인한다**
+- [x] **Step 8: 회귀 테스트가 통과하는지 확인한다**
 
 Run: `npx vitest run "src/app/(main)/apps/ralli/_areas/hero.area.reduced-motion.test.tsx"`
 Expected: PASS (4 tests)
 
-- [ ] **Step 9: 테스트가 진짜로 결함을 잡는지 증명한다 (RED/GREEN)**
+- [x] **Step 9: 테스트가 진짜로 결함을 잡는지 증명한다 (RED/GREEN)**
 
 "테스트가 존재하고 통과한다"는 "테스트가 의미 있다"를 보장하지 않는다. 직접 확인한다.
 
@@ -441,12 +449,12 @@ Expected: **FAIL** — `expected 'opacity:0' to be ''`
 
 이 RED/GREEN 증거를 보고서에 남긴다.
 
-- [ ] **Step 10: 기존 hero 테스트가 깨지지 않았는지 확인한다**
+- [x] **Step 10: 기존 hero 테스트가 깨지지 않았는지 확인한다**
 
 Run: `npx vitest run "src/app/(main)/apps/ralli/_areas/hero.area.test.tsx"`
 Expected: PASS (4 tests) — 애니메이션 경로의 DOM 구조는 바뀌지 않았으므로 그대로 통과해야 한다.
 
-- [ ] **Step 11: 전체 검증**
+- [x] **Step 11: 전체 검증**
 
 Run: `npm run test:run`
 Expected: PASS
@@ -457,7 +465,7 @@ Expected: 통과 (`docs/design/ralli/support.js`의 기존 에러 2건은 이 �
 Run: `npm run build`
 Expected: 성공
 
-- [ ] **Step 12: 커밋**
+- [x] **Step 12: 커밋**
 
 ```bash
 git add "src/app/(main)/apps/ralli/_areas/hero.area.tsx" "src/app/(main)/apps/ralli/_areas/hero.area.reduced-motion.test.tsx"
@@ -487,7 +495,7 @@ README의 "남아있는 개선 여지"에 기록되어 있던 항목이다. Task
 - Consumes: `RalliShot({ image, className?, sizes?, priority? })` (기존)
 - Produces: `RalliShot({ image, className?, sizes?, priority?, ariaHidden? })` — `ariaHidden`은 optional이라 기존 호출부(`replay`·`rules`·`workout`·`hero` area) 전부 무영향
 
-- [ ] **Step 1: 테스트를 먼저 추가한다 (실패 예정)**
+- [x] **Step 1: 테스트를 먼저 추가한다 (실패 예정)**
 
 `src/app/(main)/apps/ralli/_areas/watch.area.test.tsx`의 마지막 `it` 블록 뒤, 닫는 `});` 앞에 추가한다.
 
@@ -529,12 +537,12 @@ vi.mock('next/image', () => ({
 import { ralliWatchSection } from '../_utils/ralli-content';
 ```
 
-- [ ] **Step 2: 실패를 확인한다**
+- [x] **Step 2: 실패를 확인한다**
 
 Run: `npx vitest run "src/app/(main)/apps/ralli/_areas/watch.area.test.tsx"`
 Expected: FAIL — `expected <img> to have attribute 'aria-hidden="true"'`
 
-- [ ] **Step 3: `RalliShot`에 `ariaHidden` prop을 추가한다**
+- [x] **Step 3: `RalliShot`에 `ariaHidden` prop을 추가한다**
 
 `src/app/(main)/apps/ralli/_components/ralli-shot.tsx` 전문을 교체한다:
 
@@ -569,7 +577,7 @@ export function RalliShot({ image, className, sizes, priority = false, ariaHidde
 
 `ariaHidden`을 넘기지 않으면 `undefined`가 되어 속성이 렌더되지 않는다 — 기존 호출부는 동작이 변하지 않는다.
 
-- [ ] **Step 4: watch.area.tsx의 이미지 루프를 고친다**
+- [x] **Step 4: watch.area.tsx의 이미지 루프를 고친다**
 
 기존:
 
@@ -615,12 +623,12 @@ export function RalliShot({ image, className, sizes, priority = false, ariaHidde
 
 > `animate`에 항상 구체적 값을 넘기는 방식은 그대로 유지한다. 이 패턴은 framer-motion이 스타일 소유권을 계속 갖고 있어 Task 1이 고친 결함과 무관하다.
 
-- [ ] **Step 5: 통과를 확인한다**
+- [x] **Step 5: 통과를 확인한다**
 
 Run: `npx vitest run "src/app/(main)/apps/ralli/_areas/watch.area.test.tsx"`
 Expected: PASS (5 tests)
 
-- [ ] **Step 6: `RalliShot`을 쓰는 다른 area가 깨지지 않았는지 확인한다**
+- [x] **Step 6: `RalliShot`을 쓰는 다른 area가 깨지지 않았는지 확인한다**
 
 Run: `npm run test:run`
 Expected: PASS. `replay`·`rules`·`workout`·`hero` area 테스트와 `ralli-shot.test.tsx`가 전부 통과해야 한다.
@@ -628,7 +636,7 @@ Expected: PASS. `replay`·`rules`·`workout`·`hero` area 테스트와 `ralli-sh
 Run: `npm run lint && npm run build`
 Expected: 통과
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add "src/app/(main)/apps/ralli/_components/ralli-shot.tsx" "src/app/(main)/apps/ralli/_areas/watch.area.tsx" "src/app/(main)/apps/ralli/_areas/watch.area.test.tsx"
@@ -653,7 +661,7 @@ isShown 하나로 판단을 통일해 함께 고쳤다."
 - Consumes: Task 1·2의 수정 결과
 - Produces: 없음
 
-- [ ] **Step 1: 기존 테스트가 왜 이 결함을 놓쳤는지 확인한다**
+- [x] **Step 1: 기존 테스트가 왜 이 결함을 놓쳤는지 확인한다**
 
 `e2e/ralli.spec.ts`에는 이미 `reduced-motion` describe 블록이 있고 통과하고 있었다. 놓친 이유는 두 가지다:
 
@@ -662,7 +670,7 @@ isShown 하나로 판단을 통일해 함께 고쳤다."
 
 따라서 새 테스트는 **계산된 `opacity`를 직접** 확인해야 한다. 그리고 stale 스타일은 **래퍼**에 붙으므로 조상의 `opacity`까지 누적해서 봐야 한다.
 
-- [ ] **Step 2: 포트 충돌을 확인한다**
+- [x] **Step 2: 포트 충돌을 확인한다**
 
 ```bash
 lsof -i :3000
@@ -670,7 +678,7 @@ lsof -i :3000
 
 다른 프로젝트가 점유 중이면 정리한다. 이 저장소에서 반복되는 이슈다.
 
-- [ ] **Step 3: 기존 `reduced-motion` describe 블록에 케이스를 추가한다**
+- [x] **Step 3: 기존 `reduced-motion` describe 블록에 케이스를 추가한다**
 
 `e2e/ralli.spec.ts`의 `test.describe('reduced-motion', ...)` 블록 안, 기존 `test` 뒤에 추가한다:
 
@@ -715,7 +723,7 @@ lsof -i :3000
   });
 ```
 
-- [ ] **Step 4: E2E를 실행한다**
+- [x] **Step 4: E2E를 실행한다**
 
 Run: `npm run test:e2e -- e2e/ralli.spec.ts`
 
@@ -723,7 +731,7 @@ Expected: 새로 추가한 2개 테스트 PASS.
 
 > **알려진 기존 실패**: 같은 파일의 `모바일 › 가로 스크롤이 발생하지 않는다`는 사이트 전역 `min-w-100`(400px, `src/app/layout.tsx`) 때문에 **`develop`에서도 실패한다.** 이 작업의 회귀가 아니며 범위 밖이다. 실패하더라도 고치지 말고 그대로 둔다.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add e2e/ralli.spec.ts
@@ -745,7 +753,7 @@ toBeVisible()이 opacity:0을 감지하지 못해 이 결함을 놓쳤다.
 - Consumes: Task 1·2의 수정 결과
 - Produces: 없음
 
-- [ ] **Step 1: 7절 "reduced-motion 폴백 설계"에 판별 기준을 추가한다**
+- [x] **Step 1: 7절 "reduced-motion 폴백 설계"에 판별 기준을 추가한다**
 
 `## 7. reduced-motion 폴백 설계`(L375 부근)의 표 아래, `## 8`이 시작되기 전에 추가한다:
 
@@ -775,7 +783,7 @@ return <motion.div style={{ opacity }} className={CLASS}>{children}</motion.div>
 이 결함은 2026-08-18에 실제로 발견되어 수정됐다. 당시 히어로의 h1·부제·App Store CTA·스코어가 reduced-motion 사용자에게 보이지 않았다. 회귀 테스트는 [`_areas/hero.area.reduced-motion.test.tsx`](_areas/hero.area.reduced-motion.test.tsx)에 있다 — RTL의 `render()`(`createRoot`)로는 이 시퀀스를 재현할 수 없어 `renderToString` + `hydrateRoot`를 쓴다.
 ````
 
-- [ ] **Step 2: 10절 "남아있는 개선 여지"에서 해결된 2건을 제거한다**
+- [x] **Step 2: 10절 "남아있는 개선 여지"에서 해결된 2건을 제거한다**
 
 `## 10. 남아있는 개선 여지`(L435 부근)에서 아래 두 항목을 **삭제**한다:
 
@@ -786,7 +794,7 @@ return <motion.div style={{ opacity }} className={CLASS}>{children}</motion.div>
 
 나머지 항목(`useSectionProgress`의 불필요한 스프링, 카운트업 리렌더, `LETTER_DIRECTIONS` 길이 미연동)은 **그대로 둔다** — 이번 범위가 아니다.
 
-- [ ] **Step 3: 파일 맵의 hero 줄 수를 갱신한다**
+- [x] **Step 3: 파일 맵의 hero 줄 수를 갱신한다**
 
 8절 파일 맵 표에서 `_areas/hero.area.tsx`의 라인 수를 실제 값으로 고친다.
 
@@ -796,7 +804,7 @@ wc -l "src/app/(main)/apps/ralli/_areas/hero.area.tsx"
 
 출력된 숫자로 표의 값을 교체한다.
 
-- [ ] **Step 4: 링크가 실제 파일을 가리키는지 확인한다**
+- [x] **Step 4: 링크가 실제 파일을 가리키는지 확인한다**
 
 Step 1에서 추가한 `[_areas/hero.area.reduced-motion.test.tsx](_areas/hero.area.reduced-motion.test.tsx)`가 실재하는지 확인한다:
 
@@ -804,7 +812,7 @@ Step 1에서 추가한 `[_areas/hero.area.reduced-motion.test.tsx](_areas/hero.a
 ls "src/app/(main)/apps/ralli/_areas/hero.area.reduced-motion.test.tsx"
 ```
 
-- [ ] **Step 5: 최종 검증 4종**
+- [x] **Step 5: 최종 검증 4종**
 
 ```bash
 npm run lint && npm run test:run && npm run build && npm run test:e2e -- e2e/ralli.spec.ts
@@ -812,7 +820,7 @@ npm run lint && npm run test:run && npm run build && npm run test:e2e -- e2e/ral
 
 Expected: lint는 기존 무관 에러 2건만, 테스트·빌드 통과, E2E는 알려진 `min-w-100` 실패를 제외하고 통과.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add "src/app/(main)/apps/ralli/README.md"
@@ -822,7 +830,7 @@ git commit -m "📝 docs: reduced-motion 분기 판별 기준 추가하고 해�
 두 가지 대안을 기록한다. 10절에서 이번에 해결된 watch 접근성 2건을 뺀다."
 ```
 
-- [ ] **Step 7: PR 생성**
+- [x] **Step 7: PR 생성**
 
 ```bash
 git push -u origin fix/ralli-hero-reduced-motion
@@ -834,10 +842,10 @@ git push -u origin fix/ralli-hero-reduced-motion
 
 ## 완료 조건
 
-- [ ] reduced-motion에서 `/apps/ralli` 히어로의 h1·부제·App Store CTA·스코어가 보인다
-- [ ] 워치 이미지가 축소·회전되지 않고 정상 크기로 렌더된다
-- [ ] watch 섹션의 비활성 이미지가 스크린 리더에 노출되지 않는다
-- [ ] `hero.area.reduced-motion.test.tsx`가 결함 패턴을 되돌리면 **실패한다** (Task 1 Step 9에서 증명)
-- [ ] reduced-motion을 끈 일반 사용자에게는 시각적 변화가 없다 (기존 area 테스트 6개 통과로 확인)
-- [ ] `npm run lint` · `npm run test:run` · `npm run build` 통과
-- [ ] README 7.1절에 판별 기준이 기록되어 있다
+- [x] reduced-motion에서 `/apps/ralli` 히어로의 h1·부제·App Store CTA·스코어가 보인다
+- [x] 워치 이미지가 축소·회전되지 않고 정상 크기로 렌더된다
+- [x] watch 섹션의 비활성 이미지가 스크린 리더에 노출되지 않는다
+- [x] `hero.area.reduced-motion.test.tsx`가 결함 패턴을 되돌리면 **실패한다** (Task 1 Step 9에서 증명)
+- [x] reduced-motion을 끈 일반 사용자에게는 시각적 변화가 없다 (기존 area 테스트 6개 통과로 확인)
+- [x] `npm run lint` · `npm run test:run` · `npm run build` 통과
+- [x] README 7.1절에 판별 기준이 기록되어 있다

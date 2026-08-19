@@ -12,6 +12,24 @@ import { Reveal } from '../../_actions/reveal.action';
 /** 데스크톱 드리프트 이동 거리. 갤러리 전체 폭에서 뷰포트를 뺀 만큼 왼쪽으로 민다. */
 const DRIFT_VW = -55;
 
+const GALLERY_CLASS = 'flex gap-5.5 px-[max(6vw,32px)]';
+
+function ReplayGalleryShots() {
+  return (
+    <>
+      {ralliReplaySection.gallery.map((image) => (
+        <div key={image.src} className="flex-none snap-center">
+          <RalliShot
+            image={image}
+            sizes="(max-width: 768px) 55vw, 22vw"
+            className="h-95 md:h-130"
+          />
+        </div>
+      ))}
+    </>
+  );
+}
+
 export function ReplayArea() {
   const { ref, progress, isStatic } = useSectionProgress(['start end', 'end start'], false);
   const isMobile = useIsMobile();
@@ -37,20 +55,15 @@ export function ReplayArea() {
           useNativeScroll && 'snap-x snap-mandatory overflow-x-auto pb-4',
         )}
       >
-        <motion.div
-          style={useNativeScroll ? undefined : { x: driftX }}
-          className="flex gap-5.5 px-[max(6vw,32px)]"
-        >
-          {ralliReplaySection.gallery.map((image) => (
-            <div key={image.src} className="flex-none snap-center">
-              <RalliShot
-                image={image}
-                sizes="(max-width: 768px) 55vw, 22vw"
-                className="h-95 md:h-130"
-              />
-            </div>
-          ))}
-        </motion.div>
+        {useNativeScroll ? (
+          <div className={GALLERY_CLASS}>
+            <ReplayGalleryShots />
+          </div>
+        ) : (
+          <motion.div style={{ x: driftX }} className={GALLERY_CLASS}>
+            <ReplayGalleryShots />
+          </motion.div>
+        )}
       </div>
 
       <div className="mx-auto mt-13 grid max-w-295 grid-cols-1 gap-9 px-[max(6vw,32px)] md:grid-cols-3">

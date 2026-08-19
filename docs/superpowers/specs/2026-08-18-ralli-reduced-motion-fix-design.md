@@ -63,13 +63,15 @@ return <motion.div style={{ … }}>{children}</motion.div>;
 | `hero.area.tsx` | **4건** (L86·L128·L144·L160) | 🔴 수정 대상 |
 | `watch.area.tsx` | 0건 | ✅ `animate`에 항상 구체적 값을 넘긴다 |
 | `workout.area.tsx` | 0건 | ✅ |
-| `replay.area.tsx` | 0건 | ✅ |
+| `replay.area.tsx` | 0건 (오탐 — 아래 참고) | 🔴 수정 대상 (최종 통합 리뷰에서 발견) |
 | `rules.area.tsx` | 0건 | ✅ |
 | `final-cta.area.tsx` | 0건 | ✅ |
 
 `Reveal`([`apps/_actions/reveal.action.tsx`](../../../src/app/\(main\)/apps/_actions/reveal.action.tsx))은 `isStatic`일 때 평범한 `<div>`를 반환하므로 안전하다. `HeroLetter`(`hero.area.tsx:36`)도 조기 반환으로 `<span>`을 렌더해 안전하다 — **이미 올바른 패턴이 같은 파일 안에 있었다.**
 
 > GolfCounter 작업에서는 `health.area.tsx`가 `animate={isStatic ? undefined : {…}}`라는 변종을 갖고 있었다. ralli에는 이 변종이 없다.
+
+> **이 표의 `replay.area.tsx` 판정은 틀렸었다.** 정규식이 리터럴 토큰 `isStatic ?`만 찾았는데, 실제 코드는 `const useNativeScroll = isMobile || isStatic;` 로 `isStatic`을 별칭 뒤에 숨겨서 썼고, 문제의 줄도 `style={useNativeScroll ? undefined : { x: driftX }}`라 `isStatic`이라는 글자가 아예 등장하지 않는다. `useNativeScroll`은 여전히 `isStatic` 값에 좌우되므로 같은 결함 시퀀스(§1)를 그대로 가진다 — 게다가 `isMobile`도 `useMounted`와 동일하게 "첫 렌더는 항상 `false`, `useEffect`에서 갱신"되는 훅이라, 이 결함은 reduced-motion 사용자만이 아니라 **모바일 사용자 전반**(새로고침 시 스크롤 위치가 남아있는 채로 hydration이 끝나는 경우 등)에도 잠재했다. 최종 통합 리뷰에서 발견되어 `replay.area.tsx`와 [README §7.1](../../../src/app/\(main\)/apps/ralli/README.md)·§6 함정 3을 함께 수정했다. **교훈**: 이런 조사는 리터럴 토큰이 아니라 "해당 변수의 데이터 흐름"을 따라가야 한다 — 정규식 grep은 별칭·파생값을 놓친다.
 
 ## 3. 수정 방침
 
