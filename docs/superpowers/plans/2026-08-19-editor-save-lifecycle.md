@@ -10,6 +10,26 @@
 
 **Spec:** 별도 스펙 문서 없음. 2026-08-19 글쓰기 기능 리뷰 세션의 결론을 아래 「배경」에 요약한다.
 
+## 완료 (2026-08-19)
+
+Task 0~7 전체 완료, subagent-driven-development로 태스크별 fresh 서브에이전트 구현 + 리뷰 방식으로 진행. 브랜치 `fix/editor-save-lifecycle`(base `develop` @ 7935f64), 최종 커밋 범위 `7935f64..f0ddeec` + 문서 정리 커밋.
+
+- Task 1: 스토어에 `changeCount`/`savedChangeCount`/`selectIsDirty` 추가. 리뷰에서 Important 1건(브리프 샘플 코드가 `setContentFormat`·`setPublishedAt` 테스트 케이스를 프로즈 명세와 다르게 누락) 발견 → fix round 1회로 해결.
+- Task 2: `savePost`가 클라이언트의 `publishedAt`을 더 이상 신뢰하지 않고 DB 현재값을 SELECT해 직접 결정하도록 변경, 결과에 `status`·`publishedAt` 포함해 스토어와 동기화. 구현자가 브리프 샘플 테스트의 실제 결함(동적 `import()`가 최소 1 microtask tick을 소비하는 스펙 동작과 동기적 mid-flight 편집 가정 사이의 구조적 데드락, 100% 재현)을 발견해 테스트에만 `vi.waitFor` 보정을 적용 — 컨트롤러가 조사 후 판단(ruling)으로 채택, 프로덕션 코드·타입 계약은 무영향. 리뷰 clean.
+- Task 3: WYSIWYG 에디터의 외부 content 동기화가 `emitUpdate: false`를 쓰도록 수정 — 수정 페이지 진입만으로 dirty가 되던 문제 해결. 리뷰 clean.
+- Task 4: 자동저장이 dirty + 제목·본문 존재 조건에서만 발동, 모든 필드 변경이 `changeCount`로 트리거, `beforeunload` 이탈 경고 추가. 리뷰 clean(마이너 2건 보류: `beforeunload`에 `event.returnValue` 폴백 없음, 파일의 기존 tab 들여쓰기는 이 태스크 이전부터 존재).
+- Task 5: 발행 글의 "임시저장" 버튼이 `submitPost('draft')` 고정 호출 대신 현재 `status`를 유지한 채 저장하도록 변경(라벨도 "저장"/"임시저장" 조건부), 저장 상태 문구 "자동 저장 완료" → "저장됨" 통일. 리뷰 clean.
+- Task 6: `/admin/posts/new` 페이지에 언마운트 시 스토어를 reset하는 핸들러 추가 — 발행 후 재진입 시 이전 글을 덮어쓰던 문제 해결. 리뷰 clean.
+- Task 7: 자동 검증 — 단위 테스트 344/344 통과(67 files, 이 브랜치 신규 36개 포함: `_store.test.ts` 24, `auto-save.provider.test.tsx` 7, `draft.action.test.tsx` 3, `new-post-reset.handler.test.tsx` 2), 린트 신규 이슈 0건(사전 존재 에러 2건은 `docs/design/ralli/support.js` 레거시 파일, 이 브랜치와 무관), `tsc --noEmit` 신규 에러 0건(사전 존재 `e2e/ralli.spec.ts` 타입 에러 1건만 잔존, develop에서도 동일하게 존재 확인됨), `npm run build`는 타입스크립트 컴파일까지 성공 확인 후 이 워크트리에 `DATABASE_URL`이 설정돼 있지 않아 sitemap 페이지 데이터 수집 단계에서 실패 — 코드 회귀 아님, 이 브랜치가 건드린 파일은 에디터 로직뿐이고 DB 연결 자체가 필요한 사이트맵과는 무관.
+
+### 알려진 제약: Step 3 수동 브라우저 시나리오는 사용자 확인 필요
+
+Step 3의 6개 체크리스트(자동저장 미발동 확인, 30초 후 저장 문구, 발행 글 "저장" 버튼 유지, 발행 후 재진입 시 덮어쓰기 없음, 제목만 있을 때 실패 문구 없음, 이탈 경고)는 `/admin/*`이 Clerk 인증을 요구해 로그인 세션 없이는 서브에이전트가 확인할 수 없다. 대신 각 시나리오에 대응하는 자동화 테스트(Task 1~6의 리뷰에서 file:line까지 검증됨)로 동등한 수준의 코드 경로 확인을 마쳤다 — 2026-08-17 갤러리 plan과 동일한 제약. 실제 화면에서의 최종 확인은 병합 전후로 사용자가 직접 진행해야 한다.
+
+### 병합 방법에 대한 결정 필요
+
+Step 5(`develop`으로 PR 생성)는 공유 브랜치에 영향을 주는 작업이라 사용자 확인 없이 진행하지 않았다. 최종 브랜치 리뷰까지 마친 뒤 옵션을 안내한다.
+
 ## 로드맵 — 글쓰기 개선 4개 PR
 
 2026-08-19 글쓰기 기능 리뷰 결과를 4개 PR로 나눈다. 순서대로 진행하며, 각 PR은 별도 plan 문서를 갖는다.
@@ -1046,12 +1066,12 @@ git commit -m "🐛 fix: 신규 글 페이지 이탈 시 스토어를 reset해 �
 **Files:**
 - Modify: `docs/superpowers/plans/2026-08-19-editor-save-lifecycle.md` (완료 기록)
 
-- [ ] **Step 1: 전체 단위 테스트**
+- [x] **Step 1: 전체 단위 테스트**
 
 Run: `npm run test:run`
 Expected: 전부 PASS
 
-- [ ] **Step 2: 린트·타입·빌드**
+- [x] **Step 2: 린트·타입·빌드**
 
 Run: `npm run lint && npx tsc --noEmit && npm run build`
 Expected: 오류 없음 (사전 존재 린트 이슈는 별도 기록)
@@ -1067,7 +1087,7 @@ Expected: 오류 없음 (사전 존재 린트 이슈는 별도 기록)
 5. 새 글에서 제목만 입력하고 40초 대기 → "저장 실패"가 뜨지 **않는다**.
 6. 제목·본문 입력 후 즉시 탭 닫기 → 브라우저 이탈 확인 경고.
 
-- [ ] **Step 4: plan 문서 상단에 완료 일자·결과 요약 추가 후 커밋**
+- [x] **Step 4: plan 문서 상단에 완료 일자·결과 요약 추가 후 커밋**
 
 ```bash
 git add docs/superpowers/plans/2026-08-19-editor-save-lifecycle.md
