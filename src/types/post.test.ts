@@ -113,6 +113,32 @@ describe('postFormSchema', () => {
     });
   });
 
+  describe('thumbnailUrl', () => {
+    it('null이면 성공 (썸네일 없는 글)', () => {
+      const result = postFormSchema.safeParse({
+        ...validData,
+        thumbnailUrl: null,
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('키가 없으면(undefined) 성공', () => {
+      const { thumbnailUrl: _, ...withoutThumbnailUrl } = {
+        ...validData,
+        thumbnailUrl: undefined,
+      };
+      expect(postFormSchema.safeParse(withoutThumbnailUrl).success).toBe(true);
+    });
+
+    it('URL 문자열이면 성공', () => {
+      const result = postFormSchema.safeParse({
+        ...validData,
+        thumbnailUrl: 'https://example.com/thumb.jpg',
+      });
+      expect(result.success).toBe(true);
+    });
+  });
+
   describe('excerpt', () => {
     it('없어도 성공 (optional)', () => {
       const { excerpt: _, ...withoutExcerpt } = {

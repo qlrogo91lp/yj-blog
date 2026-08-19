@@ -21,11 +21,15 @@ type SavePostInput = {
   seriesId: number | null;
   tagIds?: number[];
   status: 'draft' | 'published';
-  publishedAt?: Date | null;
 };
 
 type SavePostResult =
-  | { success: true; postId: number }
+  | {
+      success: true;
+      postId: number;
+      status: 'draft' | 'published';
+      publishedAt: Date | null;
+    }
   | { success: false; error: string };
 
 export async function savePost(input: SavePostInput): Promise<SavePostResult> {
@@ -55,8 +59,21 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
 
   try {
     if (input.postId) {
-      // UPDATE — publishedAt은 처음 발행할 때만 설정
-      const updateData: Record<string, unknown> = {
+      // publishedAt은 클라이언트 입력을 신뢰하지 않고 DB 현재값 기준으로 결정한다.
+      // - published: 이미 있으면 유지, 없으면(첫 발행) 지금
+      // - draft: null
+      const [current] = await db
+        .select({ publishedAt: posts.publishedAt })
+        .from(posts)
+        .where(eq(posts.id, input.postId))
+        .limit(1);
+      if (!current) {
+        return { success: false, error: '글을 찾을 수 없습니다' };
+      }
+      const publishedAt =
+        status === 'published' ? (current.publishedAt ?? new Date()) : null;
+
+      const updateData: Partial<typeof posts.$inferInsert> = {
         title,
         slug,
         content,
@@ -67,14 +84,9 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
         categoryId,
         seriesId,
         status,
+        publishedAt,
         updatedAt: new Date(),
       };
-      if (status === 'published' && !input.publishedAt) {
-        updateData.publishedAt = new Date();
-      }
-      if (status === 'draft') {
-        updateData.publishedAt = null;
-      }
 
       await db.update(posts).set(updateData).where(eq(posts.id, input.postId));
       await syncPostTags(input.postId, tagIds);
@@ -82,7 +94,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
       revalidateTag(CACHE_TAGS.posts, 'max');
       revalidateTag(CACHE_TAGS.series, 'max');
       revalidatePath('/admin/posts');
-      return { success: true, postId: input.postId };
+      return { success: true, postId: input.postId, status, publishedAt };
     } else {
       // INSERT
       const publishedAt = status === 'published' ? new Date() : null;
@@ -108,7 +120,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
       revalidateTag(CACHE_TAGS.posts, 'max');
       revalidateTag(CACHE_TAGS.series, 'max');
       revalidatePath('/admin/posts');
-      return { success: true, postId: newPost.id };
+      return { success: true, postId: newPost.id, status, publishedAt };
     }
   } catch (error) {
     if (error instanceof Error && error.message.includes('unique')) {
