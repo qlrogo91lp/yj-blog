@@ -63,7 +63,8 @@ const searchable: { groupLabel?: string; item: AdminNavItem }[] = [
   ...adminFooterItems.map((item) => ({ groupLabel: undefined, item })),
 ];
 
-function isMatch(pathname: string, href: string): boolean {
+/** 사이드바 활성 항목·브레드크럼이 공유하는 경로 매칭 규칙 */
+export function isNavItemActive(pathname: string, href: string): boolean {
   // '/admin'과 '/'는 다른 모든 경로의 접두사이므로 정확히 일치할 때만 매칭한다
   if (href === '/admin' || href === '/') return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -71,7 +72,7 @@ function isMatch(pathname: string, href: string): boolean {
 
 export function getBreadcrumb(pathname: string): string[] {
   const matched = searchable
-    .filter(({ item }) => isMatch(pathname, item.href))
+    .filter(({ item }) => isNavItemActive(pathname, item.href))
     .sort((a, b) => b.item.href.length - a.item.href.length)[0];
 
   if (!matched) return [];

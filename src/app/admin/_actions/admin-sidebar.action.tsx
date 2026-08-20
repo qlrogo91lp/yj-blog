@@ -21,17 +21,13 @@ import {
   type AdminNavItem,
   adminFooterItems,
   adminNavGroups,
+  isNavItemActive,
 } from '../_utils/admin-nav';
 
 type Props = {
   /** 답변 대기 댓글 수. PR 3에서 layout이 주입한다. */
   pendingReplyCount?: number;
 };
-
-function isActive(pathname: string, href: string) {
-  if (href === '/admin') return pathname === '/admin';
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
 
 export function AdminSidebarAction({ pendingReplyCount }: Props) {
   const pathname = usePathname();
@@ -41,8 +37,8 @@ export function AdminSidebarAction({ pendingReplyCount }: Props) {
       <SidebarMenuItem key={item.href}>
         <SidebarMenuButton
           asChild
-          isActive={isActive(pathname, item.href)}
-          className="h-10 rounded-full px-3"
+          isActive={isNavItemActive(pathname, item.href)}
+          className="h-10 rounded-full px-3 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
         >
           <Link href={item.href}>
             <item.icon size={16} />
@@ -50,7 +46,7 @@ export function AdminSidebarAction({ pendingReplyCount }: Props) {
           </Link>
         </SidebarMenuButton>
         {badge !== undefined && badge > 0 && (
-          <SidebarMenuBadge className="bg-sidebar-accent text-sidebar-accent-foreground rounded-full">
+          <SidebarMenuBadge className="bg-sidebar-accent text-sidebar-accent-foreground rounded-full peer-data-[size=default]/menu-button:top-2.5">
             {badge}
           </SidebarMenuBadge>
         )}
