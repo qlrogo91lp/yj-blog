@@ -119,6 +119,7 @@ export async function insertSeries(data: SeriesFormValues): Promise<Series> {
       name: data.name,
       slug: data.slug,
       description: data.description?.trim() ? data.description : null,
+      status: data.status,
     })
     .returning();
 
@@ -138,6 +139,7 @@ export async function updateSeries(
       name: data.name,
       slug: data.slug,
       description: data.description?.trim() ? data.description : null,
+      status: data.status,
     })
     .where(eq(series.id, id))
     .returning();

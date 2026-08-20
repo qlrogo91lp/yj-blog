@@ -19,6 +19,10 @@ import {
 // -----------------------------------------------
 
 export const postStatusEnum = pgEnum('post_status', ['draft', 'published']);
+export const seriesStatusEnum = pgEnum('series_status', [
+  'ongoing',
+  'completed',
+]);
 
 // -----------------------------------------------
 // categories
@@ -41,6 +45,7 @@ export const series = pgTable('series', {
   name: varchar('name', { length: 100 }).notNull(),
   slug: varchar('slug', { length: 100 }).notNull().unique(), // URL: /series/[slug]
   description: text('description'), // 시리즈 소개 + meta description
+  status: seriesStatusEnum('status').notNull().default('ongoing'), // 연재 중 / 완결
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
