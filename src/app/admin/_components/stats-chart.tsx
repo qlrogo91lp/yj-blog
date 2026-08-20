@@ -12,18 +12,45 @@ import {
   YAxis,
 } from 'recharts';
 
+type ChartDatum = {
+  date: string;
+  views: number;
+  visitors: number;
+  previousViews?: number;
+  previousVisitors?: number;
+};
+
 type Props = {
-  data: { date: string; views: number; visitors: number }[];
+  data: ChartDatum[];
+  /** 직전 기간 계열을 함께 그린다. 기본 false. */
+  showPrevious?: boolean;
 };
 
 const VIEWS_COLOR = '#ef4444'; // red-500
 const VISITORS_COLOR = '#a1a1aa'; // zinc-400
+const PREVIOUS_COLOR = '#d4d4d8'; // zinc-300 — 직전 기간은 흐린 점선
 
-export function StatsChart({ data }: Props) {
-  const chartData = data.map((d) => ({
-    ...d,
-    label: format(parseISO(d.date), 'M/d'),
-  }));
+export function buildChartData(data: ChartDatum[], showPrevious: boolean) {
+  return data.map((d) => {
+    const base = {
+      date: d.date,
+      views: d.views,
+      visitors: d.visitors,
+      label: format(parseISO(d.date), 'M/d'),
+    };
+
+    if (!showPrevious) return base;
+
+    return {
+      ...base,
+      previousViews: d.previousViews ?? 0,
+      previousVisitors: d.previousVisitors ?? 0,
+    };
+  });
+}
+
+export function StatsChart({ data, showPrevious = false }: Props) {
+  const chartData = buildChartData(data, showPrevious);
 
   return (
     <div className="w-full">
@@ -78,6 +105,30 @@ export function StatsChart({ data }: Props) {
             dot={{ r: 3, fill: VISITORS_COLOR }}
             activeDot={{ r: 5 }}
           />
+          {showPrevious && (
+            <>
+              <Line
+                type="monotone"
+                dataKey="previousViews"
+                name="직전 기간 조회수"
+                stroke={PREVIOUS_COLOR}
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={false}
+                activeDot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="previousVisitors"
+                name="직전 기간 방문자"
+                stroke={PREVIOUS_COLOR}
+                strokeWidth={1}
+                strokeDasharray="2 4"
+                dot={false}
+                activeDot={false}
+              />
+            </>
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>
