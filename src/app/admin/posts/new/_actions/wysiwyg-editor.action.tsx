@@ -29,7 +29,6 @@ import { readImageSize } from '../_utils/read-image-size';
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
-  const setContentFormat = useNewPostStore((s) => s.setContentFormat);
   const setPostId = useNewPostStore((s) => s.setPostId);
   const content = useNewPostStore((s) => s.content);
   const { setEditor, setUploadFiles } = useEditorContext();
@@ -208,7 +207,6 @@ export function WysiwygEditorAction() {
       });
       prevImageSrcs.current = currentSrcs;
       setContent(editor.getHTML());
-      setContentFormat('html');
     },
   });
 

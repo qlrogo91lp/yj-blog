@@ -18,16 +18,10 @@ type Props = {
 export function PreviewDialogAction({ open, onOpenChange }: Props) {
   const title = useNewPostStore((s) => s.title);
   const content = useNewPostStore((s) => s.content);
-  const contentFormat = useNewPostStore((s) => s.contentFormat);
-
-  const html =
-    contentFormat === 'html'
-      ? content
-      : `<pre style="white-space: pre-wrap; font-family: var(--font-geist-mono);">${escapeHtml(content)}</pre>`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="min-w-4xl max-w-[80vw] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-[80vw] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>미리보기</DialogTitle>
           <DialogDescription className="sr-only">작성 중인 글의 미리보기입니다</DialogDescription>
@@ -37,15 +31,11 @@ export function PreviewDialogAction({ open, onOpenChange }: Props) {
             <h1 className="text-3xl font-bold mb-6">{title || '제목 없음'}</h1>
             <div
               className="prose prose-neutral dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: html }}
+              dangerouslySetInnerHTML={{ __html: content }}
             />
           </article>
         </ArticleContainer>
       </DialogContent>
     </Dialog>
   );
-}
-
-function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
