@@ -10,6 +10,13 @@ export type CommentWithReplies = Comment & {
   replies: CommentWithReplies[];
 };
 
+// 관리자 댓글 스레드 — 최상위 댓글과 그에 속한 답글들, post 정보 포함
+export type AdminCommentThread = Comment & {
+  postTitle: string;
+  postSlug: string;
+  replies: Comment[];
+};
+
 // 댓글 작성 폼 스키마 (password는 평문 — actions에서 bcrypt 해싱)
 export const commentFormSchema = z.object({
   authorName: z

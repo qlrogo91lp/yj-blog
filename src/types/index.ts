@@ -18,6 +18,7 @@ export { postFormSchema } from './post';
 export type {
   Comment,
   CommentWithReplies,
+  AdminCommentThread,
   CommentFormValues,
   CommentPasswordValues,
   AdminReplyFormValues,
