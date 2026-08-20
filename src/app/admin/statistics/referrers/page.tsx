@@ -11,6 +11,7 @@ import { selectTopReferrers } from '@/db/queries/statistics';
 import { getBlogSettings } from '@/db/queries/settings';
 import { AnalyticsLinkButton } from '../_components/analytics-link-button';
 import { PeriodFilterAction } from '../_actions/period-filter.action';
+import { ReferrerExcludesFormAction } from './_actions/referrer-excludes-form.action';
 
 export const revalidate = 60;
 
@@ -51,6 +52,15 @@ export default async function AdminReferrersPage({ searchParams }: Props) {
           />
         </div>
       </div>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-base">항상 제외</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ReferrerExcludesFormAction excludes={settings?.referrerExcludes ?? []} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
