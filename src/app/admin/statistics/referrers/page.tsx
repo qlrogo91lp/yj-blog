@@ -8,6 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { selectTopReferrers } from '@/db/queries/statistics';
+import { getBlogSettings } from '@/db/queries/settings';
 import { AnalyticsLinkButton } from '../_components/analytics-link-button';
 import { PeriodFilterAction } from '../_actions/period-filter.action';
 
@@ -31,7 +32,12 @@ export default async function AdminReferrersPage({ searchParams }: Props) {
   const days = daysParam === 'all' || !daysParam ? undefined : Number(daysParam);
   const currentPeriod = daysParam ?? '30';
 
-  const referrerList = await selectTopReferrers(20, days);
+  const settings = await getBlogSettings();
+  const referrerList = await selectTopReferrers(
+    20,
+    days,
+    settings?.referrerExcludes ?? []
+  );
 
   return (
     <div>
