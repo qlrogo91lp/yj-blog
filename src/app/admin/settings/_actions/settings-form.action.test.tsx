@@ -151,6 +151,7 @@ describe('SettingsFormAction', () => {
       siteUrl: 'https://example.com',
       defaultMetaDescription: '설명',
       socialLinks: { github: 'https://github.com/test' },
+      referrerExcludes: [],
       updatedAt: new Date(),
     };
 
