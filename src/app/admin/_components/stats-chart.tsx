@@ -30,7 +30,16 @@ const VIEWS_COLOR = '#ef4444'; // red-500
 const VISITORS_COLOR = '#a1a1aa'; // zinc-400
 const PREVIOUS_COLOR = '#d4d4d8'; // zinc-300 — 직전 기간은 흐린 점선
 
-export function buildChartData(data: ChartDatum[], showPrevious: boolean) {
+type ChartDataPoint = {
+  date: string;
+  views: number;
+  visitors: number;
+  label: string;
+  previousViews?: number;
+  previousVisitors?: number;
+};
+
+export function buildChartData(data: ChartDatum[], showPrevious: boolean): ChartDataPoint[] {
   return data.map((d) => {
     const base = {
       date: d.date,
