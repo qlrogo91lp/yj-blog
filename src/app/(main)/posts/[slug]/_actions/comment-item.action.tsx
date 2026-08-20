@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { type CommentWithReplies } from '@/types';
 import { DeleteCommentDialogAction } from './delete-comment-dialog.action';
@@ -47,6 +48,11 @@ export function CommentItemAction({ comment, postSlug, isReply = false }: Props)
     <div className={isReply ? 'mt-4 ml-4 border-l border-border pl-4' : ''}>
       <div className="flex items-center gap-2 mb-1">
         <span className="text-sm font-semibold">{comment.authorName}</span>
+        {comment.isAuthor && (
+          <Badge variant="secondary" className="text-xs">
+            작성자
+          </Badge>
+        )}
         <span className="text-xs text-muted-foreground">{formattedDate}</span>
       </div>
       <p className="text-sm whitespace-pre-wrap mb-2">{comment.content}</p>

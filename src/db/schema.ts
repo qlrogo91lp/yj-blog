@@ -101,6 +101,7 @@ export const comments = pgTable('comments', {
   content: text('content').notNull(),
 
   isDeleted: boolean('is_deleted').notNull().default(false), // 소프트 삭제 (대댓글이 있으면 "삭제된 댓글"로 표시)
+  isAuthor: boolean('is_author').notNull().default(false), // 관리자 답글 여부 — 독자 페이지 "작성자" 뱃지 + 사이드바 답변 대기 판정에 사용
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

@@ -57,6 +57,7 @@ export async function insertComment(data: {
   email?: string | null;
   passwordHash: string;
   content: string;
+  isAuthor?: boolean;
 }): Promise<Comment> {
   const result = await db
     .insert(comments)
@@ -67,6 +68,7 @@ export async function insertComment(data: {
       email: data.email ?? null,
       passwordHash: data.passwordHash,
       content: data.content,
+      isAuthor: data.isAuthor ?? false,
     })
     .returning();
 
