@@ -70,14 +70,37 @@ export function isNavItemActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function getBreadcrumb(pathname: string): string[] {
-  const matched = searchable
+/**
+ * 여러 항목의 href가 동시에 pathname과 매칭될 수 있으므로(예: /admin/statistics와
+ * /admin/statistics/referrers), 가장 긴 href 하나만 "현재 위치"로 고른다.
+ * 사이드바 active pill과 헤더 브레드크럼이 항상 같은 항목을 가리키도록 이 하나의
+ * 판정 결과를 공유한다.
+ */
+function findLongestMatch(pathname: string) {
+  return searchable
     .filter(({ item }) => isNavItemActive(pathname, item.href))
     .sort((a, b) => b.item.href.length - a.item.href.length)[0];
+}
+
+export function getBreadcrumb(pathname: string): string[] {
+  const matched = findLongestMatch(pathname);
 
   if (!matched) return [];
 
   return matched.groupLabel
     ? [matched.groupLabel, matched.item.label]
     : [matched.item.label];
+}
+
+/** 사이드바에서 active pill로 표시할 단 하나의 href. 없으면 undefined. */
+export function getActiveNavHref(pathname: string): string | undefined {
+  return findLongestMatch(pathname)?.item.href;
+}
+
+/** 글쓰기 에디터(새 글/수정) 경로 — 사이드바·헤더·본문 폭이 이 경로에서 다르게 동작한다 */
+export function isEditorPath(pathname: string): boolean {
+  return (
+    pathname === '/admin/posts/new' ||
+    (pathname.startsWith('/admin/posts/') && pathname.endsWith('/edit'))
+  );
 }

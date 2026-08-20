@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { adminFooterItems, adminNavGroups, getBreadcrumb } from './admin-nav';
+import {
+  adminFooterItems,
+  adminNavGroups,
+  getActiveNavHref,
+  getBreadcrumb,
+  isEditorPath,
+} from './admin-nav';
 
 describe('adminNavGroups', () => {
   it('대시보드·콘텐츠·통계 3개 그룹을 가진다', () => {
@@ -55,5 +61,45 @@ describe('getBreadcrumb', () => {
 
   it('매칭되는 항목이 없으면 빈 배열을 반환한다', () => {
     expect(getBreadcrumb('/admin/unknown')).toEqual([]);
+  });
+});
+
+describe('getActiveNavHref', () => {
+  it('한 href가 다른 href의 접두사여도 가장 긴 href 하나만 반환한다', () => {
+    expect(getActiveNavHref('/admin/statistics/referrers')).toBe(
+      '/admin/statistics/referrers'
+    );
+  });
+
+  it('하위 경로는 상위 항목의 href를 반환한다', () => {
+    expect(getActiveNavHref('/admin/posts/new')).toBe('/admin/posts');
+  });
+
+  it('getBreadcrumb과 항상 같은 항목을 가리킨다', () => {
+    const pathname = '/admin/statistics/referrers';
+    const activeHref = getActiveNavHref(pathname);
+    const breadcrumb = getBreadcrumb(pathname);
+
+    expect(activeHref).toBe('/admin/statistics/referrers');
+    expect(breadcrumb).toEqual(['통계', '유입경로']);
+  });
+
+  it('매칭되는 항목이 없으면 undefined를 반환한다', () => {
+    expect(getActiveNavHref('/admin/unknown')).toBeUndefined();
+  });
+});
+
+describe('isEditorPath', () => {
+  it('새 글 작성 경로를 에디터 경로로 판정한다', () => {
+    expect(isEditorPath('/admin/posts/new')).toBe(true);
+  });
+
+  it('글 수정 경로를 에디터 경로로 판정한다', () => {
+    expect(isEditorPath('/admin/posts/12/edit')).toBe(true);
+  });
+
+  it('그 외 경로는 에디터 경로가 아니다', () => {
+    expect(isEditorPath('/admin/posts')).toBe(false);
+    expect(isEditorPath('/admin')).toBe(false);
   });
 });

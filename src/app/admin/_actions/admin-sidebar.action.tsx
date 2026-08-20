@@ -21,7 +21,7 @@ import {
   type AdminNavItem,
   adminFooterItems,
   adminNavGroups,
-  isNavItemActive,
+  getActiveNavHref,
 } from '../_utils/admin-nav';
 
 type Props = {
@@ -31,13 +31,14 @@ type Props = {
 
 export function AdminSidebarAction({ pendingReplyCount }: Props) {
   const pathname = usePathname();
+  const activeHref = getActiveNavHref(pathname);
 
   function renderItem(item: AdminNavItem, badge?: number) {
     return (
       <SidebarMenuItem key={item.href}>
         <SidebarMenuButton
           asChild
-          isActive={isNavItemActive(pathname, item.href)}
+          isActive={item.href === activeHref}
           className="h-10 rounded-full px-3 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
         >
           <Link href={item.href}>

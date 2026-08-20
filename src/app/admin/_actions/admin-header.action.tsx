@@ -7,14 +7,7 @@ import { UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { SITE_NAME } from '@/lib/constants';
-import { getBreadcrumb } from '../_utils/admin-nav';
-
-function isEditorPath(pathname: string) {
-  return (
-    pathname === '/admin/posts/new' ||
-    (pathname.startsWith('/admin/posts/') && pathname.endsWith('/edit'))
-  );
-}
+import { getBreadcrumb, isEditorPath } from '../_utils/admin-nav';
 
 export function AdminHeaderAction() {
   const pathname = usePathname();

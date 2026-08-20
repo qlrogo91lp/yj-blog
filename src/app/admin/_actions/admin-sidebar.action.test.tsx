@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AdminSidebarAction } from './admin-sidebar.action';
+
+const pathname = vi.hoisted(() => ({ current: '/admin/categories' }));
 
 vi.mock('next/link', () => ({
   default: ({
@@ -22,7 +24,7 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('next/navigation', () => ({
-  usePathname: () => '/admin/categories',
+  usePathname: () => pathname.current,
 }));
 
 function renderSidebar(props: { pendingReplyCount?: number } = {}) {
@@ -34,6 +36,10 @@ function renderSidebar(props: { pendingReplyCount?: number } = {}) {
 }
 
 describe('AdminSidebarAction', () => {
+  beforeEach(() => {
+    pathname.current = '/admin/categories';
+  });
+
   it('콘텐츠·통계 메뉴와 그룹 라벨을 렌더한다', () => {
     renderSidebar();
 
@@ -78,6 +84,18 @@ describe('AdminSidebarAction', () => {
 
     expect(
       screen.getByRole('link', { name: /대시보드/ }).closest('[data-active]')
+    ).toHaveAttribute('data-active', 'false');
+  });
+
+  it('한 href가 다른 href의 접두사여도 가장 긴 매칭 하나만 활성화된다', () => {
+    pathname.current = '/admin/statistics/referrers';
+    renderSidebar();
+
+    expect(
+      screen.getByRole('link', { name: /유입경로/ }).closest('[data-active]')
+    ).toHaveAttribute('data-active', 'true');
+    expect(
+      screen.getByRole('link', { name: /방문 통계/ }).closest('[data-active]')
     ).toHaveAttribute('data-active', 'false');
   });
 
