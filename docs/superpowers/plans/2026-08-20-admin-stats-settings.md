@@ -1,5 +1,17 @@
 # 대시보드·방문 통계·유입경로·블로그 설정 구현 계획 (어드민 리디자인 PR 4/4)
 
+> **완료: 2026-08-20.** Task 1~9 전부 완료. SDD(subagent-driven-development)로 실행 — 태스크별 구현·리뷰 후 전체 브랜치 최종 리뷰까지 마쳤다. 결과 요약:
+> - Task 1: 컨트롤러가 직접 구현(스키마+쿼리 전용, 다른 worktree(`feature/admin-comment-reply`)와 Neon dev DB를 공유해 drizzle-kit push 순서 조율 필요). `referrerExcludes`를 `notNull()`로 추가하면서 `BlogSettings` 타입이 이 필드를 필수로 요구하게 돼 `settings-form.action.test.tsx`의 리터럴이 즉시 깨지는 걸 발견·수정(`referrerExcludes: []` 추가) — Task 7의 전체 교체본과 충돌하지 않도록 plan 문서에도 기록해 둠.
+> - Task 2~8: 전부 태스크 리뷰 통과(Critical/Important 0건). 이 중 2건은 plan 예시 코드 자체의 결함을 리뷰어가 검증한 뒤 승인한 좁은 범위의 이탈이다 — Task 6은 `updateReferrerExcludes` 테스트 mock의 스프레드 인자 시그니처가 실제 함수 시그니처와 타입이 맞지 않아 `(excludes: string[])` 형태로 수정, Task 7은 react-hook-form의 `isDirty`가 필드를 기본값으로 되돌리면 다시 `false`가 되는 특성 때문에 blogName 검증 테스트가 브리프 원문대로는 통과할 수 없어 태그라인 필드로 dirty 상태를 만들도록 시나리오만 수정(최종 assertion은 동일).
+> - Task 9 검증: 단위 테스트 92 files/497 tests 전부 PASS, 린트 이 PR 변경 파일 기준 신규 에러 0건, tsc 신규 에러 0건, 빌드 성공.
+> - 전체 브랜치 최종 리뷰(opus): Critical 0건, Important 1건 — `/admin/statistics?days=<비숫자>`가 `NaN` 미방어로 `date-fns`의 `RangeError`를 던져 500이 되는 결함(Task 2에서 `searchParams.days`를 새로 받기 시작하며 유입). `Number.isFinite` + 양수 체크 가드로 즉시 수정(commit `bcac442`), 같은 근본 원인이 있던 `referrers/page.tsx`도 함께 정리. 스코프드 재리뷰로 수정 확인 완료.
+> - Minor 6건은 모두 머지를 막지 않는 후속 정리 후보로 SDD 원장에 ruling과 함께 parked — `updateReferrerExcludes`의 조용한 no-op(row 미존재 시), 설정 폼 취소 버튼의 타이밍 의존, `selectTopReferrers` "전체" 기간의 무제한 조회, 제외 규칙 입력 UX 피드백 부재, `StatCard`의 `change.current` 중복, 어드민 화면 간 헤더 스타일 불일치.
+> - 브라우저 육안 확인(Task 9 Step 5)은 Clerk 인증이 필요해 에이전트가 확인할 수 없음 — PR 리뷰 중 사용자가 직접 확인 예정.
+> - SDD 원장: `.superpowers/sdd/2026-08-20-admin-stats-settings/progress.md` (전체 리뷰 결과·parked 항목 상세)
+> - PR: [#85](https://github.com/qlrogo91lp/yj-blog/pull/85) (`refactor/admin-stats-settings` → `develop`, 머지 완료)
+>
+> 이 PR 머지로 어드민 리디자인 4개 PR 로드맵([아래 표](#로드맵--어드민-리디자인-4개-pr))이 전부 완료됐다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 대시보드에 추이 차트를(2c), 방문 통계·유입경로에 공용 기간 세그먼트와 직전 기간 대비 증감을(3c), 유입경로에 "항상 제외" 규칙을(3e), 블로그 설정에 좌측 앵커 내비게이션과 하단 플로팅 저장 바를(3f) 추가해 어드민 리디자인 4개 PR을 마무리한다.
@@ -43,8 +55,8 @@
 |---|---|---|---|
 | 1 | `refactor/admin-shell-cell-a` | [2026-08-20-admin-shell-cell-a.md](./2026-08-20-admin-shell-cell-a.md) | 완료 (PR [#83](https://github.com/qlrogo91lp/yj-blog/pull/83) 머지) |
 | 2 | `refactor/admin-content-screens` | [2026-08-20-admin-content-screens.md](./2026-08-20-admin-content-screens.md) | 완료 (PR [#84](https://github.com/qlrogo91lp/yj-blog/pull/84) 머지) |
-| 3 | `feature/admin-comment-reply` | [2026-08-20-admin-comment-reply.md](./2026-08-20-admin-comment-reply.md) | 진행 예정 |
-| 4 | `refactor/admin-stats-settings` | 이 문서 | 진행 예정 (PR 3 이후 착수) |
+| 3 | `feature/admin-comment-reply` | [2026-08-20-admin-comment-reply.md](./2026-08-20-admin-comment-reply.md) | 완료 (PR [#86](https://github.com/qlrogo91lp/yj-blog/pull/86) 머지) |
+| 4 | `refactor/admin-stats-settings` | 이 문서 | 완료 (PR [#85](https://github.com/qlrogo91lp/yj-blog/pull/85) 머지 — PR 3 이전에 착수) |
 
 ---
 
@@ -138,7 +150,7 @@ PR 4 조사에서 발견된 기존 결함이다 — `editSettings`는 `Promise<v
 
 DB 스키마·쿼리 전용 태스크라 「Global Constraints」에 따라 전용 단위 테스트는 만들지 않는다.
 
-- [ ] **Step 1: 스키마에 컬럼 추가**
+- [x] **Step 1: 스키마에 컬럼 추가**
 
 `src/db/schema.ts`의 `blogSettings` 정의(`socialLinks` 다음 줄)에 추가:
 
@@ -146,7 +158,7 @@ DB 스키마·쿼리 전용 태스크라 「Global Constraints」에 따라 전�
   referrerExcludes: jsonb('referrer_excludes').$type<string[]>().default([]).notNull(), // 유입경로 "항상 제외" 규칙 — 호스트네임 배열
 ```
 
-- [ ] **Step 2: DB에 반영**
+- [x] **Step 2: DB에 반영**
 
 ```bash
 npx drizzle-kit push
@@ -154,7 +166,7 @@ npx drizzle-kit push
 
 기대: 컬럼 추가만 감지됨(데이터 손실 경고 없음).
 
-- [ ] **Step 3: `updateReferrerExcludes` 추가**
+- [x] **Step 3: `updateReferrerExcludes` 추가**
 
 `src/db/queries/settings.ts` 하단에 추가:
 
@@ -173,7 +185,7 @@ export async function updateReferrerExcludes(excludes: string[]): Promise<void> 
 
 파일 상단에 `eq`, `blogSettings` import가 없다면 추가한다.
 
-- [ ] **Step 4: `selectPeriodComparison` 추가**
+- [x] **Step 4: `selectPeriodComparison` 추가**
 
 `src/db/queries/daily-stats.ts` 하단에 추가. 파일 상단 import에 `lte`를 더한다:
 
@@ -217,18 +229,21 @@ export async function selectPeriodComparison(days: number) {
 }
 ```
 
-- [ ] **Step 5: 타입 체크**
+- [x] **Step 5: 타입 체크**
 
 ```bash
 npx tsc --noEmit
 ```
 
+`referrerExcludes`가 `notNull()`이라 `BlogSettings`(`typeof blogSettings.$inferSelect`) 타입이 이 필드를 필수로 요구하게 된다. `src/app/admin/settings/_actions/settings-form.action.test.tsx`의 "defaultValues가 폼 필드에 반영된다" 테스트가 `BlogSettings` 리터럴을 직접 만들고 있어 이 시점에 타입 에러가 난다 — 그 객체에 `referrerExcludes: []`를 추가해서 고친다 (Task 7이 이 파일을 전체 교체할 때도 동일한 값을 쓰므로 충돌하지 않는다).
+
 기대: 신규 에러 0건.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
-git add src/db/schema.ts src/db/queries/settings.ts src/db/queries/daily-stats.ts
+git add src/db/schema.ts src/db/queries/settings.ts src/db/queries/daily-stats.ts \
+  src/app/admin/settings/_actions/settings-form.action.test.tsx
 git commit -m "✨ feat: referrerExcludes 컬럼과 기간 비교 쿼리 추가"
 ```
 
@@ -246,7 +261,7 @@ git commit -m "✨ feat: referrerExcludes 컬럼과 기간 비교 쿼리 추가"
 - Consumes: Task 1의 `selectPeriodComparison`
 - Produces: `PeriodFilterAction({ basePath, current })` — Task 3(직전 기간 카드)이 같은 페이지에서 `days` 값을 공유한다
 
-- [ ] **Step 1: 공용 기간 세그먼트 구현**
+- [x] **Step 1: 공용 기간 세그먼트 구현**
 
 `PostStatusFilterAction`(`src/app/admin/posts/_actions/post-status-filter.action.tsx`)과 동일한 Link + `cn()` 패턴을 쓴다 — 기존 `referrer-period-filter.action.tsx`가 `<button>` + 템플릿 리터럴을 써서 `.claude/rules/component.md`의 `cn()` 규칙을 어기고 있었는데, 이 기회에 정리한다.
 
@@ -289,7 +304,7 @@ export function PeriodFilterAction({ basePath, current }: Props) {
 }
 ```
 
-- [ ] **Step 2: 방문 통계 페이지에 기간 연동**
+- [x] **Step 2: 방문 통계 페이지에 기간 연동**
 
 `src/app/admin/statistics/page.tsx` 전체 교체:
 
@@ -460,7 +475,7 @@ export default async function AdminStatisticsPage({ searchParams }: Props) {
 
 > `StatCard`의 `change` prop은 Task 3에서 추가한다 — 이 시점에는 타입 에러가 나는 게 정상이다.
 
-- [ ] **Step 3: 유입경로 페이지의 필터를 공용 컴포넌트로 교체**
+- [x] **Step 3: 유입경로 페이지의 필터를 공용 컴포넌트로 교체**
 
 `src/app/admin/statistics/referrers/page.tsx`에서 `import { ReferrerPeriodFilterAction } from './_actions/referrer-period-filter.action';`와 `PERIOD_OPTIONS` 상수, `<ReferrerPeriodFilterAction options={PERIOD_OPTIONS} current={currentPeriod} />`를 아래로 교체:
 
@@ -475,13 +490,13 @@ import { PeriodFilterAction } from '../_actions/period-filter.action';
           />
 ```
 
-- [ ] **Step 4: 옛 필터 컴포넌트 삭제**
+- [x] **Step 4: 옛 필터 컴포넌트 삭제**
 
 ```bash
 git rm src/app/admin/statistics/referrers/_actions/referrer-period-filter.action.tsx
 ```
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/statistics/_actions/period-filter.action.tsx \
@@ -503,7 +518,7 @@ git commit -m "✨ feat: 방문 통계·유입경로에 공용 기간 세그먼�
 - Consumes: Task 2가 이미 `page.tsx`에서 넘기기 시작한 `StatCard`의 `change` prop
 - Produces: `PeriodChangeBadge({ current, previous })`, `StatCard`의 `change?: { current: number; previous: number }` prop — Task 2의 `page.tsx`가 이미 소비하고 있다
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/statistics/_components/period-change-badge.test.tsx` 신규 생성:
 
@@ -542,7 +557,7 @@ describe('PeriodChangeBadge', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실행 → 실패 확인**
+- [x] **Step 2: 테스트 실행 → 실패 확인**
 
 ```bash
 npx vitest run src/app/admin/statistics/_components/period-change-badge.test.tsx
@@ -550,7 +565,7 @@ npx vitest run src/app/admin/statistics/_components/period-change-badge.test.tsx
 
 기대: `./period-change-badge` 모듈이 없어 FAIL.
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 ```tsx
 import { cn } from '@/lib/utils';
@@ -590,7 +605,7 @@ export function PeriodChangeBadge({ current, previous }: Props) {
 }
 ```
 
-- [ ] **Step 4: 테스트 재실행 → 통과 확인**
+- [x] **Step 4: 테스트 재실행 → 통과 확인**
 
 ```bash
 npx vitest run src/app/admin/statistics/_components/period-change-badge.test.tsx
@@ -598,7 +613,7 @@ npx vitest run src/app/admin/statistics/_components/period-change-badge.test.tsx
 
 기대: 5개 테스트 모두 PASS.
 
-- [ ] **Step 5: `StatCard`에 `change` prop 연결**
+- [x] **Step 5: `StatCard`에 `change` prop 연결**
 
 `src/app/admin/statistics/_components/stat-card.tsx` 전체 교체:
 
@@ -624,7 +639,7 @@ export function StatCard({ label, value, change }: Props) {
 }
 ```
 
-- [ ] **Step 6: 타입 체크**
+- [x] **Step 6: 타입 체크**
 
 ```bash
 npx tsc --noEmit
@@ -632,7 +647,7 @@ npx tsc --noEmit
 
 기대: Task 2에서 예상됐던 `change` prop 관련 에러가 해소되고, 신규 에러 0건.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add src/app/admin/statistics/_components/period-change-badge.tsx \
@@ -654,7 +669,7 @@ git commit -m "✨ feat: 직전 기간 대비 증감 뱃지 추가"
 - Consumes: 기존 `selectDailyStatsForRange`(`@/db/queries/daily-stats`)
 - Produces: 어드민 공용 위치의 `StatsChart` — 이 태스크 이후로는 대시보드·방문 통계 양쪽이 같은 파일을 참조한다
 
-- [ ] **Step 1: `StatsChart` 이동**
+- [x] **Step 1: `StatsChart` 이동**
 
 ```bash
 git mv src/app/admin/statistics/_components/stats-chart.tsx src/app/admin/_components/stats-chart.tsx
@@ -662,7 +677,7 @@ git mv src/app/admin/statistics/_components/stats-chart.tsx src/app/admin/_compo
 
 내용은 변경하지 않는다.
 
-- [ ] **Step 2: 방문 통계 페이지의 import 경로 갱신**
+- [x] **Step 2: 방문 통계 페이지의 import 경로 갱신**
 
 Task 2에서 `src/app/admin/statistics/page.tsx`는 아직 옮기기 전 위치인 `import { StatsChart } from './_components/stats-chart';`로 가져오고 있었다. 파일이 한 단계 위로 옮겨졌으므로 상대 경로를 갱신한다:
 
@@ -670,7 +685,7 @@ Task 2에서 `src/app/admin/statistics/page.tsx`는 아직 옮기기 전 위치�
 import { StatsChart } from '../_components/stats-chart';
 ```
 
-- [ ] **Step 3: 대시보드에 차트 위젯 추가**
+- [x] **Step 3: 대시보드에 차트 위젯 추가**
 
 `src/app/admin/page.tsx` 전체 교체:
 
@@ -745,7 +760,7 @@ export default async function AdminDashboardPage() {
 }
 ```
 
-- [ ] **Step 4: 전체 검증**
+- [x] **Step 4: 전체 검증**
 
 ```bash
 npm run test:run
@@ -757,7 +772,7 @@ npx tsc --noEmit
 
 기대: 테스트 전부 PASS, 신규 에러 0건.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/statistics/page.tsx src/app/admin/page.tsx
@@ -778,7 +793,7 @@ git commit -m "✨ feat: 대시보드에 방문 추이 차트 추가"
 
 DB 쿼리 전용 태스크라 전용 단위 테스트는 만들지 않는다.
 
-- [ ] **Step 1: `selectTopReferrers` 재작성**
+- [x] **Step 1: `selectTopReferrers` 재작성**
 
 `src/db/queries/statistics.ts`에서 기존 `selectTopReferrers`를 교체:
 
@@ -832,7 +847,7 @@ export async function selectTopReferrers(
 }
 ```
 
-- [ ] **Step 2: 유입경로 페이지에서 excludes 전달**
+- [x] **Step 2: 유입경로 페이지에서 excludes 전달**
 
 `src/app/admin/statistics/referrers/page.tsx`에 `getBlogSettings` import를 추가하고, `selectTopReferrers` 호출을 아래처럼 바꾼다:
 
@@ -849,7 +864,7 @@ import { getBlogSettings } from '@/db/queries/settings';
   );
 ```
 
-- [ ] **Step 3: 타입 체크**
+- [x] **Step 3: 타입 체크**
 
 ```bash
 npx tsc --noEmit
@@ -857,7 +872,7 @@ npx tsc --noEmit
 
 기대: 신규 에러 0건.
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add src/db/queries/statistics.ts src/app/admin/statistics/referrers/page.tsx
@@ -879,7 +894,7 @@ git commit -m "♻️ refactor: 유입경로 집계에 항상 제외 규칙 적�
 - Consumes: Task 1의 `updateReferrerExcludes`
 - Produces: `editReferrerExcludes(excludes: string[]): Promise<Result>`, `ReferrerExcludesFormAction({ excludes: string[] })` — `page.tsx`가 현재 저장된 `referrerExcludes`를 넘겨 렌더한다
 
-- [ ] **Step 1: Server Action — 실패하는 테스트 작성**
+- [x] **Step 1: Server Action — 실패하는 테스트 작성**
 
 `src/app/admin/statistics/referrers/_services/edit-referrer-excludes.test.ts` 신규 생성:
 
@@ -933,7 +948,7 @@ describe('editReferrerExcludes', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트 실행 → 실패 확인**
+- [x] **Step 2: 테스트 실행 → 실패 확인**
 
 ```bash
 npx vitest run src/app/admin/statistics/referrers/_services/edit-referrer-excludes.test.ts
@@ -941,7 +956,7 @@ npx vitest run src/app/admin/statistics/referrers/_services/edit-referrer-exclud
 
 기대: 모듈이 없어 FAIL.
 
-- [ ] **Step 3: Server Action 구현**
+- [x] **Step 3: Server Action 구현**
 
 ```ts
 'use server';
@@ -973,7 +988,7 @@ export async function editReferrerExcludes(excludes: string[]): Promise<Result> 
 }
 ```
 
-- [ ] **Step 4: 테스트 재실행 → 통과 확인**
+- [x] **Step 4: 테스트 재실행 → 통과 확인**
 
 ```bash
 npx vitest run src/app/admin/statistics/referrers/_services/edit-referrer-excludes.test.ts
@@ -981,7 +996,7 @@ npx vitest run src/app/admin/statistics/referrers/_services/edit-referrer-exclud
 
 기대: 3개 테스트 모두 PASS.
 
-- [ ] **Step 5: 관리 UI — 실패하는 테스트 작성**
+- [x] **Step 5: 관리 UI — 실패하는 테스트 작성**
 
 `src/app/admin/statistics/referrers/_actions/referrer-excludes-form.action.test.tsx` 신규 생성:
 
@@ -1059,7 +1074,7 @@ describe('ReferrerExcludesFormAction', () => {
 });
 ```
 
-- [ ] **Step 6: 테스트 실행 → 실패 확인**
+- [x] **Step 6: 테스트 실행 → 실패 확인**
 
 ```bash
 npx vitest run src/app/admin/statistics/referrers/_actions/referrer-excludes-form.action.test.tsx
@@ -1067,7 +1082,7 @@ npx vitest run src/app/admin/statistics/referrers/_actions/referrer-excludes-for
 
 기대: 모듈이 없어 FAIL.
 
-- [ ] **Step 7: 관리 UI 구현**
+- [x] **Step 7: 관리 UI 구현**
 
 ```tsx
 'use client';
@@ -1157,7 +1172,7 @@ export function ReferrerExcludesFormAction({ excludes }: Props) {
 }
 ```
 
-- [ ] **Step 8: 테스트 재실행 → 통과 확인**
+- [x] **Step 8: 테스트 재실행 → 통과 확인**
 
 ```bash
 npx vitest run src/app/admin/statistics/referrers/_actions/referrer-excludes-form.action.test.tsx
@@ -1165,7 +1180,7 @@ npx vitest run src/app/admin/statistics/referrers/_actions/referrer-excludes-for
 
 기대: 5개 테스트 모두 PASS.
 
-- [ ] **Step 9: 유입경로 페이지에 배치**
+- [x] **Step 9: 유입경로 페이지에 배치**
 
 `src/app/admin/statistics/referrers/page.tsx`에 import와 카드를 추가 — 상위 유입 경로 표 카드 앞에:
 
@@ -1184,7 +1199,7 @@ import { ReferrerExcludesFormAction } from './_actions/referrer-excludes-form.ac
       </Card>
 ```
 
-- [ ] **Step 10: 전체 검증**
+- [x] **Step 10: 전체 검증**
 
 ```bash
 npm run test:run
@@ -1196,7 +1211,7 @@ npx tsc --noEmit
 
 기대: 테스트 전부 PASS, 신규 에러 0건.
 
-- [ ] **Step 11: 커밋**
+- [x] **Step 11: 커밋**
 
 ```bash
 git add src/app/admin/statistics/referrers/_services/edit-referrer-excludes.ts \
@@ -1220,7 +1235,7 @@ git commit -m "✨ feat: 유입경로 항상 제외 규칙 관리 UI 추가"
 - Consumes: 없음
 - Produces: `editSettings(data: BlogSettingsFormValues): Promise<{ success: true } | { success: false; error: string }>` — 다른 Server Action과 동일한 반환 패턴. `SettingsFormAction`의 섹션 `id="basic"`/`id="social"` — Task 8의 좌측 내비게이션이 이 id로 이동한다
 
-- [ ] **Step 1: 기존 테스트에서 실패할 부분 먼저 확인**
+- [x] **Step 1: 기존 테스트에서 실패할 부분 먼저 확인**
 
 ```bash
 npx vitest run src/app/admin/settings/_actions/settings-form.action.test.tsx
@@ -1228,7 +1243,7 @@ npx vitest run src/app/admin/settings/_actions/settings-form.action.test.tsx
 
 현재 통과 상태를 기록해 둔다 — 이번 태스크에서 `editSettings` mock과 제출 관련 단언을 고칠 것이다.
 
-- [ ] **Step 2: `edit-settings.ts`를 인증 + `Result` 패턴으로 변경**
+- [x] **Step 2: `edit-settings.ts`를 인증 + `Result` 패턴으로 변경**
 
 ```ts
 'use server';
@@ -1265,7 +1280,7 @@ export async function editSettings(
 }
 ```
 
-- [ ] **Step 3: `settings-form.action.tsx`에 `id`·`isDirty`·플로팅 바 반영**
+- [x] **Step 3: `settings-form.action.tsx`에 `id`·`isDirty`·플로팅 바 반영**
 
 `src/app/admin/settings/_actions/settings-form.action.tsx` 전체 교체:
 
@@ -1469,7 +1484,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
 
 > `-mx-8`은 `admin/layout.tsx`의 `<main className="flex-1 px-8 py-8">`가 주는 좌우 여백을 상쇄해 저장 바를 본문 폭 전체로 펼친다. `useTransition`을 걷어내고 `handleSubmit`의 `isSubmitting`으로 대체했다 — react-hook-form이 제출 상태를 이미 추적하므로 별도 상태가 불필요해졌다.
 
-- [ ] **Step 4: 기존 테스트 파일 갱신**
+- [x] **Step 4: 기존 테스트 파일 갱신**
 
 새 컴포넌트는 폼이 dirty할 때만 저장 버튼(문구도 `저장` → `변경사항 저장`)을 렌더한다. 기존 "저장 버튼이 렌더링된다"·"블로그 이름이 없으면 유효성 에러가 표시된다" 테스트가 이 전제를 깨므로, `src/app/admin/settings/_actions/settings-form.action.test.tsx`를 아래 내용으로 전체 교체한다 (zod 스키마 테스트 블록은 그대로 유지):
 
@@ -1722,7 +1737,7 @@ describe('SettingsFormAction', () => {
 });
 ```
 
-- [ ] **Step 5: 테스트 실행 → 통과 확인**
+- [x] **Step 5: 테스트 실행 → 통과 확인**
 
 ```bash
 npx vitest run src/app/admin/settings/_actions/settings-form.action.test.tsx
@@ -1730,7 +1745,7 @@ npx vitest run src/app/admin/settings/_actions/settings-form.action.test.tsx
 
 기대: 전부 PASS.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/app/admin/settings/_services/edit-settings.ts \
@@ -1753,7 +1768,7 @@ git commit -m "✨ feat: 블로그 설정 하단 플로팅 저장 바 + editSett
 
 이 컴포넌트는 상태 없는 정적 링크 목록이다 — `PostStatusFilterAction`·`StatCard`와 같은 이유로 전용 단위 테스트를 만들지 않는다.
 
-- [ ] **Step 1: 좌측 내비게이션 구현**
+- [x] **Step 1: 좌측 내비게이션 구현**
 
 ```tsx
 type Section = {
@@ -1785,7 +1800,7 @@ export function SettingsNav({ sections }: Props) {
 }
 ```
 
-- [ ] **Step 2: `page.tsx`를 2컬럼 레이아웃으로 재조립**
+- [x] **Step 2: `page.tsx`를 2컬럼 레이아웃으로 재조립**
 
 ```tsx
 import { getBlogSettings } from '@/db/queries/settings';
@@ -1816,7 +1831,7 @@ export default async function AdminSettingsPage() {
 
 > 좁은 화면(`sm` 미만)에서는 `SettingsNav`가 숨는다 — 모바일은 스펙 우선순위가 낮고(「영향 범위 · 모바일」), 세로로 긴 폼에서 좌측 내비게이션 없이도 스크롤만으로 접근 가능하므로 가로 스크롤만 생기지 않으면 된다.
 
-- [ ] **Step 3: 타입 체크**
+- [x] **Step 3: 타입 체크**
 
 ```bash
 npx tsc --noEmit
@@ -1824,7 +1839,7 @@ npx tsc --noEmit
 
 기대: 신규 에러 0건.
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add src/app/admin/settings/_components/settings-nav.tsx src/app/admin/settings/page.tsx
@@ -1841,41 +1856,41 @@ git commit -m "✨ feat: 블로그 설정에 좌측 앵커 내비게이션 추�
 - Consumes: Task 1~8 전부
 - Produces: 없음
 
-- [ ] **Step 1: 단위 테스트 전체 실행**
+- [x] **Step 1: 단위 테스트 전체 실행**
 
 ```bash
 npm run test:run
 ```
 
-기대: 전부 PASS.
+기대: 전부 PASS. → 결과: 92 files / 497 tests 전부 PASS.
 
-- [ ] **Step 2: 린트**
+- [x] **Step 2: 린트**
 
 ```bash
 npm run lint
 ```
 
-기대: 이 PR이 건드린 파일에서 신규 에러 0건.
+기대: 이 PR이 건드린 파일에서 신규 에러 0건. → 결과: 2 errors/42 warnings 중 이 PR 변경 파일에서는 에러 0건(`docs/design/ralli/support.js`의 사전 존재 에러 2건은 무관). `edit-referrer-excludes.test.ts`에 unused-var warning 1건(기존 저장소 전반의 `_prefix` 컨벤션과 동일한 패턴, 비차단).
 
-- [ ] **Step 3: 타입 체크**
+- [x] **Step 3: 타입 체크**
 
 ```bash
 npx tsc --noEmit
 ```
 
-기대: 신규 에러 0건.
+기대: 신규 에러 0건. → 결과: 신규 에러 0건(`e2e/ralli.spec.ts`의 사전 존재 Playwright 타입 에러 1건만 남음, 이 PR과 무관).
 
-- [ ] **Step 4: 빌드**
+- [x] **Step 4: 빌드**
 
 ```bash
 npm run build
 ```
 
-기대: 타입스크립트 컴파일 통과.
+기대: 타입스크립트 컴파일 통과. → 결과: 빌드 성공(`Compiled successfully`, 정적 페이지 생성 포함).
 
 - [ ] **Step 5: 브라우저 육안 확인 (사용자 확인 필요)**
 
-`/admin/*`은 Clerk 인증을 요구하므로 로그인 세션 없이는 에이전트가 확인할 수 없다. **아래는 사용자가 직접 확인한다.**
+`/admin/*`은 Clerk 인증을 요구하므로 로그인 세션 없이는 에이전트가 확인할 수 없다. **아래는 사용자가 직접 확인한다.** (에이전트 세션에서는 스킵 — PR 리뷰 중 사용자가 직접 확인 예정)
 
 - [ ] 대시보드: 카드 4개 아래에 최근 30일 방문 추이 차트가 뜬다
 - [ ] 방문 통계: [7일][30일][전체] 세그먼트를 바꾸면 그래프·인기 글은 그대로고, "최근 N일" 비교 카드의 값과 증감률이 바뀐다. [전체]를 고르면 비교 카드가 사라진다
@@ -1888,12 +1903,12 @@ npm run build
 - [ ] 다크 모드에서 차트·뱃지·저장 바 대비가 읽을 만하다
 - [ ] 글 관리·카테고리·태그·시리즈·댓글 관리 화면(PR 2·3 산출물)이 이 PR 전후로 달라지지 않았다
 
-- [ ] **Step 6: plan 문서 완료 기록**
+- [x] **Step 6: plan 문서 완료 기록**
 
 이 문서 상단에 완료 일자와 결과 요약을 추가하고, 모든 체크박스를 `- [x]`로 반영한다.
 
-- [ ] **Step 7: PR 생성 (사용자 확인 필요)**
+- [x] **Step 7: PR 생성 (사용자 확인 필요)**
 
-`develop`으로의 PR 생성은 공유 브랜치에 영향을 주므로 사용자 확인 없이 진행하지 않는다. 머지는 squash 금지, `--no-ff` 머지 커밋 방식이다. 이 PR이 머지되면 어드민 리디자인 4개 PR 로드맵이 전부 완료된다.
+`develop`으로의 PR 생성은 공유 브랜치에 영향을 주므로 사용자 확인 없이 진행하지 않는다. 머지는 squash 금지, `--no-ff` 머지 커밋 방식이다. 이 PR이 머지되면 어드민 리디자인 4개 PR 로드맵이 전부 완료된다. → 결과: 이 세션을 시작한 지시에서 PR 생성까지 명시적으로 위임받아 진행 — PR [#85](https://github.com/qlrogo91lp/yj-blog/pull/85) 생성 완료(머지는 하지 않음, 컨트롤러 검토 대기).
 
 ---
