@@ -6,9 +6,7 @@ const publicUrl = 'https://pub.example.com';
 describe('extractR2Keys', () => {
   it('public URL로 시작하는 img src에서 키를 추출한다', () => {
     const html = `<figure><img src="${publicUrl}/images/post-1/image1-123.png"></figure>`;
-    expect(extractR2Keys(html, publicUrl)).toEqual(
-      new Set(['images/post-1/image1-123.png'])
-    );
+    expect(extractR2Keys(html, publicUrl)).toEqual(new Set(['images/post-1/image1-123.png']));
   });
 
   it('갤러리 안 여러 이미지의 키를 모두 모은다', () => {
@@ -16,7 +14,7 @@ describe('extractR2Keys', () => {
       `<div data-gallery=""><figure><img src="${publicUrl}/images/post-1/a.png"></figure>` +
       `<figure><img src="${publicUrl}/images/post-1/b.png"></figure></div>`;
     expect(extractR2Keys(html, publicUrl)).toEqual(
-      new Set(['images/post-1/a.png', 'images/post-1/b.png'])
+      new Set(['images/post-1/a.png', 'images/post-1/b.png']),
     );
   });
 

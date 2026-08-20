@@ -91,11 +91,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
 
       await db.update(posts).set(updateData).where(eq(posts.id, input.postId));
       await syncPostTags(input.postId, tagIds);
-      await cleanupOrphanImages(
-        input.postId,
-        content,
-        input.thumbnailUrl ?? null
-      );
+      await cleanupOrphanImages(input.postId, content, input.thumbnailUrl ?? null);
 
       revalidateTag(CACHE_TAGS.posts, 'max');
       revalidateTag(CACHE_TAGS.series, 'max');
@@ -122,11 +118,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
         .returning({ id: posts.id });
 
       await syncPostTags(newPost.id, tagIds);
-      await cleanupOrphanImages(
-        newPost.id,
-        content,
-        input.thumbnailUrl ?? null
-      );
+      await cleanupOrphanImages(newPost.id, content, input.thumbnailUrl ?? null);
 
       revalidateTag(CACHE_TAGS.posts, 'max');
       revalidateTag(CACHE_TAGS.series, 'max');
@@ -158,15 +150,11 @@ async function syncPostTags(postId: number, tagIds: number[]) {
 async function cleanupOrphanImages(
   postId: number,
   content: string,
-  thumbnailUrl: string | null
+  thumbnailUrl: string | null,
 ): Promise<void> {
   try {
     const keep = extractR2Keys(content, r2PublicUrl);
-    if (
-      thumbnailUrl &&
-      r2PublicUrl &&
-      thumbnailUrl.startsWith(`${r2PublicUrl}/`)
-    ) {
+    if (thumbnailUrl && r2PublicUrl && thumbnailUrl.startsWith(`${r2PublicUrl}/`)) {
       keep.add(thumbnailUrl.slice(r2PublicUrl.length + 1));
     }
 
@@ -182,8 +170,8 @@ async function cleanupOrphanImages(
     await db.delete(postImages).where(
       inArray(
         postImages.id,
-        orphans.map((row) => row.id)
-      )
+        orphans.map((row) => row.id),
+      ),
     );
   } catch {
     // 정리 실패는 저장 결과에 영향을 주지 않는다
