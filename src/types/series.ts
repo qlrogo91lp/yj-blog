@@ -50,7 +50,7 @@ export const seriesFormSchema = z.object({
     .max(100, 'slug는 100자 이하여야 합니다')
     .regex(/^[a-z0-9가-힣-]+$/, '영소문자, 숫자, 한글, 하이픈만 사용 가능합니다'),
   description: z.string().max(500, '설명은 500자 이하여야 합니다').optional(),
-  status: z.enum(['ongoing', 'completed']).default('ongoing').optional(),
+  status: z.enum(['ongoing', 'completed']).default('ongoing'),
 });
 
 export type SeriesFormValues = z.infer<typeof seriesFormSchema>;
