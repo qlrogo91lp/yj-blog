@@ -5,7 +5,6 @@ import { selectSeriesList } from '@/db/queries/series';
 import { getAllTags } from '@/db/queries/tags';
 import { BottomBar } from './_components/bottom-bar';
 import { EditorProvider } from './_providers/editor.provider';
-import { EditorViewHandler } from './_handlers/editor-view.handler';
 import { NewPostResetHandler } from './_handlers/new-post-reset.handler';
 import { EditorToolbarAction } from './_actions/editor-toolbar.action';
 import { CategorySelectorAction } from './_actions/category-selector.action';
@@ -14,6 +13,7 @@ import { TagSelectorAction } from './_actions/tag-selector.action';
 import { TitleInputAction } from './_actions/title-input.action';
 import { ThumbnailUploadAction } from './_actions/thumbnail-upload.action';
 import { SeoSectionAction } from './_actions/seo-section.action';
+import { WysiwygEditorAction } from './_actions/wysiwyg-editor.action';
 import { AutoSaveProvider } from './_providers/auto-save.provider';
 
 export default async function NewPostPage() {
@@ -38,7 +38,7 @@ export default async function NewPostPage() {
           <ThumbnailUploadAction />
           <TitleInputAction />
           <div className="mt-4 flex-1">
-            <EditorViewHandler />
+            <WysiwygEditorAction />
           </div>
           <SeoSectionAction />
         </div>

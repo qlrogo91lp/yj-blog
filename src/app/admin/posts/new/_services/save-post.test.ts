@@ -55,7 +55,6 @@ const baseInput = {
   title: '제목',
   slug: 'post-slug',
   content: '<p>본문</p>',
-  contentFormat: 'html' as const,
   categoryId: null,
   seriesId: null,
   status: 'draft' as const,
@@ -135,5 +134,56 @@ describe('savePost — publishedAt 결정 로직', () => {
     expect(db.select).not.toHaveBeenCalled();
     expect(insertPostsValuesArgs).toHaveLength(1);
     expect(insertPostsValuesArgs[0].publishedAt).toBeInstanceOf(Date);
+  });
+});
+
+describe('savePost — contentFormat은 항상 html로 저장된다', () => {
+  beforeEach(() => {
+    vi.mocked(db.select).mockClear();
+    vi.mocked(db.update).mockClear();
+    vi.mocked(db.insert).mockClear();
+    vi.mocked(db.delete).mockClear();
+    updateSetArgs.length = 0;
+    insertPostsValuesArgs.length = 0;
+    insertPostsReturning = [{ id: 1 }];
+    selectResult = [];
+  });
+
+  it('UPDATE 경로는 contentFormat을 html로 저장한다', async () => {
+    selectResult = [{ publishedAt: null }];
+
+    const result = await savePost({ ...baseInput, status: 'draft' });
+
+    expect(result.success).toBe(true);
+    expect(updateSetArgs).toHaveLength(1);
+    expect(updateSetArgs[0].contentFormat).toBe('html');
+  });
+
+  it('INSERT 경로는 contentFormat을 html로 저장한다', async () => {
+    const { postId: _postId, ...withoutPostId } = baseInput;
+
+    const result = await savePost({ ...withoutPostId, status: 'draft' });
+
+    expect(result.success).toBe(true);
+    expect(insertPostsValuesArgs).toHaveLength(1);
+    expect(insertPostsValuesArgs[0].contentFormat).toBe('html');
+  });
+
+  it('호출자가 contentFormat을 다른 값으로 끼워 넣어도 무시하고 html로 저장한다', async () => {
+    // SavePostInput 타입에는 contentFormat 필드가 없다 — 타입을 우회해 다른 값을
+    // 넣더라도 savePost 내부에서 항상 'html'로 덮어쓰는지를 검증한다(호출자 입력은
+    // 무관하다는 것이 실제 테스트 대상 계약이다).
+    const { postId: _postId, ...withoutPostId } = baseInput;
+    const inputWithForeignContentFormat = {
+      ...withoutPostId,
+      status: 'draft' as const,
+      contentFormat: 'markdown',
+    };
+
+    const result = await savePost(inputWithForeignContentFormat);
+
+    expect(result.success).toBe(true);
+    expect(insertPostsValuesArgs).toHaveLength(1);
+    expect(insertPostsValuesArgs[0].contentFormat).toBe('html');
   });
 });

@@ -26,7 +26,6 @@ import {
   Underline as UnderlineIcon,
   Undo2,
 } from 'lucide-react';
-import TurndownService from 'turndown';
 import {
   Select,
   SelectContent,
@@ -42,7 +41,6 @@ import { ColorPicker } from '../_components/color-picker';
 import { TableInsertAction } from './table-insert.action';
 import { ToolbarButton } from '../_components/toolbar-button';
 import { useEditorContext } from '../_providers/editor.provider';
-import { useNewPostStore } from '../_store';
 
 function useForceUpdate() {
   const [, setState] = useState(0);
@@ -51,7 +49,6 @@ function useForceUpdate() {
 
 export function EditorToolbarAction() {
   const { editor, uploadFiles } = useEditorContext();
-  const mode = useNewPostStore((s) => s.mode);
   const forceUpdate = useForceUpdate();
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
@@ -63,70 +60,12 @@ export function EditorToolbarAction() {
       editor.off('transaction', forceUpdate);
     };
   }, [editor, forceUpdate]);
-  const setMode = useNewPostStore((s) => s.setMode);
-  const content = useNewPostStore((s) => s.content);
-  const setContent = useNewPostStore((s) => s.setContent);
-  const setContentFormat = useNewPostStore((s) => s.setContentFormat);
   const [isLinkOpen, setIsLinkOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [isYoutubeOpen, setIsYoutubeOpen] = useState(false);
 
-  const handleModeChange = useCallback(
-    (newMode: string) => {
-      if (newMode === mode) return;
-
-      if (newMode === 'markdown' && mode === 'wysiwyg') {
-        // HTML → Markdown
-        const turndown = new TurndownService({
-          headingStyle: 'atx',
-          codeBlockStyle: 'fenced',
-        });
-        const markdown = turndown.turndown(content || '');
-        setContent(markdown);
-        setContentFormat('markdown');
-      }
-      // markdown → wysiwyg: 마크다운을 HTML로 변환해서 TipTap에 넣음
-      // content는 그대로 두고, WysiwygEditor가 마운트될 때 처리
-
-      setMode(newMode as 'wysiwyg' | 'markdown');
-    },
-    [mode, content, setContent, setContentFormat, setMode]
-  );
-
-  if (mode === 'markdown') {
-    return (
-      <div className="sticky top-0 z-10 border-b bg-background px-4 py-2 flex items-center gap-2">
-        <Select value={mode} onValueChange={handleModeChange}>
-          <SelectTrigger className="w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="wysiwyg">기본모드</SelectItem>
-            <SelectItem value="markdown">마크다운</SelectItem>
-          </SelectContent>
-        </Select>
-        <span className="text-sm text-muted-foreground ml-2">
-          마크다운 모드에서는 직접 마크다운 문법을 작성합니다
-        </span>
-      </div>
-    );
-  }
-
   return (
     <div className="sticky top-0 z-10 border-b bg-background px-4 py-2 flex items-center gap-1 flex-wrap">
-      {/* 모드 선택 */}
-      <Select value={mode} onValueChange={handleModeChange}>
-        <SelectTrigger className="w-32">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="wysiwyg">기본모드</SelectItem>
-          <SelectItem value="markdown">마크다운</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Separator orientation="vertical" className="h-6 mx-1" />
-
       {/* 제목 스타일 */}
       <Select
         value={
