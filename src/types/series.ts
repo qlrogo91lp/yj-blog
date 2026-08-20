@@ -63,4 +63,4 @@ export const seriesFormSchema = z.object({
   status: z.enum(['ongoing', 'completed']).default('ongoing'),
 });
 
-export type SeriesFormValues = z.infer<typeof seriesFormSchema>;
+export type SeriesFormValues = z.input<typeof seriesFormSchema>;
