@@ -7,13 +7,16 @@ export default function AdminPostsLoading() {
         <Skeleton className="h-8 w-24" />
         <Skeleton className="h-9 w-20" />
       </div>
-      <div className="rounded-lg border">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="flex gap-4 border-b px-4 py-3 last:border-b-0">
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-20" />
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-4 w-16" />
+      <div className="flex flex-col gap-3">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-4 rounded-2xl border p-4">
+            <Skeleton className="size-20 shrink-0 rounded-xl" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-5 w-64" />
+              <Skeleton className="h-4 w-96" />
+              <Skeleton className="h-3 w-48" />
+            </div>
+            <Skeleton className="h-6 w-11 rounded-full" />
           </div>
         ))}
       </div>
