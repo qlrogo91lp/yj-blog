@@ -258,3 +258,23 @@ export async function updatePostStatus(
     .where(eq(posts.id, id))
     .returning({ id: posts.id });
 }
+
+/**
+ * 이어 쓸 글 — 임시저장 상태의 글을 최근 수정 순으로.
+ */
+export const selectDraftQueue = unstable_cache(
+  async (limit = 5) => {
+    return db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        updatedAt: posts.updatedAt,
+      })
+      .from(posts)
+      .where(eq(posts.status, 'draft'))
+      .orderBy(desc(posts.updatedAt))
+      .limit(limit);
+  },
+  ['admin-draft-queue'],
+  { tags: [CACHE_TAGS.posts] }
+);

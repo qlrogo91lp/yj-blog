@@ -218,3 +218,43 @@ export async function getPendingReplyCount(): Promise<number> {
 
   return result[0].value;
 }
+
+/**
+ * 답변 대기 댓글 — 사이드바 뱃지(getPendingReplyCount)와 동일한 조건으로 목록을 뽑는다.
+ */
+export const selectPendingComments = unstable_cache(
+  async (limit = 5) => {
+    const rows = await db
+      .select({
+        id: comments.id,
+        content: comments.content,
+        createdAt: comments.createdAt,
+        postTitle: posts.title,
+      })
+      .from(comments)
+      .innerJoin(posts, eq(comments.postId, posts.id))
+      .where(
+        and(
+          isNull(comments.parentId),
+          eq(comments.isDeleted, false),
+          notExists(
+            db
+              .select({ id: replyComments.id })
+              .from(replyComments)
+              .where(
+                and(
+                  eq(replyComments.parentId, comments.id),
+                  eq(replyComments.isAuthor, true)
+                )
+              )
+          )
+        )
+      )
+      .orderBy(desc(comments.createdAt))
+      .limit(limit);
+
+    return rows;
+  },
+  ['admin-pending-comments'],
+  { tags: [CACHE_TAGS.comments] }
+);
