@@ -1,7 +1,14 @@
 export type { Category, CategoryFormValues } from './category';
 export { categoryFormSchema } from './category';
 
-export type { Post, PostWithCategory, PostWithTags, PostWithCategoryAndTags, PostFormValues } from './post';
+export type {
+  Post,
+  PostWithCategory,
+  PostWithTags,
+  PostWithCategoryAndTags,
+  AdminPostRow,
+  PostFormValues,
+} from './post';
 export { postFormSchema } from './post';
 
 export type {

@@ -3,7 +3,11 @@ import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { categories, comments, postTags, posts, tags } from '@/db/schema';
-import type { PostWithCategory, PostWithCategoryAndTags } from '@/types';
+import type {
+  AdminPostRow,
+  PostWithCategory,
+  PostWithCategoryAndTags,
+} from '@/types';
 
 interface GetPostsOptions {
   categoryId?: number;
@@ -142,20 +146,34 @@ export async function selectPostById(id: number) {
  * 관리자용 전체 글 목록 (draft 포함, 최근 수정 순)
  */
 export const getAllPostsForAdmin = unstable_cache(
-  async () => {
+  async (): Promise<AdminPostRow[]> => {
     const result = await db
-      .select({ post: posts, category: categories })
+      .select({
+        post: posts,
+        category: categories,
+        commentCount: sql<number>`(
+          select count(*) from ${comments} where ${comments.postId} = ${posts.id}
+        )`.mapWith(Number),
+        tagNames: sql<string[]>`coalesce((
+          select array_agg(${tags.name})
+          from ${postTags}
+          join ${tags} on ${tags.id} = ${postTags.tagId}
+          where ${postTags.postId} = ${posts.id}
+        ), '{}')`,
+      })
       .from(posts)
       .leftJoin(categories, eq(posts.categoryId, categories.id))
-      .orderBy(desc(posts.publishedAt));
+      .orderBy(desc(posts.updatedAt));
 
-    return result.map(({ post, category }) => ({
+    return result.map(({ post, category, commentCount, tagNames }) => ({
       ...post,
       category,
-    })) as PostWithCategory[];
+      commentCount,
+      tagNames,
+    })) as AdminPostRow[];
   },
   ['admin-posts-list'],
-  { tags: [CACHE_TAGS.posts] }
+  { tags: [CACHE_TAGS.posts, CACHE_TAGS.comments, CACHE_TAGS.tags] }
 );
 
 /**
@@ -166,8 +184,14 @@ export const getAdminDashboardStats = unstable_cache(
     const [totalPosts, publishedPosts, draftPosts, totalComments] =
       await Promise.all([
         db.select({ count: count() }).from(posts),
-        db.select({ count: count() }).from(posts).where(eq(posts.status, 'published')),
-        db.select({ count: count() }).from(posts).where(eq(posts.status, 'draft')),
+        db
+          .select({ count: count() })
+          .from(posts)
+          .where(eq(posts.status, 'published')),
+        db
+          .select({ count: count() })
+          .from(posts)
+          .where(eq(posts.status, 'draft')),
         db.select({ count: count() }).from(comments),
       ]);
 
