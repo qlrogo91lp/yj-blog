@@ -95,4 +95,27 @@ describe('CommentCardAction', () => {
     );
     expect(screen.getByTestId('reply-3')).toBeInTheDocument();
   });
+
+  it('답글이 있어도 isAuthor가 false면 답변 대기 뱃지를 보여준다', () => {
+    render(
+      <CommentCardAction
+        thread={makeThread({ replies: [makeReply({ isAuthor: false })] })}
+      />
+    );
+    expect(screen.getByText('답변 대기')).toBeInTheDocument();
+    expect(screen.queryByText('답변 완료')).not.toBeInTheDocument();
+  });
+
+  it('삭제된 댓글이어도 답글은 렌더한다', () => {
+    render(
+      <CommentCardAction
+        thread={makeThread({
+          isDeleted: true,
+          replies: [makeReply({ id: 4 })],
+        })}
+      />
+    );
+    expect(screen.getByText('삭제된 댓글입니다.')).toBeInTheDocument();
+    expect(screen.getByTestId('reply-4')).toBeInTheDocument();
+  });
 });
