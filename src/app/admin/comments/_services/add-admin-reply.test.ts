@@ -39,7 +39,8 @@ vi.mock('@/db/queries/settings', () => ({
 
 const sendReplyNotificationMock = vi.fn(async (..._args: unknown[]) => {});
 vi.mock('@/lib/email', () => ({
-  sendReplyNotification: (...args: unknown[]) => sendReplyNotificationMock(...args),
+  sendReplyNotification: (...args: unknown[]) =>
+    sendReplyNotificationMock(...args),
 }));
 
 describe('addAdminReply', () => {
@@ -109,6 +110,9 @@ describe('addAdminReply', () => {
     const result = await addAdminReply(1, 'my-post', 10, {
       content: '답글입니다',
     });
-    expect(result).toEqual({ success: false, error: '답글 작성에 실패했습니다' });
+    expect(result).toEqual({
+      success: false,
+      error: '답글 작성에 실패했습니다',
+    });
   });
 });

@@ -13,7 +13,6 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-
 // -----------------------------------------------
 // Enums
 // -----------------------------------------------
@@ -124,7 +123,9 @@ export const dailyStats = pgTable('daily_stats', {
 
 export const referrers = pgTable('referrers', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  postId: integer('post_id').references(() => posts.id, { onDelete: 'cascade' }), // null이면 글 페이지가 아닌 방문
+  postId: integer('post_id').references(() => posts.id, {
+    onDelete: 'cascade',
+  }), // null이면 글 페이지가 아닌 방문
   referrer: varchar('referrer', { length: 2048 }), // document.referrer 값. 빈 문자열이면 직접 접근
   visitedAt: timestamp('visited_at').defaultNow().notNull(),
 });
@@ -184,7 +185,7 @@ export const postTags = pgTable(
       .notNull()
       .references(() => tags.id, { onDelete: 'cascade' }),
   },
-  (t) => ({ pk: primaryKey({ columns: [t.postId, t.tagId] }) }),
+  (t) => ({ pk: primaryKey({ columns: [t.postId, t.tagId] }) })
 );
 
 // -----------------------------------------------

@@ -84,7 +84,9 @@ describe('CommentCardAction', () => {
     render(<CommentCardAction thread={makeThread({ isDeleted: true })} />);
     expect(screen.getByText('삭제된 댓글입니다.')).toBeInTheDocument();
     expect(screen.queryByText('댓글 내용')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: '답글' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '답글' })
+    ).not.toBeInTheDocument();
   });
 
   it('답글 목록을 렌더한다', () => {

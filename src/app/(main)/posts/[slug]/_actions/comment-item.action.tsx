@@ -6,8 +6,8 @@ import { ko } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { type CommentWithReplies } from '@/types';
-import { DeleteCommentDialogAction } from './delete-comment-dialog.action';
 import { CommentFormAction } from './comment-form.action';
+import { DeleteCommentDialogAction } from './delete-comment-dialog.action';
 
 type Props = {
   comment: CommentWithReplies;
@@ -15,7 +15,11 @@ type Props = {
   isReply?: boolean;
 };
 
-export function CommentItemAction({ comment, postSlug, isReply = false }: Props) {
+export function CommentItemAction({
+  comment,
+  postSlug,
+  isReply = false,
+}: Props) {
   const [isReplying, setIsReplying] = useState(false);
 
   const formattedDate = format(new Date(comment.createdAt), 'yyyy.M.d HH:mm', {

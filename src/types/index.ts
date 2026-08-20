@@ -23,7 +23,11 @@ export type {
   CommentPasswordValues,
   AdminReplyFormValues,
 } from './comment';
-export { commentFormSchema, commentPasswordSchema, adminReplyFormSchema } from './comment';
+export {
+  commentFormSchema,
+  commentPasswordSchema,
+  adminReplyFormSchema,
+} from './comment';
 
 export type { Tag, TagSummary, TagWithCount } from './tag';
 
