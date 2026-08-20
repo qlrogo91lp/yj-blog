@@ -9,6 +9,15 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+// columns.tsx는 PostActionsCellAction → DeletePostDialogAction → remove-post.ts를 통해
+// '@/db'를 import한다. '@/db'는 모듈 최상단에서 neon(process.env.DATABASE_URL!)을 즉시 호출하므로
+// 테스트 환경(DATABASE_URL 미설정)에서 import 시점에 에러가 발생한다.
+// 이 테스트는 제목 셀만 렌더링하며 db를 실제로 사용하지 않으므로, import 체인이 끊기지 않도록
+// 최소한의 stub으로 로컬 mock한다(전역 test.setup.ts에는 두지 않음 — 다른 테스트에 영향 방지).
+vi.mock('@/db', () => ({
+  db: {},
+}));
+
 const base = {
   id: 1,
   title: '글 제목',
