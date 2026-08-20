@@ -1,5 +1,6 @@
 import { unstable_cache } from 'next/cache';
-import { count, desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq, isNull, notExists } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { comments, posts } from '@/db/schema';
@@ -160,3 +161,34 @@ export const getAllCommentsForAdmin = unstable_cache(
   ['admin-comments-list'],
   { tags: [CACHE_TAGS.comments] }
 );
+
+const replyComments = alias(comments, 'reply_comments');
+
+/**
+ * 답변 대기 중인 최상위 댓글 수 — 대댓글 중 관리자 답글(isAuthor=true)이
+ * 하나도 없는, 삭제되지 않은 최상위 댓글의 개수. 사이드바 뱃지에 쓰인다.
+ */
+export async function getPendingReplyCount(): Promise<number> {
+  const result = await db
+    .select({ value: count() })
+    .from(comments)
+    .where(
+      and(
+        isNull(comments.parentId),
+        eq(comments.isDeleted, false),
+        notExists(
+          db
+            .select({ id: replyComments.id })
+            .from(replyComments)
+            .where(
+              and(
+                eq(replyComments.parentId, comments.id),
+                eq(replyComments.isAuthor, true)
+              )
+            )
+        )
+      )
+    );
+
+  return result[0].value;
+}
