@@ -7,6 +7,7 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
+  Code,
   Heading1,
   Heading2,
   Heading3,
@@ -21,6 +22,7 @@ import {
   Minus,
   Quote,
   Redo2,
+  SquareCode,
   Strikethrough,
   Type,
   Underline as UnderlineIcon,
@@ -199,6 +201,18 @@ export function EditorToolbarAction() {
         tooltip="순서 있는 목록"
         isActive={editor?.isActive('orderedList')}
         onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+      />
+      <ToolbarButton
+        icon={Code}
+        tooltip="코드"
+        isActive={editor?.isActive('code')}
+        onClick={() => editor?.chain().focus().toggleCode().run()}
+      />
+      <ToolbarButton
+        icon={SquareCode}
+        tooltip="코드 블록"
+        isActive={editor?.isActive('codeBlock')}
+        onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
       />
 
       <Separator orientation="vertical" className="h-6 mx-1" />
