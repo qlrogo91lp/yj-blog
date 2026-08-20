@@ -15,6 +15,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { generateSlug } from '@/lib/slugify';
 import type { Series } from '@/types';
 import { type SeriesFormValues, seriesFormSchema } from '@/types/series';
@@ -38,6 +45,7 @@ export function SeriesFormDialogAction({ open, onOpenChange, series }: Props) {
       name: '',
       slug: '',
       description: '',
+      status: 'ongoing',
     },
   });
 
@@ -47,6 +55,7 @@ export function SeriesFormDialogAction({ open, onOpenChange, series }: Props) {
         name: series?.name ?? '',
         slug: series?.slug ?? '',
         description: series?.description ?? '',
+        status: series?.status ?? 'ongoing',
       });
     }
   }, [open, series, form]);
@@ -136,6 +145,23 @@ export function SeriesFormDialogAction({ open, onOpenChange, series }: Props) {
                 {form.formState.errors.description.message}
               </p>
             )}
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="status">연재 상태</Label>
+            <Select
+              value={form.watch('status')}
+              onValueChange={(value) =>
+                form.setValue('status', value as SeriesFormValues['status'])
+              }
+            >
+              <SelectTrigger id="status">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ongoing">연재 중</SelectItem>
+                <SelectItem value="completed">완결</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <DialogFooter>

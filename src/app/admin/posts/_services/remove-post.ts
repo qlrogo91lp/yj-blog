@@ -40,6 +40,7 @@ export async function removePost(postId: number): Promise<Result> {
 
     revalidateTag(CACHE_TAGS.posts, 'max');
     revalidateTag(CACHE_TAGS.comments, 'max');
+    revalidateTag(CACHE_TAGS.tags, 'max');
     revalidatePath('/admin/posts');
 
     return { success: true };

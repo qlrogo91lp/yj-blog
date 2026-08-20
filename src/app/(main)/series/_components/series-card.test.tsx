@@ -40,6 +40,7 @@ const baseSeries: SeriesWithMeta = {
   name: 'Ralli 개발기',
   slug: 'ralli-dev',
   description: 'Ralli 앱을 만들며 기록한 개발 일지',
+  status: 'ongoing',
   createdAt: new Date('2026-07-01'),
   postCount: 3,
   thumbnailUrl: 'https://example.com/thumb.jpg',

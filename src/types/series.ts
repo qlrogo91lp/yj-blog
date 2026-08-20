@@ -12,6 +12,16 @@ export type SeriesWithMeta = Series & {
   lastPublishedAt: Date | null;
 };
 
+/** 어드민 시리즈 스택 — 임시저장 포함 전체 회차 */
+export type AdminSeriesItem = Series & {
+  posts: {
+    id: number;
+    title: string;
+    publishedAt: Date | null;
+    status: 'draft' | 'published';
+  }[];
+};
+
 // 시리즈 내 글 요약 (글 상세 시리즈 박스용)
 export type SeriesPostItem = {
   id: number;
@@ -50,6 +60,7 @@ export const seriesFormSchema = z.object({
     .max(100, 'slug는 100자 이하여야 합니다')
     .regex(/^[a-z0-9가-힣-]+$/, '영소문자, 숫자, 한글, 하이픈만 사용 가능합니다'),
   description: z.string().max(500, '설명은 500자 이하여야 합니다').optional(),
+  status: z.enum(['ongoing', 'completed']).default('ongoing'),
 });
 
-export type SeriesFormValues = z.infer<typeof seriesFormSchema>;
+export type SeriesFormValues = z.input<typeof seriesFormSchema>;

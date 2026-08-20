@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { SeriesWithMeta } from '@/types';
+import type { Series } from '@/types';
 import { DeleteSeriesDialogAction } from './delete-series-dialog.action';
 
 type Props = {
-  series: SeriesWithMeta;
+  series: Series;
 };
 
 export function DeleteSeriesAction({ series }: Props) {

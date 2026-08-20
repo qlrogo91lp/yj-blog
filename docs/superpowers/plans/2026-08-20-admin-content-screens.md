@@ -1,6 +1,15 @@
 # 어드민 콘텐츠 화면 셀 A 구현 계획 (어드민 리디자인 PR 2/4)
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **완료: 2026-08-20.** Task 1~9 전부 완료. SDD(subagent-driven-development)로 실행 — 태스크별 구현·리뷰 후 전체 브랜치 최종 리뷰까지 마쳤다. 결과 요약:
+> - Task 1~8: 전부 태스크 리뷰 통과. 플랜 자체의 결함 2건(Task 4의 "이어서 쓰기"/"삭제" 버튼 미구현, Task 7의 시리즈 삭제 확인 문구 postCount 전제 오류)은 사용자 확인을 거쳐 현재 구현을 유지하기로 결정.
+> - Task 9 검증 중 회귀 발견·수정: Task 1 수정 라운드가 유발한 `zodResolver` 제네릭 타입 충돌 → `SeriesFormValues`를 `z.input`으로 수정.
+> - 전체 브랜치 최종 리뷰(opus)에서 추가 발견·수정: 글 삭제 시 `CACHE_TAGS.tags` 무효화 누락(Task 6에서 고친 것과 같은 계열의 결함이 `remove-post.ts`에 남아있었음).
+> - 자동 검증 전부 통과: 단위 테스트 89 files/482 tests, 린트 신규 에러 0건, tsc 신규 에러 0건, 빌드 성공.
+> - 브라우저 육안 확인(Step 9 Step 5)은 Clerk 인증이 필요해 에이전트가 확인할 수 없음 — PR 리뷰 중 사용자가 직접 확인 예정.
+> - PR: [#84](https://github.com/qlrogo91lp/yj-blog/pull/84) (`refactor/admin-content-screens` → `develop`)
+> - SDD 원장: `.superpowers/sdd/2026-08-20-admin-content-screens/progress.md` (deferred/parked 항목 전체 목록)
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 글 관리·카테고리·태그·시리즈 네 화면을 표에서 시안(1b·3a·1d·3d)의 카드/행/칩/스택 형태로 교체하고, 그 결과 사용처를 잃는 `@tanstack/react-table`을 저장소에서 제거한다.
 
@@ -160,7 +169,7 @@
   - `SeriesFormValues`에 `status: 'ongoing' | 'completed'` 필드 추가
   - Task 7의 시리즈 스택이 `series.status`로 연재 중/완결 뱃지를 그린다
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/types/series.test.ts`의 마지막 `describe('description', ...)` 블록 **뒤, 최상위 `describe`가 닫히기 전**에 추가한다.
 
@@ -192,7 +201,7 @@
   });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/types/series.test.ts
@@ -200,7 +209,7 @@ npm run test:run -- src/types/series.test.ts
 
 기대: 4개 중 최소 2개 FAIL — `status` 필드가 스키마에 없어 `'paused'`도 통과하고(3번째 실패), 기본값이 채워지지 않는다(4번째 실패).
 
-- [ ] **Step 3: 스키마에 enum·컬럼 추가**
+- [x] **Step 3: 스키마에 enum·컬럼 추가**
 
 `src/db/schema.ts`의 Enums 블록에서 `postStatusEnum` 바로 아래에 추가한다.
 
@@ -217,7 +226,7 @@ export const seriesStatusEnum = pgEnum('series_status', [
   status: seriesStatusEnum('status').notNull().default('ongoing'), // 연재 중 / 완결
 ```
 
-- [ ] **Step 4: 폼 스키마에 status 추가**
+- [x] **Step 4: 폼 스키마에 status 추가**
 
 `src/types/series.ts`의 `seriesFormSchema`에서 `description` 줄 뒤에 추가한다.
 
@@ -225,7 +234,7 @@ export const seriesStatusEnum = pgEnum('series_status', [
   status: z.enum(['ongoing', 'completed']).default('ongoing'),
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/types/series.test.ts
@@ -233,7 +242,7 @@ npm run test:run -- src/types/series.test.ts
 
 기대: `status` 4개 포함 전부 PASS.
 
-- [ ] **Step 6: 쿼리에 status 반영**
+- [x] **Step 6: 쿼리에 status 반영**
 
 `src/db/queries/series.ts`의 `insertSeries`에서 `.values({...})`에 추가한다.
 
@@ -243,7 +252,7 @@ npm run test:run -- src/types/series.test.ts
 
 `updateSeries`의 `.set({...})`에도 같은 줄을 추가한다.
 
-- [ ] **Step 7: 폼 다이얼로그에 선택 필드 추가**
+- [x] **Step 7: 폼 다이얼로그에 선택 필드 추가**
 
 `src/app/admin/series/_actions/series-form-dialog.action.tsx`를 수정한다.
 
@@ -293,7 +302,7 @@ import {
           </div>
 ```
 
-- [ ] **Step 8: DB에 반영**
+- [x] **Step 8: DB에 반영**
 
 ```bash
 npx drizzle-kit push
@@ -301,7 +310,7 @@ npx drizzle-kit push
 
 기대: `series_status` enum 생성 + `series.status` 컬럼 추가. 기존 행은 `default 'ongoing'`으로 채워진다. 데이터 손실 경고가 뜨면 중단하고 보고한다 — 이 변경은 컬럼 추가뿐이라 경고가 나오면 안 된다.
 
-- [ ] **Step 9: 전체 테스트·타입 확인**
+- [x] **Step 9: 전체 테스트·타입 확인**
 
 ```bash
 npm run test:run
@@ -313,7 +322,7 @@ npx tsc --noEmit
 
 기대: 테스트 전부 PASS. tsc는 기존 에러 1건(`e2e/ralli.spec.ts:57`)만 남고 신규 에러 0건.
 
-- [ ] **Step 10: 커밋**
+- [x] **Step 10: 커밋**
 
 ```bash
 git add src/db/schema.ts src/types/series.ts src/types/series.test.ts src/db/queries/series.ts src/app/admin/series/_actions/series-form-dialog.action.tsx
@@ -335,7 +344,7 @@ git commit -m "✨ feat: 시리즈에 연재 중/완결 상태 추가"
   - `updatePostStatus(id: number, status: 'draft' | 'published'): Promise<{ id: number }[]>` — DB 쿼리. `status`가 `'published'`이고 기존 `publishedAt`이 `null`이면 현재 시각을 채우고, 그 외에는 **`publishedAt`을 건드리지 않는다**(「결정 사항」 참조). `returning({ id })`로 갱신된 행을 돌려주므로 빈 배열이면 대상 글이 없다는 뜻이다.
   - `editPostStatus(postId: number, status: 'draft' | 'published'): Promise<{ success: true } | { success: false; error: string }>` — Server Action. Task 3의 토글 컴포넌트가 호출한다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/_services/edit-post-status.test.ts`:
 
@@ -415,7 +424,7 @@ describe('editPostStatus', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/posts/_services/edit-post-status.test.ts
@@ -423,7 +432,7 @@ npm run test:run -- src/app/admin/posts/_services/edit-post-status.test.ts
 
 기대: FAIL — `Failed to resolve import "./edit-post-status"`.
 
-- [ ] **Step 3: DB 쿼리 추가**
+- [x] **Step 3: DB 쿼리 추가**
 
 `src/db/queries/posts.ts`의 맨 끝(`deletePostById` 뒤)에 추가한다.
 
@@ -462,7 +471,7 @@ export async function updatePostStatus(
 }
 ```
 
-- [ ] **Step 4: Server Action 작성**
+- [x] **Step 4: Server Action 작성**
 
 `src/app/admin/posts/_services/edit-post-status.ts`:
 
@@ -505,7 +514,7 @@ export async function editPostStatus(
 }
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/posts/_services/edit-post-status.test.ts
@@ -513,7 +522,7 @@ npm run test:run -- src/app/admin/posts/_services/edit-post-status.test.ts
 
 기대: 6개 PASS.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/db/queries/posts.ts src/app/admin/posts/_services/edit-post-status.ts src/app/admin/posts/_services/edit-post-status.test.ts
@@ -538,7 +547,7 @@ git commit -m "✨ feat: 글 발행 상태 토글 Server Action 추가"
   - `deleteUnusedTags(): Promise<{ id: number }[]>` — `post_tags`에 한 건도 없는 태그를 모두 지우고 지워진 id 목록을 돌려준다.
   - `removeUnusedTags(): Promise<{ success: true; removed: number } | { success: false; error: string }>` — Server Action. `removed`는 삭제된 개수.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/tags/_services/remove-unused-tags.test.ts`:
 
@@ -605,7 +614,7 @@ describe('removeUnusedTags', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/tags/_services/remove-unused-tags.test.ts
@@ -613,7 +622,7 @@ npm run test:run -- src/app/admin/tags/_services/remove-unused-tags.test.ts
 
 기대: FAIL — `Failed to resolve import "./remove-unused-tags"`.
 
-- [ ] **Step 3: 타입 추가**
+- [x] **Step 3: 타입 추가**
 
 `src/types/tag.ts` 끝에 추가한다.
 
@@ -628,7 +637,7 @@ export type TagWithCount = Tag & { postCount: number };
 export type { Tag, TagSummary, TagWithCount } from './tag';
 ```
 
-- [ ] **Step 4: DB 쿼리 추가**
+- [x] **Step 4: DB 쿼리 추가**
 
 `src/db/queries/tags.ts`의 `deleteTag` 뒤에 추가한다.
 
@@ -659,7 +668,7 @@ export async function deleteUnusedTags(): Promise<{ id: number }[]> {
 }
 ```
 
-- [ ] **Step 5: Server Action 작성**
+- [x] **Step 5: Server Action 작성**
 
 `src/app/admin/tags/_services/remove-unused-tags.ts`:
 
@@ -693,7 +702,7 @@ export async function removeUnusedTags(): Promise<Result> {
 }
 ```
 
-- [ ] **Step 6: 테스트 통과 확인**
+- [x] **Step 6: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/tags/_services/remove-unused-tags.test.ts
@@ -701,7 +710,7 @@ npm run test:run -- src/app/admin/tags/_services/remove-unused-tags.test.ts
 
 기대: 4개 PASS.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add src/types/tag.ts src/types/index.ts src/db/queries/tags.ts src/app/admin/tags/_services/remove-unused-tags.ts src/app/admin/tags/_services/remove-unused-tags.test.ts
@@ -735,7 +744,7 @@ git commit -m "✨ feat: 미사용 태그 일괄 정리 Server Action 추가"
 - 메타 줄: 발행일 · 조회 N · 댓글 N · #태그
 - 임시저장 행은 발행일 대신 `본문 N자 · {수정 시각} 자동 저장`, [이어서 쓰기] [삭제] 버튼
 
-- [ ] **Step 1: 실패하는 테스트 작성 — 행 컴포넌트**
+- [x] **Step 1: 실패하는 테스트 작성 — 행 컴포넌트**
 
 `src/app/admin/posts/_components/post-row.test.tsx`:
 
@@ -857,7 +866,7 @@ describe('PostRow', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/posts/_components/post-row.test.tsx
@@ -865,7 +874,7 @@ npm run test:run -- src/app/admin/posts/_components/post-row.test.tsx
 
 기대: FAIL — `Failed to resolve import "./post-row"`.
 
-- [ ] **Step 3: 타입 추가**
+- [x] **Step 3: 타입 추가**
 
 `src/types/post.ts`의 `PostWithCategory` 정의 뒤에 추가한다.
 
@@ -883,7 +892,7 @@ export type AdminPostRow = PostWithCategory & {
 export type { Post, PostWithCategory, PostWithTags, PostWithCategoryAndTags, AdminPostRow, PostFormValues } from './post';
 ```
 
-- [ ] **Step 4: 행 컴포넌트 작성**
+- [x] **Step 4: 행 컴포넌트 작성**
 
 `src/app/admin/posts/_components/post-row.tsx`:
 
@@ -979,7 +988,7 @@ export function PostRow({ post }: Props) {
 }
 ```
 
-- [ ] **Step 5: 실패하는 테스트 작성 — 토글**
+- [x] **Step 5: 실패하는 테스트 작성 — 토글**
 
 `src/app/admin/posts/_actions/post-status-toggle.action.test.tsx`:
 
@@ -1037,7 +1046,7 @@ describe('PostStatusToggleAction', () => {
 });
 ```
 
-- [ ] **Step 6: 테스트가 실패하는지 확인**
+- [x] **Step 6: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/posts/_actions/post-status-toggle.action.test.tsx
@@ -1045,7 +1054,7 @@ npm run test:run -- src/app/admin/posts/_actions/post-status-toggle.action.test.
 
 기대: FAIL — `Failed to resolve import "./post-status-toggle.action"`.
 
-- [ ] **Step 7: 토글 컴포넌트 작성**
+- [x] **Step 7: 토글 컴포넌트 작성**
 
 `src/app/admin/posts/_actions/post-status-toggle.action.tsx`:
 
@@ -1096,7 +1105,7 @@ export function PostStatusToggleAction({ postId, status }: Props) {
 }
 ```
 
-- [ ] **Step 8: 테스트 통과 확인**
+- [x] **Step 8: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/posts/_components/post-row.test.tsx src/app/admin/posts/_actions/post-status-toggle.action.test.tsx
@@ -1104,7 +1113,7 @@ npm run test:run -- src/app/admin/posts/_components/post-row.test.tsx src/app/ad
 
 기대: 7 + 4 = 11개 PASS.
 
-- [ ] **Step 9: 쿼리 확장**
+- [x] **Step 9: 쿼리 확장**
 
 `src/db/queries/posts.ts`의 `getAllPostsForAdmin`을 교체한다. 필요한 import는 Task 2 Step 3에서 이미 다 넣었다 — 스키마의 `comments`·`postTags`·`tags`는 원래부터 있었고 `sql`은 그때 추가했다. `AdminPostRow` 타입 import만 더한다.
 
@@ -1147,7 +1156,7 @@ export const getAllPostsForAdmin = unstable_cache(
 
 > 정렬을 `publishedAt DESC`에서 `updatedAt DESC`로 바꾼다 — 임시저장 글은 `publishedAt`이 `null`이라 기존 정렬에서는 목록 끝으로 밀려났는데, 시안 1b는 임시저장 글을 목록 안에 섞어 보여준다.
 
-- [ ] **Step 10: 필터 컴포넌트 작성**
+- [x] **Step 10: 필터 컴포넌트 작성**
 
 `src/app/admin/posts/_actions/post-status-filter.action.tsx`:
 
@@ -1193,7 +1202,7 @@ export function PostStatusFilterAction({ current }: Props) {
 }
 ```
 
-- [ ] **Step 11: 페이지 교체**
+- [x] **Step 11: 페이지 교체**
 
 `src/app/admin/posts/page.tsx`:
 
@@ -1258,7 +1267,7 @@ export default async function AdminPostsPage({ searchParams }: Props) {
 }
 ```
 
-- [ ] **Step 12: 전체 테스트 확인**
+- [x] **Step 12: 전체 테스트 확인**
 
 ```bash
 npm run test:run
@@ -1266,7 +1275,7 @@ npm run test:run
 
 기대: 전부 PASS. `columns.tsx`는 아직 남아 있으므로 기존 `columns.test.tsx`도 통과해야 한다.
 
-- [ ] **Step 13: 커밋**
+- [x] **Step 13: 커밋**
 
 ```bash
 git add src/types/post.ts src/types/index.ts src/db/queries/posts.ts src/app/admin/posts/
@@ -1293,7 +1302,7 @@ git commit -m "💄 style: 글 관리를 썸네일 행 목록 + 발행 토글로
   - `getCategoriesWithPostCount(): Promise<CategoryWithCount[]>`
   - `selectUncategorizedPosts(): Promise<{ id: number; title: string }[]>` — `categoryId`가 `null`인 글, 오래된 순.
 
-- [ ] **Step 1: 실패하는 테스트 작성 — 카드**
+- [x] **Step 1: 실패하는 테스트 작성 — 카드**
 
 `src/app/admin/categories/_components/category-card.test.tsx`:
 
@@ -1340,7 +1349,7 @@ describe('CategoryCard', () => {
 });
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성 — 배너**
+- [x] **Step 2: 실패하는 테스트 작성 — 배너**
 
 `src/app/admin/categories/_components/uncategorized-banner.test.tsx`:
 
@@ -1393,7 +1402,7 @@ describe('UncategorizedBanner', () => {
 });
 ```
 
-- [ ] **Step 3: 테스트가 실패하는지 확인**
+- [x] **Step 3: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/categories/_components/
@@ -1401,7 +1410,7 @@ npm run test:run -- src/app/admin/categories/_components/
 
 기대: 두 파일 모두 FAIL — import 해결 실패.
 
-- [ ] **Step 4: 타입 추가**
+- [x] **Step 4: 타입 추가**
 
 `src/types/category.ts` 끝에 추가한다.
 
@@ -1416,7 +1425,7 @@ export type CategoryWithCount = Category & { postCount: number };
 export type { Category, CategoryWithCount, CategoryFormValues } from './category';
 ```
 
-- [ ] **Step 5: 컴포넌트 작성**
+- [x] **Step 5: 컴포넌트 작성**
 
 `src/app/admin/categories/_components/category-card.tsx`:
 
@@ -1489,7 +1498,7 @@ export function UncategorizedBanner({ posts }: Props) {
 }
 ```
 
-- [ ] **Step 6: 테스트 통과 확인**
+- [x] **Step 6: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/categories/_components/
@@ -1497,7 +1506,7 @@ npm run test:run -- src/app/admin/categories/_components/
 
 기대: 3 + 3 = 6개 PASS.
 
-- [ ] **Step 7: 쿼리 추가**
+- [x] **Step 7: 쿼리 추가**
 
 `src/db/queries/categories.ts`의 `getCategories` 뒤에 추가한다.
 
@@ -1552,7 +1561,7 @@ export const selectUncategorizedPosts = unstable_cache(
 );
 ```
 
-- [ ] **Step 8: 보드 액션 작성**
+- [x] **Step 8: 보드 액션 작성**
 
 `src/app/admin/categories/_actions/category-board.action.tsx`:
 
@@ -1598,7 +1607,7 @@ export function CategoryBoardAction({ categories }: Props) {
 }
 ```
 
-- [ ] **Step 9: 페이지 교체**
+- [x] **Step 9: 페이지 교체**
 
 `src/app/admin/categories/page.tsx`:
 
@@ -1640,7 +1649,7 @@ export default async function AdminCategoriesPage() {
 }
 ```
 
-- [ ] **Step 10: 전체 테스트 확인**
+- [x] **Step 10: 전체 테스트 확인**
 
 ```bash
 npm run test:run
@@ -1648,7 +1657,7 @@ npm run test:run
 
 기대: 전부 PASS.
 
-- [ ] **Step 11: 커밋**
+- [x] **Step 11: 커밋**
 
 ```bash
 git add src/types/category.ts src/types/index.ts src/db/queries/categories.ts src/app/admin/categories/
@@ -1679,7 +1688,7 @@ git commit -m "💄 style: 카테고리를 카드 그리드 + 미분류 배너�
 > - `src/app/admin/tags/_components/tag-table.tsx` — Task 8에서 삭제
 > - `src/app/admin/tags/_components/tag-actions-cell.tsx` — Task 8에서 삭제
 
-- [ ] **Step 1: 실패하는 테스트 작성 — 칩**
+- [x] **Step 1: 실패하는 테스트 작성 — 칩**
 
 `src/app/admin/tags/_components/tag-chip.test.tsx`:
 
@@ -1723,7 +1732,7 @@ describe('TagChip', () => {
 });
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성 — 보드**
+- [x] **Step 2: 실패하는 테스트 작성 — 보드**
 
 `src/app/admin/tags/_actions/tag-board.action.test.tsx`:
 
@@ -1788,7 +1797,7 @@ describe('TagBoardAction', () => {
 });
 ```
 
-- [ ] **Step 3: 테스트가 실패하는지 확인**
+- [x] **Step 3: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/tags/
@@ -1796,7 +1805,7 @@ npm run test:run -- src/app/admin/tags/
 
 기대: 두 신규 파일 FAIL — import 해결 실패. 기존 태그 테스트가 있으면 그대로 PASS.
 
-- [ ] **Step 4: `DeleteTagAction`의 타입 참조 교체**
+- [x] **Step 4: `DeleteTagAction`의 타입 참조 교체**
 
 `src/app/admin/tags/_actions/delete-tag.action.tsx`와 `delete-tag-dialog.action.tsx`에서 `import type { TagRow } from '../_components/columns'`를 아래로 바꾸고, 사용처의 `TagRow`를 `TagWithCount`로 교체한다.
 
@@ -1804,7 +1813,7 @@ npm run test:run -- src/app/admin/tags/
 import type { TagWithCount } from '@/types';
 ```
 
-- [ ] **Step 5: 칩 컴포넌트 작성**
+- [x] **Step 5: 칩 컴포넌트 작성**
 
 `src/app/admin/tags/_components/tag-chip.tsx`:
 
@@ -1839,7 +1848,7 @@ export function TagChip({ tag }: Props) {
 }
 ```
 
-- [ ] **Step 6: 보드 액션 작성**
+- [x] **Step 6: 보드 액션 작성**
 
 `src/app/admin/tags/_actions/tag-board.action.tsx`:
 
@@ -1946,7 +1955,7 @@ export function TagBoardAction({ tags }: Props) {
 }
 ```
 
-- [ ] **Step 7: 글 저장 시 태그 캐시 무효화 고치기**
+- [x] **Step 7: 글 저장 시 태그 캐시 무효화 고치기**
 
 `src/app/admin/posts/new/_services/save-post.ts`는 `post_tags`를 통째로 다시 쓰면서(`:137-141`) `CACHE_TAGS.posts`와 `CACHE_TAGS.series`만 무효화하고 **`CACHE_TAGS.tags`는 무효화하지 않는다**(`:96-98`, `:123-125`). 그래서 에디터에서 글의 태그를 바꿔도 `getAllTags()`의 `postCount`가 갱신되지 않는다.
 
@@ -1958,7 +1967,7 @@ export function TagBoardAction({ tags }: Props) {
       revalidateTag(CACHE_TAGS.tags, 'max');
 ```
 
-- [ ] **Step 8: 페이지 교체**
+- [x] **Step 8: 페이지 교체**
 
 `src/app/admin/tags/page.tsx`:
 
@@ -1987,7 +1996,7 @@ export default async function AdminTagsPage() {
 }
 ```
 
-- [ ] **Step 9: 테스트 통과 확인**
+- [x] **Step 9: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/tags/ src/app/admin/posts/new/_services/save-post.test.ts
@@ -1995,7 +2004,7 @@ npm run test:run -- src/app/admin/tags/ src/app/admin/posts/new/_services/save-p
 
 기대: 신규 3 + 4 = 7개 PASS. Step 7에서 `save-post.ts`를 고쳤으므로 기존 `save-post.test.ts`(13개)도 함께 돌려 회귀가 없는지 확인한다 — 이 테스트는 `revalidateTag`를 mock하고 호출 여부를 단언하지 않으므로 통과해야 한다.
 
-- [ ] **Step 10: 커밋**
+- [x] **Step 10: 커밋**
 
 ```bash
 git add src/app/admin/tags/ src/app/admin/posts/new/_services/save-post.ts
@@ -2027,7 +2036,7 @@ git commit -m "💄 style: 태그 관리를 칩 보드 + 미사용 정리로 교
 - 회차 목록 아래 점선 [+ 이 시리즈에 글 추가] → `/admin/posts/new`
 - **드래그 핸들 없음** (스펙에서 정렬 기능 제외)
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/series/_components/series-stack-item.test.tsx`:
 
@@ -2138,7 +2147,7 @@ describe('SeriesStackItem', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/series/_components/series-stack-item.test.tsx
@@ -2146,7 +2155,7 @@ npm run test:run -- src/app/admin/series/_components/series-stack-item.test.tsx
 
 기대: FAIL — import 해결 실패.
 
-- [ ] **Step 3: 타입 추가**
+- [x] **Step 3: 타입 추가**
 
 `src/types/series.ts`의 `SeriesWithMeta` 뒤에 추가한다.
 
@@ -2164,7 +2173,7 @@ export type AdminSeriesItem = Series & {
 
 `src/types/index.ts`의 series 블록에 `AdminSeriesItem`을 추가한다.
 
-- [ ] **Step 4: 컴포넌트 작성**
+- [x] **Step 4: 컴포넌트 작성**
 
 `src/app/admin/series/_components/series-stack-item.tsx`:
 
@@ -2272,7 +2281,7 @@ export function SeriesStackItem({ series, isExpanded, onToggle }: Props) {
 }
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/series/_components/series-stack-item.test.tsx
@@ -2280,7 +2289,7 @@ npm run test:run -- src/app/admin/series/_components/series-stack-item.test.tsx
 
 기대: 8개 PASS.
 
-- [ ] **Step 6: 쿼리 추가**
+- [x] **Step 6: 쿼리 추가**
 
 `src/db/queries/series.ts`의 `selectSeriesList` 뒤에 추가한다. `asc`·`sql` import를 확인한다.
 
@@ -2323,7 +2332,7 @@ export const selectSeriesListForAdmin = unstable_cache(
 );
 ```
 
-- [ ] **Step 7: 스택 액션 작성**
+- [x] **Step 7: 스택 액션 작성**
 
 `src/app/admin/series/_actions/series-stack.action.tsx`:
 
@@ -2379,7 +2388,7 @@ export function SeriesStackAction({ seriesList }: Props) {
 }
 ```
 
-- [ ] **Step 8: 페이지 교체**
+- [x] **Step 8: 페이지 교체**
 
 `src/app/admin/series/page.tsx`:
 
@@ -2416,7 +2425,7 @@ export default async function AdminSeriesPage() {
 >
 > `src/app/admin/posts/new/_actions/series-selector.action.tsx`도 `SeriesWithMeta`를 쓰지만 에디터 화면이 `selectSeriesList`(변경 없음)로 채우므로 건드리지 않는다. `npx tsc --noEmit`으로 확인한다.
 
-- [ ] **Step 9: 전체 테스트·타입 확인**
+- [x] **Step 9: 전체 테스트·타입 확인**
 
 ```bash
 npm run test:run
@@ -2428,7 +2437,7 @@ npx tsc --noEmit
 
 기대: 테스트 전부 PASS. tsc 신규 에러 0건.
 
-- [ ] **Step 10: 커밋**
+- [x] **Step 10: 커밋**
 
 ```bash
 git add src/types/series.ts src/types/index.ts src/db/queries/series.ts src/app/admin/series/
@@ -2456,7 +2465,7 @@ git commit -m "💄 style: 시리즈 관리를 접힘 스택으로 교체"
 - Consumes: Task 4~7이 모든 표 사용처를 교체했다는 사실
 - Produces: 없음 (제거 전용)
 
-- [ ] **Step 1: 남은 사용처가 없는지 확인**
+- [x] **Step 1: 남은 사용처가 없는지 확인**
 
 ```bash
 grep -rn "data-table\|@tanstack/react-table\|DataTable" src/
@@ -2464,7 +2473,7 @@ grep -rn "data-table\|@tanstack/react-table\|DataTable" src/
 
 기대: Task 8에서 지울 파일들 안에서만 나온다. 그 밖의 파일이 나오면 멈추고 보고한다 — Task 4~7이 놓친 화면이 있다는 뜻이다.
 
-- [ ] **Step 2: 파일 삭제**
+- [x] **Step 2: 파일 삭제**
 
 ```bash
 git rm src/components/data-table.tsx \
@@ -2479,13 +2488,13 @@ git rm src/components/data-table.tsx \
   src/app/admin/series/_actions/series-table.action.tsx
 ```
 
-- [ ] **Step 3: 의존성 제거**
+- [x] **Step 3: 의존성 제거**
 
 ```bash
 npm uninstall @tanstack/react-table
 ```
 
-- [ ] **Step 4: 스켈레톤 갱신**
+- [x] **Step 4: 스켈레톤 갱신**
 
 `src/app/admin/posts/loading.tsx`의 `<div className="rounded-lg border">` 블록을 새 행 레이아웃에 맞춰 교체한다.
 
@@ -2537,7 +2546,7 @@ npm uninstall @tanstack/react-table
       </div>
 ```
 
-- [ ] **Step 5: 전체 검증**
+- [x] **Step 5: 전체 검증**
 
 ```bash
 npm run test:run
@@ -2549,7 +2558,7 @@ npx tsc --noEmit
 
 기대: 테스트 전부 PASS(삭제된 `columns.test.tsx` 개수만큼 줄어든다), tsc 신규 에러 0건. 어느 쪽이든 실패하면 삭제한 파일에 남은 참조가 있다는 뜻이니 그 참조를 고친다.
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add -A src/ package.json package-lock.json
@@ -2566,7 +2575,7 @@ git commit -m "🔥 remove: 표 화면 제거에 따라 @tanstack/react-table �
 - Consumes: Task 1~8 전부
 - Produces: 없음
 
-- [ ] **Step 1: 단위 테스트 전체 실행**
+- [x] **Step 1: 단위 테스트 전체 실행**
 
 ```bash
 npm run test:run
@@ -2574,7 +2583,7 @@ npm run test:run
 
 기대: 전부 PASS.
 
-- [ ] **Step 2: 린트**
+- [x] **Step 2: 린트**
 
 ```bash
 npm run lint
@@ -2582,7 +2591,7 @@ npm run lint
 
 기대: 이 PR이 건드린 파일에서 신규 에러 0건. `docs/design/ralli/support.js`의 기존 에러 2건은 그대로 둔다.
 
-- [ ] **Step 3: 타입 체크**
+- [x] **Step 3: 타입 체크**
 
 ```bash
 npx tsc --noEmit
@@ -2590,13 +2599,17 @@ npx tsc --noEmit
 
 기대: 신규 에러 0건. `e2e/ralli.spec.ts:57`의 기존 에러 1건만 잔존.
 
-- [ ] **Step 4: 빌드**
+> 검증 중 Task 1 fix round 1이 유발한 tsc 에러 2건(zodResolver 제네릭 불일치)을 발견해 `SeriesFormValues`를 `z.input`으로 수정했다(커밋 `d127780`). 독립 리뷰로 런타임 동작 변화 없음을 확인했다.
+
+- [x] **Step 4: 빌드**
 
 ```bash
 npm run build
 ```
 
 기대: 타입스크립트 컴파일 통과. 워크트리에 `DATABASE_URL`이 없으면 sitemap 데이터 수집 단계에서 실패하는데 이는 환경 문제다 — 컴파일 단계까지 성공했음을 확인하고 넘어간다.
+
+> 빌드 전체(정적 페이지 생성 포함) 성공. `DATABASE_URL`이 워크트리 환경에 설정돼 있어 sitemap 단계도 정상 통과했다.
 
 - [ ] **Step 5: 브라우저 육안 확인 (사용자 확인 필요)**
 
@@ -2614,11 +2627,11 @@ npm run build
 - [ ] 다크 모드에서 네 화면 모두 대비가 읽을 만하다 (특히 발행 스위치 초록·임시저장 앰버·미사용 정리 빨강)
 - [ ] 블로그 화면(`/`)이 이 PR 전후로 달라지지 않았다
 
-- [ ] **Step 6: plan 문서 완료 기록**
+- [x] **Step 6: plan 문서 완료 기록**
 
 이 문서 상단에 완료 일자와 결과 요약을 추가하고, 모든 체크박스를 `- [x]`로 반영한다.
 
-- [ ] **Step 7: PR 생성 (사용자 확인 필요)**
+- [x] **Step 7: PR 생성 (사용자 확인 필요)**
 
 `develop`으로의 PR 생성은 공유 브랜치에 영향을 주므로 사용자 확인 없이 진행하지 않는다. 머지는 squash 금지, `--no-ff` 머지 커밋 방식이다.
 
