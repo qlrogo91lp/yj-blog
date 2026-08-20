@@ -10,6 +10,13 @@ export type CommentWithReplies = Comment & {
   replies: CommentWithReplies[];
 };
 
+// 관리자 댓글 스레드 — 최상위 댓글과 그에 속한 답글들, post 정보 포함
+export type AdminCommentThread = Comment & {
+  postTitle: string;
+  postSlug: string;
+  replies: Comment[];
+};
+
 // 댓글 작성 폼 스키마 (password는 평문 — actions에서 bcrypt 해싱)
 export const commentFormSchema = z.object({
   authorName: z
@@ -40,3 +47,13 @@ export const commentPasswordSchema = z.object({
 });
 
 export type CommentPasswordValues = z.infer<typeof commentPasswordSchema>;
+
+// 관리자 답글 폼 스키마 — 작성자명·비밀번호는 서버에서 고정하므로 content만 받는다
+export const adminReplyFormSchema = z.object({
+  content: z
+    .string()
+    .min(1, '답글을 입력해주세요')
+    .max(2000, '답글은 2000자 이하여야 합니다'),
+});
+
+export type AdminReplyFormValues = z.infer<typeof adminReplyFormSchema>;

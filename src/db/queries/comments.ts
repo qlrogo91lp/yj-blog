@@ -1,9 +1,10 @@
 import { unstable_cache } from 'next/cache';
-import { count, desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, isNull, notExists } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { comments, posts } from '@/db/schema';
-import type { Comment, CommentWithReplies } from '@/types';
+import type { AdminCommentThread, Comment, CommentWithReplies } from '@/types';
 
 async function selectCommentsByPostIdUncached(
   postId: number
@@ -57,6 +58,7 @@ export async function insertComment(data: {
   email?: string | null;
   passwordHash: string;
   content: string;
+  isAuthor?: boolean;
 }): Promise<Comment> {
   const result = await db
     .insert(comments)
@@ -67,6 +69,7 @@ export async function insertComment(data: {
       email: data.email ?? null,
       passwordHash: data.passwordHash,
       content: data.content,
+      isAuthor: data.isAuthor ?? false,
     })
     .returning();
 
@@ -125,13 +128,17 @@ export const getRecentComments = unstable_cache(
 );
 
 /**
- * 관리자용 전체 댓글 조회 (post title 포함, 페이지네이션)
+ * 관리자용 댓글 스레드 조회 — 최상위 댓글을 페이지네이션 기준으로 삼고,
+ * 그 안에 속한 답글을 전부 함께 반환한다 (post title/slug 포함)
  */
 export const getAllCommentsForAdmin = unstable_cache(
-  async (page = 1, limit = 20) => {
+  async (
+    page = 1,
+    limit = 20
+  ): Promise<{ comments: AdminCommentThread[]; total: number }> => {
     const offset = (page - 1) * limit;
 
-    const [items, totalResult] = await Promise.all([
+    const [topLevelRows, totalResult] = await Promise.all([
       db
         .select({
           comment: comments,
@@ -140,17 +147,39 @@ export const getAllCommentsForAdmin = unstable_cache(
         })
         .from(comments)
         .innerJoin(posts, eq(comments.postId, posts.id))
+        .where(isNull(comments.parentId))
         .orderBy(desc(comments.createdAt))
         .limit(limit)
         .offset(offset),
-      db.select({ total: count() }).from(comments),
+      db
+        .select({ total: count() })
+        .from(comments)
+        .where(isNull(comments.parentId)),
     ]);
 
+    const topLevelIds = topLevelRows.map(({ comment }) => comment.id);
+    const replyRows =
+      topLevelIds.length > 0
+        ? await db
+            .select()
+            .from(comments)
+            .where(inArray(comments.parentId, topLevelIds))
+            .orderBy(comments.createdAt)
+        : [];
+
+    const repliesByParent = new Map<number, Comment[]>();
+    for (const reply of replyRows) {
+      const list = repliesByParent.get(reply.parentId!) ?? [];
+      list.push(reply);
+      repliesByParent.set(reply.parentId!, list);
+    }
+
     return {
-      comments: items.map(({ comment, postTitle, postSlug }) => ({
+      comments: topLevelRows.map(({ comment, postTitle, postSlug }) => ({
         ...comment,
         postTitle,
         postSlug,
+        replies: repliesByParent.get(comment.id) ?? [],
       })),
       total: totalResult[0].total,
     };
@@ -158,3 +187,34 @@ export const getAllCommentsForAdmin = unstable_cache(
   ['admin-comments-list'],
   { tags: [CACHE_TAGS.comments] }
 );
+
+const replyComments = alias(comments, 'reply_comments');
+
+/**
+ * 답변 대기 중인 최상위 댓글 수 — 대댓글 중 관리자 답글(isAuthor=true)이
+ * 하나도 없는, 삭제되지 않은 최상위 댓글의 개수. 사이드바 뱃지에 쓰인다.
+ */
+export async function getPendingReplyCount(): Promise<number> {
+  const result = await db
+    .select({ value: count() })
+    .from(comments)
+    .where(
+      and(
+        isNull(comments.parentId),
+        eq(comments.isDeleted, false),
+        notExists(
+          db
+            .select({ id: replyComments.id })
+            .from(replyComments)
+            .where(
+              and(
+                eq(replyComments.parentId, comments.id),
+                eq(replyComments.isAuthor, true)
+              )
+            )
+        )
+      )
+    );
+
+  return result[0].value;
+}

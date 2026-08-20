@@ -18,10 +18,16 @@ export { postFormSchema } from './post';
 export type {
   Comment,
   CommentWithReplies,
+  AdminCommentThread,
   CommentFormValues,
   CommentPasswordValues,
+  AdminReplyFormValues,
 } from './comment';
-export { commentFormSchema, commentPasswordSchema } from './comment';
+export {
+  commentFormSchema,
+  commentPasswordSchema,
+  adminReplyFormSchema,
+} from './comment';
 
 export type { Tag, TagSummary, TagWithCount } from './tag';
 

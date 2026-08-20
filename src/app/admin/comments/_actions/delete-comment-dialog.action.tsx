@@ -8,20 +8,20 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { removeComment } from '../_services/remove-comment';
 
 type Props = {
-  commentId: number | null;
-  onClose: () => void;
+  commentId: number;
 };
 
-export function DeleteCommentDialogAction({ commentId, onClose }: Props) {
+export function DeleteCommentDialogAction({ commentId }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleDelete = async () => {
-    if (!commentId) return;
     setIsSubmitting(true);
     setError(null);
 
@@ -29,14 +29,29 @@ export function DeleteCommentDialogAction({ commentId, onClose }: Props) {
     setIsSubmitting(false);
 
     if (result.success) {
-      onClose();
+      setIsOpen(false);
     } else {
       setError(result.error);
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) setError(null);
+  };
+
   return (
-    <Dialog open={commentId !== null} onOpenChange={() => onClose()}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-destructive h-7 px-2 text-xs"
+          aria-label={`댓글 삭제 (ID: ${commentId})`}
+        >
+          삭제
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>댓글 삭제</DialogTitle>
@@ -45,9 +60,13 @@ export function DeleteCommentDialogAction({ commentId, onClose }: Props) {
             댓글입니다&quot;로 표시됩니다.
           </DialogDescription>
         </DialogHeader>
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {error && <p className="text-destructive text-sm">{error}</p>}
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
+          <Button
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+          >
             취소
           </Button>
           <Button

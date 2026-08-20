@@ -13,7 +13,6 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-
 // -----------------------------------------------
 // Enums
 // -----------------------------------------------
@@ -101,6 +100,7 @@ export const comments = pgTable('comments', {
   content: text('content').notNull(),
 
   isDeleted: boolean('is_deleted').notNull().default(false), // 소프트 삭제 (대댓글이 있으면 "삭제된 댓글"로 표시)
+  isAuthor: boolean('is_author').notNull().default(false), // 관리자 답글 여부 — 독자 페이지 "작성자" 뱃지 + 사이드바 답변 대기 판정에 사용
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -123,7 +123,9 @@ export const dailyStats = pgTable('daily_stats', {
 
 export const referrers = pgTable('referrers', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  postId: integer('post_id').references(() => posts.id, { onDelete: 'cascade' }), // null이면 글 페이지가 아닌 방문
+  postId: integer('post_id').references(() => posts.id, {
+    onDelete: 'cascade',
+  }), // null이면 글 페이지가 아닌 방문
   referrer: varchar('referrer', { length: 2048 }), // document.referrer 값. 빈 문자열이면 직접 접근
   visitedAt: timestamp('visited_at').defaultNow().notNull(),
 });
@@ -183,7 +185,7 @@ export const postTags = pgTable(
       .notNull()
       .references(() => tags.id, { onDelete: 'cascade' }),
   },
-  (t) => ({ pk: primaryKey({ columns: [t.postId, t.tagId] }) }),
+  (t) => ({ pk: primaryKey({ columns: [t.postId, t.tagId] }) })
 );
 
 // -----------------------------------------------
