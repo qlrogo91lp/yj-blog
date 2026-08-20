@@ -3,14 +3,13 @@
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
-import { ImageToolbar } from './image-toolbar';
 
-export function ImageNodeView({
-  node,
-  updateAttributes,
-  deleteNode,
-  selected,
-}: NodeViewProps) {
+/**
+ * 본문 이미지 NodeView.
+ * - 툴바는 여기 두지 않는다 — 에디터 레벨 ImageBubbleMenuAction이 담당(폭·overflow 문제 회피).
+ * - <img>가 드래그 핸들: TipTap React NodeView는 [data-drag-handle]에서 시작한 드래그만 노드 이동으로 처리한다.
+ */
+export function ImageNodeView({ node, updateAttributes, selected }: NodeViewProps) {
   const size = (node.attrs.size as ImageSize) ?? 'default';
   const align = (node.attrs.align as ImageAlign) ?? 'center';
   const src = node.attrs.src as string;
@@ -24,25 +23,13 @@ export function ImageNodeView({
       data-size={size}
       data-align={align}
     >
-      {selected && (
-        <div className="absolute -top-11 left-1/2 z-10 -translate-x-1/2">
-          <ImageToolbar
-            size={size}
-            align={align}
-            alt={alt}
-            onSizeChange={(next) => updateAttributes({ size: next })}
-            onAlignChange={(next) => updateAttributes({ align: next })}
-            onAltChange={(next) => updateAttributes({ alt: next })}
-            onDelete={() => deleteNode()}
-          />
-        </div>
-      )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
         alt={alt}
         data-size={size}
         data-align={align}
+        data-drag-handle
         className={cn(
           'cursor-grab active:cursor-grabbing',
           selected && 'ring-2 ring-primary ring-offset-2',
