@@ -20,3 +20,6 @@ export const categoryFormSchema = z.object({
 });
 
 export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
+
+/** 글 수를 함께 집계한 카테고리 (어드민 카테고리 보드용) */
+export type CategoryWithCount = Category & { postCount: number };

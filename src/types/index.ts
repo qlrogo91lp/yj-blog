@@ -1,4 +1,8 @@
-export type { Category, CategoryFormValues } from './category';
+export type {
+  Category,
+  CategoryWithCount,
+  CategoryFormValues,
+} from './category';
 export { categoryFormSchema } from './category';
 
 export type {
