@@ -109,7 +109,7 @@ export async function selectTopReferrers(
     row.hosts.sort();
   }
 
-  const externalCount = sorted
+  const externalCount = [...groups.values()]
     .filter((row) => row.key !== 'direct' && row.label !== '내부 링크')
     .reduce((acc, row) => acc + row.count, 0);
 
