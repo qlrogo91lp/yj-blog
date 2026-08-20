@@ -17,7 +17,9 @@ export default async function AdminLayout({
       <AdminSidebarAction />
       <SidebarInset>
         <AdminHeaderAction />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 px-8 py-8">
+          <div className="mx-auto max-w-360">{children}</div>
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );
