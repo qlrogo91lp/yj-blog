@@ -28,7 +28,8 @@ type Props = {
 export default async function AdminStatisticsPage({ searchParams }: Props) {
   const { days: daysParam } = await searchParams;
   const currentPeriod = daysParam ?? '30';
-  const days = currentPeriod === 'all' ? undefined : Number(currentPeriod);
+  const parsed = Number(currentPeriod);
+  const days = currentPeriod === 'all' || !Number.isFinite(parsed) || parsed <= 0 ? undefined : parsed;
   const chartDays = days ?? 30; // "전체" 선택 시에도 그래프는 최근 30일 고정
 
   const [summary, dailyStats, popularPosts, comparison] = await Promise.all([

@@ -30,7 +30,8 @@ function formatReferrer(referrer: string) {
 
 export default async function AdminReferrersPage({ searchParams }: Props) {
   const { days: daysParam } = await searchParams;
-  const days = daysParam === 'all' || !daysParam ? undefined : Number(daysParam);
+  const parsed = Number(daysParam);
+  const days = daysParam === 'all' || !daysParam || !Number.isFinite(parsed) || parsed <= 0 ? undefined : parsed;
   const currentPeriod = daysParam ?? '30';
 
   const settings = await getBlogSettings();
