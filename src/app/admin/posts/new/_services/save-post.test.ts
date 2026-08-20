@@ -15,9 +15,15 @@ vi.mock('next/cache', () => ({
 
 // cleanupOrphanImages가 사용하는 실제 R2 클라이언트를 대체한다. 실제 R2 env
 // 값은 필요 없다 — deleteR2Objects 호출 여부/인자만 검증하면 충분하다.
+// r2PublicUrl은 테스트별로 값을 바꿔야 하므로(r2PublicUrl 미설정 케이스 검증)
+// vi.hoisted로 만든 상태를 getter로 노출해 매 접근마다 최신 값을 읽게 한다.
+const r2State = vi.hoisted(() => ({ publicUrl: 'https://pub.example.com' }));
+
 vi.mock('@/lib/r2', () => ({
   deleteR2Objects: vi.fn(async () => undefined),
-  r2PublicUrl: 'https://pub.example.com',
+  get r2PublicUrl() {
+    return r2State.publicUrl;
+  },
 }));
 
 /** select().from().where().limit()이 최종적으로 이 배열을 resolve한다. (posts.publishedAt 조회) */
@@ -254,6 +260,7 @@ describe('savePost — 저장 시점 고아 이미지 정리 (cleanupOrphanImage
     deleteTableArgs.length = 0;
     deleteWhereArgs.length = 0;
     selectFromArgs.length = 0;
+    r2State.publicUrl = r2PublicUrl; // 다른 테스트가 바꿔놓은 값이 있으면 원복
   });
 
   it('본문·썸네일 어디에도 참조되지 않는 post_images row는 R2와 DB에서 삭제한다', async () => {
@@ -317,5 +324,24 @@ describe('savePost — 저장 시점 고아 이미지 정리 (cleanupOrphanImage
     expect(result.success).toBe(true);
     // 정리 시도는 실제로 일어났다 — 실패가 조용히 스킵된 게 아니라 catch로 흡수된 것.
     expect(deleteR2Objects).toHaveBeenCalledWith([keyB]);
+  });
+
+  it('r2PublicUrl이 비어 있으면(env 미설정) 모든 row가 고아처럼 보여도 정리를 건너뛴다', async () => {
+    r2State.publicUrl = '';
+    postImagesRows = [
+      { id: 1, key: keyA },
+      { id: 2, key: keyB },
+    ];
+
+    const result = await savePost({
+      ...baseInput,
+      // r2PublicUrl이 비어 있으면 extractR2Keys가 빈 Set을 반환하므로, 본문에
+      // 이미지가 참조돼 있어도(=고아가 아니어도) keep을 계산할 수 없는 상태다.
+      content: `<p><img src="${r2PublicUrl}/${keyA}"></p>`,
+    });
+
+    expect(result.success).toBe(true);
+    expect(deleteR2Objects).not.toHaveBeenCalled();
+    expect(deleteTableArgs).not.toContain(postImages);
   });
 });

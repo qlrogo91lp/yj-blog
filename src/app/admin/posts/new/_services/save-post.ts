@@ -152,6 +152,13 @@ async function cleanupOrphanImages(
   content: string,
   thumbnailUrl: string | null,
 ): Promise<void> {
+  // r2PublicUrl이 비어 있으면(env 미설정 등) 본문·썸네일 속 이미지가 실제로
+  // 어떤 R2 key를 가리키는지 안전하게 판별할 수 없다. 이 상태로 진행하면
+  // extractR2Keys가 빈 Set을 반환해 모든 post_images row를 고아로 오판하고
+  // 전부 삭제해버린다 — 정리를 건너뛰는 게 안전하다(고아가 한 번 더 저장될
+  // 때까지 남는 건 무해하지만, 전체 오삭제는 되돌릴 수 없다).
+  if (!r2PublicUrl) return;
+
   try {
     const keep = extractR2Keys(content, r2PublicUrl);
     if (thumbnailUrl && r2PublicUrl && thumbnailUrl.startsWith(`${r2PublicUrl}/`)) {
