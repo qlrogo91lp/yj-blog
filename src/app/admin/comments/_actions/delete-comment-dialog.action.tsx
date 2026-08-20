@@ -47,6 +47,7 @@ export function DeleteCommentDialogAction({ commentId }: Props) {
           variant="ghost"
           size="sm"
           className="text-destructive h-7 px-2 text-xs"
+          aria-label={`댓글 삭제 (ID: ${commentId})`}
         >
           삭제
         </Button>

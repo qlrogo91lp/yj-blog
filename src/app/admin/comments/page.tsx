@@ -7,7 +7,9 @@ export default async function AdminCommentsPage() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">댓글 관리</h1>
-      <p className="text-muted-foreground mb-4 text-sm">전체 {total}개</p>
+      <p className="text-muted-foreground mb-4 text-sm">
+        전체 스레드 {total}개
+      </p>
       {comments.length === 0 ? (
         <p className="text-muted-foreground">댓글이 없습니다.</p>
       ) : (

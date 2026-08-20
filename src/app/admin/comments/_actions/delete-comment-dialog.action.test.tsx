@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { removeComment } from '../_services/remove-comment';
 import { DeleteCommentDialogAction } from './delete-comment-dialog.action';
@@ -14,14 +20,14 @@ describe('DeleteCommentDialogAction', () => {
 
   it('삭제 버튼을 누르면 확인 다이얼로그가 뜬다', () => {
     render(<DeleteCommentDialogAction commentId={1} />);
-    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    fireEvent.click(screen.getByRole('button', { name: '댓글 삭제 (ID: 1)' }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
   it('삭제를 확정하면 removeComment(commentId)를 호출하고 다이얼로그를 닫는다', async () => {
     vi.mocked(removeComment).mockResolvedValue({ success: true });
     render(<DeleteCommentDialogAction commentId={1} />);
-    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    fireEvent.click(screen.getByRole('button', { name: '댓글 삭제 (ID: 1)' }));
     const dialog = screen.getByRole('dialog');
     fireEvent.click(within(dialog).getByRole('button', { name: '삭제' }));
 
@@ -37,7 +43,7 @@ describe('DeleteCommentDialogAction', () => {
       error: '삭제 실패',
     });
     render(<DeleteCommentDialogAction commentId={1} />);
-    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    fireEvent.click(screen.getByRole('button', { name: '댓글 삭제 (ID: 1)' }));
     const dialog = screen.getByRole('dialog');
     fireEvent.click(within(dialog).getByRole('button', { name: '삭제' }));
 
@@ -52,7 +58,7 @@ describe('DeleteCommentDialogAction', () => {
     render(<DeleteCommentDialogAction commentId={1} />);
 
     // 첫 번째: 삭제 버튼 클릭 → 다이얼로그 열기
-    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    fireEvent.click(screen.getByRole('button', { name: '댓글 삭제 (ID: 1)' }));
     let dialog = screen.getByRole('dialog');
 
     // 삭제 시도 → 실패
@@ -66,7 +72,7 @@ describe('DeleteCommentDialogAction', () => {
     );
 
     // 다시 삭제 버튼 클릭 → 다이얼로그 다시 열기
-    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    fireEvent.click(screen.getByRole('button', { name: '댓글 삭제 (ID: 1)' }));
     dialog = screen.getByRole('dialog');
 
     // 이전 에러 메시지가 없어야 함

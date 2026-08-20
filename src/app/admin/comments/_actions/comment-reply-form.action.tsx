@@ -39,6 +39,7 @@ export function CommentReplyFormAction({
     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
       <Textarea
         placeholder="답글을 입력하세요"
+        aria-label="답글 내용"
         {...form.register('content')}
       />
       {form.formState.errors.content && (
