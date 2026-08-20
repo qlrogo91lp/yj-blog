@@ -19,7 +19,7 @@ import { selectPopularPosts } from '@/db/queries/statistics';
 import { AnalyticsLinkButton } from './_components/analytics-link-button';
 import { PeriodFilterAction } from './_actions/period-filter.action';
 import { StatCard } from './_components/stat-card';
-import { StatsChart } from './_components/stats-chart';
+import { StatsChart } from '../_components/stats-chart';
 
 type Props = {
   searchParams: Promise<{ days?: string }>;
