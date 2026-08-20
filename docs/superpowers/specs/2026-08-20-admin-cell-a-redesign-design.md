@@ -1,0 +1,184 @@
+# 어드민 셀 A 리디자인 설계
+
+**작성일:** 2026-08-20
+**원본 시안:** `yjlogs-design.pdf` (섹션 1·2·3 — 글/태그 관리, 대시보드, 어드민 셀 변형 3종)
+**상태:** 결정 완료, 구현 대기
+
+---
+
+## 배경
+
+어드민 화면 전체를 새 시안으로 교체한다. 시안은 어드민 톤을 **셀 A / 셀 B / 셀 C** 세 가지로 병렬 제시했고, 이 중 **셀 A**를 채택했다.
+
+- **셀 A** (채택) — 차콜 사이드바 + 흰 본문. 블로그 상단바를 세로로 눕힌 느낌
+- 셀 B — 본문 배경을 웜그레이(#f4f3f0)로 깔고 콘텐츠를 흰 카드로 띄움
+- 셀 C — 상단 컨텍스트 바 + 촘촘한 밀도
+
+셀 A로 **전 화면을 통일**한다. 셀 B의 웜그레이 캔버스와 셀 C의 상단 컨텍스트 바는 쓰지 않는다. 단, 셀 C가 제시한 **기간 세그먼트(7일/30일/전체)** 는 통계 화면의 기능 요소로 유지한다.
+
+## 시안 대비 현재 코드 조사 결과
+
+조사는 2026-08-20 세션에서 수행했다. 화면별로 "UI만 바꾸면 되는 것 / 스키마·액션 추가가 필요한 것 / 데이터가 없어 불가능한 것"으로 분류했다.
+
+### UI 교체만으로 되는 것
+
+| 시안 | 근거 |
+|---|---|
+| 3a 차콜 사이드바 + 흰 본문 | shadcn `Sidebar` 이미 사용 중 (`admin/_actions/admin-sidebar.action.tsx`). `--sidebar` 계열 토큰 교체로 해결 |
+| 3c 기간 세그먼트 | `ui/toggle-group.tsx` 존재. 유입경로에 이미 유사 필터(`referrer-period-filter.action.tsx`) |
+| 1b 글 관리 썸네일 행 | `thumbnailUrl`·`views`·`status`·`publishedAt`·`updatedAt` 모두 `posts`에 존재 |
+| 1d 태그 칩 보드 | `getAllTags`가 이미 `postCount`를 반환 → 사용 중/미사용 분리 즉시 가능 |
+| 2c 대시보드 라인차트 | `recharts` 설치됨 |
+| 3f 설정 하단 플로팅 저장 바 | `react-hook-form` 사용 중 → `formState.isDirty`로 구현 |
+
+### 새로 만들어야 하는 것
+
+- `src/components/ui/switch.tsx` — **현재 없음**. `toggle`·`toggle-group`만 있다. `radix-ui`는 이미 설치돼 있으므로 shadcn으로 추가만 하면 된다
+- 발행 상태 토글 Server Action — `admin/posts/_services`에 `remove-post.ts`뿐이다
+- 미사용 태그 일괄 정리 Server Action
+- 유입 제외 규칙 저장 Server Action
+- 관리자 답글 Server Action (아래 "댓글 인라인 답글" 참조)
+- 집계 쿼리 2개 — 카테고리별 글 수(`getCategories`가 글 수를 세지 않음), 글별 댓글 수
+
+## 결정 사항
+
+### 채택
+
+**셀 A로 전 화면 통일** + **다크모드 대응 포함.**
+
+다크모드는 선택이 아니라 필수다. `ThemeProvider`가 `src/app/layout.tsx:68`에서 루트 전체를 감싸고 `attribute="class"`로 `<html>`에 `.dark`를 붙이며, `/admin`은 그 아래 중첩 라우트다. 게다가 `defaultTheme="system"` + `enableSystem`이라 **사용자가 토글을 한 번도 누르지 않아도 OS가 다크면 어드민이 다크로 렌더된다.** 대응하지 않으면 깨진 화면이 그대로 노출된다.
+
+대응 비용은 낮다. `dark:` 유틸이 전체 코드에 16곳(어드민은 2곳)뿐이고 색이 전부 shadcn 토큰을 통과하므로, `globals.css`의 `.dark` 블록 값 조정이 작업의 대부분이다.
+
+### 제외 — 시리즈 드래그 정렬 (시안 3d)
+
+시안은 시리즈 회차를 드래그로 정렬하게 했으나 **정렬 기능은 넣지 않는다.**
+
+`db/schema.ts:73`에 *"시리즈 (연재). 순서는 publishedAt ASC로 결정"* 이 명시돼 있고, 독자 페이지(`series/[slug]`, `series-prev-next`)가 전부 이 규칙에 의존한다. 드래그를 넣으려면 `posts.seriesOrder` 컬럼 추가 + `@dnd-kit` 신규 의존성 + 독자 페이지 정렬 로직 변경까지 번져서, 개인 블로그의 시리즈 규모 대비 비용이 맞지 않는다.
+
+**시안에서 가져오는 것:** 접힘/펼침 스택 레이아웃, 회차 번호 뱃지, 진행 상태 표시.
+**빼는 것:** 드래그 핸들(⠿) 아이콘, 순서 변경 인터랙션. 순서는 `publishedAt ASC` 유지.
+
+### 제외 — 통계 지표 3종 (시안 2c·3c)
+
+시안의 아래 3개 지표는 **데이터가 존재하지 않는다.** `src/app/api/track/route.ts` 조사 결과다.
+
+| 지표 | 불가능한 이유 |
+|---|---|
+| 평균 체류 시간 (2:41) | 체류 시간을 측정·전송하지 않는다. `/api/track`은 진입 시 단발 POST만 한다 |
+| 재방문율 (18%) | `_blog_vid` 쿠키 값이 **날짜 문자열**이라 매일 리셋된다. 재방문자를 판별할 수 없다 |
+| 기기 비율 (모바일/데스크톱/태블릿) | User-Agent를 저장하지 않는다 |
+
+세 지표 모두 트래킹 스키마 확장이 선행돼야 하고 개인정보 취급 범위도 넓어진다. 이미 `AnalyticsLinkButton`으로 GA를 연결해 두었으므로 **이 3개는 GA에 위임**하고, 시안의 지표 자리를 아래로 교체한다.
+
+- 방문(`dailyStats.visitors`) · 페이지뷰(`dailyStats.views`) — 기존 데이터 그대로
+- **직전 기간 대비 증감** — `dailyStats`로 계산 가능하므로 유지한다 (시안의 `+12%` 및 "이번 기간 / 직전 기간" 비교 막대)
+
+### 제외 — 블로그 설정 "외형" 토글 3종 (시안 3f)
+
+시안 3f의 "외형" 섹션에 있던 아래 3개는 **만들지 않는다.**
+
+| 시안 항목 | 대상 코드 |
+|---|---|
+| 다크 모드 토글 노출 | `components/nav/header.tsx:23` — `ThemeToggle` 무조건 렌더 |
+| 홈 히어로 섹션 | `app/(main)/page.tsx:13` — `HeroSection` 무조건 렌더 |
+| 최근 글 노출 개수 (3/5/10) | `app/(main)/page.tsx:9` — `selectPosts({ limit: 5 })` 하드코딩 |
+
+개인 블로그에서 이 값들을 어드민으로 바꿀 일이 드물고, 각각 컬럼 추가 + 조건부 렌더 연결 + (개수의 경우) `RecentPostsSection`의 Hero/2up 레이아웃이 3·5·10에서 각각 어떻게 무너지는지 검증까지 붙는다. 비용 대비 실익이 없다.
+
+**3f는 기존 필드(블로그 이름·한 줄 소개·작성자 소개·사이트 URL·SEO·소셜 링크)를 셀 A 외형으로 재배치하는 선까지만 한다.** 좌측 앵커 내비게이션과 하단 플로팅 저장 바는 채택한다.
+
+### 채택 — 댓글 인라인 답글 (시안 3b)
+
+`/admin/comments`에서 목록을 벗어나지 않고 바로 답글을 단다.
+
+현재는 목록 + 삭제뿐이라, 답글을 달려면 실제 글 페이지로 이동해 **일반 방문자와 동일하게 이름·비밀번호를 입력**해야 한다. `add-comment.ts`가 `commentFormSchema`로 `authorName`·`password`를 필수로 받고 bcrypt 해싱까지 하기 때문이다.
+
+**필요한 것**
+
+- `add-admin-reply.ts` (신규 Server Action) — Clerk `auth()`로 본인 확인, 작성자명은 블로그 설정값으로 고정, 비밀번호는 랜덤 해시
+- `comments.isAuthor` 컬럼 — 독자 페이지에서 "작성자" 뱃지로 구분하고, 어드민에서 답변 완료 판정에 사용
+
+**알림 동작:** 기존 `addComment`의 이메일 알림(`sendReplyNotification` — 부모 댓글 작성자에게 발송)은 관리자 답글에서도 그대로 태운다. Discord 알림(`sendCommentNotification`)은 본인 답글까지 울리면 소음이므로 건너뛴다.
+
+**`isAuthor` 없이 근사하지 않는 이유:** "대댓글이 하나라도 있으면 답변 완료"로 판정하면 방문자끼리 주고받은 대댓글도 완료로 잡혀 뱃지가 부정확해진다. 컬럼 하나로 정확해지므로 추가한다.
+
+## 스키마 변경
+
+전부 컬럼 추가라 `npx drizzle-kit push` 한 번으로 반영된다. 데이터 손실 위험이 있는 변경(컬럼 삭제·타입 변경)은 없다.
+
+| 테이블 | 컬럼 | 용도 |
+|---|---|---|
+| `series` | `status` | 시안 3d "연재 중 / 완결" 뱃지. 자동 판정 수단이 없어 컬럼이 필요하다 |
+| `comments` | `isAuthor` | 시안 3b 관리자 답글 구분 + 답변 완료 판정 |
+| `blog_settings` | `referrerExcludes` (jsonb) | 시안 3e 유입경로 "항상 제외" 규칙 저장 |
+
+## 디자인 토큰
+
+셀 A의 색은 전부 `globals.css`의 CSS 변수로 정의하고, 컴포넌트에는 hex를 직접 쓰지 않는다. 시안이 상태 색(발행 초록·임시저장 앰버·삭제 빨강)을 하드코딩하고 있는데, **그대로 옮기면 다크모드에서 대비가 무너진다.** 상태 색도 토큰으로 뽑아 `.dark`에서 명도만 조정한다.
+
+기존 토큰은 `oklch` 표기를 쓰고 있으므로 신규 토큰도 `oklch`로 맞춘다. 아래 값은 시안에서 눈으로 읽은 근사치이며, **구현 시 시안과 나란히 놓고 미세 조정한다.**
+
+| 토큰 | 라이트 | 다크 | 용도 |
+|---|---|---|---|
+| `--sidebar` | `oklch(0.22 0.004 100)` | `oklch(0.12 0.004 100)` | 차콜 사이드바. 다크에서도 사이드바가 가장 어둡도록 본문 배경(`0.145`)보다 낮게 잡는다 |
+| `--sidebar-foreground` | `oklch(0.985 0 0)` | `oklch(0.985 0 0)` | 사이드바 텍스트 |
+| `--sidebar-accent` | `oklch(1 0 0)` | `oklch(0.30 0.004 100)` | 활성 항목 pill 배경 (라이트는 흰 pill) |
+| `--sidebar-accent-foreground` | `oklch(0.22 0.004 100)` | `oklch(0.985 0 0)` | 활성 항목 텍스트 |
+| `--status-published` | `oklch(0.72 0.19 145)` | `oklch(0.76 0.17 145)` | 발행 스위치 ON |
+| `--status-draft` | `oklch(0.80 0.15 75)` | `oklch(0.78 0.14 75)` | 임시저장 뱃지 |
+| `--status-danger` | `oklch(0.62 0.23 27)` | `oklch(0.70 0.19 22)` | 삭제·미사용 정리 |
+
+> `Sidebar` 컴포넌트는 어드민 전용이다(`grep` 확인: `admin/layout.tsx`, `admin/posts/[id]/edit/layout.tsx`, `admin/_actions/*`, `sidebar-collapse.handler.tsx`). `--sidebar` 계열을 차콜로 바꿔도 블로그 화면에는 영향이 없다.
+
+## 영향 범위
+
+### `@tanstack/react-table` 제거
+
+시안이 글 관리(1b)·태그(1d)·카테고리(3a)·시리즈(3d)에서 표를 전부 버린다. 댓글 관리(3b)도 카드형으로 바뀐다. 그 결과 아래가 사용처를 잃는다.
+
+- `src/components/data-table.tsx`
+- `src/app/admin/posts/_components/columns.tsx`
+- `src/app/admin/categories/_components/columns.tsx`
+- `src/app/admin/series/_components/columns.tsx`
+- `src/app/admin/tags/_components/columns.tsx`
+
+마지막 화면 전환이 끝나면 `@tanstack/react-table` 의존성을 통째로 제거한다. `ui/table.tsx`는 유입경로(3e)가 표를 유지하므로 남긴다.
+
+### 폴더 컨벤션
+
+시안의 화면들은 구역이 뚜렷하므로 `.claude/rules/page-folder.md`의 `_areas` 단위로 쪼개기 적합하다. 현재 어드민은 `_areas`를 쓰지 않고 `page.tsx`가 직접 조립하고 있는데, **신규로 손대는 구조부터** area를 도입한다. 기존 파일의 일괄 리네이밍은 하지 않는다.
+
+### Tailwind v4 문법
+
+`.claude/rules/coding-conventions.md`의 v4 규칙을 지킨다. 특히 시안 재현 중 자주 걸릴 것들:
+
+- CSS 변수 참조는 `max-w-(--content-width)` (v3의 `[var(--x)]` 아님)
+- 그라디언트는 `bg-linear-to-*` (v3의 `bg-gradient-to-*` 아님 — 실제 출력이 다르다)
+- spacing 스케일 속성의 4배수 px 임의값은 숫자 유틸리티로 (`max-w-[1180px]` → `max-w-295`)
+
+### 알려진 제약 — Clerk `UserButton` 다크모드
+
+다크모드에서 Clerk `UserButton`의 팝오버가 흰 배경으로 뜬다. 완전 대응하려면 `@clerk/themes`(미설치) 추가가 필요하다. **현재도 동일한 상태이므로 이번 작업으로 생기는 회귀는 아니다.** 이번 범위에 넣지 않고 후순위로 둔다.
+
+### 모바일
+
+시안이 전부 데스크톱 폭 기준이다. 어드민이라 우선순위는 낮고, 사이드바는 shadcn `Sidebar`가 모바일에서 `Sheet`로 전환해 주므로 기본 동작은 확보된다. 본문 영역은 화면 전환 시 최소한 가로 스크롤이 생기지 않는 선까지만 맞춘다.
+
+## 구현 순서
+
+4개 PR로 나눈다. 각 PR은 별도 plan 문서를 갖고, 단독으로 동작하는 상태로 끝난다.
+
+| 순서 | 브랜치 | 요지 |
+|---|---|---|
+| 1 | `refactor/admin-shell-cell-a` | 디자인 토큰 + 다크모드 + 셀 A 셸(사이드바·헤더·레이아웃) + `Switch` 프리미티브 |
+| 2 | `refactor/admin-content-screens` | 글 관리(1b)·카테고리(3a)·태그(1d)·시리즈(3d) + `series.status` + 발행 토글·미사용 태그 정리 액션 + `@tanstack/react-table` 제거 |
+| 3 | `feature/admin-comment-reply` | 댓글 관리(3b) + `comments.isAuthor` + 관리자 답글 액션 |
+| 4 | `refactor/admin-stats-settings` | 대시보드(2c)·방문 통계(3c)·유입경로(3e)·블로그 설정(3f) + `blog_settings.referrerExcludes` |
+
+PR 1이 나머지 전부의 기반이므로 반드시 먼저 간다. PR 2가 가장 크다.
+
+## 미해결
+
+- 시안 3a 사이드바의 "댓글 관리 ②" 뱃지는 답변 대기 수를 뜻한다. 판정에 `comments.isAuthor`가 필요하므로 **PR 3에서 연결한다.** PR 1은 뱃지 슬롯 구조만 만든다.
+- 셀 A 다크 팔레트의 최종 명도 대비는 실제 화면에서 눈으로 확인해야 확정된다. 위 토큰 표의 값은 출발점이다.
