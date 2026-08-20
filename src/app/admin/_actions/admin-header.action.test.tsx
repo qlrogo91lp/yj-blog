@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdminHeaderAction } from './admin-header.action';
@@ -12,7 +12,7 @@ vi.mock('next/link', () => ({
     className,
   }: {
     href: string;
-    children: React.ReactNode;
+    children: ReactNode;
     className?: string;
   }) => (
     <a href={href} className={className}>
