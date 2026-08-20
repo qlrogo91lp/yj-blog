@@ -2,18 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  BarChart3,
-  ExternalLink,
-  FileText,
-  FolderOpen,
-  Globe,
-  Layers,
-  LayoutDashboard,
-  MessageSquare,
-  Settings,
-  Tag,
-} from 'lucide-react';
+import { Logo } from '@/components/nav/logo';
 import {
   Sidebar,
   SidebarContent,
@@ -23,90 +12,85 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { SITE_NAME } from '@/lib/constants';
+import {
+  type AdminNavItem,
+  adminFooterItems,
+  adminNavGroups,
+} from '../_utils/admin-nav';
 
-const menuGroups = [
-  {
-    items: [{ label: '대시보드', icon: LayoutDashboard, href: '/admin' }],
-  },
-  {
-    label: '콘텐츠',
-    items: [
-      { label: '글 관리', icon: FileText, href: '/admin/posts' },
-      { label: '카테고리 관리', icon: FolderOpen, href: '/admin/categories' },
-      { label: '시리즈 관리', icon: Layers, href: '/admin/series' },
-      { label: '태그 관리', icon: Tag, href: '/admin/tags' },
-      { label: '댓글 관리', icon: MessageSquare, href: '/admin/comments' },
-    ],
-  },
-  {
-    label: '통계',
-    items: [
-      { label: '방문 통계', icon: BarChart3, href: '/admin/statistics' },
-      {
-        label: '유입경로',
-        icon: ExternalLink,
-        href: '/admin/statistics/referrers',
-      },
-    ],
-  },
-  {
-    label: '설정',
-    items: [{ label: '블로그 설정', icon: Settings, href: '/admin/settings' }],
-  },
-];
+type Props = {
+  /** 답변 대기 댓글 수. PR 3에서 layout이 주입한다. */
+  pendingReplyCount?: number;
+};
 
-export function AdminSidebarAction() {
+function isActive(pathname: string, href: string) {
+  if (href === '/admin') return pathname === '/admin';
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export function AdminSidebarAction({ pendingReplyCount }: Props) {
   const pathname = usePathname();
 
-  function isActive(href: string) {
-    if (href === '/admin') return pathname === '/admin';
-    return pathname.startsWith(href);
+  function renderItem(item: AdminNavItem, badge?: number) {
+    return (
+      <SidebarMenuItem key={item.href}>
+        <SidebarMenuButton
+          asChild
+          isActive={isActive(pathname, item.href)}
+          className="h-10 rounded-full px-3"
+        >
+          <Link href={item.href}>
+            <item.icon size={16} />
+            <span>{item.label}</span>
+          </Link>
+        </SidebarMenuButton>
+        {badge !== undefined && badge > 0 && (
+          <SidebarMenuBadge className="bg-sidebar-accent text-sidebar-accent-foreground rounded-full">
+            {badge}
+          </SidebarMenuBadge>
+        )}
+      </SidebarMenuItem>
+    );
   }
 
   return (
     <Sidebar>
-      <SidebarHeader className="border-b px-4 py-3 h-14">
-        <Link href="/admin" className="font-semibold text-lg">
-          {SITE_NAME} 관리
+      <SidebarHeader className="h-14 justify-center px-4">
+        <Link href="/admin" className="flex items-center gap-2">
+          <Logo className="size-7 bg-white text-zinc-900 dark:bg-white dark:text-zinc-900" />
+          <span className="text-base font-semibold">{SITE_NAME} 관리</span>
         </Link>
       </SidebarHeader>
 
       <SidebarContent>
-        {menuGroups.map((group, i) => (
-          <SidebarGroup key={i}>
+        {adminNavGroups.map((group, index) => (
+          <SidebarGroup key={group.label ?? index}>
             {group.label && (
               <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
             )}
             <SidebarGroupContent>
               <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive(item.href)}>
-                      <Link href={item.href}>
-                        <item.icon size={16} />
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {group.items.map((item) =>
+                  renderItem(
+                    item,
+                    item.href === '/admin/comments'
+                      ? pendingReplyCount
+                      : undefined
+                  )
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="border-t p-4">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <Globe size={16} />
-          블로그 보기
-        </Link>
+      <SidebarFooter className="border-sidebar-border border-t p-2">
+        <SidebarMenu>{adminFooterItems.map((item) => renderItem(item))}</SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
