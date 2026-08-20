@@ -13,7 +13,6 @@ type SavePostInput = {
   title: string;
   slug: string;
   content: string;
-  contentFormat: 'markdown' | 'html';
   excerpt?: string;
   metaTitle?: string;
   thumbnailUrl?: string | null;
@@ -38,7 +37,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
     return { success: false, error: '인증이 필요합니다' };
   }
 
-  const parsed = postFormSchema.safeParse(input);
+  const parsed = postFormSchema.safeParse({ ...input, contentFormat: 'html' });
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0].message };
   }

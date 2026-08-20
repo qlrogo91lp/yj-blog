@@ -6,16 +6,17 @@ import { useNewPostStore } from '../../../new/_store';
 
 type Props = {
   post: Post;
+  /** 편집기에 넣을 HTML. 마크다운 글이면 서버에서 변환된 값이 들어온다. */
+  content: string;
   initialTagIds: number[];
 };
 
-export function PostInitHandler({ post, initialTagIds }: Props) {
+export function PostInitHandler({ post, content, initialTagIds }: Props) {
   useEffect(() => {
     useNewPostStore.getState().initializePost({
       postId: post.id,
       title: post.title,
-      content: post.content,
-      contentFormat: post.contentFormat as 'markdown' | 'html',
+      content,
       categoryId: post.categoryId,
       seriesId: post.seriesId,
       tagIds: initialTagIds,
@@ -30,7 +31,7 @@ export function PostInitHandler({ post, initialTagIds }: Props) {
     return () => {
       useNewPostStore.getState().reset();
     };
-  }, [post, initialTagIds]);
+  }, [post, content, initialTagIds]);
 
   return null;
 }
