@@ -126,7 +126,7 @@ describe('globals.css 어드민 토큰', () => {
     const theme = block('@theme inline');
 
     for (const token of statusTokens) {
-      expect(theme).toContain(`--color${token}: var(${token});`);
+      expect(theme).toContain(`--color-${token.slice(2)}: var(${token});`);
     }
   });
 
@@ -303,14 +303,14 @@ npm run test:run -- src/components/ui/switch.test.tsx
 ```tsx
 'use client';
 
-import * as React from 'react';
+import type { ComponentProps } from 'react';
 import { Switch as SwitchPrimitive } from 'radix-ui';
 import { cn } from '@/lib/utils';
 
 function Switch({
   className,
   ...props
-}: React.ComponentProps<typeof SwitchPrimitive.Root>) {
+}: ComponentProps<typeof SwitchPrimitive.Root>) {
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
@@ -573,7 +573,7 @@ git commit -m "♻️ refactor: 어드민 라우트 메타데이터를 admin-nav
 `src/app/admin/_actions/admin-sidebar.action.test.tsx`:
 
 ```tsx
-import React from 'react';
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -586,7 +586,7 @@ vi.mock('next/link', () => ({
     className,
   }: {
     href: string;
-    children: React.ReactNode;
+    children: ReactNode;
     className?: string;
   }) => (
     <a href={href} className={className}>
@@ -825,7 +825,7 @@ git commit -m "💄 style: 어드민 사이드바를 셀 A 외형으로 교체"
 `src/app/admin/_actions/admin-header.action.test.tsx`:
 
 ```tsx
-import React from 'react';
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdminHeaderAction } from './admin-header.action';
@@ -839,7 +839,7 @@ vi.mock('next/link', () => ({
     className,
   }: {
     href: string;
-    children: React.ReactNode;
+    children: ReactNode;
     className?: string;
   }) => (
     <a href={href} className={className}>
