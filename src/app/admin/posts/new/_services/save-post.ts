@@ -95,6 +95,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
 
       revalidateTag(CACHE_TAGS.posts, 'max');
       revalidateTag(CACHE_TAGS.series, 'max');
+      revalidateTag(CACHE_TAGS.tags, 'max');
       revalidatePath('/admin/posts');
       return { success: true, postId: input.postId, status, publishedAt };
     } else {
@@ -122,6 +123,7 @@ export async function savePost(input: SavePostInput): Promise<SavePostResult> {
 
       revalidateTag(CACHE_TAGS.posts, 'max');
       revalidateTag(CACHE_TAGS.series, 'max');
+      revalidateTag(CACHE_TAGS.tags, 'max');
       revalidatePath('/admin/posts');
       return { success: true, postId: newPost.id, status, publishedAt };
     }
