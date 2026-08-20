@@ -81,7 +81,7 @@
 
 > `--status-*` 3종은 이 PR에서 정의만 하고 소비하지 않는다. 팔레트를 한 커밋에 모아두기 위한 의도된 선행이며, 실제 사용은 PR 2부터다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/globals.test.ts`:
 
@@ -149,7 +149,7 @@ describe('globals.css 어드민 토큰', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/globals.test.ts
@@ -157,7 +157,7 @@ npm run test:run -- src/app/globals.test.ts
 
 기대: 5개 중 최소 4개 FAIL. `--status-*` 토큰이 없어 `expect(root).toContain` 실패, 라이트 `--sidebar`가 `oklch(0.985 0 0)`이라 차콜 단언 실패, 다크 `--sidebar`(0.205)가 `--background`(0.145)보다 밝아 실패.
 
-- [ ] **Step 3: `@theme inline`에 상태 색 매핑 추가**
+- [x] **Step 3: `@theme inline`에 상태 색 매핑 추가**
 
 `src/app/globals.css`의 `@theme inline` 블록에서 `--color-sidebar-ring` 줄 바로 앞에 추가한다.
 
@@ -167,7 +167,7 @@ npm run test:run -- src/app/globals.test.ts
   --color-status-danger: var(--status-danger);
 ```
 
-- [ ] **Step 4: `:root` 사이드바 차콜화 + 상태 색 추가**
+- [x] **Step 4: `:root` 사이드바 차콜화 + 상태 색 추가**
 
 `:root` 블록의 `--sidebar` 8줄을 아래로 교체한다.
 
@@ -190,7 +190,7 @@ npm run test:run -- src/app/globals.test.ts
   --status-danger: oklch(0.62 0.23 27);
 ```
 
-- [ ] **Step 5: `.dark` 재정의**
+- [x] **Step 5: `.dark` 재정의**
 
 `.dark` 블록의 `--sidebar` 8줄을 아래로 교체한다. 사이드바가 본문 배경(`--background: oklch(0.145 0 0)`)보다 어두워야 라이트 모드와 같은 위계(사이드바 < 페이지 < 카드)가 유지된다.
 
@@ -213,7 +213,7 @@ npm run test:run -- src/app/globals.test.ts
   --status-danger: oklch(0.7 0.19 22);
 ```
 
-- [ ] **Step 6: 테스트 통과 확인**
+- [x] **Step 6: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/globals.test.ts
@@ -221,7 +221,7 @@ npm run test:run -- src/app/globals.test.ts
 
 기대: 5개 PASS.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add src/app/globals.css src/app/globals.test.ts
@@ -240,7 +240,7 @@ git commit -m "🎨 style: 어드민 셀 A 디자인 토큰 정의 (차콜 사�
 - Consumes: Task 1의 토큰 (직접 참조는 없음. 색은 shadcn 기본 `bg-primary`를 쓰고, 발행 초록은 PR 2가 사용처에서 `data-[state=checked]:bg-status-published`로 덮는다)
 - Produces: `Switch` — radix `SwitchPrimitive.Root` 래퍼. props는 radix 원형 그대로(`checked`, `defaultChecked`, `onCheckedChange`, `disabled`, `aria-label`). `role="switch"`와 `data-state="checked" | "unchecked"`를 노출한다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/components/ui/switch.test.tsx`:
 
@@ -286,7 +286,7 @@ describe('Switch', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/components/ui/switch.test.tsx
@@ -294,7 +294,7 @@ npm run test:run -- src/components/ui/switch.test.tsx
 
 기대: FAIL — `Failed to resolve import "./switch"`.
 
-- [ ] **Step 3: Switch 컴포넌트 작성**
+- [x] **Step 3: Switch 컴포넌트 작성**
 
 `npx shadcn@latest add switch`로 받아도 되지만, 이 프로젝트는 개별 `@radix-ui/*` 패키지가 아니라 통합 `radix-ui` 패키지를 쓴다(`ui/toggle.tsx` 참고). CLI 결과가 `@radix-ui/react-switch`를 import하면 아래 형태로 맞춰 고친다.
 
@@ -337,7 +337,7 @@ function Switch({
 export { Switch };
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/components/ui/switch.test.tsx
@@ -345,7 +345,7 @@ npm run test:run -- src/components/ui/switch.test.tsx
 
 기대: 4개 PASS.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/components/ui/switch.tsx src/components/ui/switch.test.tsx
@@ -371,7 +371,7 @@ git commit -m "➕ feat: Switch 프리미티브 추가"
 
 `getBreadcrumb`은 **가장 긴 href 접두사**로 매칭한다. `/admin/statistics/referrers`가 `/admin/statistics`가 아니라 `/admin/statistics/referrers`에 붙어야 하기 때문이다. `/admin`은 다른 모든 경로의 접두사이므로 정확히 일치할 때만 매칭한다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/_utils/admin-nav.test.ts`:
 
@@ -437,7 +437,7 @@ describe('getBreadcrumb', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_utils/admin-nav.test.ts
@@ -445,7 +445,7 @@ npm run test:run -- src/app/admin/_utils/admin-nav.test.ts
 
 기대: FAIL — `Failed to resolve import "./admin-nav"`.
 
-- [ ] **Step 3: 모듈 작성**
+- [x] **Step 3: 모듈 작성**
 
 `src/app/admin/_utils/admin-nav.ts`:
 
@@ -534,7 +534,7 @@ export function getBreadcrumb(pathname: string): string[] {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_utils/admin-nav.test.ts
@@ -542,7 +542,7 @@ npm run test:run -- src/app/admin/_utils/admin-nav.test.ts
 
 기대: 10개 PASS.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/_utils/admin-nav.ts src/app/admin/_utils/admin-nav.test.ts
@@ -568,7 +568,7 @@ git commit -m "♻️ refactor: 어드민 라우트 메타데이터를 admin-nav
 - 블로그 설정을 본문 메뉴에서 하단으로 내린다 (시안 3a)
 - 시안 하단에는 "블로그 설정"만 있지만 **"블로그 보기"를 함께 남긴다.** 기존 기능이고 블로그로 돌아가는 유일한 링크라 제거할 이유가 없다
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/_actions/admin-sidebar.action.test.tsx`:
 
@@ -674,7 +674,7 @@ describe('AdminSidebarAction', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_actions/admin-sidebar.action.test.tsx
@@ -682,7 +682,7 @@ npm run test:run -- src/app/admin/_actions/admin-sidebar.action.test.tsx
 
 기대: FAIL — 블로그 설정이 아직 본문 메뉴에 있어 하단 단언 실패, 뱃지 미구현으로 뱃지 테스트 실패.
 
-- [ ] **Step 3: 사이드바 재작성**
+- [x] **Step 3: 사이드바 재작성**
 
 `src/app/admin/_actions/admin-sidebar.action.tsx` 전체를 교체한다.
 
@@ -786,7 +786,7 @@ export function AdminSidebarAction({ pendingReplyCount }: Props) {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_actions/admin-sidebar.action.test.tsx
@@ -796,7 +796,7 @@ npm run test:run -- src/app/admin/_actions/admin-sidebar.action.test.tsx
 
 > 테스트가 의존하는 두 속성은 확인해 두었다 — `SidebarMenuButton`이 `data-active={isActive}`를 렌더하고(`src/components/ui/sidebar.tsx:522`), `SidebarMenuBadge`가 `data-slot="sidebar-menu-badge"`를 붙인다(`src/components/ui/sidebar.tsx:586`).
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/_actions/admin-sidebar.action.tsx src/app/admin/_actions/admin-sidebar.action.test.tsx
@@ -820,7 +820,7 @@ git commit -m "💄 style: 어드민 사이드바를 셀 A 외형으로 교체"
 - 좌측에 `콘텐츠 / 카테고리 관리` 브레드크럼. 마지막 조각만 진하게
 - 우측 글쓰기 버튼은 검정 pill (`rounded-full`) + `+` 아이콘
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/_actions/admin-header.action.test.tsx`:
 
@@ -912,7 +912,7 @@ describe('AdminHeaderAction', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_actions/admin-header.action.test.tsx
@@ -920,7 +920,7 @@ npm run test:run -- src/app/admin/_actions/admin-header.action.test.tsx
 
 기대: FAIL — 브레드크럼 미구현으로 "콘텐츠"·"카테고리 관리" 단언 실패.
 
-- [ ] **Step 3: 헤더 재작성**
+- [x] **Step 3: 헤더 재작성**
 
 `src/app/admin/_actions/admin-header.action.tsx` 전체를 교체한다.
 
@@ -992,7 +992,7 @@ export function AdminHeaderAction() {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_actions/admin-header.action.test.tsx
@@ -1000,7 +1000,7 @@ npm run test:run -- src/app/admin/_actions/admin-header.action.test.tsx
 
 기대: 5개 PASS.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/_actions/admin-header.action.tsx src/app/admin/_actions/admin-header.action.test.tsx
@@ -1020,7 +1020,7 @@ git commit -m "💄 style: 어드민 헤더에 브레드크럼 추가하고 셀 
 - Consumes: 없음 (순수 컴포넌트)
 - Produces: `AdminPageHeader({ title, description, action }: { title: string; description?: string; action?: React.ReactNode })`. PR 2~4의 모든 어드민 화면이 `<h1>` 직접 작성 대신 이 컴포넌트를 쓴다. 시안의 "카테고리 / 글 3개가 카테고리에 묶여 있고, 1개는 아직 미분류입니다 / [+ 새 카테고리]" 3단 구성에 대응한다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/_components/admin-page-header.test.tsx`:
 
@@ -1063,7 +1063,7 @@ describe('AdminPageHeader', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_components/admin-page-header.test.tsx
@@ -1071,7 +1071,7 @@ npm run test:run -- src/app/admin/_components/admin-page-header.test.tsx
 
 기대: FAIL — `Failed to resolve import "./admin-page-header"`.
 
-- [ ] **Step 3: 컴포넌트 작성**
+- [x] **Step 3: 컴포넌트 작성**
 
 `src/app/admin/_components/admin-page-header.tsx`:
 
@@ -1097,7 +1097,7 @@ export function AdminPageHeader({ title, description, action }: Props) {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_components/admin-page-header.test.tsx
@@ -1105,7 +1105,7 @@ npm run test:run -- src/app/admin/_components/admin-page-header.test.tsx
 
 기대: 4개 PASS.
 
-- [ ] **Step 5: layout 본문 컨테이너 조정**
+- [x] **Step 5: layout 본문 컨테이너 조정**
 
 `src/app/admin/layout.tsx`의 `main` 줄을 교체한다. 시안의 본문은 좌우 여백이 넉넉하고 폭이 제한돼 있다.
 
@@ -1117,7 +1117,7 @@ npm run test:run -- src/app/admin/_components/admin-page-header.test.tsx
 
 > `max-w-360`은 1440px이다 (360 × 4px). Tailwind v4 spacing 스케일 규칙에 따라 `max-w-[1440px]` 임의값 대신 숫자 유틸리티를 쓴다.
 
-- [ ] **Step 6: 전체 테스트 통과 확인**
+- [x] **Step 6: 전체 테스트 통과 확인**
 
 ```bash
 npm run test:run
@@ -1125,7 +1125,7 @@ npm run test:run
 
 기대: 기존 테스트 전부 PASS + 이 PR에서 추가한 테스트 PASS. 실패가 있으면 이 태스크에서 고친다.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add src/app/admin/_components/admin-page-header.tsx src/app/admin/_components/admin-page-header.test.tsx src/app/admin/layout.tsx
@@ -1142,7 +1142,7 @@ git commit -m "✨ feat: 어드민 공통 페이지 헤더 추가하고 본문 �
 - Consumes: Task 1~6 전부
 - Produces: 없음
 
-- [ ] **Step 1: 단위 테스트 전체 실행**
+- [x] **Step 1: 단위 테스트 전체 실행**
 
 ```bash
 npm run test:run
@@ -1150,7 +1150,7 @@ npm run test:run
 
 기대: 전부 PASS. 실패가 있으면 원인을 고친 뒤 다음 단계로 간다.
 
-- [ ] **Step 2: 린트**
+- [x] **Step 2: 린트**
 
 ```bash
 npm run lint
@@ -1158,7 +1158,7 @@ npm run lint
 
 기대: 이 PR이 건드린 파일에서 신규 에러 0건. `docs/design/ralli/support.js`의 기존 에러 2건은 이 브랜치와 무관하므로 그대로 둔다.
 
-- [ ] **Step 3: 타입 체크**
+- [x] **Step 3: 타입 체크**
 
 ```bash
 npx tsc --noEmit
@@ -1166,7 +1166,7 @@ npx tsc --noEmit
 
 기대: 이 PR이 건드린 파일에서 신규 에러 0건. `e2e/ralli.spec.ts`의 기존 타입 에러 1건은 `develop`에도 존재하므로 그대로 둔다.
 
-- [ ] **Step 4: 빌드**
+- [x] **Step 4: 빌드**
 
 ```bash
 npm run build
@@ -1186,6 +1186,7 @@ npm run build
 - [ ] 블로그 화면(`/`)의 색이 이 PR 전후로 달라지지 않았다 (`--sidebar` 변경이 블로그로 새지 않았는지)
 - [ ] 사이드바를 접었다 펴도 레이아웃이 깨지지 않는다
 - [ ] 모바일 폭에서 사이드바가 Sheet로 열린다
+- [ ] 사이드바에서 hover 상태가 활성(active) pill과 시각적으로 구분된다
 
 토큰 값이 시안과 어긋나 보이면 `globals.css`의 `oklch` 값만 조정한다. 스펙의 토큰 표에 적힌 값은 출발점이며 최종값이 아니다.
 
