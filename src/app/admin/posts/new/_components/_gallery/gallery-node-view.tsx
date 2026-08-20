@@ -38,12 +38,13 @@ export function GalleryNodeView({
   return (
     <NodeViewWrapper
       data-gallery=""
+      data-drag-handle
       className={cn('my-4', selected && 'ring-2 ring-primary ring-offset-2')}
     >
       {images.map((image, index) => (
         <figure key={`${image.src}-${index}`} className="relative">
           {selected && (
-            <div className="absolute left-1/2 top-2 z-10 -translate-x-1/2">
+            <div className="absolute left-2 top-2 z-10">
               <GallerySlideToolbar
                 index={index}
                 total={images.length}

@@ -57,10 +57,11 @@ export function ImageToolbar({
           aria-label={label}
           aria-pressed={align === value}
           disabled={alignDisabled}
+          title={alignDisabled ? '40% 크기에서만 정렬할 수 있습니다' : undefined}
           onClick={() => onAlignChange(value)}
           className={cn(
             'rounded p-1.5 hover:bg-accent disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer',
-            align === value && !alignDisabled && 'bg-primary text-primary-foreground hover:bg-muted-foreground',
+            align === value && !alignDisabled && 'bg-primary text-primary-foreground hover:bg-primary/90',
             alignDisabled && 'cursor-not-allowed',
           )}
         >
@@ -79,7 +80,7 @@ export function ImageToolbar({
           onClick={() => onSizeChange(value)}
           className={cn(
             'rounded px-2 py-1 text-xs hover:bg-accent cursor-pointer',
-            size === value && 'bg-primary text-primary-foreground hover:bg-muted-foreground'
+            size === value && 'bg-primary text-primary-foreground hover:bg-primary/90'
           )}
         >
           {Icon ? <Icon size={16} /> : label}

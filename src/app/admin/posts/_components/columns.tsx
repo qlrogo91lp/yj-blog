@@ -13,14 +13,23 @@ const columnHelper = createColumnHelper<PostWithCategory>();
 export const postColumns = [
   columnHelper.accessor('title', {
     header: '제목',
-    cell: (info) => (
-      <Link
-        href={`/posts/${info.row.original.slug}`}
-        className="font-medium hover:underline"
-      >
-        {info.getValue()}
-      </Link>
-    ),
+    cell: (info) => {
+      const { id, slug, status } = info.row.original;
+      const title = info.getValue();
+      const href = status === 'draft' ? `/admin/posts/${id}/edit` : `/posts/${slug}`;
+      return (
+        <Link
+          href={href}
+          className={
+            title
+              ? 'font-medium hover:underline'
+              : 'italic text-muted-foreground hover:underline'
+          }
+        >
+          {title || '(제목 없음)'}
+        </Link>
+      );
+    },
   }),
   columnHelper.accessor((row) => row.category?.name, {
     id: 'category',

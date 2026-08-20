@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { uploadImage } from '../_services/upload-image';
 import { useNewPostStore } from '../_store';
+import { compressImage } from '../_utils/compress-image';
 
 const THUMBNAIL_SIZE_LIMIT = 1 * 1024 * 1024; // 1MB
 
@@ -24,17 +25,16 @@ export function ThumbnailUploadAction() {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > THUMBNAIL_SIZE_LIMIT) {
-      toast.error('썸네일은 1MB 이하만 업로드 가능합니다');
-      e.target.value = '';
-      return;
-    }
+    const original = e.target.files?.[0];
+    if (!original) return;
 
     setIsUploading(true);
     try {
+      const file = await compressImage(original);
+      if (file.size > THUMBNAIL_SIZE_LIMIT) {
+        toast.error('썸네일은 1MB 이하만 업로드 가능합니다 (압축 후에도 초과)');
+        return;
+      }
       const formData = new FormData();
       formData.append('file', file);
       const result = await uploadImage(formData, postId, 'thumbnail');

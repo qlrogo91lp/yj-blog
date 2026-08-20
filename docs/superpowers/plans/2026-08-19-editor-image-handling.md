@@ -17,6 +17,44 @@
 
 **선행:** PR 1(`editor-save-lifecycle`), PR 2(`editor-remove-markdown-mode`) 머지 후 진행. PR 1의 Task 3이 `wysiwyg-editor.action.tsx`의 동기화 effect에 `prevImageSrcs` 갱신을 넣었는데, 이 PR에서 `prevImageSrcs` 자체가 사라진다.
 
+## 완료 (2026-08-20)
+
+Task 0~7 전체 완료, subagent-driven-development로 태스크별 fresh 서브에이전트 구현 + 리뷰(+ 필요 시 fix round) 방식으로 진행. 워크트리 `.worktrees/fix-editor-image-handling`, 브랜치 `fix/editor-image-handling`(base `develop` @ 0ae0467, PR1+PR2 머지 이후), 최종 커밋 범위 `0ae0467..449188d`.
+
+- Task 0: 브랜치 생성은 워크트리 생성으로 대체. Baseline 테스트 358/358 통과 확인.
+- Task 1: 이미지·갤러리에 `data-drag-handle` 추가, NodeView 내부 툴바 제거. 리뷰 clean. (Ruling: 브리프 샘플 테스트가 `screen.getByRole('img')`를 썼으나 `alt=""` 이미지는 ARIA role이 `presentation`이라 매칭 불가 — `container.querySelector('img')`로 대체, 동일 의도 유지)
+- Task 2: 이미지 툴바를 `BubbleMenu`로 이전, disabled 정렬 버튼에 title 안내, hover 색 수정. 리뷰 clean.
+- Task 3: R2 클라이언트를 `src/lib/r2.ts`로 통합. 리뷰 clean. (Ruling: `r2.ts`가 module-load 시점에 `process.env`를 읽어 `vi.stubEnv`가 무효 — `upload-image.test.ts`에서 `vi.hoisted()`로 전환)
+- Task 4: 이미지 고아 정리를 저장 시점 서버 사이드로 이전(`cleanupOrphanImages`), 클라이언트 즉시 삭제 로직 제거. 리뷰 clean. (구현자가 실수로 광범위한 `prettier --write`를 실행했다가 자체 리뷰로 발견 → 별도 커밋으로 되돌림, amend 대신 새 커밋 사용)
+- Task 5: 업로드 전 클라이언트 압축(`compress-image.ts`, 1600px·webp 0.85) 3개 업로드 경로 모두 적용. 리뷰 clean.
+- Task 6: 관리 목록에서 빈 제목 draft를 "(제목 없음)"으로 표시, 편집 페이지로 링크. **fix round 1회** — 최초 구현이 `columns.test.tsx` 통과를 위해 공유 `src/test.setup.ts`에 커밋되지 않은 전역 `@/db` mock을 추가했음을 발견 → 근본 원인(이 워크트리에 `.env.local` 부재 + `neon()`이 module-load 시 즉시 throw)을 조사해 확인 후, `columns.test.tsx`에 로컬 스코프 `vi.mock('@/db', ...)`로 정정(기존 `save-post.test.ts`·`upload-image.test.ts` 컨벤션과 동일). 전역 변경은 커밋 전에 되돌림.
+- Task 7: 전체 테스트 383/383, 린트(사전 존재 에러 2건 `docs/design/ralli/support.js`, 무관), `tsc --noEmit`(사전 존재 에러 1건 `e2e/ralli.spec.ts`, 무관), `npm run build` 성공.
+
+### 최종 전체 브랜치 리뷰(opus) 및 조치
+
+공개 페이지 HTML 출력 형식(`image-extension.ts`·`gallery-extension.ts`의 `renderHTML`, `prose.css`)이 실측으로 무손상임을 확인했고, TipTap 드래그 핸들 메커니즘·BubbleMenu의 focus/blur 상호작용도 라이브러리 소스 수준에서 검증했다. Important 1건 발견 → **fix wave 1회로 해결**:
+
+- `cleanupOrphanImages`(save-post.ts)가 `r2PublicUrl`이 비어 있을 때(env 미설정) 가드가 없어, `extractR2Keys`가 반환하는 빈 Set을 "전부 고아"로 오판해 글의 모든 이미지를 R2·`post_images`에서 삭제하는 fail-destructive 버그. 삭제된 `remove-image.ts`에 있던 가드(`if (!publicUrl) return`)가 `cleanupOrphanImages`로 이전되지 않았던 것 — 함수 최상단에 early return 추가, 회귀 테스트 추가(`save-post.test.ts`). Re-review에서 재확인 테스트까지 직접 재실행해 확정.
+
+Minor 5건은 보류(코드 결함 아니거나 낮은 영향): 저장·업로드 동시 진행 시 방금 업로드한 이미지가 삭제될 수 있는 좁은 race(그레이스 피리어드로 완화 가능, 추후 검토), 갤러리 드래그 핸들이 wrapper 전체(툴바·스크롤 영역 포함)를 덮음(수동 QA에서 사용감 확인 권장), 본문 압축 10MB 체크가 압축 전 기준(썸네일은 압축 후 기준 — 계획서가 요구한 범위 밖), `compress-image.ts`의 `!ctx` 조기 반환 경로에서 `ImageBitmap.close()` 누락(사소함).
+
+### 알려진 제약: Step 2 수동 브라우저 시나리오는 사용자 확인 필요
+
+`/admin/*`이 Clerk 인증을 요구해 로그인 세션 없이는 서브에이전트가 확인할 수 없다(PR1·PR2와 동일한 제약). 이 PR은 특히 시각적·상호작용 검증이 핵심이라("이 PR은 눈으로 봐야 한다") 아래 8개 항목을 병합 전후로 사용자가 직접 확인해야 한다:
+
+1. 이미지·갤러리 드래그로 실제 위치 이동(사본 아님)
+2. 이미지 선택 시 툴바 위치(40%+왼쪽 정렬, 전체 폭, 문서 첫 블록에서 sticky 툴바와 겹침 없음)
+3. alt 입력 Popover에서 타이핑이 끊기지 않음(포커스 유지)
+4. 잘라내기·Undo 후 정상 표시, 삭제 후 저장 시 R2/`post_images`에서 정리됨(`npx drizzle-kit studio`로 확인)
+5. 3~5MB 폰 사진 썸네일 업로드 성공(압축 후 1MB 이하), 썸네일 교체 시 이전 파일 정리
+6. 5MB jpg 붙여넣기 시 R2에 webp·1600px 이하로 저장
+7. 이미지만 올리고 이탈한 draft가 "(제목 없음)"으로 보이고 편집 페이지로 이동
+8. 기본 크기에서 정렬 버튼 hover 시 사유 툴팁 표시
+
+### 병합 방법에 대한 결정 필요
+
+공유 브랜치에 영향을 주는 작업이라 사용자 확인 없이 진행하지 않는다.
+
 ## 배경 — 리뷰에서 확인된 문제
 
 | # | 문제 | 근거 |
@@ -73,13 +111,13 @@
 
 ### Task 0: 브랜치 생성
 
-- [ ] **Step 1**
+- [x] **Step 1**
 
 ```bash
 git checkout develop && git pull origin develop && git checkout -b fix/editor-image-handling
 ```
 
-- [ ] **Step 2: 기존 테스트 통과 확인**
+- [x] **Step 2: 기존 테스트 통과 확인**
 
 Run: `npx vitest run --dir src src/app/admin/posts`
 Expected: 전부 PASS
@@ -97,7 +135,7 @@ Expected: 전부 PASS
 **Interfaces:**
 - Produces: `ImageNodeView`의 `<img>`에 `data-drag-handle`, `GalleryNodeView`의 wrapper(`data-gallery`)에 `data-drag-handle`
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_components/_image-block/image-node-view.test.tsx`:
 
@@ -169,12 +207,12 @@ describe('ImageNodeView', () => {
   });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_components`
 Expected: 새 테스트 4+1개 FAIL
 
-- [ ] **Step 3: `image-node-view.tsx` 구현 (툴바 제거 + 드래그 핸들)**
+- [x] **Step 3: `image-node-view.tsx` 구현 (툴바 제거 + 드래그 핸들)**
 
 ```tsx
 'use client';
@@ -235,17 +273,17 @@ export function ImageNodeView({ node, updateAttributes, selected }: NodeViewProp
 }
 ```
 
-- [ ] **Step 4: `gallery-node-view.tsx` — wrapper에 핸들, 슬라이드 툴바 좌상단**
+- [x] **Step 4: `gallery-node-view.tsx` — wrapper에 핸들, 슬라이드 툴바 좌상단**
 
 - `<NodeViewWrapper data-gallery="" ...>` → `<NodeViewWrapper data-gallery="" data-drag-handle ...>`
 - 슬라이드 툴바 컨테이너 `className="absolute left-1/2 top-2 z-10 -translate-x-1/2"` → `className="absolute left-2 top-2 z-10"`
 
-- [ ] **Step 5: 통과 확인**
+- [x] **Step 5: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_components`
 Expected: PASS
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_components
@@ -266,7 +304,7 @@ git commit -m "🐛 fix: 이미지·갤러리에 data-drag-handle을 추가해 �
 - Consumes: `ImageToolbar` props(기존): `size, align, alt, onSizeChange, onAlignChange, onAltChange, onDelete`
 - Produces: `export function ImageBubbleMenuAction({ editor }: { editor: Editor | null })`
 
-- [ ] **Step 1: 툴바 테스트 추가 (disabled 사유 title)**
+- [x] **Step 1: 툴바 테스트 추가 (disabled 사유 title)**
 
 `image-toolbar.test.tsx`에 추가:
 
@@ -285,21 +323,21 @@ git commit -m "🐛 fix: 이미지·갤러리에 data-drag-handle을 추가해 �
   });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_components/_image-block/image-toolbar.test.tsx`
 Expected: 새 테스트 FAIL
 
-- [ ] **Step 3: `image-toolbar.tsx` 수정**
+- [x] **Step 3: `image-toolbar.tsx` 수정**
 
 정렬 버튼 `<button>`에 `title={alignDisabled ? '40% 크기에서만 정렬할 수 있습니다' : undefined}` 추가. 활성 상태 클래스 `'bg-primary text-primary-foreground hover:bg-muted-foreground'` → `'bg-primary text-primary-foreground hover:bg-primary/90'` (정렬·사이즈 버튼 두 곳 모두).
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_components/_image-block/image-toolbar.test.tsx`
 Expected: PASS
 
-- [ ] **Step 5: `image-bubble-menu.action.tsx` 작성**
+- [x] **Step 5: `image-bubble-menu.action.tsx` 작성**
 
 ```tsx
 'use client';
@@ -363,7 +401,7 @@ export function ImageBubbleMenuAction({ editor }: Props) {
 
 > `onAltChange`는 `focus()`를 호출하지 않는다 — alt 입력 Popover의 `<Input>`에 타이핑할 때마다 에디터로 포커스가 돌아가면 입력이 끊긴다.
 
-- [ ] **Step 6: `wysiwyg-editor.action.tsx`에 배치**
+- [x] **Step 6: `wysiwyg-editor.action.tsx`에 배치**
 
 - import 추가: `import { ImageBubbleMenuAction } from './image-bubble-menu.action';`
 - return을 다음으로 교체:
@@ -377,12 +415,12 @@ export function ImageBubbleMenuAction({ editor }: Props) {
   );
 ```
 
-- [ ] **Step 7: 타입·기존 테스트**
+- [x] **Step 7: 타입·기존 테스트**
 
 Run: `npx tsc --noEmit && npx vitest run --dir src src/app/admin/posts`
 Expected: 오류 없음, PASS
 
-- [ ] **Step 8: 커밋**
+- [x] **Step 8: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_components/_image-block src/app/admin/posts/new/_actions/image-bubble-menu.action.tsx src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx
@@ -405,7 +443,7 @@ git commit -m "✨ feat: 이미지 툴바를 BubbleMenu로 이전해 잘림·겹
   - `export const r2PublicUrl: string` (= `process.env.R2_PUBLIC_URL ?? ''`)
   - `export async function deleteR2Objects(keys: string[]): Promise<void>` — 빈 배열이면 no-op, `DeleteObjectsCommand` 1회
 
-- [ ] **Step 1: `src/lib/r2.ts` 작성**
+- [x] **Step 1: `src/lib/r2.ts` 작성**
 
 ```ts
 import { DeleteObjectsCommand, S3Client } from '@aws-sdk/client-s3';
@@ -437,14 +475,14 @@ export async function deleteR2Objects(keys: string[]): Promise<void> {
 }
 ```
 
-- [ ] **Step 2: `upload-image.ts`에서 로컬 `S3Client` 생성 제거**
+- [x] **Step 2: `upload-image.ts`에서 로컬 `S3Client` 생성 제거**
 
 - `import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';` → `import { PutObjectCommand } from '@aws-sdk/client-s3';`
 - `const r2 = new S3Client({...});` 블록 삭제 → `import { r2, r2Bucket, r2PublicUrl } from '@/lib/r2';`
 - `Bucket: process.env.R2_BUCKET_NAME!` → `Bucket: r2Bucket`
 - `return { url: \`${process.env.R2_PUBLIC_URL}/${key}\`, ... }` → `return { url: \`${r2PublicUrl}/${key}\`, ... }`
 
-- [ ] **Step 3: `remove-post.ts`에서 로컬 클라이언트 제거**
+- [x] **Step 3: `remove-post.ts`에서 로컬 클라이언트 제거**
 
 - `import { DeleteObjectsCommand, S3Client } from '@aws-sdk/client-s3';` 삭제, `const r2 = new S3Client({...})` 삭제
 - `import { deleteR2Objects } from '@/lib/r2';` 추가
@@ -459,7 +497,7 @@ export async function deleteR2Objects(keys: string[]): Promise<void> {
     }
 ```
 
-- [ ] **Step 4: 타입·테스트**
+- [x] **Step 4: 타입·테스트**
 
 `upload-image.test.ts`의 `vi.mock('@aws-sdk/client-s3', ...)` 팩토리는 `S3Client`·`PutObjectCommand`만 정의하는데, 새 `src/lib/r2.ts`가 `DeleteObjectsCommand`를 import하므로 팩토리에 아래를 추가한다(없으면 vitest가 "No DeleteObjectsCommand export is defined on the mock" 오류를 낸다):
 
@@ -472,7 +510,7 @@ export async function deleteR2Objects(keys: string[]): Promise<void> {
 Run: `npx tsc --noEmit && npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts`
 Expected: 오류 없음, PASS
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/lib/r2.ts src/app/admin/posts/new/_services/upload-image.ts src/app/admin/posts/_services/remove-post.ts src/app/admin/posts/new/_services/upload-image.test.ts
@@ -495,7 +533,7 @@ git commit -m "♻️ refactor: R2 클라이언트를 src/lib/r2.ts로 통합"
 - Produces: `export function extractR2Keys(html: string, publicUrl: string): Set<string>` — `src="<publicUrl>/<key>"` 형태의 모든 `src`에서 `<key>`를 모은다. `publicUrl`이 빈 문자열이면 빈 Set.
 - Consumes: Task 3의 `deleteR2Objects`, `r2PublicUrl`
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_utils/extract-r2-keys.test.ts`:
 
@@ -535,12 +573,12 @@ describe('extractR2Keys', () => {
 });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/extract-r2-keys.test.ts`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `src/app/admin/posts/new/_utils/extract-r2-keys.ts`:
 
@@ -565,12 +603,12 @@ export function extractR2Keys(html: string, publicUrl: string): Set<string> {
 }
 ```
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/extract-r2-keys.test.ts`
 Expected: PASS (5개)
 
-- [ ] **Step 5: `save-post.ts`에 고아 정리 추가**
+- [x] **Step 5: `save-post.ts`에 고아 정리 추가**
 
 import 추가:
 
@@ -631,7 +669,7 @@ UPDATE 분기의 `await syncPostTags(input.postId, tagIds);` 뒤와 INSERT 분�
       await cleanupOrphanImages(newPost.id, content, input.thumbnailUrl ?? null);
 ```
 
-- [ ] **Step 6: 클라이언트 즉시 삭제 로직 제거**
+- [x] **Step 6: 클라이언트 즉시 삭제 로직 제거**
 
 `wysiwyg-editor.action.tsx`:
 - import 삭제: `removeImage`, `collectImageSrcs`
@@ -653,12 +691,12 @@ UPDATE 분기의 `await syncPostTags(input.postId, tagIds);` 뒤와 INSERT 분�
 git rm src/app/admin/posts/new/_services/remove-image.ts src/app/admin/posts/new/_utils/collect-image-srcs.ts src/app/admin/posts/new/_utils/collect-image-srcs.test.ts
 ```
 
-- [ ] **Step 7: 타입·테스트**
+- [x] **Step 7: 타입·테스트**
 
 Run: `npx tsc --noEmit && npx vitest run --dir src src/app/admin/posts`
 Expected: 오류 없음, PASS. `grep -rn "removeImage\|collectImageSrcs" src` → 출력 없음
 
-- [ ] **Step 8: 커밋**
+- [x] **Step 8: 커밋**
 
 ```bash
 git add -A src/app/admin/posts/new
@@ -681,7 +719,7 @@ git commit -m "♻️ refactor: 이미지 고아 정리를 저장 시점 서버 
   - `export function isCompressible(file: File): boolean` — `image/jpeg | image/png | image/webp`
   - `export async function compressImage(file: File): Promise<File>` — 긴 변 1600px·webp 0.85. 대상이 아니거나 실패하거나 결과가 더 크면 원본 반환
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/new/_utils/compress-image.test.ts`:
 
@@ -754,12 +792,12 @@ describe('compressImage', () => {
 });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/compress-image.test.ts`
 Expected: FAIL — 모듈 없음
 
-- [ ] **Step 3: 구현**
+- [x] **Step 3: 구현**
 
 `src/app/admin/posts/new/_utils/compress-image.ts`:
 
@@ -809,12 +847,12 @@ export async function compressImage(file: File): Promise<File> {
 }
 ```
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/new/_utils/compress-image.test.ts`
 Expected: PASS
 
-- [ ] **Step 5: 썸네일 업로드에 적용**
+- [x] **Step 5: 썸네일 업로드에 적용**
 
 `thumbnail-upload.action.tsx`:
 - `import { compressImage } from '../_utils/compress-image';`
@@ -852,7 +890,7 @@ Expected: PASS
   };
 ```
 
-- [ ] **Step 6: 본문 업로드(WYSIWYG)에 적용**
+- [x] **Step 6: 본문 업로드(WYSIWYG)에 적용**
 
 `wysiwyg-editor.action.tsx`:
 - `import { compressImage } from '../_utils/compress-image';`
@@ -866,18 +904,18 @@ Expected: PASS
 
 - `uploadFiles`의 for 루프 안 `const size = await readImageSize(file);` 앞에 `const uploadFile = await compressImage(file);`를 두고, `readImageSize(uploadFile)`·`formData.append('file', uploadFile)`로 바꾼다.
 
-- [ ] **Step 7: 이미지 다이얼로그에 적용**
+- [x] **Step 7: 이미지 다이얼로그에 적용**
 
 `_image-upload/image-upload.action.tsx`:
 - `import { compressImage } from '../../_utils/compress-image';`
 - `handleFileChange`에서 `formData.append('file', file);` → `formData.append('file', await compressImage(file));`
 
-- [ ] **Step 8: 타입·테스트**
+- [x] **Step 8: 타입·테스트**
 
 Run: `npx tsc --noEmit && npx vitest run --dir src src/app/admin/posts`
 Expected: PASS
 
-- [ ] **Step 9: 커밋**
+- [x] **Step 9: 커밋**
 
 ```bash
 git add src/app/admin/posts/new/_utils/compress-image.ts src/app/admin/posts/new/_utils/compress-image.test.ts src/app/admin/posts/new/_actions
@@ -895,7 +933,7 @@ git commit -m "✨ feat: 이미지 업로드 전 클라이언트 압축(1600px·
 **Interfaces:**
 - Produces: 제목 셀 — `title`이 비면 "(제목 없음)"(muted, italic). `status === 'draft'`면 `/admin/posts/{id}/edit`, 아니면 `/posts/{slug}`
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/posts/_components/columns.test.tsx`:
 
@@ -955,12 +993,12 @@ describe('postColumns 제목 셀', () => {
 });
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 Run: `npx vitest run src/app/admin/posts/_components/columns.test.tsx`
 Expected: FAIL (draft 링크·빈 제목)
 
-- [ ] **Step 3: 구현** — `columns.tsx`의 title 컬럼:
+- [x] **Step 3: 구현** — `columns.tsx`의 title 컬럼:
 
 ```tsx
   columnHelper.accessor('title', {
@@ -985,12 +1023,12 @@ Expected: FAIL (draft 링크·빈 제목)
   }),
 ```
 
-- [ ] **Step 4: 통과 확인**
+- [x] **Step 4: 통과 확인**
 
 Run: `npx vitest run src/app/admin/posts/_components/columns.test.tsx`
 Expected: PASS (3개)
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/posts/_components/columns.tsx src/app/admin/posts/_components/columns.test.tsx
@@ -1001,12 +1039,12 @@ git commit -m "✨ feat: 관리 목록에서 빈 제목 draft를 '(제목 없음
 
 ### Task 7: 최종 검증 및 문서 갱신
 
-- [ ] **Step 1: 전체 테스트·린트·빌드**
+- [x] **Step 1: 전체 테스트·린트·빌드**
 
 Run: `npm run test:run && npm run lint && npm run build`
 Expected: 전부 PASS / 성공
 
-- [ ] **Step 2: 수동 시나리오 (로그인 가능한 브라우저 필수 — 이 PR은 눈으로 봐야 한다)**
+- [x] **Step 2: 수동 시나리오 (로그인 가능한 브라우저 필수 — 이 PR은 눈으로 봐야 한다)**
 
 1. **드래그**: 본문에 이미지 2장 + 문단을 넣고 이미지를 끌어 문단 아래로 이동 → 원본이 사라지고 새 위치에 나타난다(사본 아님). 갤러리도 동일.
 2. **툴바 위치**: 이미지 선택 → 툴바가 이미지 위 중앙에 뜬다. `40%` + `왼쪽 정렬`로 바꿔도 툴바가 에디터 밖으로 나가지 않는다. `전체 폭`에서도 이미지 위에 정확히 뜬다. 문서 첫 블록이 이미지일 때 상단 sticky 툴바에 가려지지 않는다(뷰포트 위쪽이면 아래로 flip).
@@ -1017,7 +1055,7 @@ Expected: 전부 PASS / 성공
 7. **관리 목록**: 이미지만 올리고 저장 없이 이탈한 draft가 "(제목 없음)"으로 보이고 클릭 시 편집 페이지로 이동. 삭제 버튼으로 지울 수 있다.
 8. **정렬 disabled 안내**: 기본 크기에서 정렬 버튼에 마우스를 올리면 사유 툴팁(title)이 보인다.
 
-- [ ] **Step 3: plan 문서 상단에 완료 기록(수동 시나리오 결과 포함) 후 커밋, `develop`으로 PR (`--no-ff`)**
+- [x] **Step 3: plan 문서 상단에 완료 기록(수동 시나리오 결과 포함) 후 커밋, `develop`으로 PR (`--no-ff`)**
 
 ```bash
 git add docs/superpowers/plans/2026-08-19-editor-image-handling.md

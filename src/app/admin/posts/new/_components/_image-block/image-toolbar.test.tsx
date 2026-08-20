@@ -93,4 +93,17 @@ describe('ImageToolbar', () => {
     });
     expect(onAltChange).toHaveBeenCalledWith('바뀐 alt');
   });
+
+  it('정렬 버튼이 disabled일 때 사유를 title로 안내한다', () => {
+    render(<ImageToolbar {...baseProps} size="default" />);
+    expect(screen.getByRole('button', { name: '왼쪽 정렬' })).toHaveAttribute(
+      'title',
+      '40% 크기에서만 정렬할 수 있습니다',
+    );
+  });
+
+  it('size=small이면 정렬 버튼에 title이 없다', () => {
+    render(<ImageToolbar {...baseProps} size="small" />);
+    expect(screen.getByRole('button', { name: '왼쪽 정렬' })).not.toHaveAttribute('title');
+  });
 });
