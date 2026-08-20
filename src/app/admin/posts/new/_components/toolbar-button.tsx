@@ -1,5 +1,6 @@
 'use client';
 
+import type { LucideIcon } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 import {
   Tooltip,
@@ -8,7 +9,7 @@ import {
 } from '@/components/ui/tooltip';
 
 type Props = {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: LucideIcon;
   tooltip: string;
   isActive?: boolean;
   onClick?: () => void;
@@ -30,7 +31,7 @@ export function ToolbarButton({
           aria-label={tooltip}
           className="cursor-pointer data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
         >
-          <Icon className="h-4 w-4" />
+          <Icon size={16} />
         </Toggle>
       </TooltipTrigger>
       <TooltipContent side="bottom">

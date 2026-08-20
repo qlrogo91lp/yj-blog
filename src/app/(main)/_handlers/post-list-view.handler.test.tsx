@@ -47,7 +47,6 @@ const basePost = {
   categoryId: null,
   seriesId: null,
   metaTitle: null,
-  metaDescription: null,
   category: null,
   createdAt: new Date('2024-01-15'),
   updatedAt: new Date('2024-01-15'),

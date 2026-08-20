@@ -55,3 +55,18 @@ describe('htmlToHtmlWithToc — 갤러리', () => {
     expect(html).toContain('<figcaption>거실</figcaption>');
   });
 });
+
+describe('htmlToHtmlWithToc — 코드 하이라이트', () => {
+  it('language 클래스가 있는 code를 hljs 토큰으로 하이라이트한다', async () => {
+    const html = '<pre><code class="language-javascript">const a = 1;</code></pre>';
+    const { html: result } = await htmlToHtmlWithToc(html);
+    expect(result).toContain('hljs');
+    expect(result).toContain('hljs-keyword');
+  });
+
+  it('language 클래스가 없는 code도 자동 감지로 하이라이트한다', async () => {
+    const html = '<pre><code>function f() { return 1; }</code></pre>';
+    const { html: result } = await htmlToHtmlWithToc(html);
+    expect(result).toContain('hljs');
+  });
+});

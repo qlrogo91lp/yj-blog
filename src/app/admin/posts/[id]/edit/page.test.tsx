@@ -94,7 +94,6 @@ function buildPost(overrides: Partial<Post>): Post {
     categoryId: null,
     seriesId: null,
     metaTitle: null,
-    metaDescription: null,
     publishedAt: null,
     createdAt: new Date('2026-01-01T00:00:00Z'),
     updatedAt: new Date('2026-01-01T00:00:00Z'),

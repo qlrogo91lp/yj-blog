@@ -45,10 +45,6 @@ export const postFormSchema = z.object({
     .string()
     .max(100, 'meta 제목은 100자 이하여야 합니다')
     .optional(),
-  metaDescription: z
-    .string()
-    .max(200, 'meta 설명은 200자 이하여야 합니다')
-    .optional(),
 });
 
 export type PostFormValues = z.infer<typeof postFormSchema>;

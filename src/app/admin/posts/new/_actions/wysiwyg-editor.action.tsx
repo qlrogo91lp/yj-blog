@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
+import { common, createLowlight } from 'lowlight';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { ImageBlock } from '../_utils/image-extension';
@@ -26,6 +28,8 @@ import { Gallery, type GalleryImage } from '../_utils/gallery-extension';
 import { readImageSize } from '../_utils/read-image-size';
 import { compressImage } from '../_utils/compress-image';
 import { ImageBubbleMenuAction } from './image-bubble-menu.action';
+
+const lowlight = createLowlight(common);
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
@@ -153,7 +157,9 @@ export function WysiwygEditorAction() {
         heading: { levels: [1, 2, 3] },
         link: false,
         underline: false,
+        codeBlock: false,
       }),
+      CodeBlockLowlight.configure({ lowlight }),
       Underline,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Highlight.configure({ multicolor: true }),

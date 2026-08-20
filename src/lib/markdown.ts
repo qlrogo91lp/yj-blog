@@ -122,6 +122,8 @@ export async function htmlToHtmlWithToc(html: string): Promise<MarkdownResult> {
   const processor = unified()
     .use(rehypeParse, { fragment: true })
     .use(rehypeSlug)
+    // detect: true — 편집기 코드블록은 언어를 안 고르면 class 없이 저장되므로 자동 감지가 필요하다
+    .use(rehypeHighlight, { detect: true })
     .use(rehypeImageCaption)
     .use(() => (tree) => {
       visit(tree, 'element', (node: Element) => {

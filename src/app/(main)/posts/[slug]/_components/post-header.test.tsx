@@ -33,7 +33,6 @@ const mockPost: PostWithCategoryAndTags = {
   categoryId: 1,
   seriesId: null,
   metaTitle: null,
-  metaDescription: null,
   publishedAt: new Date('2026-06-12'),
   createdAt: new Date('2026-06-12'),
   updatedAt: new Date('2026-06-12'),

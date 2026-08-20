@@ -7,6 +7,7 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
+  Code,
   Heading1,
   Heading2,
   Heading3,
@@ -21,6 +22,7 @@ import {
   Minus,
   Quote,
   Redo2,
+  SquareCode,
   Strikethrough,
   Type,
   Underline as UnderlineIcon,
@@ -93,22 +95,22 @@ export function EditorToolbarAction() {
         <SelectContent>
           <SelectItem value="paragraph">
             <div className="flex items-center gap-2">
-              <Type className="h-4 w-4" /> 본문
+              <Type size={16} /> 본문
             </div>
           </SelectItem>
           <SelectItem value="h1">
             <div className="flex items-center gap-2">
-              <Heading1 className="h-4 w-4" /> 제목 1
+              <Heading1 size={16} /> 제목 1
             </div>
           </SelectItem>
           <SelectItem value="h2">
             <div className="flex items-center gap-2">
-              <Heading2 className="h-4 w-4" /> 제목 2
+              <Heading2 size={16} /> 제목 2
             </div>
           </SelectItem>
           <SelectItem value="h3">
             <div className="flex items-center gap-2">
-              <Heading3 className="h-4 w-4" /> 제목 3
+              <Heading3 size={16} /> 제목 3
             </div>
           </SelectItem>
         </SelectContent>
@@ -199,6 +201,18 @@ export function EditorToolbarAction() {
         tooltip="순서 있는 목록"
         isActive={editor?.isActive('orderedList')}
         onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+      />
+      <ToolbarButton
+        icon={Code}
+        tooltip="코드"
+        isActive={editor?.isActive('code')}
+        onClick={() => editor?.chain().focus().toggleCode().run()}
+      />
+      <ToolbarButton
+        icon={SquareCode}
+        tooltip="코드 블록"
+        isActive={editor?.isActive('codeBlock')}
+        onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
       />
 
       <Separator orientation="vertical" className="h-6 mx-1" />

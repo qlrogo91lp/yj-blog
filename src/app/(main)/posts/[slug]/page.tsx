@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post || post.status !== 'published') return {};
 
   const title = post.metaTitle ?? post.title;
-  const description = post.metaDescription ?? post.excerpt ?? undefined;
+  const description = post.excerpt ?? undefined;
   const ogImage = post.thumbnailUrl ?? '/og-default.png';
   const url = `/posts/${slug}`;
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useNewPostStore } from '../_store';
 
@@ -15,6 +16,8 @@ export function PublishAction() {
     const result = await submitPost('published');
     if (result.success) {
       router.push(`/posts/${result.slug}`);
+    } else {
+      toast.error(result.error);
     }
   };
 
