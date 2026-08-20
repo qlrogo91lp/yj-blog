@@ -26,6 +26,7 @@ import { replaceUploadingNode } from '../_utils/replace-uploading-node';
 import { collectImageSrcs } from '../_utils/collect-image-srcs';
 import { Gallery, type GalleryImage } from '../_utils/gallery-extension';
 import { readImageSize } from '../_utils/read-image-size';
+import { ImageBubbleMenuAction } from './image-bubble-menu.action';
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
@@ -237,5 +238,10 @@ export function WysiwygEditorAction() {
     }
   }, [content, editor]);
 
-  return <EditorContent editor={editor} />;
+  return (
+    <>
+      <EditorContent editor={editor} />
+      <ImageBubbleMenuAction editor={editor} />
+    </>
+  );
 }
