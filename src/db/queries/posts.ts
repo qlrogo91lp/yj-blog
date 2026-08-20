@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache';
-import { and, count, desc, eq, ilike, or } from 'drizzle-orm';
+import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { categories, comments, postTags, posts, tags } from '@/db/schema';
@@ -208,4 +208,29 @@ export const getRecentPostsForAdmin = unstable_cache(
  */
 export async function deletePostById(id: number) {
   return db.delete(posts).where(eq(posts.id, id)).returning({ id: posts.id });
+}
+
+/**
+ * 글의 발행 상태만 변경한다.
+ *
+ * publishedAt은 처음 발행할 때(null → published)만 채우고, 그 외에는 건드리지
+ * 않는다. 목록의 원클릭 토글로 발행일이 리셋되면 블로그 정렬이 조용히 바뀌기
+ * 때문이다. (에디터의 savePost는 draft 전환 시 null로 지우는 다른 정책을 쓴다)
+ */
+export async function updatePostStatus(
+  id: number,
+  status: 'draft' | 'published'
+) {
+  return db
+    .update(posts)
+    .set({
+      status,
+      publishedAt:
+        status === 'published'
+          ? sql`coalesce(${posts.publishedAt}, now())`
+          : posts.publishedAt,
+      updatedAt: new Date(),
+    })
+    .where(eq(posts.id, id))
+    .returning({ id: posts.id });
 }
