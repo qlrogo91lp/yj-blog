@@ -20,34 +20,51 @@ export async function selectPopularPosts(limit = 10) {
     .limit(limit);
 }
 
+function extractHostname(referrer: string): string {
+  if (!referrer) return '';
+  try {
+    return new URL(referrer).hostname;
+  } catch {
+    return referrer;
+  }
+}
+
 /**
- * 상위 referrer 도메인 집계 (기간 필터 가능)
+ * 상위 referrer 도메인 집계 (기간 필터 가능, "항상 제외" 규칙 적용)
  * days: undefined이면 전체 기간
  */
-export async function selectTopReferrers(limit = 20, days?: number) {
+export async function selectTopReferrers(
+  limit = 20,
+  days?: number,
+  excludes: string[] = []
+) {
   const since = days ? subDays(new Date(), days) : undefined;
-
-  const where = and(
-    since ? gte(referrers.visitedAt, since) : undefined,
-  );
+  const where = and(since ? gte(referrers.visitedAt, since) : undefined);
 
   const rows = await db
-    .select({
-      referrer: referrers.referrer,
-      count: count(),
-    })
+    .select({ referrer: referrers.referrer })
     .from(referrers)
-    .where(where)
-    .groupBy(referrers.referrer)
-    .orderBy(desc(count()))
-    .limit(limit);
+    .where(where);
 
-  const total = rows.reduce((acc, r) => acc + r.count, 0);
+  const excludeSet = new Set(excludes);
+  const counts = new Map<string, number>();
 
-  return rows.map((r) => ({
-    referrer: r.referrer ?? '',
-    count: r.count,
-    percentage: total > 0 ? Math.round((r.count / total) * 1000) / 10 : 0,
+  for (const row of rows) {
+    const referrer = row.referrer ?? '';
+    if (excludeSet.has(extractHostname(referrer))) continue;
+    counts.set(referrer, (counts.get(referrer) ?? 0) + 1);
+  }
+
+  const sorted = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit);
+
+  const total = sorted.reduce((acc, [, c]) => acc + c, 0);
+
+  return sorted.map(([referrer, c]) => ({
+    referrer,
+    count: c,
+    percentage: total > 0 ? Math.round((c / total) * 1000) / 10 : 0,
   }));
 }
 

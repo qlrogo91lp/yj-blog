@@ -8,8 +8,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { selectTopReferrers } from '@/db/queries/statistics';
+import { getBlogSettings } from '@/db/queries/settings';
 import { AnalyticsLinkButton } from '../_components/analytics-link-button';
-import { ReferrerPeriodFilterAction } from './_actions/referrer-period-filter.action';
+import { PeriodFilterAction } from '../_actions/period-filter.action';
+import { ReferrerExcludesFormAction } from './_actions/referrer-excludes-form.action';
 
 export const revalidate = 60;
 
@@ -26,18 +28,18 @@ function formatReferrer(referrer: string) {
   }
 }
 
-const PERIOD_OPTIONS = [
-  { label: '7일', value: '7' },
-  { label: '30일', value: '30' },
-  { label: '전체', value: 'all' },
-];
-
 export default async function AdminReferrersPage({ searchParams }: Props) {
   const { days: daysParam } = await searchParams;
-  const days = daysParam === 'all' || !daysParam ? undefined : Number(daysParam);
+  const parsed = Number(daysParam);
+  const days = daysParam === 'all' || !daysParam || !Number.isFinite(parsed) || parsed <= 0 ? undefined : parsed;
   const currentPeriod = daysParam ?? '30';
 
-  const referrerList = await selectTopReferrers(20, days);
+  const settings = await getBlogSettings();
+  const referrerList = await selectTopReferrers(
+    20,
+    days,
+    settings?.referrerExcludes ?? []
+  );
 
   return (
     <div>
@@ -45,9 +47,21 @@ export default async function AdminReferrersPage({ searchParams }: Props) {
         <h1 className="text-2xl font-bold">유입 경로</h1>
         <div className="flex items-center gap-2">
           <AnalyticsLinkButton />
-          <ReferrerPeriodFilterAction options={PERIOD_OPTIONS} current={currentPeriod} />
+          <PeriodFilterAction
+            basePath="/admin/statistics/referrers"
+            current={currentPeriod}
+          />
         </div>
       </div>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-base">항상 제외</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ReferrerExcludesFormAction excludes={settings?.referrerExcludes ?? []} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

@@ -21,7 +21,7 @@ vi.mock('next/link', () => ({
 
 // edit-settings mock
 vi.mock('../_services/edit-settings', () => ({
-  editSettings: vi.fn().mockResolvedValue(undefined),
+  editSettings: vi.fn().mockResolvedValue({ success: true }),
 }));
 
 // sonner mock
@@ -37,7 +37,6 @@ import { toast } from 'sonner';
 // zod 스키마 단위 테스트
 // -------------------------------------------------------------------
 
-// 내부 스키마와 동일하게 정의 (export 하지 않으므로 직접 정의)
 const blogSettingsSchema = z.object({
   blogName: z.string().min(1, '블로그 이름은 필수입니다').max(100),
   tagline: z.string().max(255).optional(),
@@ -137,9 +136,21 @@ describe('SettingsFormAction', () => {
     expect(screen.getByLabelText('LinkedIn')).toBeInTheDocument();
   });
 
-  it('저장 버튼이 렌더링된다', () => {
+  it('변경 사항이 없으면 저장 바를 렌더하지 않는다', () => {
     render(<SettingsFormAction />);
-    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '변경사항 저장' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('필드를 바꾸면 하단 저장 바가 나타난다', () => {
+    render(<SettingsFormAction />);
+    fireEvent.change(screen.getByLabelText('블로그 이름 *'), {
+      target: { value: 'YJlogs' },
+    });
+    expect(
+      screen.getByRole('button', { name: '변경사항 저장' })
+    ).toBeInTheDocument();
   });
 
   it('defaultValues가 폼 필드에 반영된다', () => {
@@ -151,6 +162,7 @@ describe('SettingsFormAction', () => {
       siteUrl: 'https://example.com',
       defaultMetaDescription: '설명',
       socialLinks: { github: 'https://github.com/test' },
+      referrerExcludes: [],
       updatedAt: new Date(),
     };
 
@@ -167,7 +179,13 @@ describe('SettingsFormAction', () => {
   it('blogName이 없으면 유효성 에러가 표시된다', async () => {
     render(<SettingsFormAction />);
 
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    // blogName의 기본값이 ''이므로 blogName만 바꿨다가 다시 비우면 값이 defaultValues와
+    // 완전히 일치해 isDirty가 false로 되돌아가 저장 바가 사라진다. 다른 필드(태그라인)를
+    // 함께 변경해 폼을 dirty 상태로 유지하면서 blogName은 빈 값(무효 상태)으로 남긴다.
+    fireEvent.change(screen.getByLabelText('태그라인'), {
+      target: { value: '임시' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
 
     await waitFor(() => {
       expect(
@@ -183,7 +201,7 @@ describe('SettingsFormAction', () => {
       target: { value: 'YJlogs' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
 
     await waitFor(() => {
       expect(editSettings).toHaveBeenCalledWith(
@@ -192,17 +210,40 @@ describe('SettingsFormAction', () => {
     });
   });
 
-  it('저장 성공 시 toast.success가 호출된다', async () => {
+  it('저장 성공 시 toast.success가 호출되고 저장 바가 사라진다', async () => {
     render(<SettingsFormAction />);
 
     fireEvent.change(screen.getByLabelText('블로그 이름 *'), {
       target: { value: 'YJlogs' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
 
     await waitFor(() => {
       expect(toast.success).toHaveBeenCalledWith('설정이 저장되었습니다');
+    });
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('button', { name: '변경사항 저장' })
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  it('저장 실패 시 toast.error가 호출된다', async () => {
+    vi.mocked(editSettings).mockResolvedValueOnce({
+      success: false,
+      error: '저장 실패',
+    });
+    render(<SettingsFormAction />);
+
+    fireEvent.change(screen.getByLabelText('블로그 이름 *'), {
+      target: { value: 'YJlogs' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('저장 실패');
     });
   });
 });
