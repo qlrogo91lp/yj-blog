@@ -78,7 +78,7 @@ export function TagSelectorAction({ allTags: initialTags }: Props) {
   };
 
   return (
-    <div className="mb-4 w-48">
+    <div className="mb-4 w-full max-w-md">
       <div className="relative">
         <Input
           ref={inputRef}
@@ -94,7 +94,7 @@ export function TagSelectorAction({ allTags: initialTags }: Props) {
           className="border-0 border-b rounded-none px-0 shadow-none focus-visible:ring-0 bg-transparent text-sm"
         />
         {isOpen && (filtered.length > 0 || input.trim()) && (
-          <div className="absolute left-0 top-full z-50 w-48 rounded-md border bg-popover shadow-md mt-1">
+          <div className="absolute left-0 top-full z-50 w-full rounded-md border bg-popover shadow-md mt-1">
             {filtered.slice(0, 8).map((tag) => (
               <button
                 key={tag.id}

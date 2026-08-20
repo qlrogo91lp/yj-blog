@@ -43,7 +43,7 @@ export function TableInsertAction({ editor }: Props) {
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
             <Toggle size="sm" aria-label="표">
-              <TableIcon className="h-4 w-4" />
+              <TableIcon size={16} />
             </Toggle>
           </PopoverTrigger>
         </TooltipTrigger>

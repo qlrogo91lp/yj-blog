@@ -95,22 +95,22 @@ export function EditorToolbarAction() {
         <SelectContent>
           <SelectItem value="paragraph">
             <div className="flex items-center gap-2">
-              <Type className="h-4 w-4" /> 본문
+              <Type size={16} /> 본문
             </div>
           </SelectItem>
           <SelectItem value="h1">
             <div className="flex items-center gap-2">
-              <Heading1 className="h-4 w-4" /> 제목 1
+              <Heading1 size={16} /> 제목 1
             </div>
           </SelectItem>
           <SelectItem value="h2">
             <div className="flex items-center gap-2">
-              <Heading2 className="h-4 w-4" /> 제목 2
+              <Heading2 size={16} /> 제목 2
             </div>
           </SelectItem>
           <SelectItem value="h3">
             <div className="flex items-center gap-2">
-              <Heading3 className="h-4 w-4" /> 제목 3
+              <Heading3 size={16} /> 제목 3
             </div>
           </SelectItem>
         </SelectContent>
