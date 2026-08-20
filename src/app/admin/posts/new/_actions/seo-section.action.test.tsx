@@ -55,4 +55,28 @@ describe('SeoSectionAction', () => {
       screen.getByRole('button', { name: /AI로 요약 생성/ }),
     ).toBeEnabled();
   });
+
+  it('slug 입력 필드가 있고 입력 시 store가 업데이트된다', () => {
+    render(<SeoSectionAction />);
+    fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
+    const input = screen.getByLabelText('URL slug');
+    fireEvent.change(input, { target: { value: 'my-post' } });
+    expect(useNewPostStore.getState().slug).toBe('my-post');
+  });
+
+  it('slug가 비어 있으면 제목 기반 자동 slug를 placeholder로 보여준다', () => {
+    useNewPostStore.getState().setTitle('Hello World');
+    render(<SeoSectionAction />);
+    fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
+    expect(screen.getByLabelText('URL slug')).toHaveAttribute('placeholder', 'hello-world');
+  });
+
+  it('허용되지 않는 문자가 있으면 안내문을 보여준다', () => {
+    render(<SeoSectionAction />);
+    fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
+    fireEvent.change(screen.getByLabelText('URL slug'), { target: { value: 'Hello World!' } });
+    expect(
+      screen.getByText('영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다'),
+    ).toBeInTheDocument();
+  });
 });

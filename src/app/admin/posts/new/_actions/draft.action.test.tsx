@@ -4,7 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('../_services/save-post', () => ({
   savePost: vi.fn(),
 }));
+vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
+import { toast } from 'sonner';
 import { savePost } from '../_services/save-post';
 import { useNewPostStore } from '../_store';
 import { DraftAction } from './draft.action';
@@ -51,5 +53,14 @@ describe('DraftAction', () => {
     useNewPostStore.getState().setSaveStatus('saving');
     render(<DraftAction />);
     expect(screen.getByRole('button')).toBeDisabled();
+  });
+
+  it('저장 실패 시 toast.error로 사유를 보여준다', async () => {
+    vi.mocked(savePost).mockResolvedValue({ success: false, error: '이미 사용 중인 slug입니다' });
+    render(<DraftAction />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+    });
+    expect(toast.error).toHaveBeenCalledWith('이미 사용 중인 slug입니다');
   });
 });
