@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useNewPostStore } from '../../_store';
 import { uploadImage } from '../../_services/upload-image';
+import { compressImage } from '../../_utils/compress-image';
 
 type Props = {
   editor: Editor | null;
@@ -35,7 +36,7 @@ export function ImageUploadDialogAction({ editor, open, onOpenChange }: Props) {
     setIsUploading(true);
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', await compressImage(file));
       const result = await uploadImage(formData, postId, 'content');
       if (result.url) {
         setUrl(result.url);

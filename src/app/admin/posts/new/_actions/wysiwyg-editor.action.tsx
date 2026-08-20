@@ -24,6 +24,7 @@ import { uploadImage } from '../_services/upload-image';
 import { replaceUploadingNode } from '../_utils/replace-uploading-node';
 import { Gallery, type GalleryImage } from '../_utils/gallery-extension';
 import { readImageSize } from '../_utils/read-image-size';
+import { compressImage } from '../_utils/compress-image';
 import { ImageBubbleMenuAction } from './image-bubble-menu.action';
 
 export function WysiwygEditorAction() {
@@ -54,8 +55,9 @@ export function WysiwygEditorAction() {
         })
         .run();
 
+      const uploadFile = await compressImage(file);
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', uploadFile);
 
       const currentPostId = useNewPostStore.getState().postId;
       const result = await uploadImage(formData, currentPostId, 'content');
@@ -108,9 +110,10 @@ export function WysiwygEditorAction() {
 
       // R2 키의 index를 서버가 순차 계산하므로 병렬 호출 시 충돌한다
       for (const file of withinLimit) {
-        const size = await readImageSize(file);
+        const uploadFile = await compressImage(file);
+        const size = await readImageSize(uploadFile);
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', uploadFile);
         const currentPostId = useNewPostStore.getState().postId;
         const result = await uploadImage(formData, currentPostId, 'content');
         if (result.url) {
