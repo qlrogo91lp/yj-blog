@@ -35,8 +35,13 @@ export function DeleteCommentDialogAction({ commentId }: Props) {
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) setError(null);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
@@ -58,7 +63,7 @@ export function DeleteCommentDialogAction({ commentId }: Props) {
         <div className="flex justify-end gap-2">
           <Button
             variant="outline"
-            onClick={() => setIsOpen(false)}
+            onClick={() => handleOpenChange(false)}
             disabled={isSubmitting}
           >
             취소

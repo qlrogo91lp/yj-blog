@@ -43,4 +43,33 @@ describe('DeleteCommentDialogAction', () => {
 
     expect(await screen.findByText('삭제 실패')).toBeInTheDocument();
   });
+
+  it('에러 발생 후 다이얼로그를 닫고 다시 열면 이전 에러 메시지가 없어진다', async () => {
+    vi.mocked(removeComment).mockResolvedValue({
+      success: false,
+      error: '삭제 실패',
+    });
+    render(<DeleteCommentDialogAction commentId={1} />);
+
+    // 첫 번째: 삭제 버튼 클릭 → 다이얼로그 열기
+    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    let dialog = screen.getByRole('dialog');
+
+    // 삭제 시도 → 실패
+    fireEvent.click(within(dialog).getByRole('button', { name: '삭제' }));
+    expect(await screen.findByText('삭제 실패')).toBeInTheDocument();
+
+    // 취소 버튼으로 다이얼로그 닫기
+    fireEvent.click(within(dialog).getByRole('button', { name: '취소' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    );
+
+    // 다시 삭제 버튼 클릭 → 다이얼로그 다시 열기
+    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    dialog = screen.getByRole('dialog');
+
+    // 이전 에러 메시지가 없어야 함
+    expect(within(dialog).queryByText('삭제 실패')).not.toBeInTheDocument();
+  });
 });
