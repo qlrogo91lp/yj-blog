@@ -12,7 +12,7 @@ export type {
 } from './comment';
 export { commentFormSchema, commentPasswordSchema } from './comment';
 
-export type { Tag, TagSummary } from './tag';
+export type { Tag, TagSummary, TagWithCount } from './tag';
 
 export type {
   Series,
