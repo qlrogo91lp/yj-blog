@@ -16,6 +16,7 @@ import {
   selectStatsSummary,
 } from '@/db/queries/daily-stats';
 import { selectPopularPosts } from '@/db/queries/statistics';
+import { AdminPageHeader } from '../_components/admin-page-header';
 import { AnalyticsLinkButton } from './_components/analytics-link-button';
 import { PeriodFilterAction } from './_actions/period-filter.action';
 import { StatCard } from './_components/stat-card';
@@ -53,16 +54,23 @@ export default async function AdminStatisticsPage({ searchParams }: Props) {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">방문 통계</h1>
-        <div className="flex items-center gap-2">
-          <AnalyticsLinkButton />
-          <PeriodFilterAction
-            basePath="/admin/statistics"
-            current={currentPeriod}
-          />
-        </div>
-      </div>
+      <AdminPageHeader
+        title="방문 통계"
+        description={
+          days
+            ? `최근 ${days}일 · 방문 ${summary.totalVisitors.toLocaleString()}회 누적`
+            : `전체 기간 · 방문 ${summary.totalVisitors.toLocaleString()}회 누적`
+        }
+        action={
+          <div className="flex items-center gap-2">
+            <AnalyticsLinkButton />
+            <PeriodFilterAction
+              basePath="/admin/statistics"
+              current={currentPeriod}
+            />
+          </div>
+        }
+      />
 
       {/* 통계 카드 */}
       <Card className="mb-6">

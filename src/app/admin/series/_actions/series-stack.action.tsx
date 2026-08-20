@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { AdminSeriesItem } from '@/types';
+import { AdminPageHeader } from '../../_components/admin-page-header';
 import { SeriesStackItem } from '../_components/series-stack-item';
 import { SeriesFormDialogAction } from './series-form-dialog.action';
 
 type Props = {
   seriesList: AdminSeriesItem[];
+  description?: string;
 };
 
-export function SeriesStackAction({ seriesList }: Props) {
+export function SeriesStackAction({ seriesList, description }: Props) {
   const [formOpen, setFormOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(
     seriesList[0]?.id ?? null
@@ -19,6 +21,16 @@ export function SeriesStackAction({ seriesList }: Props) {
 
   return (
     <>
+      <AdminPageHeader
+        title="시리즈"
+        description={description}
+        action={
+          <Button className="rounded-full" onClick={() => setFormOpen(true)}>
+            <Plus size={16} />새 시리즈
+          </Button>
+        }
+      />
+
       <div className="flex flex-col gap-3">
         {seriesList.map((series) => (
           <SeriesStackItem
