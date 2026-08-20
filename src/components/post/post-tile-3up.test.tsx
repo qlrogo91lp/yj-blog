@@ -27,7 +27,6 @@ const mockPost = {
   categoryId: null,
   seriesId: null,
   metaTitle: null,
-  metaDescription: null,
   category: null,
   publishedAt: new Date('2024-02-20'),
   createdAt: new Date('2024-02-20'),

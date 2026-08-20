@@ -73,7 +73,6 @@ export const posts = pgTable('posts', {
 
   // SEO - 비워두면 title/excerpt를 fallback으로 사용
   metaTitle: text('meta_title'),
-  metaDescription: text('meta_description'),
 
   publishedAt: timestamp('published_at'), // 발행 시각 (sitemap, 정렬에 사용)
   createdAt: timestamp('created_at').notNull().defaultNow(),

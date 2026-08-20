@@ -6,7 +6,6 @@ const basePost = {
   slug: 'test-post',
   excerpt: '요약',
   metaTitle: null,
-  metaDescription: null,
   thumbnailUrl: null,
   publishedAt: new Date('2026-04-20T00:00:00Z'),
   updatedAt: new Date('2026-04-25T00:00:00Z'),
@@ -47,14 +46,14 @@ describe('buildArticleJsonLd', () => {
     expect(json.image).toBe('https://r2/thumb.png');
   });
 
-  it('metaTitle/metaDescription이 있으면 우선 사용한다', () => {
+  it('metaTitle이 있으면 headline로 우선 사용하고 description은 excerpt를 쓴다', () => {
     const json = buildArticleJsonLd({
-      post: { ...basePost, metaTitle: 'SEO 제목', metaDescription: 'SEO 설명' },
+      post: { ...basePost, metaTitle: 'SEO 제목', excerpt: '요약' },
       blogName: 'YJlogs',
       baseUrl: 'https://yjlogs.com',
     });
     expect(json.headline).toBe('SEO 제목');
-    expect(json.description).toBe('SEO 설명');
+    expect(json.description).toBe('요약');
   });
 
   it('author와 publisher에 blogName을 사용한다', () => {

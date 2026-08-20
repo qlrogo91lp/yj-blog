@@ -3,7 +3,6 @@ type PostInput = {
   slug: string;
   excerpt: string | null;
   metaTitle: string | null;
-  metaDescription: string | null;
   thumbnailUrl: string | null;
   publishedAt: Date | null;
   updatedAt: Date | null;
@@ -23,7 +22,7 @@ export function buildArticleJsonLd({
   const url = `${baseUrl}/posts/${post.slug}`;
   const image = post.thumbnailUrl ?? `${baseUrl}/og-default.png`;
   const headline = post.metaTitle ?? post.title;
-  const description = post.metaDescription ?? post.excerpt ?? '';
+  const description = post.excerpt ?? '';
 
   return {
     '@context': 'https://schema.org',

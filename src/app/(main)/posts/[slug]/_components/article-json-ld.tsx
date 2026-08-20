@@ -6,7 +6,6 @@ type Props = {
     slug: string;
     excerpt: string | null;
     metaTitle: string | null;
-    metaDescription: string | null;
     thumbnailUrl: string | null;
     publishedAt: Date | null;
     updatedAt: Date | null;
