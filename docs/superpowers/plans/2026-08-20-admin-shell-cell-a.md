@@ -1142,7 +1142,7 @@ git commit -m "✨ feat: 어드민 공통 페이지 헤더 추가하고 본문 �
 - Consumes: Task 1~6 전부
 - Produces: 없음
 
-- [ ] **Step 1: 단위 테스트 전체 실행**
+- [x] **Step 1: 단위 테스트 전체 실행**
 
 ```bash
 npm run test:run
@@ -1150,7 +1150,7 @@ npm run test:run
 
 기대: 전부 PASS. 실패가 있으면 원인을 고친 뒤 다음 단계로 간다.
 
-- [ ] **Step 2: 린트**
+- [x] **Step 2: 린트**
 
 ```bash
 npm run lint
@@ -1158,7 +1158,7 @@ npm run lint
 
 기대: 이 PR이 건드린 파일에서 신규 에러 0건. `docs/design/ralli/support.js`의 기존 에러 2건은 이 브랜치와 무관하므로 그대로 둔다.
 
-- [ ] **Step 3: 타입 체크**
+- [x] **Step 3: 타입 체크**
 
 ```bash
 npx tsc --noEmit
@@ -1166,7 +1166,7 @@ npx tsc --noEmit
 
 기대: 이 PR이 건드린 파일에서 신규 에러 0건. `e2e/ralli.spec.ts`의 기존 타입 에러 1건은 `develop`에도 존재하므로 그대로 둔다.
 
-- [ ] **Step 4: 빌드**
+- [x] **Step 4: 빌드**
 
 ```bash
 npm run build
