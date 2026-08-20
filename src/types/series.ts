@@ -12,6 +12,16 @@ export type SeriesWithMeta = Series & {
   lastPublishedAt: Date | null;
 };
 
+/** 어드민 시리즈 스택 — 임시저장 포함 전체 회차 */
+export type AdminSeriesItem = Series & {
+  posts: {
+    id: number;
+    title: string;
+    publishedAt: Date | null;
+    status: 'draft' | 'published';
+  }[];
+};
+
 // 시리즈 내 글 요약 (글 상세 시리즈 박스용)
 export type SeriesPostItem = {
   id: number;

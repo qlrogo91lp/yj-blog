@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { SeriesWithMeta } from '@/types';
+import type { Series } from '@/types';
 import { SeriesFormDialogAction } from './series-form-dialog.action';
 
 type Props = {
-  series: SeriesWithMeta;
+  series: Series;
 };
 
 export function EditSeriesAction({ series }: Props) {

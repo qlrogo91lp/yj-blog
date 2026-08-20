@@ -1,9 +1,9 @@
-import type { SeriesWithMeta } from '@/types';
+import type { Series } from '@/types';
 import { EditSeriesAction } from '../_actions/edit-series.action';
 import { DeleteSeriesAction } from '../_actions/delete-series.action';
 
 type Props = {
-  series: SeriesWithMeta;
+  series: Series;
 };
 
 export function SeriesActionsCell({ series }: Props) {

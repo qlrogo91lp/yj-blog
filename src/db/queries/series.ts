@@ -1,9 +1,10 @@
 import { unstable_cache } from 'next/cache';
-import { and, asc, desc, eq, isNotNull } from 'drizzle-orm';
+import { and, asc, desc, eq, isNotNull, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { posts, series } from '@/db/schema';
 import type {
+  AdminSeriesItem,
   Series,
   SeriesDetail,
   SeriesFormValues,
@@ -44,6 +45,43 @@ export const selectSeriesList = unstable_cache(
     });
   },
   ['series-list'],
+  { tags: [CACHE_TAGS.series, CACHE_TAGS.posts] }
+);
+
+/**
+ * 어드민 시리즈 목록 — 임시저장 포함 전체 회차를 담는다.
+ * 회차 순서는 publishedAt ASC(미발행은 뒤), 같으면 createdAt ASC.
+ */
+export const selectSeriesListForAdmin = unstable_cache(
+  async (): Promise<AdminSeriesItem[]> => {
+    const [seriesRows, postRows] = await Promise.all([
+      db.select().from(series).orderBy(desc(series.createdAt)),
+      db
+        .select({
+          id: posts.id,
+          title: posts.title,
+          seriesId: posts.seriesId,
+          publishedAt: posts.publishedAt,
+          status: posts.status,
+        })
+        .from(posts)
+        .where(isNotNull(posts.seriesId))
+        .orderBy(sql`${posts.publishedAt} asc nulls last`, asc(posts.createdAt)),
+    ]);
+
+    return seriesRows.map((row) => ({
+      ...row,
+      posts: postRows
+        .filter((post) => post.seriesId === row.id)
+        .map(({ id, title, publishedAt, status }) => ({
+          id,
+          title,
+          publishedAt,
+          status,
+        })),
+    }));
+  },
+  ['admin-series-list'],
   { tags: [CACHE_TAGS.series, CACHE_TAGS.posts] }
 );
 

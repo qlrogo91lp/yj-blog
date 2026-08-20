@@ -28,6 +28,7 @@ export type { Tag, TagSummary, TagWithCount } from './tag';
 export type {
   Series,
   SeriesWithMeta,
+  AdminSeriesItem,
   SeriesPostItem,
   SeriesDetailPost,
   SeriesDetail,
