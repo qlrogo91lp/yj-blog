@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import { selectTopReferrers } from '@/db/queries/statistics';
 import { AnalyticsLinkButton } from '../_components/analytics-link-button';
-import { ReferrerPeriodFilterAction } from './_actions/referrer-period-filter.action';
+import { PeriodFilterAction } from '../_actions/period-filter.action';
 
 export const revalidate = 60;
 
@@ -26,12 +26,6 @@ function formatReferrer(referrer: string) {
   }
 }
 
-const PERIOD_OPTIONS = [
-  { label: '7일', value: '7' },
-  { label: '30일', value: '30' },
-  { label: '전체', value: 'all' },
-];
-
 export default async function AdminReferrersPage({ searchParams }: Props) {
   const { days: daysParam } = await searchParams;
   const days = daysParam === 'all' || !daysParam ? undefined : Number(daysParam);
@@ -45,7 +39,10 @@ export default async function AdminReferrersPage({ searchParams }: Props) {
         <h1 className="text-2xl font-bold">유입 경로</h1>
         <div className="flex items-center gap-2">
           <AnalyticsLinkButton />
-          <ReferrerPeriodFilterAction options={PERIOD_OPTIONS} current={currentPeriod} />
+          <PeriodFilterAction
+            basePath="/admin/statistics/referrers"
+            current={currentPeriod}
+          />
         </div>
       </div>
 
