@@ -70,4 +70,18 @@ describe('GalleryNodeView', () => {
     setup({ selected: false } as unknown as Partial<NodeViewProps>);
     expect(screen.queryByRole('button', { name: '슬라이드 삭제' })).not.toBeInTheDocument();
   });
+
+  it('갤러리 wrapper가 드래그 핸들이다 (data-drag-handle)', () => {
+    const { container } = render(
+      <GalleryNodeView
+        {...({
+          node: { attrs: { images } },
+          updateAttributes: vi.fn(),
+          deleteNode: vi.fn(),
+          selected: false,
+        } as unknown as NodeViewProps)}
+      />,
+    );
+    expect(container.querySelector('[data-gallery]')).toHaveAttribute('data-drag-handle');
+  });
 });

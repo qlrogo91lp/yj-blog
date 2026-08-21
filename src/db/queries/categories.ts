@@ -1,9 +1,9 @@
 import { unstable_cache } from 'next/cache';
-import { eq } from 'drizzle-orm';
+import { asc, count, eq, isNull } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
-import { categories } from '@/db/schema';
-import type { Category } from '@/types';
+import { categories, posts } from '@/db/schema';
+import type { Category, CategoryWithCount } from '@/types';
 import type { CategoryFormValues } from '@/types/category';
 
 /**
@@ -15,6 +15,42 @@ export const getCategories = unstable_cache(
   },
   ['categories-list'],
   { tags: [CACHE_TAGS.categories] }
+);
+
+/**
+ * 카테고리 목록 + 글 수 집계 (이름 순)
+ */
+export const getCategoriesWithPostCount = unstable_cache(
+  async (): Promise<CategoryWithCount[]> => {
+    const rows = await db
+      .select({
+        category: categories,
+        postCount: count(posts.id),
+      })
+      .from(categories)
+      .leftJoin(posts, eq(posts.categoryId, categories.id))
+      .groupBy(categories.id)
+      .orderBy(categories.name);
+
+    return rows.map(({ category, postCount }) => ({ ...category, postCount }));
+  },
+  ['categories-with-count'],
+  { tags: [CACHE_TAGS.categories, CACHE_TAGS.posts] }
+);
+
+/**
+ * 카테고리가 지정되지 않은 글 (오래된 순)
+ */
+export const selectUncategorizedPosts = unstable_cache(
+  async (): Promise<{ id: number; title: string }[]> => {
+    return db
+      .select({ id: posts.id, title: posts.title })
+      .from(posts)
+      .where(isNull(posts.categoryId))
+      .orderBy(asc(posts.createdAt));
+  },
+  ['uncategorized-posts'],
+  { tags: [CACHE_TAGS.categories, CACHE_TAGS.posts] }
 );
 
 async function selectCategoryBySlugUncached(

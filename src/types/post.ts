@@ -23,6 +23,12 @@ export type PostWithCategoryAndTags = Post & {
   tags: TagSummary[];
 };
 
+/** 어드민 글 목록 행 — 카테고리 + 댓글 수 + 태그명 집계 */
+export type AdminPostRow = PostWithCategory & {
+  commentCount: number;
+  tagNames: string[];
+};
+
 // 글 생성/수정 폼 스키마
 export const postFormSchema = z.object({
   title: z
@@ -33,7 +39,10 @@ export const postFormSchema = z.object({
     .string()
     .min(1, 'slug를 입력해주세요')
     .max(200, 'slug는 200자 이하여야 합니다')
-    .regex(/^[a-z0-9\uAC00-\uD7A3-]+$/, '영소문자, 숫자, 한글, 하이픈만 사용 가능합니다'),
+    .regex(
+      /^[a-z0-9\uAC00-\uD7A3-]+$/,
+      '영소문자, 숫자, 한글, 하이픈만 사용 가능합니다'
+    ),
   content: z.string().min(1, '내용을 입력해주세요'),
   contentFormat: z.enum(['markdown', 'html']),
   excerpt: z.string().max(500, '요약은 500자 이하여야 합니다').optional(),
@@ -44,10 +53,6 @@ export const postFormSchema = z.object({
   metaTitle: z
     .string()
     .max(100, 'meta 제목은 100자 이하여야 합니다')
-    .optional(),
-  metaDescription: z
-    .string()
-    .max(200, 'meta 설명은 200자 이하여야 합니다')
     .optional(),
 });
 

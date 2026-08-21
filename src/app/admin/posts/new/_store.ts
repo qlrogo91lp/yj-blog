@@ -1,14 +1,12 @@
 import { create } from 'zustand';
 import { generateSlug } from '@/lib/slugify';
 
-type EditorMode = 'wysiwyg' | 'markdown';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 type State = {
   postId: number | null;
   title: string;
   content: string;
-  contentFormat: 'markdown' | 'html';
   categoryId: number | null;
   seriesId: number | null;
   tagIds: number[];
@@ -19,7 +17,6 @@ type State = {
   thumbnailUrl: string | null;
   status: 'draft' | 'published';
   publishedAt: Date | null;
-  mode: EditorMode;
   saveStatus: SaveStatus;
   lastSavedAt: Date | null;
   changeCount: number;
@@ -30,7 +27,6 @@ type Action = {
   setPostId: (id: number) => void;
   setTitle: (title: string) => void;
   setContent: (content: string) => void;
-  setContentFormat: (format: 'markdown' | 'html') => void;
   setCategoryId: (id: number | null) => void;
   setSeriesId: (id: number | null) => void;
   setTagIds: (ids: number[]) => void;
@@ -41,7 +37,6 @@ type Action = {
   setThumbnailUrl: (url: string | null) => void;
   setStatus: (status: 'draft' | 'published') => void;
   setPublishedAt: (date: Date | null) => void;
-  setMode: (mode: EditorMode) => void;
   setSaveStatus: (status: SaveStatus) => void;
   setLastSavedAt: (date: Date) => void;
   reset: () => void;
@@ -49,7 +44,6 @@ type Action = {
     postId: number;
     title: string;
     content: string;
-    contentFormat: 'markdown' | 'html';
     categoryId: number | null;
     seriesId: number | null;
     tagIds: number[];
@@ -72,7 +66,6 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
   postId: null,
   title: '',
   content: '',
-  contentFormat: 'html',
   categoryId: null,
   seriesId: null,
   tagIds: [],
@@ -84,7 +77,6 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
   status: 'draft',
   publishedAt: null,
 
-  mode: 'wysiwyg',
   saveStatus: 'idle',
   lastSavedAt: null,
   changeCount: 0,
@@ -93,8 +85,6 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
   setPostId: (postId) => set({ postId }),
   setTitle: (title) => set((s) => ({ title, changeCount: s.changeCount + 1 })),
   setContent: (content) => set((s) => ({ content, changeCount: s.changeCount + 1 })),
-  setContentFormat: (contentFormat) =>
-    set((s) => ({ contentFormat, changeCount: s.changeCount + 1 })),
   setCategoryId: (categoryId) => set((s) => ({ categoryId, changeCount: s.changeCount + 1 })),
   setSeriesId: (seriesId) => set((s) => ({ seriesId, changeCount: s.changeCount + 1 })),
   setTagIds: (tagIds) => set((s) => ({ tagIds, changeCount: s.changeCount + 1 })),
@@ -107,7 +97,6 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
     set((s) => ({ thumbnailUrl, changeCount: s.changeCount + 1 })),
   setStatus: (status) => set({ status }),
   setPublishedAt: (publishedAt) => set({ publishedAt }),
-  setMode: (mode) => set({ mode }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setLastSavedAt: (lastSavedAt) => set({ lastSavedAt }),
   reset: () =>
@@ -115,7 +104,6 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
       postId: null,
       title: '',
       content: '',
-      contentFormat: 'html',
       categoryId: null,
       seriesId: null,
       tagIds: [],
@@ -126,7 +114,6 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
       thumbnailUrl: null,
       status: 'draft',
       publishedAt: null,
-      mode: 'wysiwyg',
       saveStatus: 'idle',
       lastSavedAt: null,
       changeCount: 0,
@@ -135,7 +122,6 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
   initializePost: (data) =>
     set({
       ...data,
-      mode: data.contentFormat === 'markdown' ? 'markdown' : 'wysiwyg',
       isGeneratingExcerpt: false,
       saveStatus: 'idle',
       lastSavedAt: null,
@@ -163,7 +149,6 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
       title: state.title,
       slug,
       content: state.content,
-      contentFormat: state.contentFormat,
       excerpt: state.excerpt,
       metaTitle: state.metaTitle,
       categoryId: state.categoryId,

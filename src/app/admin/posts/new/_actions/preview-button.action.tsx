@@ -11,7 +11,7 @@ export function PreviewButtonAction() {
   return (
     <>
       <Button variant="outline" size="sm" onClick={() => setIsOpen(true)}>
-        <Eye className="h-4 w-4 mr-1" />
+        <Eye size={16} />
         미리보기
       </Button>
       <PreviewDialogAction open={isOpen} onOpenChange={setIsOpen} />

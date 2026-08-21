@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useNewPostStore } from '../_store';
 import { CharacterCounter } from '../_components/character-counter';
 import { generateExcerpt } from '../_services/generate-excerpt';
+import { generateSlug } from '@/lib/slugify';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,6 +21,11 @@ export function SeoSectionAction() {
   const content = useNewPostStore((s) => s.content);
   const isGenerating = useNewPostStore((s) => s.isGeneratingExcerpt);
   const setIsGenerating = useNewPostStore((s) => s.setIsGeneratingExcerpt);
+  const title = useNewPostStore((s) => s.title);
+  const slug = useNewPostStore((s) => s.slug);
+  const setSlug = useNewPostStore((s) => s.setSlug);
+  const slugPattern = /^[a-z0-9가-힣-]*$/;
+  const isSlugValid = slugPattern.test(slug);
 
   async function handleGenerate() {
     setIsGenerating(true);
@@ -48,6 +54,25 @@ export function SeoSectionAction() {
       </button>
       {open && (
         <div className="space-y-4 px-4 pb-4">
+          <div>
+            <Label htmlFor="seo-slug" className="mb-1 block">URL slug</Label>
+            <Input
+              id="seo-slug"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value.trim())}
+              placeholder={title ? generateSlug(title) : 'my-post'}
+              aria-invalid={!isSlugValid}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              /posts/{slug || (title ? generateSlug(title) : '…')} — 비우면 제목으로 자동 생성됩니다.
+            </p>
+            {!isSlugValid && (
+              <p className="mt-1 text-xs text-destructive">
+                영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다
+              </p>
+            )}
+          </div>
+
           <div>
             <div className="mb-1 flex items-center justify-between">
               <Label htmlFor="seo-excerpt">요약 (excerpt)</Label>

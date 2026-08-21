@@ -1,9 +1,13 @@
 import { unstable_cache } from 'next/cache';
-import { and, count, desc, eq, ilike, or } from 'drizzle-orm';
+import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { categories, comments, postTags, posts, tags } from '@/db/schema';
-import type { PostWithCategory, PostWithCategoryAndTags } from '@/types';
+import type {
+  AdminPostRow,
+  PostWithCategory,
+  PostWithCategoryAndTags,
+} from '@/types';
 
 interface GetPostsOptions {
   categoryId?: number;
@@ -142,65 +146,34 @@ export async function selectPostById(id: number) {
  * 관리자용 전체 글 목록 (draft 포함, 최근 수정 순)
  */
 export const getAllPostsForAdmin = unstable_cache(
-  async () => {
+  async (): Promise<AdminPostRow[]> => {
     const result = await db
-      .select({ post: posts, category: categories })
+      .select({
+        post: posts,
+        category: categories,
+        commentCount: sql<number>`(
+          select count(*) from ${comments} where ${comments.postId} = ${posts.id}
+        )`.mapWith(Number),
+        tagNames: sql<string[]>`coalesce((
+          select array_agg(${tags.name})
+          from ${postTags}
+          join ${tags} on ${tags.id} = ${postTags.tagId}
+          where ${postTags.postId} = ${posts.id}
+        ), '{}')`,
+      })
       .from(posts)
       .leftJoin(categories, eq(posts.categoryId, categories.id))
-      .orderBy(desc(posts.publishedAt));
+      .orderBy(desc(posts.updatedAt));
 
-    return result.map(({ post, category }) => ({
+    return result.map(({ post, category, commentCount, tagNames }) => ({
       ...post,
       category,
-    })) as PostWithCategory[];
+      commentCount,
+      tagNames,
+    })) as AdminPostRow[];
   },
   ['admin-posts-list'],
-  { tags: [CACHE_TAGS.posts] }
-);
-
-/**
- * 관리자 대시보드 통계 (글·댓글 카운트)
- */
-export const getAdminDashboardStats = unstable_cache(
-  async () => {
-    const [totalPosts, publishedPosts, draftPosts, totalComments] =
-      await Promise.all([
-        db.select({ count: count() }).from(posts),
-        db.select({ count: count() }).from(posts).where(eq(posts.status, 'published')),
-        db.select({ count: count() }).from(posts).where(eq(posts.status, 'draft')),
-        db.select({ count: count() }).from(comments),
-      ]);
-
-    return {
-      totalPosts: totalPosts[0].count,
-      publishedPosts: publishedPosts[0].count,
-      draftPosts: draftPosts[0].count,
-      totalComments: totalComments[0].count,
-    };
-  },
-  ['admin-dashboard-stats'],
-  { tags: [CACHE_TAGS.posts, CACHE_TAGS.comments] }
-);
-
-/**
- * 관리자 대시보드 최근 글 목록 (draft 포함, 수정 시각 내림차순)
- */
-export const getRecentPostsForAdmin = unstable_cache(
-  async (limit = 5) => {
-    const result = await db
-      .select({ post: posts, category: categories })
-      .from(posts)
-      .leftJoin(categories, eq(posts.categoryId, categories.id))
-      .orderBy(desc(posts.updatedAt))
-      .limit(limit);
-
-    return result.map(({ post, category }) => ({
-      ...post,
-      category,
-    })) as PostWithCategory[];
-  },
-  ['admin-recent-posts'],
-  { tags: [CACHE_TAGS.posts] }
+  { tags: [CACHE_TAGS.posts, CACHE_TAGS.comments, CACHE_TAGS.tags] }
 );
 
 /**
@@ -209,3 +182,65 @@ export const getRecentPostsForAdmin = unstable_cache(
 export async function deletePostById(id: number) {
   return db.delete(posts).where(eq(posts.id, id)).returning({ id: posts.id });
 }
+
+/**
+ * 글의 발행 상태만 변경한다.
+ *
+ * publishedAt은 처음 발행할 때(null → published)만 채우고, 그 외에는 건드리지
+ * 않는다. 목록의 원클릭 토글로 발행일이 리셋되면 블로그 정렬이 조용히 바뀌기
+ * 때문이다. (에디터의 savePost는 draft 전환 시 null로 지우는 다른 정책을 쓴다)
+ */
+export async function updatePostStatus(
+  id: number,
+  status: 'draft' | 'published'
+) {
+  return db
+    .update(posts)
+    .set({
+      status,
+      publishedAt:
+        status === 'published'
+          ? sql`coalesce(${posts.publishedAt}, now())`
+          : posts.publishedAt,
+      updatedAt: new Date(),
+    })
+    .where(eq(posts.id, id))
+    .returning({ id: posts.id });
+}
+
+/**
+ * 이어 쓸 글 — 임시저장 상태의 글을 최근 수정 순으로.
+ */
+export const selectDraftQueue = unstable_cache(
+  async (limit = 5) => {
+    return db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        updatedAt: posts.updatedAt,
+      })
+      .from(posts)
+      .where(eq(posts.status, 'draft'))
+      .orderBy(desc(posts.updatedAt))
+      .limit(limit);
+  },
+  ['admin-draft-queue'],
+  { tags: [CACHE_TAGS.posts] }
+);
+
+/**
+ * 임시저장 글 총 개수 — selectDraftQueue(limit)와 별개로, 위젯 뱃지에 쓰는
+ * 전체 카운트. limit에 상관없이 항상 실제 총합을 반환한다.
+ */
+export const selectDraftCount = unstable_cache(
+  async () => {
+    const result = await db
+      .select({ count: count() })
+      .from(posts)
+      .where(eq(posts.status, 'draft'));
+
+    return result[0].count;
+  },
+  ['admin-draft-count'],
+  { tags: [CACHE_TAGS.posts] }
+);

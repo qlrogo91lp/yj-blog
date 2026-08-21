@@ -43,7 +43,7 @@ export function ColorPicker({ editor }: Props) {
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
             <Toggle size="sm" aria-label="텍스트 색상">
-              <Palette className="h-4 w-4" />
+              <Palette size={16} />
             </Toggle>
           </PopoverTrigger>
         </TooltipTrigger>

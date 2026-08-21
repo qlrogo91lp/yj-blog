@@ -176,7 +176,6 @@ describe('postFormSchema', () => {
       categoryId: 1,
       seriesId: 1,
       metaTitle: 'SEO 제목',
-      metaDescription: 'SEO 설명',
       thumbnailUrl: 'https://example.com/thumb.jpg',
     });
     expect(result.success).toBe(true);

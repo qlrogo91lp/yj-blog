@@ -1,19 +1,11 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { eq, max } from 'drizzle-orm';
 import { db } from '@/db';
 import { postImages, posts } from '@/db/schema';
-
-const r2 = new S3Client({
-  region: 'auto',
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-  },
-});
+import { r2, r2Bucket, r2PublicUrl } from '@/lib/r2';
 
 function getExtension(mimeType: string): string {
   const map: Record<string, string> = {
@@ -91,7 +83,7 @@ export async function uploadImage(
 
     await r2.send(
       new PutObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME!,
+        Bucket: r2Bucket,
         Key: key,
         Body: buffer,
         ContentType: file.type,
@@ -110,7 +102,7 @@ export async function uploadImage(
       index: imageIndex,
     });
 
-    return { url: `${process.env.R2_PUBLIC_URL}/${key}`, postId: resolvedPostId };
+    return { url: `${r2PublicUrl}/${key}`, postId: resolvedPostId };
   } catch {
     return { error: '업로드에 실패했습니다' };
   }

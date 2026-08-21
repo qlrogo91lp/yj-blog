@@ -1,6 +1,5 @@
 'use client';
 
-import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -43,52 +42,52 @@ type Props = {
 };
 
 export function SettingsFormAction({ defaultValues }: Props) {
-  const [isPending, startTransition] = useTransition();
+  const defaultFormValues: BlogSettingsFormValues = {
+    blogName: defaultValues?.blogName ?? '',
+    tagline: defaultValues?.tagline ?? '',
+    authorBio: defaultValues?.authorBio ?? '',
+    siteUrl: defaultValues?.siteUrl ?? '',
+    defaultMetaDescription: defaultValues?.defaultMetaDescription ?? '',
+    github: defaultValues?.socialLinks?.github ?? '',
+    twitter: defaultValues?.socialLinks?.twitter ?? '',
+    linkedin: defaultValues?.socialLinks?.linkedin ?? '',
+  };
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<BlogSettingsFormValues>({
     resolver: zodResolver(blogSettingsSchema),
-    defaultValues: {
-      blogName: defaultValues?.blogName ?? '',
-      tagline: defaultValues?.tagline ?? '',
-      authorBio: defaultValues?.authorBio ?? '',
-      siteUrl: defaultValues?.siteUrl ?? '',
-      defaultMetaDescription: defaultValues?.defaultMetaDescription ?? '',
-      github: defaultValues?.socialLinks?.github ?? '',
-      twitter: defaultValues?.socialLinks?.twitter ?? '',
-      linkedin: defaultValues?.socialLinks?.linkedin ?? '',
-    },
+    defaultValues: defaultFormValues,
   });
 
-  const onSubmit = (data: BlogSettingsFormValues) => {
-    startTransition(async () => {
-      try {
-        await editSettings(data);
-        toast.success('설정이 저장되었습니다');
-      } catch {
-        toast.error('저장 중 오류가 발생했습니다');
-      }
-    });
+  const onSubmit = async (data: BlogSettingsFormValues) => {
+    const result = await editSettings(data);
+    if (result.success) {
+      toast.success('설정이 저장되었습니다');
+      reset(data);
+    } else {
+      toast.error(result.error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-2xl">
-      <section className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-8">
+      <section id="basic" className="space-y-4">
         <h2 className="text-lg font-semibold">기본 정보</h2>
 
         <div className="space-y-2">
           <Label htmlFor="blogName">블로그 이름 *</Label>
           <Input id="blogName" {...register('blogName')} />
           {errors.blogName && (
-            <p className="text-sm text-destructive">{errors.blogName.message}</p>
+            <p className="text-destructive text-sm">{errors.blogName.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="tagline">태그라인</Label>
+          <Label htmlFor="tagline">한 줄 소개</Label>
           <Input
             id="tagline"
             placeholder="개발하며 배운 것들을 기록합니다."
@@ -97,7 +96,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="authorBio">소개</Label>
+          <Label htmlFor="authorBio">홈 문구</Label>
           <Textarea
             id="authorBio"
             rows={3}
@@ -105,6 +104,10 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('authorBio')}
           />
         </div>
+      </section>
+
+      <section id="seo" className="space-y-4">
+        <h2 className="text-lg font-semibold">SEO · 공유</h2>
 
         <div className="space-y-2">
           <Label htmlFor="siteUrl">사이트 URL</Label>
@@ -114,7 +117,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('siteUrl')}
           />
           {errors.siteUrl && (
-            <p className="text-sm text-destructive">{errors.siteUrl.message}</p>
+            <p className="text-destructive text-sm">{errors.siteUrl.message}</p>
           )}
         </div>
 
@@ -127,14 +130,14 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('defaultMetaDescription')}
           />
           {errors.defaultMetaDescription && (
-            <p className="text-sm text-destructive">
+            <p className="text-destructive text-sm">
               {errors.defaultMetaDescription.message}
             </p>
           )}
         </div>
       </section>
 
-      <section className="space-y-4">
+      <section id="social" className="space-y-4">
         <h2 className="text-lg font-semibold">소셜 링크</h2>
 
         <div className="space-y-2">
@@ -145,7 +148,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('github')}
           />
           {errors.github && (
-            <p className="text-sm text-destructive">{errors.github.message}</p>
+            <p className="text-destructive text-sm">{errors.github.message}</p>
           )}
         </div>
 
@@ -157,7 +160,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('twitter')}
           />
           {errors.twitter && (
-            <p className="text-sm text-destructive">{errors.twitter.message}</p>
+            <p className="text-destructive text-sm">{errors.twitter.message}</p>
           )}
         </div>
 
@@ -169,14 +172,36 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('linkedin')}
           />
           {errors.linkedin && (
-            <p className="text-sm text-destructive">{errors.linkedin.message}</p>
+            <p className="text-destructive text-sm">{errors.linkedin.message}</p>
           )}
         </div>
       </section>
 
-      <Button type="submit" disabled={isPending}>
-        {isPending ? '저장 중...' : '저장'}
-      </Button>
+      {isDirty && (
+        <div className="pointer-events-none sticky bottom-6 z-10 flex justify-center">
+          <div className="bg-foreground text-background pointer-events-auto flex items-center gap-3 rounded-full py-2 pr-2 pl-5 shadow-lg">
+            <span className="text-sm">
+              변경사항 {Object.keys(dirtyFields).length}개
+            </span>
+            <button
+              type="button"
+              onClick={() => reset(defaultFormValues)}
+              disabled={isSubmitting}
+              className="text-background/70 hover:text-background text-sm transition-colors disabled:opacity-50"
+            >
+              되돌리기
+            </button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-background text-foreground hover:bg-background/90 rounded-full"
+              size="sm"
+            >
+              {isSubmitting ? '저장 중...' : '저장'}
+            </Button>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

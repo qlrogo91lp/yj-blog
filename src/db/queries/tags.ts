@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache';
-import { count, desc, eq, inArray } from 'drizzle-orm';
+import { count, desc, eq, inArray, notExists } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
 import { categories, postTags, posts, tags } from '@/db/schema';
@@ -149,4 +149,21 @@ export async function selectTagsByPostIds(
  */
 export async function deleteTag(id: number): Promise<void> {
   await db.delete(tags).where(eq(tags.id, id));
+}
+
+/**
+ * 어떤 글에도 붙어 있지 않은 태그를 일괄 삭제한다.
+ */
+export async function deleteUnusedTags(): Promise<{ id: number }[]> {
+  return db
+    .delete(tags)
+    .where(
+      notExists(
+        db
+          .select({ postId: postTags.postId })
+          .from(postTags)
+          .where(eq(postTags.tagId, tags.id))
+      )
+    )
+    .returning({ id: tags.id });
 }

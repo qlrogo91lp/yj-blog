@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { TagRow } from '../_components/columns';
+import type { TagWithCount } from '@/types';
 import { DeleteTagDialogAction } from './delete-tag-dialog.action';
 
 type Props = {
-  tag: TagRow;
+  tag: TagWithCount;
 };
 
 export function DeleteTagAction({ tag }: Props) {

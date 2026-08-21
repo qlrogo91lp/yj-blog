@@ -24,7 +24,6 @@ describe('useNewPostStore dirty 추적', () => {
 
   it.each([
     ['setContent', (s: ReturnType<typeof useNewPostStore.getState>) => s.setContent('<p>a</p>')],
-    ['setContentFormat', (s: ReturnType<typeof useNewPostStore.getState>) => s.setContentFormat('markdown')],
     ['setCategoryId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setCategoryId(1)],
     ['setSeriesId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSeriesId(1)],
     ['setTagIds', (s: ReturnType<typeof useNewPostStore.getState>) => s.setTagIds([1])],
@@ -42,7 +41,6 @@ describe('useNewPostStore dirty 추적', () => {
     ['setPostId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setPostId(1)],
     ['setStatus', (s: ReturnType<typeof useNewPostStore.getState>) => s.setStatus('published')],
     ['setPublishedAt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setPublishedAt(new Date())],
-    ['setMode', (s: ReturnType<typeof useNewPostStore.getState>) => s.setMode('markdown')],
     ['setSaveStatus', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSaveStatus('saving')],
     ['setLastSavedAt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setLastSavedAt(new Date())],
     ['setIsGeneratingExcerpt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setIsGeneratingExcerpt(true)],
@@ -58,7 +56,6 @@ describe('useNewPostStore dirty 추적', () => {
       postId: 1,
       title: '글',
       content: '<p>본문</p>',
-      contentFormat: 'html',
       categoryId: null,
       seriesId: null,
       tagIds: [],
@@ -76,6 +73,14 @@ describe('useNewPostStore dirty 추적', () => {
     useNewPostStore.getState().setTitle('편집 중');
     useNewPostStore.getState().reset();
     expect(selectIsDirty(useNewPostStore.getState())).toBe(false);
+  });
+
+  it('스토어에 mode·contentFormat 필드가 없다', () => {
+    const state = useNewPostStore.getState() as Record<string, unknown>;
+    expect('mode' in state).toBe(false);
+    expect('contentFormat' in state).toBe(false);
+    expect('setMode' in state).toBe(false);
+    expect('setContentFormat' in state).toBe(false);
   });
 });
 

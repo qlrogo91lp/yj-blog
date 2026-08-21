@@ -66,4 +66,30 @@ describe('seriesFormSchema', () => {
       ).toBe(false);
     });
   });
+
+  describe('status', () => {
+    it('ongoing이면 성공', () => {
+      expect(
+        seriesFormSchema.safeParse({ ...validData, status: 'ongoing' }).success
+      ).toBe(true);
+    });
+
+    it('completed면 성공', () => {
+      expect(
+        seriesFormSchema.safeParse({ ...validData, status: 'completed' }).success
+      ).toBe(true);
+    });
+
+    it('정의되지 않은 값이면 실패', () => {
+      expect(
+        seriesFormSchema.safeParse({ ...validData, status: 'paused' }).success
+      ).toBe(false);
+    });
+
+    it('생략하면 ongoing으로 채워진다', () => {
+      const result = seriesFormSchema.safeParse(validData);
+      expect(result.success).toBe(true);
+      if (result.success) expect(result.data.status).toBe('ongoing');
+    });
+  });
 });

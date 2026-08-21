@@ -21,13 +21,16 @@ export function CategorySelectorAction({ categories }: Props) {
   return (
     <div className="mb-3">
       <Select
-        value={categoryId?.toString() ?? ''}
-        onValueChange={(value) => setCategoryId(value ? Number(value) : null)}
+        value={categoryId?.toString() ?? 'none'}
+        onValueChange={(value) =>
+          setCategoryId(value === 'none' ? null : Number(value))
+        }
       >
         <SelectTrigger className="w-48">
           <SelectValue placeholder="카테고리 선택" />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value="none">카테고리 없음</SelectItem>
           {categories.map((cat) => (
             <SelectItem key={cat.id} value={cat.id.toString()}>
               {cat.name}

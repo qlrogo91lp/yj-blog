@@ -10,13 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { TagRow } from '../_components/columns';
+import type { TagWithCount } from '@/types';
 import { removeTag } from '../_services/remove-tag';
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  tag: TagRow;
+  tag: TagWithCount;
 };
 
 export function DeleteTagDialogAction({ open, onOpenChange, tag }: Props) {

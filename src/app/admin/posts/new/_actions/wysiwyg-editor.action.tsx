@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
+import { common, createLowlight } from 'lowlight';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { ImageBlock } from '../_utils/image-extension';
@@ -21,20 +23,20 @@ import { StarterKit } from '@tiptap/starter-kit';
 import { useEditorContext } from '../_providers/editor.provider';
 import { useNewPostStore } from '../_store';
 import { uploadImage } from '../_services/upload-image';
-import { removeImage } from '../_services/remove-image';
 import { replaceUploadingNode } from '../_utils/replace-uploading-node';
-import { collectImageSrcs } from '../_utils/collect-image-srcs';
 import { Gallery, type GalleryImage } from '../_utils/gallery-extension';
 import { readImageSize } from '../_utils/read-image-size';
+import { compressImage } from '../_utils/compress-image';
+import { ImageBubbleMenuAction } from './image-bubble-menu.action';
+
+const lowlight = createLowlight(common);
 
 export function WysiwygEditorAction() {
   const setContent = useNewPostStore((s) => s.setContent);
-  const setContentFormat = useNewPostStore((s) => s.setContentFormat);
   const setPostId = useNewPostStore((s) => s.setPostId);
   const content = useNewPostStore((s) => s.content);
   const { setEditor, setUploadFiles } = useEditorContext();
   const isInitialMount = useRef(true);
-  const prevImageSrcs = useRef<Set<string>>(new Set());
 
   const uploadAndInsert = useCallback(
     async (editorInstance: Editor, file: File) => {
@@ -57,8 +59,9 @@ export function WysiwygEditorAction() {
         })
         .run();
 
+      const uploadFile = await compressImage(file);
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', uploadFile);
 
       const currentPostId = useNewPostStore.getState().postId;
       const result = await uploadImage(formData, currentPostId, 'content');
@@ -111,9 +114,10 @@ export function WysiwygEditorAction() {
 
       // R2 키의 index를 서버가 순차 계산하므로 병렬 호출 시 충돌한다
       for (const file of withinLimit) {
-        const size = await readImageSize(file);
+        const uploadFile = await compressImage(file);
+        const size = await readImageSize(uploadFile);
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', uploadFile);
         const currentPostId = useNewPostStore.getState().postId;
         const result = await uploadImage(formData, currentPostId, 'content');
         if (result.url) {
@@ -153,7 +157,9 @@ export function WysiwygEditorAction() {
         heading: { levels: [1, 2, 3] },
         link: false,
         underline: false,
+        codeBlock: false,
       }),
+      CodeBlockLowlight.configure({ lowlight }),
       Underline,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Highlight.configure({ multicolor: true }),
@@ -200,25 +206,14 @@ export function WysiwygEditorAction() {
       },
     },
     onUpdate: ({ editor }) => {
-      const currentSrcs = collectImageSrcs(editor.state.doc);
-      prevImageSrcs.current.forEach((src) => {
-        if (!currentSrcs.has(src)) {
-          removeImage(src);
-        }
-      });
-      prevImageSrcs.current = currentSrcs;
       setContent(editor.getHTML());
-      setContentFormat('html');
     },
   });
 
-  // context에 editor 인스턴스 공유 + 초기 이미지 src 추적 시작
+  // context에 editor 인스턴스 공유
   useEffect(() => {
     setEditor(editor);
     setUploadFiles(editor ? (files: File[]) => void uploadFiles(editor, files) : null);
-    if (editor) {
-      prevImageSrcs.current = collectImageSrcs(editor.state.doc);
-    }
     return () => {
       setEditor(null);
       setUploadFiles(null);
@@ -227,7 +222,6 @@ export function WysiwygEditorAction() {
 
   // content가 외부에서 변경되었을 때 (수정 페이지 초기화, 모드 전환 등) 에디터 내용 동기화.
   // emitUpdate: false — onUpdate를 타지 않게 해서 초기화가 dirty(changeCount)를 올리지 않도록 한다.
-  // onUpdate가 하던 이미지 src 추적 초기화는 여기서 직접 수행한다.
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -235,9 +229,13 @@ export function WysiwygEditorAction() {
     }
     if (editor && content !== editor.getHTML()) {
       editor.commands.setContent(content || '', { emitUpdate: false });
-      prevImageSrcs.current = collectImageSrcs(editor.state.doc);
     }
   }, [content, editor]);
 
-  return <EditorContent editor={editor} />;
+  return (
+    <>
+      <EditorContent editor={editor} />
+      <ImageBubbleMenuAction editor={editor} />
+    </>
+  );
 }
