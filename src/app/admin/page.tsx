@@ -4,8 +4,8 @@ import { ko } from 'date-fns/locale';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { selectDashboardOverview } from '@/db/queries/daily-stats';
-import { selectDraftQueue } from '@/db/queries/posts';
-import { selectPendingComments } from '@/db/queries/comments';
+import { selectDraftCount, selectDraftQueue } from '@/db/queries/posts';
+import { getPendingReplyCount, selectPendingComments } from '@/db/queries/comments';
 import { selectPopularPosts, selectTopReferrers } from '@/db/queries/statistics';
 import { getBlogSettings } from '@/db/queries/settings';
 import { AdminPageHeader } from './_components/admin-page-header';
@@ -32,14 +32,23 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
 
   const settings = await getBlogSettings();
 
-  const [overview, popularPosts, referrers, drafts, pendingComments] =
-    await Promise.all([
-      selectDashboardOverview(days),
-      selectPopularPosts(3),
-      selectTopReferrers(3, days, settings?.referrerExcludes ?? [], settings?.siteUrl),
-      selectDraftQueue(3),
-      selectPendingComments(3),
-    ]);
+  const [
+    overview,
+    popularPosts,
+    referrers,
+    drafts,
+    draftCount,
+    pendingComments,
+    pendingReplyCount,
+  ] = await Promise.all([
+    selectDashboardOverview(days),
+    selectPopularPosts(3),
+    selectTopReferrers(3, days, settings?.referrerExcludes ?? [], settings?.siteUrl),
+    selectDraftQueue(3),
+    selectDraftCount(),
+    selectPendingComments(3),
+    getPendingReplyCount(),
+  ]);
 
   const rangeLabel = `${format(new Date(overview.rangeStart), 'M월 d일', { locale: ko })} – ${format(
     new Date(overview.rangeEnd),
@@ -53,7 +62,11 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
         title="대시보드"
         description={rangeLabel}
         action={
-          <PeriodFilterAction basePath="/admin" current={currentPeriod} />
+          <PeriodFilterAction
+            basePath="/admin"
+            current={currentPeriod}
+            options={['7', '30']}
+          />
         }
       />
 
@@ -97,8 +110,11 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
               <Plus size={16} />새 글 쓰기
             </Link>
           </Button>
-          <DraftQueueWidget drafts={drafts} />
-          <PendingCommentsWidget comments={pendingComments} />
+          <DraftQueueWidget drafts={drafts} totalCount={draftCount} />
+          <PendingCommentsWidget
+            comments={pendingComments}
+            totalCount={pendingReplyCount}
+          />
         </div>
       </div>
     </div>
