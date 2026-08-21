@@ -57,7 +57,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty, isSubmitting, dirtyFields },
   } = useForm<BlogSettingsFormValues>({
     resolver: zodResolver(blogSettingsSchema),
     defaultValues: defaultFormValues,
@@ -87,7 +87,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="tagline">태그라인</Label>
+          <Label htmlFor="tagline">한 줄 소개</Label>
           <Input
             id="tagline"
             placeholder="개발하며 배운 것들을 기록합니다."
@@ -96,7 +96,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="authorBio">소개</Label>
+          <Label htmlFor="authorBio">홈 문구</Label>
           <Textarea
             id="authorBio"
             rows={3}
@@ -104,6 +104,10 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('authorBio')}
           />
         </div>
+      </section>
+
+      <section id="seo" className="space-y-4">
+        <h2 className="text-lg font-semibold">SEO · 공유</h2>
 
         <div className="space-y-2">
           <Label htmlFor="siteUrl">사이트 URL</Label>
@@ -174,18 +178,26 @@ export function SettingsFormAction({ defaultValues }: Props) {
       </section>
 
       {isDirty && (
-        <div className="bg-background sticky bottom-0 -mx-8 border-t px-8 py-4 shadow-lg">
-          <div className="flex max-w-2xl items-center justify-end gap-2">
-            <Button
+        <div className="pointer-events-none sticky bottom-6 z-10 flex justify-center">
+          <div className="bg-foreground text-background pointer-events-auto flex items-center gap-3 rounded-full py-2 pr-2 pl-5 shadow-lg">
+            <span className="text-sm">
+              변경사항 {Object.keys(dirtyFields).length}개
+            </span>
+            <button
               type="button"
-              variant="outline"
               onClick={() => reset(defaultFormValues)}
               disabled={isSubmitting}
+              className="text-background/70 hover:text-background text-sm transition-colors disabled:opacity-50"
             >
-              취소
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? '저장 중...' : '변경사항 저장'}
+              되돌리기
+            </button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-background text-foreground hover:bg-background/90 rounded-full"
+              size="sm"
+            >
+              {isSubmitting ? '저장 중...' : '저장'}
             </Button>
           </div>
         </div>

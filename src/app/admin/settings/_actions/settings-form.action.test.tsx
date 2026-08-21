@@ -127,8 +127,8 @@ describe('SettingsFormAction', () => {
     render(<SettingsFormAction />);
 
     expect(screen.getByLabelText('블로그 이름 *')).toBeInTheDocument();
-    expect(screen.getByLabelText('태그라인')).toBeInTheDocument();
-    expect(screen.getByLabelText('소개')).toBeInTheDocument();
+    expect(screen.getByLabelText('한 줄 소개')).toBeInTheDocument();
+    expect(screen.getByLabelText('홈 문구')).toBeInTheDocument();
     expect(screen.getByLabelText('사이트 URL')).toBeInTheDocument();
     expect(screen.getByLabelText('기본 메타 설명')).toBeInTheDocument();
     expect(screen.getByLabelText('GitHub')).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe('SettingsFormAction', () => {
   it('변경 사항이 없으면 저장 바를 렌더하지 않는다', () => {
     render(<SettingsFormAction />);
     expect(
-      screen.queryByRole('button', { name: '변경사항 저장' })
+      screen.queryByRole('button', { name: '저장' })
     ).not.toBeInTheDocument();
   });
 
@@ -149,7 +149,7 @@ describe('SettingsFormAction', () => {
       target: { value: 'YJlogs' },
     });
     expect(
-      screen.getByRole('button', { name: '변경사항 저장' })
+      screen.getByRole('button', { name: '저장' })
     ).toBeInTheDocument();
   });
 
@@ -169,8 +169,8 @@ describe('SettingsFormAction', () => {
     render(<SettingsFormAction defaultValues={defaultValues} />);
 
     expect(screen.getByLabelText('블로그 이름 *')).toHaveValue('My Blog');
-    expect(screen.getByLabelText('태그라인')).toHaveValue('기록하는 블로그');
-    expect(screen.getByLabelText('소개')).toHaveValue('개발자');
+    expect(screen.getByLabelText('한 줄 소개')).toHaveValue('기록하는 블로그');
+    expect(screen.getByLabelText('홈 문구')).toHaveValue('개발자');
     expect(screen.getByLabelText('GitHub')).toHaveValue(
       'https://github.com/test',
     );
@@ -180,12 +180,12 @@ describe('SettingsFormAction', () => {
     render(<SettingsFormAction />);
 
     // blogName의 기본값이 ''이므로 blogName만 바꿨다가 다시 비우면 값이 defaultValues와
-    // 완전히 일치해 isDirty가 false로 되돌아가 저장 바가 사라진다. 다른 필드(태그라인)를
+    // 완전히 일치해 isDirty가 false로 되돌아가 저장 바가 사라진다. 다른 필드(한 줄 소개)를
     // 함께 변경해 폼을 dirty 상태로 유지하면서 blogName은 빈 값(무효 상태)으로 남긴다.
-    fireEvent.change(screen.getByLabelText('태그라인'), {
+    fireEvent.change(screen.getByLabelText('한 줄 소개'), {
       target: { value: '임시' },
     });
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     await waitFor(() => {
       expect(
@@ -201,7 +201,7 @@ describe('SettingsFormAction', () => {
       target: { value: 'YJlogs' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     await waitFor(() => {
       expect(editSettings).toHaveBeenCalledWith(
@@ -217,14 +217,14 @@ describe('SettingsFormAction', () => {
       target: { value: 'YJlogs' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     await waitFor(() => {
       expect(toast.success).toHaveBeenCalledWith('설정이 저장되었습니다');
     });
     await waitFor(() => {
       expect(
-        screen.queryByRole('button', { name: '변경사항 저장' })
+        screen.queryByRole('button', { name: '저장' })
       ).not.toBeInTheDocument();
     });
   });
@@ -240,7 +240,7 @@ describe('SettingsFormAction', () => {
       target: { value: 'YJlogs' },
     });
 
-    fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('저장 실패');
