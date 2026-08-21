@@ -99,13 +99,21 @@ export async function selectTopReferrers(
     }
   }
 
+  // percentage는 externalCount와 동일하게 슬라이스 이전(pre-slice) 전체 모수를
+  // 분모로 삼는다 — limit 20 등으로 상위 몇 행만 보여주더라도 비율이 그 행들만의
+  // 합이 아니라 전체(devTrafficCount 제외) 대비 값이 되도록 하기 위함이다.
+  // 그래야 대시보드(limit=3)와 유입경로 페이지(limit=20)가 같은 기간에 대해
+  // 같은 비율을 보여준다. 그 대가로 그룹이 21개를 넘으면 유입경로 페이지의
+  // 비율 합이 100%를 밑돌 수 있는데, 이는 의도된 정직한 결과다.
+  const population = [...groups.values()].reduce((acc, row) => acc + row.count, 0);
+
   const sorted = [...groups.values()]
     .sort((a, b) => b.count - a.count)
     .slice(0, limit);
 
-  const shown = sorted.reduce((acc, row) => acc + row.count, 0);
   for (const row of sorted) {
-    row.percentage = shown > 0 ? Math.round((row.count / shown) * 1000) / 10 : 0;
+    row.percentage =
+      population > 0 ? Math.round((row.count / population) * 1000) / 10 : 0;
     row.hosts.sort();
   }
 
