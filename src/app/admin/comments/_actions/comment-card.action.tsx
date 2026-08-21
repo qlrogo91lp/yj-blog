@@ -28,7 +28,7 @@ export function CommentCardAction({ thread }: Props) {
             <span className="text-sm font-semibold">
               {thread.isDeleted ? '(삭제됨)' : thread.authorName}
             </span>
-            {thread.isAuthor && (
+            {!thread.isDeleted && thread.isAuthor && (
               <Badge variant="secondary" className="text-xs">
                 작성자
               </Badge>

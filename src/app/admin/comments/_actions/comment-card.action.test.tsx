@@ -108,6 +108,20 @@ describe('CommentCardAction', () => {
     expect(screen.queryByText('답변 완료')).not.toBeInTheDocument();
   });
 
+  it('삭제된 댓글이면 작성자가 본인이어도 작성자 뱃지를 보여주지 않는다', () => {
+    render(
+      <CommentCardAction
+        thread={makeThread({ isDeleted: true, isAuthor: true })}
+      />
+    );
+    expect(screen.queryByText('작성자')).not.toBeInTheDocument();
+  });
+
+  it('삭제되지 않은 댓글이고 작성자면 작성자 뱃지를 보여준다', () => {
+    render(<CommentCardAction thread={makeThread({ isAuthor: true })} />);
+    expect(screen.getByText('작성자')).toBeInTheDocument();
+  });
+
   it('삭제된 댓글이어도 답글은 렌더한다', () => {
     render(
       <CommentCardAction
