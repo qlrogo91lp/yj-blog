@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { AdminCommentThread } from '@/types';
+import { CommentAvatar } from '../_components/comment-avatar';
 import { CommentReplyRow } from '../_components/comment-reply-row';
 import { CommentReplyFormAction } from './comment-reply-form.action';
 import { DeleteCommentDialogAction } from './delete-comment-dialog.action';
@@ -20,15 +21,35 @@ export function CommentCardAction({ thread }: Props) {
 
   return (
     <div className="rounded-2xl border p-4">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <a
-          href={`/posts/${thread.postSlug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary text-sm hover:underline"
-        >
-          {thread.postTitle}
-        </a>
+      <div className="flex items-start gap-3">
+        <CommentAvatar name={thread.isDeleted ? '' : thread.authorName} />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold">
+              {thread.isDeleted ? '(삭제됨)' : thread.authorName}
+            </span>
+            {thread.isAuthor && (
+              <Badge variant="secondary" className="text-xs">
+                작성자
+              </Badge>
+            )}
+          </div>
+          <p className="text-muted-foreground mt-0.5 text-xs">
+            <a
+              href={`/posts/${thread.postSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {thread.postTitle}
+            </a>
+            {' · '}
+            {formatDistanceToNow(new Date(thread.createdAt), {
+              addSuffix: true,
+              locale: ko,
+            })}
+          </p>
+        </div>
         {!thread.isDeleted &&
           (hasAdminReply ? (
             <Badge variant="secondary">답변 완료</Badge>
@@ -38,26 +59,15 @@ export function CommentCardAction({ thread }: Props) {
       </div>
 
       {thread.isDeleted ? (
-        <p className="text-muted-foreground text-sm italic">
+        <p className="text-muted-foreground ml-11 text-sm italic">
           삭제된 댓글입니다.
         </p>
       ) : (
         <>
-          <div className="mb-1 flex items-center gap-2">
-            <span className="text-sm font-semibold">{thread.authorName}</span>
-            {thread.isAuthor && (
-              <Badge variant="secondary" className="text-xs">
-                작성자
-              </Badge>
-            )}
-            <span className="text-muted-foreground text-xs">
-              {format(new Date(thread.createdAt), 'yyyy.M.d HH:mm', {
-                locale: ko,
-              })}
-            </span>
-          </div>
-          <p className="mb-2 text-sm whitespace-pre-wrap">{thread.content}</p>
-          <div className="flex gap-2">
+          <p className="mt-2 mb-2 ml-11 text-sm whitespace-pre-wrap">
+            {thread.content}
+          </p>
+          <div className="ml-11 flex gap-2">
             <Button
               variant="ghost"
               size="sm"
@@ -69,7 +79,7 @@ export function CommentCardAction({ thread }: Props) {
             <DeleteCommentDialogAction commentId={thread.id} />
           </div>
           {isReplying && (
-            <div className="mt-3 ml-6">
+            <div className="mt-3 ml-11">
               <CommentReplyFormAction
                 postId={thread.postId}
                 postSlug={thread.postSlug}

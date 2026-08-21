@@ -21,7 +21,7 @@ export const getAllTags = unstable_cache(
       .from(tags)
       .leftJoin(postTags, eq(tags.id, postTags.tagId))
       .groupBy(tags.id)
-      .orderBy(tags.name);
+      .orderBy(desc(count(postTags.postId)), tags.name);
 
     return result;
   },
