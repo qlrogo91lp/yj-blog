@@ -59,4 +59,21 @@ describe('TagBoardAction', () => {
       screen.getByPlaceholderText('새 태그 이름을 입력하고 Enter')
     ).toBeInTheDocument();
   });
+
+  it('사용 중 태그를 사용 횟수 내림차순으로 정렬하고, 동률이면 이름 순으로 정렬한다', () => {
+    const unsorted: TagWithCount[] = [
+      { id: 1, name: 'zebra', slug: 'zebra', createdAt: new Date(), postCount: 2 },
+      { id: 2, name: 'apple', slug: 'apple', createdAt: new Date(), postCount: 5 },
+      { id: 3, name: 'nextjs', slug: 'nextjs', createdAt: new Date(), postCount: 2 },
+    ];
+
+    render(<TagBoardAction tags={unsorted} />);
+
+    const chipIds = screen
+      .getAllByTestId(/^chip-/)
+      .map((el) => el.getAttribute('data-testid'));
+
+    // apple(5) > nextjs(2)=zebra(2)이지만 동률이면 이름 순(nextjs < zebra)
+    expect(chipIds).toEqual(['chip-2', 'chip-3', 'chip-1']);
+  });
 });

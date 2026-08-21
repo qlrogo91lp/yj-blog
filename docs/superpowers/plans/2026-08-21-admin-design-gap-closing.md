@@ -146,7 +146,7 @@
   - `isDevTraffic(hostname: string): boolean` — localhost·사설 IP·`.local` 판별
   - `resolveReferrerGroup(hostname: string, siteHostname?: string): { key: string; label: string; letter: string }` — 알려진 서비스는 한 그룹으로, 자기 도메인은 "내부 링크", 나머지는 hostname 그대로
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/_utils/referrer-group.test.ts`:
 
@@ -244,7 +244,7 @@ describe('resolveReferrerGroup', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_utils/referrer-group.test.ts
@@ -252,7 +252,7 @@ npm run test:run -- src/app/admin/_utils/referrer-group.test.ts
 
 기대: FAIL — `Failed to resolve import "./referrer-group"`.
 
-- [ ] **Step 3: 모듈 작성**
+- [x] **Step 3: 모듈 작성**
 
 `src/app/admin/_utils/referrer-group.ts`:
 
@@ -330,7 +330,7 @@ export function resolveReferrerGroup(
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_utils/referrer-group.test.ts
@@ -338,7 +338,7 @@ npm run test:run -- src/app/admin/_utils/referrer-group.test.ts
 
 기대: 전부 PASS.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/_utils/referrer-group.ts src/app/admin/_utils/referrer-group.test.ts
@@ -376,7 +376,7 @@ export type TopReferrersResult = {
 
 > `devTrafficCount`는 Task 5의 접힘 알림이, `externalCount`는 Task 3·6의 부제/지표가 쓴다.
 
-- [ ] **Step 1: 현재 구현 확인**
+- [x] **Step 1: 현재 구현 확인**
 
 ```bash
 sed -n '1,70p' src/db/queries/statistics.ts
@@ -384,7 +384,7 @@ sed -n '1,70p' src/db/queries/statistics.ts
 
 `selectTopReferrers`가 원본 referrer 문자열로 `counts`를 쌓고 있고, `extractHostname`이 이 파일 안에 지역 함수로 있는지 확인한다. 있으면 Task 1의 모듈로 교체하고 지역 정의를 지운다.
 
-- [ ] **Step 2: 쿼리 교체**
+- [x] **Step 2: 쿼리 교체**
 
 `src/db/queries/statistics.ts`의 `selectTopReferrers`를 아래로 교체한다. import에 Task 1의 유틸을 추가한다.
 
@@ -489,7 +489,7 @@ export async function selectTopReferrers(
 }
 ```
 
-- [ ] **Step 3: 타입 확인**
+- [x] **Step 3: 타입 확인**
 
 ```bash
 npx tsc --noEmit
@@ -501,7 +501,7 @@ npx tsc --noEmit
 grep -rn "selectTopReferrers" src/
 ```
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add src/db/queries/statistics.ts
@@ -537,7 +537,7 @@ git commit -m "♻️ refactor: 유입경로를 호스트네임 그룹으로 집
   - `selectDraftQueue(limit: number)` → `{ id: number; title: string; updatedAt: Date }[]` (임시저장 글, 최근 수정 순)
   - `selectPendingComments(limit: number)` → `{ id: number; content: string; postTitle: string; createdAt: Date }[]` (관리자 답글이 없는 최상위 댓글, 최신 순)
 
-- [ ] **Step 1: `selectDashboardOverview` 작성**
+- [x] **Step 1: `selectDashboardOverview` 작성**
 
 `src/db/queries/daily-stats.ts` 끝에 추가한다.
 
@@ -600,7 +600,7 @@ export async function selectDashboardOverview(days: number) {
 }
 ```
 
-- [ ] **Step 2: `selectDraftQueue` 작성**
+- [x] **Step 2: `selectDraftQueue` 작성**
 
 `src/db/queries/posts.ts` 끝에 추가한다.
 
@@ -626,7 +626,7 @@ export const selectDraftQueue = unstable_cache(
 );
 ```
 
-- [ ] **Step 3: `selectPendingComments` 작성**
+- [x] **Step 3: `selectPendingComments` 작성**
 
 `src/db/queries/comments.ts`의 `getPendingReplyCount`(`:197-220`) 바로 아래에 추가한다.
 
@@ -676,7 +676,7 @@ export const selectPendingComments = unstable_cache(
 
 > `where` 절이 `getPendingReplyCount:201-217`과 글자 그대로 같다. 한쪽만 고치면 두 숫자가 어긋나므로, 나중에 판정 기준을 바꿀 일이 생기면 **반드시 두 함수를 함께** 고친다.
 
-- [ ] **Step 4: 타입 확인**
+- [x] **Step 4: 타입 확인**
 
 ```bash
 npx tsc --noEmit
@@ -684,7 +684,7 @@ npx tsc --noEmit
 
 기대: `referrers/page.tsx`의 기존 에러(Task 2에서 발생) 외에 신규 에러 없음.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/db/queries/daily-stats.ts src/db/queries/posts.ts src/db/queries/comments.ts
@@ -721,7 +721,7 @@ type Props = {
 
 > 색 지정은 기존 hex 상수 방식을 그대로 둔다 (PR 4 플랜 44행의 보류 결정). 직전 기간 계열은 같은 색 계열의 흐린 점선으로 그려 "이번 기간"과 구분한다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 recharts는 jsdom에서 `ResponsiveContainer`가 크기 0으로 렌더돼 내부 SVG를 그리지 않는다. 렌더 결과 대신 **전달된 데이터 가공 결과**를 검증한다 — 차트 데이터 준비 로직을 export해 테스트한다.
 
@@ -764,7 +764,7 @@ describe('buildChartData', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_components/stats-chart.test.tsx
@@ -772,7 +772,7 @@ npm run test:run -- src/app/admin/_components/stats-chart.test.tsx
 
 기대: FAIL — `buildChartData`가 export되지 않음.
 
-- [ ] **Step 3: 차트 수정**
+- [x] **Step 3: 차트 수정**
 
 `src/app/admin/_components/stats-chart.tsx`를 수정한다. 기존 색 상수 두 개는 그대로 두고 직전 기간용 상수만 추가한다.
 
@@ -856,7 +856,7 @@ export function StatsChart({ data, showPrevious = false }: Props) {
           )}
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_components/stats-chart.test.tsx
@@ -864,7 +864,7 @@ npm run test:run -- src/app/admin/_components/stats-chart.test.tsx
 
 기대: 4개 PASS. 기존 호출부(`admin/page.tsx`, `statistics/page.tsx`)는 `showPrevious`를 안 주므로 동작이 바뀌지 않는다.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/_components/stats-chart.tsx src/app/admin/_components/stats-chart.test.tsx
@@ -895,7 +895,7 @@ git commit -m "✨ feat: 통계 차트에 직전 기간 비교 계열 추가"
 - 좌측 하단 2열: 인기 글 top3 · 유입경로 top3(퍼센트 바)
 - 우측 칼럼: 검정 [+ 새 글 쓰기] 버튼, "이어 쓸 글 N", "새 댓글 N"
 
-- [ ] **Step 1: 실패하는 테스트 작성 — 스탯 패널**
+- [x] **Step 1: 실패하는 테스트 작성 — 스탯 패널**
 
 `src/app/admin/_components/dashboard-stat-panel.test.tsx`:
 
@@ -947,7 +947,7 @@ describe('DashboardStatPanel', () => {
 });
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성 — 순위 목록**
+- [x] **Step 2: 실패하는 테스트 작성 — 순위 목록**
 
 `src/app/admin/_components/dashboard-rank-list.test.tsx`:
 
@@ -1006,7 +1006,7 @@ describe('DashboardRankList', () => {
 });
 ```
 
-- [ ] **Step 3: 실패하는 테스트 작성 — 우측 칼럼 위젯 2종**
+- [x] **Step 3: 실패하는 테스트 작성 — 우측 칼럼 위젯 2종**
 
 `src/app/admin/_components/draft-queue-widget.test.tsx`:
 
@@ -1107,7 +1107,7 @@ describe('PendingCommentsWidget', () => {
 });
 ```
 
-- [ ] **Step 4: 테스트가 실패하는지 확인**
+- [x] **Step 4: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_components/
@@ -1115,7 +1115,7 @@ npm run test:run -- src/app/admin/_components/
 
 기대: 4개 신규 파일 전부 FAIL (import 해결 실패).
 
-- [ ] **Step 5: 컴포넌트 4종 작성**
+- [x] **Step 5: 컴포넌트 4종 작성**
 
 `src/app/admin/_components/dashboard-stat-panel.tsx`:
 
@@ -1376,7 +1376,7 @@ export function PendingCommentsWidget({ comments }: Props) {
 }
 ```
 
-- [ ] **Step 6: 테스트 통과 확인**
+- [x] **Step 6: 테스트 통과 확인**
 
 ```bash
 npm run test:run -- src/app/admin/_components/
@@ -1384,7 +1384,7 @@ npm run test:run -- src/app/admin/_components/
 
 기대: 4개 파일 전부 PASS.
 
-- [ ] **Step 7: 대시보드 페이지 재작성**
+- [x] **Step 7: 대시보드 페이지 재작성**
 
 `src/app/admin/page.tsx` 전체를 교체한다.
 
@@ -1499,7 +1499,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
 
 > `PeriodFilterAction`의 `basePath`를 `/admin`으로 주면 링크가 `/admin?days=7` 형태가 된다 — 별도 수정 없이 동작한다.
 
-- [ ] **Step 8: 구 위젯 삭제**
+- [x] **Step 8: 구 위젯 삭제**
 
 ```bash
 git rm src/app/admin/_components/quick-actions.tsx \
@@ -1515,7 +1515,7 @@ grep -rn "QuickActions\|RecentPostsWidget\|RecentCommentsWidget" src/
 
 기대: 결과 없음.
 
-- [ ] **Step 9: 전체 테스트·타입 확인**
+- [x] **Step 9: 전체 테스트·타입 확인**
 
 ```bash
 npm run test:run
@@ -1527,7 +1527,7 @@ npx tsc --noEmit
 
 기대: 테스트 PASS. tsc는 `referrers/page.tsx`의 기존 에러(Task 2)만 남는다.
 
-- [ ] **Step 10: 커밋**
+- [x] **Step 10: 커밋**
 
 ```bash
 git add -A src/app/admin/
@@ -1555,7 +1555,7 @@ git commit -m "✨ feat: 대시보드를 시안 2c 분석 화면으로 재작성
 - `localhost·개발 트래픽 112회 는 접어뒀습니다` + [펼치기]
 - 표 행: letter 뱃지 + 그룹명 + 하위 호스트 보조 라인
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/statistics/referrers/_components/referrer-row.test.tsx`:
 
@@ -1644,7 +1644,7 @@ describe('DevTrafficNoticeAction', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/statistics/referrers/
@@ -1652,7 +1652,7 @@ npm run test:run -- src/app/admin/statistics/referrers/
 
 기대: 두 파일 FAIL.
 
-- [ ] **Step 3: 컴포넌트 작성**
+- [x] **Step 3: 컴포넌트 작성**
 
 `src/app/admin/statistics/referrers/_components/referrer-row.tsx`:
 
@@ -1740,7 +1740,7 @@ export function DevTrafficNoticeAction({ count }: Props) {
 }
 ```
 
-- [ ] **Step 4: 페이지 재작성**
+- [x] **Step 4: 페이지 재작성**
 
 `src/app/admin/statistics/referrers/page.tsx`를 교체한다. `formatReferrer` 지역 함수는 그룹핑이 쿼리로 옮겨갔으므로 삭제한다.
 
@@ -1845,7 +1845,7 @@ export default async function AdminReferrersPage({ searchParams }: Props) {
 
 > "항상 제외" 카드에서 `CardHeader`/`CardTitle`을 없앴다 — 시안에 없는 요소이고, `ReferrerExcludesFormAction` 안에 라벨이 있으면 중복이다. 폼 컴포넌트를 열어 자체 제목이 없으면 카드 제목을 되살린다.
 
-- [ ] **Step 5: 테스트·타입 확인**
+- [x] **Step 5: 테스트·타입 확인**
 
 ```bash
 npm run test:run -- src/app/admin/statistics/
@@ -1857,7 +1857,7 @@ npx tsc --noEmit
 
 기대: 테스트 PASS, tsc 신규 에러 0건 (Task 2에서 생긴 에러가 여기서 해소된다).
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add src/app/admin/statistics/referrers/
@@ -1886,7 +1886,7 @@ git commit -m "💄 style: 유입경로에 도메인 그룹 행·개발 트래�
 
 **해결** — `page.tsx`에서 `AdminPageHeader`를 렌더하지 말고, 클라이언트 보드 컴포넌트가 헤더까지 포함해 렌더한다. `AdminPageHeader`는 순수 컴포넌트라 클라이언트 컴포넌트 안에서도 문제없이 쓰인다.
 
-- [ ] **Step 1: 통계 화면 헤더 교체**
+- [x] **Step 1: 통계 화면 헤더 교체**
 
 `src/app/admin/statistics/page.tsx`의 `<div className="mb-6 flex items-center justify-between">` 블록을 교체한다.
 
@@ -1916,7 +1916,7 @@ import를 추가한다.
 import { AdminPageHeader } from '../_components/admin-page-header';
 ```
 
-- [ ] **Step 2: 댓글 화면 헤더 교체**
+- [x] **Step 2: 댓글 화면 헤더 교체**
 
 `src/app/admin/comments/page.tsx`를 교체한다. 답변 대기 수는 `getPendingReplyCount()`를 함께 호출해 얻는다.
 
@@ -1951,7 +1951,7 @@ export default async function AdminCommentsPage() {
 }
 ```
 
-- [ ] **Step 3: 설정 화면 헤더 교체**
+- [x] **Step 3: 설정 화면 헤더 교체**
 
 `src/app/admin/settings/page.tsx`를 교체한다. 앵커 목록에 "SEO · 공유"를 추가한다 (섹션 분리는 Task 8).
 
@@ -2000,7 +2000,7 @@ export default async function AdminSettingsPage() {
 }
 ```
 
-- [ ] **Step 4: 카테고리 헤더 버튼**
+- [x] **Step 4: 카테고리 헤더 버튼**
 
 `src/app/admin/categories/_actions/category-board.action.tsx`가 헤더까지 렌더하도록 바꾼다. props에 `title`·`description`을 받는다.
 
@@ -2051,7 +2051,7 @@ import { AdminPageHeader } from '../../_components/admin-page-header';
 
 > `UncategorizedBanner`는 `CategoryBoardAction` 바깥에 남아 있으므로, `page.tsx`가 `<>...</>`로 보드와 배너를 감싸도록 유지한다.
 
-- [ ] **Step 5: 시리즈 헤더 버튼**
+- [x] **Step 5: 시리즈 헤더 버튼**
 
 `src/app/admin/series/_actions/series-stack.action.tsx`에 같은 방식을 적용한다.
 
@@ -2076,7 +2076,7 @@ type Props = {
 
 `src/app/admin/series/page.tsx`에서 `AdminPageHeader`를 없애고 `description`을 넘긴다.
 
-- [ ] **Step 6: 기존 테스트 갱신**
+- [x] **Step 6: 기존 테스트 갱신**
 
 카테고리·시리즈의 기존 테스트가 `AdminPageHeader` 위치 변경으로 깨질 수 있다.
 
@@ -2086,7 +2086,7 @@ npm run test:run -- src/app/admin/categories/ src/app/admin/series/ src/app/admi
 
 실패하는 단언은 새 구조에 맞게 고친다. **단언의 의도는 유지하고 셀렉터만 바꾼다** — 통과시키려고 검증을 약화시키지 않는다.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add src/app/admin/
@@ -2110,7 +2110,7 @@ git commit -m "💄 style: 어드민 화면 헤더를 AdminPageHeader로 통일�
 - SEO 필드를 `#seo` 섹션으로 분리
 - 저장 바: 전폭 sticky → **떠 있는 알약**, `변경사항 N개` + `되돌리기` + `저장`
 
-- [ ] **Step 1: 필드 라벨 교체**
+- [x] **Step 1: 필드 라벨 교체**
 
 `settings-form.action.tsx`에서 `tagline`·`authorBio` 라벨을 바꾼다.
 
@@ -2122,7 +2122,7 @@ git commit -m "💄 style: 어드민 화면 헤더를 AdminPageHeader로 통일�
           <Label htmlFor="authorBio">홈 문구</Label>
 ```
 
-- [ ] **Step 2: SEO 섹션 분리**
+- [x] **Step 2: SEO 섹션 분리**
 
 `기본 정보` 섹션에서 `defaultMetaDescription` 필드 블록을 잘라내고, `기본 정보` `</section>` 바로 뒤에 새 섹션으로 옮긴다. `사이트 URL`도 SEO 쪽이 더 자연스러우므로 함께 옮긴다.
 
@@ -2159,7 +2159,7 @@ git commit -m "💄 style: 어드민 화면 헤더를 AdminPageHeader로 통일�
       </section>
 ```
 
-- [ ] **Step 3: 저장 바를 알약으로**
+- [x] **Step 3: 저장 바를 알약으로**
 
 `{isDirty && (...)}` 블록 전체를 교체한다. 변경 필드 개수는 `formState.dirtyFields`로 센다 — 컴포넌트 상단 `useForm` 구조분해에 `dirtyFields`를 추가한다.
 
@@ -2195,7 +2195,7 @@ git commit -m "💄 style: 어드민 화면 헤더를 AdminPageHeader로 통일�
       )}
 ```
 
-- [ ] **Step 4: 기존 테스트 갱신**
+- [x] **Step 4: 기존 테스트 갱신**
 
 ```bash
 npm run test:run -- src/app/admin/settings/
@@ -2203,7 +2203,7 @@ npm run test:run -- src/app/admin/settings/
 
 `settings-form.action.test.tsx`가 "취소"·"변경사항 저장" 라벨을 단언하고 있으면 "되돌리기"·"저장"으로 고친다.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add src/app/admin/settings/
@@ -2224,7 +2224,7 @@ git commit -m "💄 style: 설정 화면 SEO 섹션 분리·라벨 시안화·�
 - Consumes: 없음
 - Produces: `CommentAvatar({ name }: { name: string })` — 이름의 첫 글자를 원형 뱃지로
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `src/app/admin/comments/_components/comment-avatar.test.tsx`:
 
@@ -2256,7 +2256,7 @@ describe('CommentAvatar', () => {
 });
 ```
 
-- [ ] **Step 2: 테스트가 실패하는지 확인**
+- [x] **Step 2: 테스트가 실패하는지 확인**
 
 ```bash
 npm run test:run -- src/app/admin/comments/_components/comment-avatar.test.tsx
@@ -2264,7 +2264,7 @@ npm run test:run -- src/app/admin/comments/_components/comment-avatar.test.tsx
 
 기대: FAIL.
 
-- [ ] **Step 3: 아바타 컴포넌트 작성**
+- [x] **Step 3: 아바타 컴포넌트 작성**
 
 `src/app/admin/comments/_components/comment-avatar.tsx`:
 
@@ -2287,7 +2287,7 @@ export function CommentAvatar({ name }: Props) {
 }
 ```
 
-- [ ] **Step 4: 댓글 카드 재배치**
+- [x] **Step 4: 댓글 카드 재배치**
 
 `src/app/admin/comments/_actions/comment-card.action.tsx`를 시안 구조로 바꾼다 — 아바타 + (작성자명 / 글 제목 · 상대시각) 메타 줄, 우측에 상태 뱃지.
 
@@ -2344,7 +2344,7 @@ import { CommentAvatar } from '../_components/comment-avatar';
 
 > `comment-reply-row.tsx`의 절대시각은 「결정 사항」대로 **그대로 둔다.**
 
-- [ ] **Step 5: 태그 정렬 변경**
+- [x] **Step 5: 태그 정렬 변경**
 
 `src/db/queries/tags.ts`의 `getAllTags`에서 `orderBy`를 바꾼다.
 
@@ -2362,7 +2362,7 @@ grep -rn "getAllTags" src/
 
 글쓰기 화면의 태그 셀렉터도 이 정렬을 쓰게 되는데, 자주 쓰는 태그가 위로 오는 편이 오히려 낫다. 문제가 있으면 보고한다.
 
-- [ ] **Step 6: 사이드바 주석 정리**
+- [x] **Step 6: 사이드바 주석 정리**
 
 `src/app/admin/_actions/admin-sidebar.action.tsx:28`의 주석을 현재 사실에 맞게 고친다.
 
@@ -2370,7 +2370,7 @@ grep -rn "getAllTags" src/
   /** 답변 대기 댓글 수. admin/layout.tsx가 주입한다. */
 ```
 
-- [ ] **Step 7: 테스트 확인**
+- [x] **Step 7: 테스트 확인**
 
 ```bash
 npm run test:run -- src/app/admin/comments/ src/app/admin/tags/
@@ -2378,7 +2378,7 @@ npm run test:run -- src/app/admin/comments/ src/app/admin/tags/
 
 기대: 신규 4개 PASS. 기존 댓글 테스트가 절대시각·글 제목 위치를 단언하고 있으면 새 구조에 맞게 고친다.
 
-- [ ] **Step 8: 커밋**
+- [x] **Step 8: 커밋**
 
 ```bash
 git add src/app/admin/comments/ src/db/queries/tags.ts src/app/admin/_actions/admin-sidebar.action.tsx
@@ -2391,7 +2391,7 @@ git commit -m "💄 style: 댓글 카드에 아바타·상대시각 적용하고
 
 **Files:** 없음 (검증 전용)
 
-- [ ] **Step 1: 단위 테스트 전체 실행**
+- [x] **Step 1: 단위 테스트 전체 실행**
 
 ```bash
 npm run test:run
@@ -2399,7 +2399,7 @@ npm run test:run
 
 기대: 전부 PASS.
 
-- [ ] **Step 2: 린트**
+- [x] **Step 2: 린트**
 
 ```bash
 npm run lint
@@ -2407,7 +2407,7 @@ npm run lint
 
 기대: 이 PR이 건드린 파일에서 신규 에러 0건. `docs/design/ralli/support.js`의 기존 에러 2건은 그대로.
 
-- [ ] **Step 3: 타입 체크**
+- [x] **Step 3: 타입 체크**
 
 ```bash
 npx tsc --noEmit
@@ -2415,7 +2415,7 @@ npx tsc --noEmit
 
 기대: 신규 에러 0건. `e2e/ralli.spec.ts:57`의 기존 에러 1건만 잔존.
 
-- [ ] **Step 4: 빌드**
+- [x] **Step 4: 빌드**
 
 ```bash
 npm run build
@@ -2443,9 +2443,10 @@ npm run build
 - [ ] 댓글: 아바타가 뜨고 시각이 "1일 전" 형태로 보인다
 - [ ] 태그: 칩이 사용량 많은 순으로 정렬된다
 - [ ] 다크 모드에서 대시보드 검정 카드·차트·퍼센트 바 대비가 읽을 만하다
+- [ ] 대시보드 차트(차콜 패널)에서 점선인 직전 기간 계열이 실선인 현재 기간 계열보다 뒤로 물러나 보인다
 - [ ] 블로그 화면(`/`)이 이 PR 전후로 달라지지 않았다
 
-- [ ] **Step 6: plan 문서 완료 기록**
+- [x] **Step 6: plan 문서 완료 기록**
 
 이 문서 상단에 완료 일자와 결과 요약을 추가하고 체크박스를 반영한다.
 

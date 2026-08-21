@@ -1,15 +1,19 @@
-import { getAllCommentsForAdmin } from '@/db/queries/comments';
+import { getAllCommentsForAdmin, getPendingReplyCount } from '@/db/queries/comments';
+import { AdminPageHeader } from '../_components/admin-page-header';
 import { CommentCardAction } from './_actions/comment-card.action';
 
 export default async function AdminCommentsPage() {
-  const { comments, total } = await getAllCommentsForAdmin();
+  const [{ comments, total }, pendingCount] = await Promise.all([
+    getAllCommentsForAdmin(),
+    getPendingReplyCount(),
+  ]);
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">댓글 관리</h1>
-      <p className="text-muted-foreground mb-4 text-sm">
-        전체 스레드 {total}개
-      </p>
+      <AdminPageHeader
+        title="댓글"
+        description={`답변 대기 ${pendingCount}개 · 전체 ${total}개`}
+      />
       {comments.length === 0 ? (
         <p className="text-muted-foreground">댓글이 없습니다.</p>
       ) : (

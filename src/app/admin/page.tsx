@@ -1,68 +1,122 @@
-import { Eye, FileText, MessageSquare, PenLine } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getAdminDashboardStats, getRecentPostsForAdmin } from '@/db/queries/posts';
-import { getRecentComments } from '@/db/queries/comments';
-import { selectDailyStatsForRange } from '@/db/queries/daily-stats';
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { selectDashboardOverview } from '@/db/queries/daily-stats';
+import { selectDraftCount, selectDraftQueue } from '@/db/queries/posts';
+import { getPendingReplyCount, selectPendingComments } from '@/db/queries/comments';
+import { selectPopularPosts, selectTopReferrers } from '@/db/queries/statistics';
+import { getBlogSettings } from '@/db/queries/settings';
 import { AdminPageHeader } from './_components/admin-page-header';
-import { RecentPostsWidget } from './_components/recent-posts-widget';
-import { RecentCommentsWidget } from './_components/recent-comments-widget';
-import { QuickActions } from './_components/quick-actions';
-import { StatsChart } from './_components/stats-chart';
+import { DashboardStatPanel } from './_components/dashboard-stat-panel';
+import { DashboardRankList } from './_components/dashboard-rank-list';
+import { DraftQueueWidget } from './_components/draft-queue-widget';
+import { PendingCommentsWidget } from './_components/pending-comments-widget';
+import { PeriodFilterAction } from './statistics/_actions/period-filter.action';
 
-export default async function AdminDashboardPage() {
-  const [stats, recentPosts, recentComments, dailyStats] = await Promise.all([
-    getAdminDashboardStats(),
-    getRecentPostsForAdmin(5),
-    getRecentComments(5),
-    selectDailyStatsForRange(30),
+export const revalidate = 60;
+
+type Props = {
+  searchParams: Promise<{ days?: string }>;
+};
+
+export default async function AdminDashboardPage({ searchParams }: Props) {
+  const { days: daysParam } = await searchParams;
+  const currentPeriod = daysParam ?? '7';
+  const parsed = Number(currentPeriod);
+  const days =
+    currentPeriod === 'all' || !Number.isFinite(parsed) || parsed <= 0
+      ? 30
+      : parsed;
+
+  const settings = await getBlogSettings();
+
+  const [
+    overview,
+    popularPosts,
+    referrers,
+    drafts,
+    draftCount,
+    pendingComments,
+    pendingReplyCount,
+  ] = await Promise.all([
+    selectDashboardOverview(days),
+    selectPopularPosts(3),
+    selectTopReferrers(3, days, settings?.referrerExcludes ?? [], settings?.siteUrl),
+    selectDraftQueue(3),
+    selectDraftCount(),
+    selectPendingComments(3),
+    getPendingReplyCount(),
   ]);
 
-  const cards = [
-    { title: '전체 글', value: stats.totalPosts, icon: FileText },
-    { title: '발행됨', value: stats.publishedPosts, icon: Eye },
-    { title: '임시저장', value: stats.draftPosts, icon: PenLine },
-    { title: '댓글', value: stats.totalComments, icon: MessageSquare },
-  ];
+  const rangeLabel = `${format(new Date(overview.rangeStart), 'M월 d일', { locale: ko })} – ${format(
+    new Date(overview.rangeEnd),
+    'M월 d일',
+    { locale: ko }
+  )}`;
 
   return (
-    <>
-      <AdminPageHeader title="대시보드" />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card) => (
-          <Card key={card.title}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-medium">
-                {card.title}
-              </CardTitle>
-              <card.icon className="text-muted-foreground h-4 w-4" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{card.value}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <div>
+      <AdminPageHeader
+        title="대시보드"
+        description={rangeLabel}
+        action={
+          <PeriodFilterAction
+            basePath="/admin"
+            current={currentPeriod}
+            options={['7', '30']}
+          />
+        }
+      />
 
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="text-base">최근 30일 방문 추이</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-2">
-          {dailyStats.length === 0 ? (
-            <p className="text-muted-foreground py-16 text-center">
-              아직 통계 데이터가 없습니다.
-            </p>
-          ) : (
-            <StatsChart data={dailyStats} />
-          )}
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="flex flex-col gap-4 lg:col-span-2">
+          <DashboardStatPanel
+            visitors={overview.visitors}
+            views={overview.views}
+            externalCount={referrers.externalCount}
+            previousVisitors={overview.previousVisitors}
+            daily={overview.daily}
+          />
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <QuickActions />
-        <RecentPostsWidget posts={recentPosts} />
-        <RecentCommentsWidget comments={recentComments} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <DashboardRankList
+              title="인기 글"
+              moreHref="/admin/statistics"
+              items={popularPosts.map((post) => ({
+                id: String(post.id),
+                label: post.title || '(제목 없음)',
+                value: post.views,
+                href: `/admin/statistics/posts/${post.id}`,
+              }))}
+            />
+            <DashboardRankList
+              title="유입경로"
+              variant="percent"
+              moreHref="/admin/statistics/referrers"
+              items={referrers.rows.map((row) => ({
+                id: row.key,
+                label: row.label,
+                value: row.percentage,
+              }))}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <Button className="w-full rounded-full" size="lg" asChild>
+            <Link href="/admin/posts/new">
+              <Plus size={16} />새 글 쓰기
+            </Link>
+          </Button>
+          <DraftQueueWidget drafts={drafts} totalCount={draftCount} />
+          <PendingCommentsWidget
+            comments={pendingComments}
+            totalCount={pendingReplyCount}
+          />
+        </div>
       </div>
-    </>
+    </div>
   );
 }

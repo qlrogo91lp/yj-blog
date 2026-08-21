@@ -4,18 +4,30 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { CategoryWithCount } from '@/types';
+import { AdminPageHeader } from '../../_components/admin-page-header';
 import { CategoryCard } from '../_components/category-card';
 import { CategoryFormDialogAction } from './category-form-dialog.action';
 
 type Props = {
   categories: CategoryWithCount[];
+  description?: string;
 };
 
-export function CategoryBoardAction({ categories }: Props) {
+export function CategoryBoardAction({ categories, description }: Props) {
   const [formOpen, setFormOpen] = useState(false);
 
   return (
     <>
+      <AdminPageHeader
+        title="카테고리"
+        description={description}
+        action={
+          <Button className="rounded-full" onClick={() => setFormOpen(true)}>
+            <Plus size={16} />새 카테고리
+          </Button>
+        }
+      />
+
       <div className="grid gap-3 sm:grid-cols-2">
         {categories.map((category) => (
           <CategoryCard key={category.id} category={category} />

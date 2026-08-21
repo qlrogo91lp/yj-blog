@@ -19,8 +19,12 @@ export function TagBoardAction({ tags }: Props) {
   const [name, setName] = useState('');
   const [isPending, startTransition] = useTransition();
 
-  const usedTags = tags.filter((tag) => tag.postCount > 0);
-  const unusedTags = tags.filter((tag) => tag.postCount === 0);
+  const sortedTags = [...tags].sort((a, b) => {
+    if (b.postCount !== a.postCount) return b.postCount - a.postCount;
+    return a.name.localeCompare(b.name);
+  });
+  const usedTags = sortedTags.filter((tag) => tag.postCount > 0);
+  const unusedTags = sortedTags.filter((tag) => tag.postCount === 0);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== 'Enter' || !name.trim()) return;

@@ -1,5 +1,4 @@
 import { selectSeriesListForAdmin } from '@/db/queries/series';
-import { AdminPageHeader } from '../_components/admin-page-header';
 import { SeriesStackAction } from './_actions/series-stack.action';
 
 export default async function AdminSeriesPage() {
@@ -11,11 +10,10 @@ export default async function AdminSeriesPage() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="시리즈"
+      <SeriesStackAction
+        seriesList={seriesList}
         description={`연재 ${ongoingCount}개 · 완결 ${seriesList.length - ongoingCount}개`}
       />
-      <SeriesStackAction seriesList={seriesList} />
     </div>
   );
 }

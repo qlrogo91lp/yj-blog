@@ -25,7 +25,7 @@ import {
 } from '../_utils/admin-nav';
 
 type Props = {
-  /** 답변 대기 댓글 수. PR 3에서 layout이 주입한다. */
+  /** 답변 대기 댓글 수. admin/layout.tsx가 주입한다. */
   pendingReplyCount?: number;
 };
 

@@ -2,7 +2,6 @@ import {
   getCategoriesWithPostCount,
   selectUncategorizedPosts,
 } from '@/db/queries/categories';
-import { AdminPageHeader } from '../_components/admin-page-header';
 import { CategoryBoardAction } from './_actions/category-board.action';
 import { UncategorizedBanner } from './_components/uncategorized-banner';
 
@@ -19,16 +18,14 @@ export default async function AdminCategoriesPage() {
 
   return (
     <div>
-      <AdminPageHeader
-        title="카테고리"
+      <CategoryBoardAction
+        categories={categories}
         description={
           uncategorized.length > 0
             ? `글 ${categorizedCount}개가 카테고리에 묶여 있고, ${uncategorized.length}개는 아직 미분류입니다`
             : `글 ${categorizedCount}개가 카테고리에 묶여 있습니다`
         }
       />
-
-      <CategoryBoardAction categories={categories} />
       <UncategorizedBanner posts={uncategorized} />
     </div>
   );
