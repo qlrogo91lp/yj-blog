@@ -4,15 +4,17 @@ import { ko } from 'date-fns/locale';
 
 type Props = {
   drafts: { id: number; title: string; updatedAt: Date }[];
+  /** 임시저장 글 전체 개수. 목록은 최대 몇 건만 보여줄 수 있어 따로 받는다. */
+  totalCount: number;
 };
 
-export function DraftQueueWidget({ drafts }: Props) {
+export function DraftQueueWidget({ drafts, totalCount }: Props) {
   return (
     <div className="rounded-2xl border p-4">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold">이어 쓸 글</h2>
         <span className="bg-status-draft text-foreground rounded-full px-2 text-xs">
-          {drafts.length}
+          {totalCount}
         </span>
       </div>
 
