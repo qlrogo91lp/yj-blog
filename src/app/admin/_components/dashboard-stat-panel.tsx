@@ -53,7 +53,7 @@ export function DashboardStatPanel({
             아직 통계 데이터가 없습니다.
           </p>
         ) : (
-          <StatsChart data={daily} showPrevious />
+          <StatsChart data={daily} showPrevious tone="dark" />
         )}
       </div>
     </div>

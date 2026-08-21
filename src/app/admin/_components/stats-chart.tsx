@@ -24,11 +24,32 @@ type Props = {
   data: ChartDatum[];
   /** 직전 기간 계열을 함께 그린다. 기본 false. */
   showPrevious?: boolean;
+  /** 카드 배경 톤. 어두운 패널(예: bg-sidebar) 위에서는 'dark'로 그린다. 기본 'light'. */
+  tone?: 'light' | 'dark';
 };
 
 const VIEWS_COLOR = '#ef4444'; // red-500
-const VISITORS_COLOR = '#a1a1aa'; // zinc-400
-const PREVIOUS_COLOR = '#d4d4d8'; // zinc-300 — 직전 기간은 흐린 점선
+
+const CHROME_COLORS = {
+  light: {
+    grid: '#e5e7eb', // gray-200
+    axisLine: '#e5e7eb', // gray-200
+    tick: '#9ca3af', // gray-400
+    tooltipBg: '#fff',
+    tooltipBorder: '#e5e7eb',
+    visitors: '#a1a1aa', // zinc-400
+    previous: '#d4d4d8', // zinc-300 — 흰 카드 위에서 흐린 점선
+  },
+  dark: {
+    grid: '#3f3f46', // zinc-700 — 차콜 패널 위에서 은은한 그리드
+    axisLine: '#3f3f46', // zinc-700
+    tick: '#a1a1aa', // zinc-400
+    tooltipBg: '#27272a', // zinc-800
+    tooltipBorder: '#3f3f46', // zinc-700
+    visitors: '#d4d4d8', // zinc-300 — 차콜 위에서 대비를 유지
+    previous: '#52525b', // zinc-600 — 현재 계열보다 어둡게 눌러 뒤로 보내야 함
+  },
+} as const;
 
 type ChartDataPoint = {
   date: string;
@@ -58,8 +79,9 @@ export function buildChartData(data: ChartDatum[], showPrevious: boolean): Chart
   });
 }
 
-export function StatsChart({ data, showPrevious = false }: Props) {
+export function StatsChart({ data, showPrevious = false, tone = 'light' }: Props) {
   const chartData = buildChartData(data, showPrevious);
+  const chrome = CHROME_COLORS[tone];
 
   return (
     <div className="w-full">
@@ -68,23 +90,23 @@ export function StatsChart({ data, showPrevious = false }: Props) {
           data={chartData}
           margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke={chrome.grid} />
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 12, fill: '#9ca3af' }}
+            tick={{ fontSize: 12, fill: chrome.tick }}
             tickLine={false}
-            axisLine={{ stroke: '#e5e7eb' }}
+            axisLine={{ stroke: chrome.axisLine }}
           />
           <YAxis
             allowDecimals={false}
-            tick={{ fontSize: 12, fill: '#9ca3af' }}
+            tick={{ fontSize: 12, fill: chrome.tick }}
             tickLine={false}
             axisLine={false}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#fff',
-              border: '1px solid #e5e7eb',
+              backgroundColor: chrome.tooltipBg,
+              border: `1px solid ${chrome.tooltipBorder}`,
               borderRadius: '8px',
               fontSize: 13,
             }}
@@ -109,9 +131,9 @@ export function StatsChart({ data, showPrevious = false }: Props) {
             type="monotone"
             dataKey="visitors"
             name="일간 방문자"
-            stroke={VISITORS_COLOR}
+            stroke={chrome.visitors}
             strokeWidth={2}
-            dot={{ r: 3, fill: VISITORS_COLOR }}
+            dot={{ r: 3, fill: chrome.visitors }}
             activeDot={{ r: 5 }}
           />
           {showPrevious && (
@@ -120,7 +142,7 @@ export function StatsChart({ data, showPrevious = false }: Props) {
                 type="monotone"
                 dataKey="previousViews"
                 name="직전 기간 조회수"
-                stroke={PREVIOUS_COLOR}
+                stroke={chrome.previous}
                 strokeWidth={2}
                 strokeDasharray="4 4"
                 dot={false}
@@ -130,7 +152,7 @@ export function StatsChart({ data, showPrevious = false }: Props) {
                 type="monotone"
                 dataKey="previousVisitors"
                 name="직전 기간 방문자"
-                stroke={PREVIOUS_COLOR}
+                stroke={chrome.previous}
                 strokeWidth={1}
                 strokeDasharray="2 4"
                 dot={false}
