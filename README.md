@@ -11,41 +11,34 @@
 
 ## 처음 세팅
 
-1. **Node 22.** 루트의 `.nvmrc`를 따른다.
+1. **pnpm 설치.** 버전은 신경 쓰지 않아도 된다 — 루트 `package.json`의 `packageManager`에 고정돼 있고,
+   pnpm이 이 저장소 안에서는 알아서 그 버전으로 전환해 실행한다.
 
    ```bash
-   nvm use
-   ```
-
-2. **pnpm 11.** 둘 중 하나로 설치한다. 버전은 루트 `package.json`의 `packageManager`에 고정되어 있다.
-
-   ```bash
-   # corepack — Node에 포함. packageManager 값을 읽어 정확한 버전을 받는다
-   corepack enable
-   pnpm -v
-
-   # 또는 Homebrew
    brew install pnpm
    ```
 
-3. **의존성 설치.** 루트에서 한 번만 한다. 모든 앱이 함께 설치된다.
+2. **의존성 설치.** 루트에서 한 번만 한다. 모든 앱이 함께 설치된다.
 
    ```bash
    pnpm install
    ```
 
-4. **환경변수.** 블로그는 DB·인증 키가 필요하다.
+3. **환경변수.** 블로그는 DB·인증 키가 필요하다.
 
    ```bash
    cp apps/web/.env.example apps/web/.env.local
    # 값은 apps/web/README.md의 환경 변수 표를 본다
    ```
 
-5. **개발 서버.**
+4. **개발 서버.**
 
    ```bash
    pnpm dev --filter web
    ```
+
+> Node 버전은 저장소에서 고정하지 않는다. 개인 프로젝트라 최신 Node를 그대로 쓰고, 배포 시 Node 버전은
+> Vercel 프로젝트 설정을 따른다.
 
 ## 명령
 
