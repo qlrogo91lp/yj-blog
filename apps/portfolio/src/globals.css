@@ -48,12 +48,12 @@
 @layer components {
   /* 종이 */
   .doc {
-    @apply max-w-205 mx-auto my-6 bg-white px-12 pt-11 pb-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)] print:my-0 print:max-w-full print:shadow-none print:px-1 print:pt-0;
+    @apply max-w-205 mx-auto my-6 bg-white px-12 pt-11 pb-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)];
   }
 
-  /* 프로젝트 장. 항상 새 페이지에서 시작 */
+  /* 프로젝트 장. 페이지를 나누지 않으므로 선으로 끊는다 */
   .page {
-    @apply break-before-page pt-2;
+    @apply mt-12 pt-9 border-t border-line;
   }
 
   /* 장 헤더 */
@@ -120,6 +120,31 @@
     @apply text-2xs text-muted text-center mt-1.5;
   }
 
+  /* 그림 여러 장을 좌우로 넘겨 보는 띠.
+     인쇄에는 스크롤이 없으므로 그리드로 펴서 전부 보이게 한다. */
+  .strip {
+    @apply flex gap-3 overflow-x-auto snap-x pb-2;
+  }
+  .strip > a {
+    @apply flex-none snap-start;
+  }
+  .strip img {
+    @apply h-56 w-auto max-w-none flex-none snap-start;
+  }
+  .strip-tall img {
+    @apply h-80;
+  }
+  .strip::-webkit-scrollbar {
+    height: 6px;
+  }
+  .strip::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 3px;
+  }
+  .strip-hint {
+    @apply text-2xs text-muted text-center mt-1;
+  }
+
   /* 결과 숫자 */
   .kpi {
     @apply inline-flex items-baseline gap-1.5 bg-accent-soft px-2.5 py-1 rounded;
@@ -181,14 +206,27 @@
   }
 }
 
-/* @media print 안에 넣으면 Chrome이 용지 크기를 무시하므로 최상위에 둔다 */
-@page {
-  size: A4;
-  margin: 14mm 12mm;
+/* PDF 렌더링 레이아웃.
+   `?print=1` 로 열면 <html>에 .printing 이 붙는다. 페이지 나눔 없이 한 장으로
+   이어 붙이므로 그림을 본문 폭 가득 크게 둘 수 있다. @page 크기는 문서 높이를
+   재서 index.html의 스크립트가 넣는다. */
+.printing body {
+  background: #fff;
 }
-
-@media print {
-  body {
-    background: #fff !important;
-  }
+.printing .doc {
+  @apply my-0 max-w-full px-10 pt-9 pb-12 shadow-none;
+}
+.printing .strip {
+  @apply grid grid-cols-1 gap-4 overflow-visible pb-0;
+}
+.printing .strip-tall {
+  @apply grid-cols-2;
+}
+.printing .strip img,
+.printing .strip > a {
+  @apply h-auto w-full;
+}
+.printing .strip-hint,
+.printing .no-print {
+  @apply hidden;
 }
