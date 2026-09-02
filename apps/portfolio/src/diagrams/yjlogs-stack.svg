@@ -1,0 +1,43 @@
+<svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="yjlogs 스택 배치와 모노레포 구조">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f4e79" />
+    </marker>
+  </defs>
+
+  <!-- Repo -->
+  <rect x="14" y="14" width="300" height="172" rx="8" class="dg-box-soft" />
+  <text x="164" y="30" class="dg-label">GitHub 저장소 — pnpm workspace + Turborepo</text>
+  <rect x="30" y="44" width="268" height="52" rx="6" class="dg-box" />
+  <text x="164" y="60" class="dg-text">apps/web — Next.js 16</text>
+  <text x="164" y="80" class="dg-label">App Router · Drizzle · Server Actions · SEO</text>
+  <rect x="30" y="108" width="268" height="52" rx="6" class="dg-box" />
+  <text x="164" y="124" class="dg-text">apps/portfolio — Vite</text>
+  <text x="164" y="144" class="dg-label">이 문서. HTML 파티셜 + Tailwind, A4 인쇄</text>
+  <text x="164" y="176" class="dg-label">Skip deployments: 바뀐 앱만 배포</text>
+
+  <!-- Vercel -->
+  <path d="M316,70 L386,70" class="dg-line" />
+  <path d="M316,134 L386,134" class="dg-line" />
+  <rect x="388" y="44" width="120" height="52" rx="6" class="dg-box" />
+  <text x="448" y="62" class="dg-text">Vercel</text>
+  <text x="448" y="80" class="dg-label">yjlogs.com</text>
+  <rect x="388" y="108" width="120" height="52" rx="6" class="dg-box" />
+  <text x="448" y="126" class="dg-text">Vercel</text>
+  <text x="448" y="144" class="dg-label">portfolio.yjlogs.com</text>
+
+  <!-- Services -->
+  <path d="M510,70 L560,70" class="dg-line" />
+  <rect x="562" y="14" width="144" height="34" rx="6" class="dg-box-soft" />
+  <text x="634" y="26" class="dg-text">Neon PostgreSQL</text>
+  <text x="634" y="40" class="dg-label">Drizzle ORM</text>
+  <rect x="562" y="56" width="144" height="34" rx="6" class="dg-box-soft" />
+  <text x="634" y="68" class="dg-text">Clerk</text>
+  <text x="634" y="82" class="dg-label">관리자 인증</text>
+  <rect x="562" y="98" width="144" height="34" rx="6" class="dg-box-soft" />
+  <text x="634" y="110" class="dg-text">Cloudflare R2</text>
+  <text x="634" y="124" class="dg-label">이미지 · assets.yjlogs.com</text>
+  <rect x="562" y="140" width="144" height="34" rx="6" class="dg-box-soft" />
+  <text x="634" y="152" class="dg-text">Cloudflare DNS</text>
+  <text x="634" y="166" class="dg-label">도메인 · 서브도메인</text>
+</svg>

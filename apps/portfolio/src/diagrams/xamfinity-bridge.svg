@@ -1,0 +1,43 @@
+<svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flutter와 WebView 사이의 브리지 구조">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f4e79" />
+    </marker>
+  </defs>
+
+  <!-- Flutter shell -->
+  <rect x="14" y="14" width="300" height="200" rx="8" class="dg-box-soft" />
+  <text x="164" y="32" class="dg-label">Flutter (iOS · Android 단일 코드)</text>
+  <rect x="30" y="48" width="130" height="34" rx="6" class="dg-box" />
+  <text x="95" y="65" class="dg-text">인앱결제</text>
+  <rect x="170" y="48" width="130" height="34" rx="6" class="dg-box" />
+  <text x="235" y="65" class="dg-text">푸시 (FCM)</text>
+  <rect x="30" y="92" width="130" height="34" rx="6" class="dg-box" />
+  <text x="95" y="109" class="dg-text">Remote Config</text>
+  <rect x="170" y="92" width="130" height="34" rx="6" class="dg-box" />
+  <text x="235" y="109" class="dg-text">Crashlytics</text>
+  <rect x="30" y="136" width="130" height="34" rx="6" class="dg-box" />
+  <text x="95" y="153" class="dg-text">Kiosk · 자동 업데이트</text>
+  <rect x="170" y="136" width="130" height="34" rx="6" class="dg-box" />
+  <text x="235" y="153" class="dg-text">WebView 컨테이너</text>
+  <text x="164" y="196" class="dg-label">네이티브 권한·결제·알림처럼 웹으로 안 되는 것만</text>
+
+  <!-- bridge -->
+  <path d="M316,96 L404,96" class="dg-line" />
+  <text x="360" y="84" class="dg-label">MethodChannel</text>
+  <text x="360" y="108" class="dg-label">네이티브 → 웹 호출</text>
+  <path d="M404,140 L316,140" class="dg-line" />
+  <text x="360" y="128" class="dg-label">EventChannel</text>
+  <text x="360" y="152" class="dg-label">웹 → 네이티브 이벤트</text>
+
+  <!-- Web -->
+  <rect x="406" y="14" width="300" height="200" rx="8" class="dg-box-soft" />
+  <text x="556" y="32" class="dg-label">React 모바일 웹 (WebView 안)</text>
+  <rect x="422" y="48" width="268" height="34" rx="6" class="dg-box" />
+  <text x="556" y="65" class="dg-text">출결 · 수납 · 공지 · 상담 화면</text>
+  <rect x="422" y="92" width="268" height="34" rx="6" class="dg-box" />
+  <text x="556" y="109" class="dg-text">TanStack Query · Recoil</text>
+  <rect x="422" y="136" width="268" height="34" rx="6" class="dg-box" />
+  <text x="556" y="153" class="dg-text">Vanilla Extract CSS</text>
+  <text x="556" y="196" class="dg-label">화면과 비즈니스 로직. 배포는 웹만 다시 하면 된다</text>
+</svg>

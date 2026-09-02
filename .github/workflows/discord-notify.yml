@@ -20,7 +20,8 @@ jobs:
                 \"description\": \"main branch 배포가 완료되었습니다.\",
                 \"color\": 5763719,
                 \"fields\": [
-                  {\"name\": \"👤 배포자\", \"value\": \"${{  github.event.deployment.creator.login }}\", \"inline\": true}
+                  {\"name\": \"👤 배포자\", \"value\": \"${{ github.event.deployment.creator.login }}\", \"inline\": true},
+                  {\"name\": \"🔗 URL\", \"value\": \"${{ github.event.deployment_status.environment_url }}\", \"inline\": true}
                 ]
               }]
             }" \
