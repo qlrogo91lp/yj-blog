@@ -120,6 +120,33 @@
     @apply text-2xs text-muted text-center mt-1.5;
   }
 
+  /* 그림 여러 장을 좌우로 넘겨 보는 띠.
+     인쇄에는 스크롤이 없으므로 그리드로 펴서 전부 보이게 한다. */
+  .strip {
+    @apply flex gap-3 overflow-x-auto snap-x pb-2;
+    @apply print:grid print:gap-2 print:overflow-visible print:pb-0;
+  }
+  .strip > a {
+    @apply flex-none snap-start;
+  }
+  .strip img {
+    @apply h-56 w-auto max-w-none flex-none snap-start;
+    @apply print:h-auto print:w-full;
+  }
+  .strip-tall img {
+    @apply h-80;
+  }
+  .strip::-webkit-scrollbar {
+    height: 6px;
+  }
+  .strip::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 3px;
+  }
+  .strip-hint {
+    @apply print:hidden text-2xs text-muted text-center mt-1;
+  }
+
   /* 결과 숫자 */
   .kpi {
     @apply inline-flex items-baseline gap-1.5 bg-accent-soft px-2.5 py-1 rounded;

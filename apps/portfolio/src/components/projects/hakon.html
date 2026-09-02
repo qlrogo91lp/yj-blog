@@ -30,13 +30,19 @@
     시스템을 Next.js·TypeScript 기반으로 새로 설계해 구축했고, 현재 약 500명
     규모(일 약 160건 출결)로 베타 운영 중이다.
   </p>
-  <div class="figure mx-auto max-w-[64%]">
-    <div class="figure-placeholder" style="aspect-ratio: 16 / 9">
-      대시보드 화면 (학원명·학생 정보 가림)
+  <div class="figure">
+    <div class="strip print:grid-cols-2">
+      <a href="./hakon/payments.png" target="_blank" rel="noopener">
+        <img src="./hakon/payments.png" alt="원비 관리 화면" />
+      </a>
+      <a href="./hakon/permissions.png" target="_blank" rel="noopener">
+        <img src="./hakon/permissions.png" alt="역할별 권한 설정 화면" />
+      </a>
     </div>
     <div class="figure-caption">
-      재구축한 관리자 대시보드. 학원명과 학생 정보는 가렸다.
+      원비 관리와 역할별 권한 설정. 학원·학생·직원 정보는 가렸다.
     </div>
+    <div class="strip-hint">좌우로 넘겨 볼 수 있습니다</div>
   </div>
 
   <h3 class="section-h">문제</h3>
@@ -156,12 +162,11 @@
       실시간 반영.
     </li>
   </ul>
-  <div class="figure mx-auto max-w-[56%]">
-    <div class="figure-placeholder" style="aspect-ratio: 16 / 9">
-      실시간 출결 모니터링 화면 (정보 가림)
-    </div>
+  <div class="figure mx-auto max-w-[78%]">
+    <img src="./hakon/attendance-monitor.png" alt="실시간 출결 모니터링 화면" />
     <div class="figure-caption">
-      QR 스캔 출결이 WebSocket으로 즉시 반영되는 모니터링 페이지.
+      QR 스캔 출결이 WebSocket으로 즉시 반영되는 모니터링 페이지. 학생 정보는
+      가렸다.
     </div>
   </div>
 
