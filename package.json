@@ -3,11 +3,16 @@
   "private": true,
   "packageManager": "pnpm@11.22.0",
   "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test:run": "turbo run test:run",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "turbo": "^2.10.12"
   }
 }
