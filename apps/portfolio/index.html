@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>김윤재 — Portfolio</title>
+    <link
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
+      rel="stylesheet"
+    />
+    <link href="/src/globals.css" rel="stylesheet" />
+  </head>
+  <body class="bg-page text-primary print:bg-white">
+    <button
+      type="button"
+      onclick="window.print()"
+      class="print:hidden fixed top-4 right-4 z-10 text-xs font-semibold text-white bg-accent px-3 py-1.5 rounded shadow hover:opacity-90"
+    >
+      PDF로 저장
+    </button>
+
+    <div class="doc">
+      <!-- include: src/components/cover.html -->
+      <!-- include: src/components/toc.html -->
+      <!-- include: src/components/projects/hakon.html -->
+      <!-- include: src/components/projects/xamfinity.html -->
+      <!-- include: src/components/projects/watch-apps.html -->
+      <!-- include: src/components/projects/yjlogs.html -->
+      <!-- include: src/components/closing.html -->
+    </div>
+  </body>
+</html>

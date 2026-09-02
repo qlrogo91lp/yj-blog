@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+@source '../index.html';
+@source './components';
+
+@theme {
+  --color-primary: #1a1d24;
+  --color-accent: #1f4e79;
+  --color-page: #f0f2f5;
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.doc {
+  @apply max-w-205 mx-auto my-6 bg-white px-12 pt-11 pb-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)] print:my-0 print:max-w-full print:shadow-none print:px-1;
+}
+
+@page {
+  size: A4;
+  margin: 14mm 12mm;
+}
