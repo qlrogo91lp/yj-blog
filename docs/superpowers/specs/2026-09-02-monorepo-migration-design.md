@@ -35,6 +35,7 @@ yjlogs의 Root Directory가 저장소 루트인 채로 `portfolio/` 폴더만 �
 
 - `packages/` 공유 패키지 — 공유할 코드가 없다. 필요해질 때 추가한다
 - Turborepo 원격 캐시 — 앱 둘, 개발자 하나. 이득이 없다
+- Turborepo strict env 모드 — `envMode: "loose"`로 둔다. 로컬 `pnpm build`에서 셸 환경변수가 걸러지는 것을 피한다. Vercel 빌드는 turbo를 거치지 않으므로 영향이 없다
 - 포트폴리오 앱 자체 — 이 스펙은 이사와 도구 도입까지만 다룬다
 - 이력서 저장소(`yj-resume`) 편입 — 전화번호·주소·사진이 들어 있고 yjlogs는 public이다. private으로 따로 둔다
 
@@ -94,7 +95,6 @@ yjlogs/
 | `dev` | — | — | `cache: false`, `persistent: true` |
 | `lint` | — | — | 캐시 |
 | `test:run` | — | — | 캐시 |
-| `format:check` | — | — | 캐시 |
 
 루트 `package.json` 스크립트:
 
@@ -109,9 +109,9 @@ yjlogs/
 }
 ```
 
-- 루트 `devDependencies`는 `turbo`와 `prettier` 둘뿐이다. 앱별 도구(eslint, vitest, playwright 등)는 각 앱에 남긴다.
+- 루트 `devDependencies`는 `turbo`, `prettier`, `@trivago/prettier-plugin-sort-imports` 셋이다. `.prettierrc`가 플러그인을 쓰므로 루트에서 resolve되어야 한다. 앱별 도구(eslint, vitest, playwright 등)는 각 앱에 남긴다.
 - 앱 하나만 돌릴 때는 `pnpm dev --filter web`. 앱 폴더 안에서 `pnpm dev`를 쳐도 지금과 같다.
-- `format`은 turbo를 거치지 않고 루트 prettier가 저장소 전체를 훑는다. `.prettierignore`에 `apps/*/.next`,
+- `format`·`format:check`는 turbo 태스크가 아니다. 루트 prettier가 저장소 전체를 훑는다. `.prettierignore`에 `apps/*/.next`,
   `apps/*/dist`, `pnpm-lock.yaml`을 둔다.
 - `apps/web/package.json`의 `format`·`format:check` 스크립트는 제거한다. 루트가 담당한다.
 
