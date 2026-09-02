@@ -71,7 +71,7 @@ gh auth status                   # 로그인 상태
 **Interfaces:**
 - Produces: `apps/web/` 디렉터리. 이후 모든 태스크는 앱을 이 경로로 참조한다.
 
-- [ ] **Step 1: 브랜치 생성**
+- [x] **Step 1: 브랜치 생성**
 
 ```bash
 cd /Users/yj/Workspace/yjlogs
@@ -79,7 +79,7 @@ git checkout develop && git pull --ff-only origin develop
 git checkout -b refactor/monorepo
 ```
 
-- [ ] **Step 2: 생성물 제거**
+- [x] **Step 2: 생성물 제거**
 
 git이 추적하지 않는 빌드 산출물은 옮기지 않고 지운다.
 
@@ -87,7 +87,7 @@ git이 추적하지 않는 빌드 산출물은 옮기지 않고 지운다.
 rm -rf .next node_modules tsconfig.tsbuildinfo next-env.d.ts
 ```
 
-- [ ] **Step 3: 추적 파일 `git mv`**
+- [x] **Step 3: 추적 파일 `git mv`**
 
 ```bash
 mkdir -p apps/web
@@ -98,7 +98,7 @@ git mv src public e2e \
   apps/web/
 ```
 
-- [ ] **Step 4: 이동 결과 확인**
+- [x] **Step 4: 이동 결과 확인**
 
 ```bash
 git status --short | grep -v '^R' ; echo "--- 위에 R 외 항목이 없어야 함 ---"
@@ -108,7 +108,7 @@ ls   # 루트에는 .claude .github .gitignore .mcp.json .prettierrc CLAUDE.md d
 
 Expected: `git status --short`의 모든 줄이 `R`(rename)로 시작한다. 루트에 소스 파일이 남아 있지 않다.
 
-- [ ] **Step 5: git 밖 로컬 파일 이동**
+- [x] **Step 5: git 밖 로컬 파일 이동**
 
 ```bash
 mv .env.local apps/web/.env.local
@@ -118,7 +118,7 @@ ls -a apps/web | grep -E '^\.env\.local$|^\.clerk$'
 
 Expected: 두 항목이 출력된다.
 
-- [ ] **Step 6: 루트 `.gitignore` 통합**
+- [x] **Step 6: 루트 `.gitignore` 통합**
 
 앱이 하위 폴더로 내려가므로 `/`로 시작하던 앵커 패턴을 경로 무관 패턴으로 바꾸고, `dist/`와 `.turbo/`를 추가한다. 파일 전체를 아래 내용으로 교체한다.
 
@@ -185,7 +185,7 @@ next-env.d.ts
 .worktrees/
 ```
 
-- [ ] **Step 7: ignore 동작 확인**
+- [x] **Step 7: ignore 동작 확인**
 
 ```bash
 git check-ignore -v apps/web/.env.local apps/web/.clerk/x apps/web/.next/x apps/web/node_modules/x apps/portfolio/dist/x
@@ -194,7 +194,7 @@ git status --short | grep -v '^R' ; echo "--- .gitignore 외 항목이 없어야
 
 Expected: 다섯 경로 모두 무시 규칙에 걸린다. `git status`에 `.gitignore` 수정(`M`)과 rename만 보인다.
 
-- [ ] **Step 8: 이사 후에도 앱이 빌드되는지 확인 (npm 기준, 마지막)**
+- [x] **Step 8: 이사 후에도 앱이 빌드되는지 확인 (npm 기준, 마지막)**
 
 pnpm 전환 전에 이동 자체로 깨진 것이 없는지 분리해서 확인한다.
 
@@ -204,7 +204,7 @@ cd apps/web && npm ci && npm run build 2>&1 | tail -15 && cd ../..
 
 Expected: `✓ Compiled successfully` 등 정상 빌드 로그. 실패하면 이동 누락 파일이 있는 것이니 Step 3 목록과 `ls apps/web`을 대조한다.
 
-- [ ] **Step 9: 히스토리 추적 확인**
+- [x] **Step 9: 히스토리 추적 확인**
 
 ```bash
 git log --follow --oneline apps/web/src/app/layout.tsx | tail -3
@@ -212,7 +212,7 @@ git log --follow --oneline apps/web/src/app/layout.tsx | tail -3
 
 Expected: 이사 이전 커밋들이 출력된다.
 
-- [ ] **Step 10: 커밋**
+- [x] **Step 10: 커밋**
 
 ```bash
 git add -A
@@ -236,7 +236,7 @@ git commit -m "♻️ refactor: 블로그 앱을 apps/web으로 이동
 **Interfaces:**
 - Produces: 워크스페이스 패키지 이름 `web`. 이후 `pnpm --filter web <script>`로 호출한다.
 
-- [ ] **Step 1: 루트 `package.json` 생성**
+- [x] **Step 1: 루트 `package.json` 생성**
 
 turbo 스크립트는 Task 3에서 추가한다. 여기서는 워크스페이스와 포맷만 둔다.
 
@@ -256,7 +256,7 @@ turbo 스크립트는 Task 3에서 추가한다. 여기서는 워크스페이스
 }
 ```
 
-- [ ] **Step 2: `pnpm-workspace.yaml`, `.nvmrc` 생성**
+- [x] **Step 2: `pnpm-workspace.yaml`, `.nvmrc` 생성**
 
 `pnpm-workspace.yaml`:
 
@@ -271,7 +271,7 @@ packages:
 22
 ```
 
-- [ ] **Step 3: `.prettierignore` 생성**
+- [x] **Step 3: `.prettierignore` 생성**
 
 ```
 node_modules
@@ -284,7 +284,7 @@ apps/*/playwright-report
 docs/legacy
 ```
 
-- [ ] **Step 4: `apps/web/package.json` 수정**
+- [x] **Step 4: `apps/web/package.json` 수정**
 
 세 군데를 바꾼다. 나머지 의존성 목록은 그대로 둔다.
 
@@ -307,7 +307,7 @@ docs/legacy
   },
 ```
 
-- [ ] **Step 5: Playwright webServer 명령 수정**
+- [x] **Step 5: Playwright webServer 명령 수정**
 
 `apps/web/playwright.config.ts`의 `webServer.command`를 바꾼다.
 
@@ -319,7 +319,7 @@ docs/legacy
   },
 ```
 
-- [ ] **Step 6: npm 산출물 제거 후 pnpm 설치**
+- [x] **Step 6: npm 산출물 제거 후 pnpm 설치**
 
 ```bash
 git rm -q apps/web/package-lock.json
@@ -329,7 +329,7 @@ pnpm install 2>&1 | tail -20
 
 Expected: 루트에 `pnpm-lock.yaml`과 `node_modules/`가 생기고, `apps/web/node_modules/`에 심링크 구조가 생긴다. peer dependency 경고는 무시해도 된다. `ERR_PNPM_*`가 나오면 멈추고 메시지를 보고한다.
 
-- [ ] **Step 7: 워크스페이스 인식 확인**
+- [x] **Step 7: 워크스페이스 인식 확인**
 
 ```bash
 pnpm -r ls --depth -1 2>/dev/null | grep -E '^(web|yjlogs)'
@@ -337,7 +337,7 @@ pnpm -r ls --depth -1 2>/dev/null | grep -E '^(web|yjlogs)'
 
 Expected: `web` 패키지가 `apps/web`에 잡힌다.
 
-- [ ] **Step 8: 앱 빌드·테스트·lint로 숨은 의존성 확인**
+- [x] **Step 8: 앱 빌드·테스트·lint로 숨은 의존성 확인**
 
 pnpm은 `package.json`에 없는 패키지를 못 찾는다. 세 명령을 차례로 돌린다.
 
@@ -356,7 +356,7 @@ pnpm --filter web add -D <패키지명>       # 빌드·테스트 도구면
 
 추가한 패키지는 커밋 메시지 본문에 적는다.
 
-- [ ] **Step 9: 루트 Prettier 동작 확인**
+- [x] **Step 9: 루트 Prettier 동작 확인**
 
 플러그인이 루트에서 resolve되는지 본다.
 
@@ -366,7 +366,7 @@ pnpm format:check 2>&1 | tail -5
 
 Expected: `All matched files use Prettier code style!` 또는 기존에 포맷이 안 맞던 파일 목록. `Cannot find package '@trivago/prettier-plugin-sort-imports'`가 나오면 Step 1의 devDependencies를 다시 확인한다. 기존 파일이 포맷에 안 맞아 실패하면 `pnpm format`을 한 번 돌리고 그 변경도 이 커밋에 포함한다.
 
-- [ ] **Step 10: 커밋**
+- [x] **Step 10: 커밋**
 
 ```bash
 git add -A
@@ -391,7 +391,7 @@ Playwright webServer 명령을 pnpm dev로 바꾼다."
 **Interfaces:**
 - Produces: 루트 스크립트 `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm test:run`. 앱 선택은 `--filter web`.
 
-- [ ] **Step 1: turbo 설치**
+- [x] **Step 1: turbo 설치**
 
 ```bash
 pnpm add -Dw turbo 2>&1 | tail -3
@@ -400,7 +400,7 @@ grep '"turbo"' package.json
 
 Expected: 루트 `devDependencies`에 `turbo` 항목이 생긴다.
 
-- [ ] **Step 2: `turbo.json` 생성**
+- [x] **Step 2: `turbo.json` 생성**
 
 ```json
 {
@@ -423,7 +423,7 @@ Expected: 루트 `devDependencies`에 `turbo` 항목이 생긴다.
 
 `envMode: "loose"`는 셸 환경변수를 태스크에 그대로 넘긴다. strict가 기본값이라 빠뜨리면 로컬 `pnpm build`에서 선언하지 않은 변수가 걸러진다.
 
-- [ ] **Step 3: 루트 스크립트 추가**
+- [x] **Step 3: 루트 스크립트 추가**
 
 루트 `package.json`의 `scripts`를 다음으로 교체한다.
 
@@ -438,7 +438,7 @@ Expected: 루트 `devDependencies`에 `turbo` 항목이 생긴다.
   },
 ```
 
-- [ ] **Step 4: 루트에서 세 태스크 실행**
+- [x] **Step 4: 루트에서 세 태스크 실행**
 
 ```bash
 pnpm build 2>&1 | tail -10
@@ -448,7 +448,7 @@ pnpm test:run 2>&1 | tail -8
 
 Expected: 각각 `Tasks: 1 successful, 1 total`로 끝난다.
 
-- [ ] **Step 5: 캐시 동작 확인**
+- [x] **Step 5: 캐시 동작 확인**
 
 ```bash
 pnpm build 2>&1 | grep -E 'FULL TURBO|cache hit'
@@ -456,7 +456,7 @@ pnpm build 2>&1 | grep -E 'FULL TURBO|cache hit'
 
 Expected: `>>> FULL TURBO` 또는 `cache hit, replaying logs`가 보인다. 입력이 안 바뀌었으니 두 번째 빌드는 캐시에서 나와야 한다.
 
-- [ ] **Step 6: 필터 실행 확인**
+- [x] **Step 6: 필터 실행 확인**
 
 ```bash
 pnpm dev --filter web &
@@ -467,7 +467,7 @@ kill %1
 
 Expected: `200`. (다른 서버가 3000을 쓰고 있으면 먼저 내린다.)
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add -A
@@ -489,7 +489,7 @@ dev는 persistent로 둔다. envMode는 loose."
 **Interfaces:**
 - Consumes: Task 3의 루트 스크립트 이름(`dev`, `build`, `lint`, `test:run`)과 패키지 이름 `web`.
 
-- [ ] **Step 1: `apps/web/vercel.json` 생성**
+- [x] **Step 1: `apps/web/vercel.json` 생성**
 
 ```json
 {
@@ -497,7 +497,7 @@ dev는 persistent로 둔다. envMode는 loose."
 }
 ```
 
-- [ ] **Step 2: 루트 `README.md` 생성**
+- [x] **Step 2: 루트 `README.md` 생성**
 
 ````markdown
 # yjlogs
@@ -579,7 +579,7 @@ dev는 persistent로 둔다. envMode는 loose."
 Production Branch는 둘 다 `main`. 브랜치 전략은 `CLAUDE.md`를 본다.
 ````
 
-- [ ] **Step 3: `apps/web/README.md` 명령어 절 수정**
+- [x] **Step 3: `apps/web/README.md` 명령어 절 수정**
 
 `## 명령어` 절의 코드 블록을 다음으로 교체한다. 나머지 절은 그대로 둔다.
 
@@ -604,7 +604,7 @@ pnpm exec drizzle-kit studio  # DB 데이터 GUI로 확인
 ```
 ````
 
-- [ ] **Step 4: `CLAUDE.md` 명령어 절 수정**
+- [x] **Step 4: `CLAUDE.md` 명령어 절 수정**
 
 `## 명령어` 아래 첫 코드 블록(`npm run dev` … `npm run format`)을 다음으로 교체한다.
 
@@ -636,7 +636,7 @@ pnpm test:run                 # Vitest 1회 실행 (CI용)
 pnpm --filter web test:e2e    # Playwright E2E 테스트
 ```
 
-- [ ] **Step 5: `CLAUDE.md`에 저장소 구조 절 추가**
+- [x] **Step 5: `CLAUDE.md`에 저장소 구조 절 추가**
 
 `## 아키텍처` 절 바로 앞에 다음 절을 넣는다.
 
@@ -654,7 +654,7 @@ Vercel은 프로젝트별 Root Directory(`apps/web`, `apps/portfolio`)로 연결
 `ignoreCommand`(`npx turbo-ignore`)가 무관한 커밋의 빌드를 건너뛴다.
 ```
 
-- [ ] **Step 6: `.claude/launch.json` 수정**
+- [x] **Step 6: `.claude/launch.json` 수정**
 
 ```json
 {
@@ -676,7 +676,7 @@ Vercel은 프로젝트별 Root Directory(`apps/web`, `apps/portfolio`)로 연결
 }
 ```
 
-- [ ] **Step 7: 포맷 확인**
+- [x] **Step 7: 포맷 확인**
 
 ```bash
 pnpm format:check 2>&1 | tail -5
@@ -684,7 +684,7 @@ pnpm format:check 2>&1 | tail -5
 
 Expected: 통과. 실패하면 `pnpm format` 후 변경을 이 커밋에 포함한다.
 
-- [ ] **Step 8: 커밋**
+- [x] **Step 8: 커밋**
 
 ```bash
 git add -A

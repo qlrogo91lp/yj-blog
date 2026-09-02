@@ -1,0 +1,109 @@
+'use server';
+
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { auth } from '@clerk/nextjs/server';
+import { eq, max } from 'drizzle-orm';
+import { db } from '@/db';
+import { postImages, posts } from '@/db/schema';
+import { r2, r2Bucket, r2PublicUrl } from '@/lib/r2';
+
+function getExtension(mimeType: string): string {
+  const map: Record<string, string> = {
+    'image/png': '.png',
+    'image/jpeg': '.jpg',
+    'image/gif': '.gif',
+    'image/webp': '.webp',
+    'image/svg+xml': '.svg',
+    'image/avif': '.avif',
+  };
+  return map[mimeType] ?? '.png';
+}
+
+async function createDraftPost(): Promise<number> {
+  const [draft] = await db
+    .insert(posts)
+    .values({
+      title: '',
+      slug: `draft-${Date.now()}`,
+      content: '',
+      status: 'draft',
+    })
+    .returning({ id: posts.id });
+  return draft.id;
+}
+
+type UploadResult =
+  | { url: string; postId: number; error?: never }
+  | { url?: never; postId?: never; error: string };
+
+export async function uploadImage(
+  formData: FormData,
+  postId: number | null,
+  type: 'thumbnail' | 'content'
+): Promise<UploadResult> {
+  const { userId } = await auth();
+  if (!userId) {
+    return { error: '인증이 필요합니다' };
+  }
+
+  const file = formData.get('file') as File | null;
+  if (!file) {
+    return { error: '파일이 없습니다' };
+  }
+
+  if (!file.type.startsWith('image/')) {
+    return { error: '이미지 파일만 업로드 가능합니다' };
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    return { error: '파일 크기는 10MB 이하여야 합니다' };
+  }
+
+  try {
+    const resolvedPostId = postId ?? (await createDraftPost());
+    const ext = getExtension(file.type);
+
+    let imageIndex: number;
+    let key: string;
+
+    if (type === 'thumbnail') {
+      imageIndex = 0;
+      key = `images/post-${resolvedPostId}/thumbnail-${Date.now()}${ext}`;
+    } else {
+      const result = await db
+        .select({ maxIndex: max(postImages.index) })
+        .from(postImages)
+        .where(eq(postImages.postId, resolvedPostId));
+      const currentMax = result[0]?.maxIndex ?? 0;
+      imageIndex = currentMax + 1;
+      key = `images/post-${resolvedPostId}/image${imageIndex}-${Date.now()}${ext}`;
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: r2Bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+        // 업로드 키에 타임스탬프가 포함돼 매 업로드마다 유일한 키가 생성되므로
+        // (썸네일 재업로드·인덱스 재사용 시에도 충돌하지 않는다) immutable이 안전하다.
+        // 이 헤더가 없으면 next/image는 minimumCacheTTL로 폴백하고,
+        // 본문 raw <img>는 브라우저 캐시가 아예 걸리지 않는다.
+        CacheControl: 'public, max-age=31536000, immutable',
+      })
+    );
+
+    await db.insert(postImages).values({
+      postId: resolvedPostId,
+      key,
+      type,
+      index: imageIndex,
+    });
+
+    return { url: `${r2PublicUrl}/${key}`, postId: resolvedPostId };
+  } catch {
+    return { error: '업로드에 실패했습니다' };
+  }
+}

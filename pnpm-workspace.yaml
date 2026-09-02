@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+overrides:
+  eslint-plugin-react-hooks: 7.0.1
+allowBuilds:
+  '@clerk/shared': true
+  esbuild: true
+  msw: true
+  sharp: true
+  unrs-resolver: true
