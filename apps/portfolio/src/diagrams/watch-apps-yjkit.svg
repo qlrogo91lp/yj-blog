@@ -1,0 +1,47 @@
+<svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="YJKit 패키지와 두 앱의 의존 관계">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f4e79" />
+    </marker>
+  </defs>
+
+  <!-- Apps -->
+  <rect x="14" y="14" width="330" height="80" rx="8" class="dg-box-soft" />
+  <text x="179" y="30" class="dg-label">Ralli (테니스)</text>
+  <rect x="28" y="42" width="145" height="38" rx="6" class="dg-box" />
+  <text x="100" y="56" class="dg-text">Watch App</text>
+  <text x="100" y="70" class="dg-label">메인 입력 · 점수 · 워크아웃</text>
+  <rect x="185" y="42" width="145" height="38" rx="6" class="dg-box" />
+  <text x="257" y="56" class="dg-text">iOS App</text>
+  <text x="257" y="70" class="dg-label">기록 · Live Activity</text>
+
+  <rect x="376" y="14" width="330" height="80" rx="8" class="dg-box-soft" />
+  <text x="541" y="30" class="dg-label">GolfCounter (골프)</text>
+  <rect x="390" y="42" width="145" height="38" rx="6" class="dg-box" />
+  <text x="462" y="56" class="dg-text">Watch App</text>
+  <text x="462" y="70" class="dg-label">메인 입력 · 타수 · 퍼팅</text>
+  <rect x="547" y="42" width="145" height="38" rx="6" class="dg-box" />
+  <text x="619" y="56" class="dg-text">iOS App</text>
+  <text x="619" y="70" class="dg-label">기록 · 통계 전용</text>
+
+  <!-- arrows down to kit -->
+  <path d="M179,96 L179,126" class="dg-line" />
+  <path d="M541,96 L541,126" class="dg-line" />
+  <text x="360" y="112" class="dg-label">종목 규칙·메시지·저장 정책은 앱이 소유</text>
+
+  <!-- Kit -->
+  <rect x="14" y="130" width="692" height="76" rx="8" class="dg-box-soft" />
+  <text x="360" y="146" class="dg-label">Packages/YJKit — 로컬 Swift Package. 코어는 도메인을 모른다</text>
+  <rect x="28" y="158" width="160" height="36" rx="6" class="dg-box" />
+  <text x="108" y="171" class="dg-text">WorkoutCore</text>
+  <text x="108" y="185" class="dg-label">HealthKit 세션 · 경과시간</text>
+  <rect x="200" y="158" width="160" height="36" rx="6" class="dg-box" />
+  <text x="280" y="171" class="dg-text">WorkoutUI</text>
+  <text x="280" y="185" class="dg-label">워치 공통 화면</text>
+  <rect x="372" y="158" width="160" height="36" rx="6" class="dg-box" />
+  <text x="452" y="171" class="dg-text">ConnectivityCore</text>
+  <text x="452" y="185" class="dg-label">WatchConnectivity 앵커</text>
+  <rect x="544" y="158" width="148" height="36" rx="6" class="dg-box" />
+  <text x="618" y="171" class="dg-text">PersistenceCore</text>
+  <text x="618" y="185" class="dg-label">SwiftData · CloudKit</text>
+</svg>
