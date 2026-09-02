@@ -12,21 +12,20 @@
 
 ## 파일 구조
 
-| 파일                                                                       | 작업                                                                  |
-| -------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `src/app/admin/posts/new/_components/_image-block/image-extension.ts`      | 수정 — `caption` 속성 추가                                            |
-| `src/app/admin/posts/new/_components/_image-block/image-extension.test.ts` | 수정 — caption 파싱·직렬화 테스트 추가                                |
-| `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx`     | 수정 — 캡션 `<input>` UI 추가                                         |
-| `src/lib/markdown.ts`                                                      | 수정 — `rehypeImageCaption` 플러그인 추가, `htmlToHtmlWithToc`에 적용 |
-| `src/lib/markdown.test.ts`                                                 | 신규 — rehype 플러그인 동작 검증                                      |
-| `src/styles/prose.css`                                                     | 수정 — `figcaption` 스타일 추가                                       |
+| 파일 | 작업 |
+|------|------|
+| `src/app/admin/posts/new/_components/_image-block/image-extension.ts` | 수정 — `caption` 속성 추가 |
+| `src/app/admin/posts/new/_components/_image-block/image-extension.test.ts` | 수정 — caption 파싱·직렬화 테스트 추가 |
+| `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx` | 수정 — 캡션 `<input>` UI 추가 |
+| `src/lib/markdown.ts` | 수정 — `rehypeImageCaption` 플러그인 추가, `htmlToHtmlWithToc`에 적용 |
+| `src/lib/markdown.test.ts` | 신규 — rehype 플러그인 동작 검증 |
+| `src/styles/prose.css` | 수정 — `figcaption` 스타일 추가 |
 
 ---
 
 ## Task 1: ImageBlock extension에 caption 속성 추가
 
 **Files:**
-
 - Modify: `src/app/admin/posts/new/_components/_image-block/image-extension.ts`
 - Modify: `src/app/admin/posts/new/_components/_image-block/image-extension.test.ts`
 
@@ -37,7 +36,7 @@
 ```typescript
 it('data-caption 속성이 있는 이미지를 파싱하고 직렬화한다', () => {
   const editor = createEditor(
-    '<p><img src="a.png" data-size="medium" data-align="center" data-caption="강남역 저녁" /></p>'
+    '<p><img src="a.png" data-size="medium" data-align="center" data-caption="강남역 저녁" /></p>',
   );
   const html = editor.getHTML();
   expect(html).toContain('data-caption="강남역 저녁"');
@@ -115,7 +114,6 @@ git commit -m "feat: ImageBlock에 caption 속성 추가 (data-caption으로 직
 ## Task 2: ImageNodeView에 캡션 입력 UI 추가
 
 **Files:**
-
 - Modify: `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx`
 
 - [ ] **Step 1: NodeView 전체 교체**
@@ -125,7 +123,7 @@ git commit -m "feat: ImageBlock에 caption 속성 추가 (data-caption으로 직
 ```tsx
 'use client';
 
-import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
+import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import type { ImageAlign, ImageSize } from './image-extension';
 import { ImageToolbar } from './image-toolbar';
 
@@ -212,7 +210,6 @@ git commit -m "feat: ImageNodeView에 캡션 입력 UI 추가"
 ## Task 3: rehypeImageCaption 플러그인으로 블로그 렌더링 처리
 
 **Files:**
-
 - Modify: `src/lib/markdown.ts`
 - Create: `src/lib/markdown.test.ts`
 
@@ -221,7 +218,7 @@ git commit -m "feat: ImageNodeView에 캡션 입력 UI 추가"
 `src/lib/markdown.test.ts` 신규 생성:
 
 ```typescript
-import { describe, expect, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { htmlToHtmlWithToc } from './markdown';
 
 describe('htmlToHtmlWithToc — 이미지 캡션', () => {
@@ -243,8 +240,7 @@ describe('htmlToHtmlWithToc — 이미지 캡션', () => {
   });
 
   it('data-caption이 없는 img는 변환하지 않는다', async () => {
-    const html =
-      '<p><img src="a.png" data-size="medium" data-align="center" /></p>';
+    const html = '<p><img src="a.png" data-size="medium" data-align="center" /></p>';
     const { html: result } = await htmlToHtmlWithToc(html);
     expect(result).not.toContain('<figure');
     expect(result).not.toContain('<figcaption>');
@@ -304,12 +300,8 @@ function rehypeImageCaption() {
         type: 'element',
         tagName: 'figure',
         properties: {
-          ...(img.properties?.dataSize && {
-            dataSize: img.properties.dataSize,
-          }),
-          ...(img.properties?.dataAlign && {
-            dataAlign: img.properties.dataAlign,
-          }),
+          ...(img.properties?.dataSize && { dataSize: img.properties.dataSize }),
+          ...(img.properties?.dataAlign && { dataAlign: img.properties.dataAlign }),
         },
         children: [
           img,
@@ -339,7 +331,7 @@ export async function htmlToHtmlWithToc(html: string): Promise<MarkdownResult> {
   const processor = unified()
     .use(rehypeParse, { fragment: true })
     .use(rehypeSlug)
-    .use(rehypeImageCaption) // ← 추가
+    .use(rehypeImageCaption)   // ← 추가
     .use(() => (tree) => {
       visit(tree, 'element', (node: Element) => {
         if (node.tagName === 'h2' || node.tagName === 'h3') {
@@ -379,7 +371,6 @@ git commit -m "feat: htmlToHtmlWithToc에 rehypeImageCaption 플러그인 추가
 ## Task 4: prose.css에 figcaption 스타일 추가
 
 **Files:**
-
 - Modify: `src/styles/prose.css`
 
 - [ ] **Step 1: figcaption 스타일 추가**

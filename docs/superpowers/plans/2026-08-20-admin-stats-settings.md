@@ -1,7 +1,6 @@
 # 대시보드·방문 통계·유입경로·블로그 설정 구현 계획 (어드민 리디자인 PR 4/4)
 
 > **완료: 2026-08-20.** Task 1~9 전부 완료. SDD(subagent-driven-development)로 실행 — 태스크별 구현·리뷰 후 전체 브랜치 최종 리뷰까지 마쳤다. 결과 요약:
->
 > - Task 1: 컨트롤러가 직접 구현(스키마+쿼리 전용, 다른 worktree(`feature/admin-comment-reply`)와 Neon dev DB를 공유해 drizzle-kit push 순서 조율 필요). `referrerExcludes`를 `notNull()`로 추가하면서 `BlogSettings` 타입이 이 필드를 필수로 요구하게 돼 `settings-form.action.test.tsx`의 리터럴이 즉시 깨지는 걸 발견·수정(`referrerExcludes: []` 추가) — Task 7의 전체 교체본과 충돌하지 않도록 plan 문서에도 기록해 둠.
 > - Task 2~8: 전부 태스크 리뷰 통과(Critical/Important 0건). 이 중 2건은 plan 예시 코드 자체의 결함을 리뷰어가 검증한 뒤 승인한 좁은 범위의 이탈이다 — Task 6은 `updateReferrerExcludes` 테스트 mock의 스프레드 인자 시그니처가 실제 함수 시그니처와 타입이 맞지 않아 `(excludes: string[])` 형태로 수정, Task 7은 react-hook-form의 `isDirty`가 필드를 기본값으로 되돌리면 다시 `false`가 되는 특성 때문에 blogName 검증 테스트가 브리프 원문대로는 통과할 수 없어 태그라인 필드로 dirty 상태를 만들도록 시나리오만 수정(최종 assertion은 동일).
 > - Task 9 검증: 단위 테스트 92 files/497 tests 전부 PASS, 린트 이 PR 변경 파일 기준 신규 에러 0건, tsc 신규 에러 0건, 빌드 성공.
@@ -52,12 +51,12 @@
 
 ## 로드맵 — 어드민 리디자인 4개 PR
 
-| 순서 | 브랜치                           | plan 문서                                                                    | 상태                                                                                   |
-| ---- | -------------------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| 1    | `refactor/admin-shell-cell-a`    | [2026-08-20-admin-shell-cell-a.md](./2026-08-20-admin-shell-cell-a.md)       | 완료 (PR [#83](https://github.com/qlrogo91lp/yj-blog/pull/83) 머지)                    |
-| 2    | `refactor/admin-content-screens` | [2026-08-20-admin-content-screens.md](./2026-08-20-admin-content-screens.md) | 완료 (PR [#84](https://github.com/qlrogo91lp/yj-blog/pull/84) 머지)                    |
-| 3    | `feature/admin-comment-reply`    | [2026-08-20-admin-comment-reply.md](./2026-08-20-admin-comment-reply.md)     | 완료 (PR [#86](https://github.com/qlrogo91lp/yj-blog/pull/86) 머지)                    |
-| 4    | `refactor/admin-stats-settings`  | 이 문서                                                                      | 완료 (PR [#85](https://github.com/qlrogo91lp/yj-blog/pull/85) 머지 — PR 3 이전에 착수) |
+| 순서 | 브랜치 | plan 문서 | 상태 |
+|---|---|---|---|
+| 1 | `refactor/admin-shell-cell-a` | [2026-08-20-admin-shell-cell-a.md](./2026-08-20-admin-shell-cell-a.md) | 완료 (PR [#83](https://github.com/qlrogo91lp/yj-blog/pull/83) 머지) |
+| 2 | `refactor/admin-content-screens` | [2026-08-20-admin-content-screens.md](./2026-08-20-admin-content-screens.md) | 완료 (PR [#84](https://github.com/qlrogo91lp/yj-blog/pull/84) 머지) |
+| 3 | `feature/admin-comment-reply` | [2026-08-20-admin-comment-reply.md](./2026-08-20-admin-comment-reply.md) | 완료 (PR [#86](https://github.com/qlrogo91lp/yj-blog/pull/86) 머지) |
+| 4 | `refactor/admin-stats-settings` | 이 문서 | 완료 (PR [#85](https://github.com/qlrogo91lp/yj-blog/pull/85) 머지 — PR 3 이전에 착수) |
 
 ---
 
@@ -83,8 +82,8 @@ PR 4 조사에서 발견된 기존 결함이다 — `editSettings`는 `Promise<v
 
 `npx drizzle-kit push` 한 번으로 반영된다. 컬럼 추가 하나뿐이라 데이터 손실 위험이 없다.
 
-| 테이블          | 컬럼               | 용도                                              |
-| --------------- | ------------------ | ------------------------------------------------- |
+| 테이블 | 컬럼 | 용도 |
+|---|---|---|
 | `blog_settings` | `referrerExcludes` | 유입경로 "항상 제외" 규칙(호스트네임 배열, jsonb) |
 
 ---
@@ -93,44 +92,44 @@ PR 4 조사에서 발견된 기존 결함이다 — `editSettings`는 `Promise<v
 
 **생성**
 
-| 파일                                                                                 | 책임                                |
-| ------------------------------------------------------------------------------------ | ----------------------------------- |
-| `src/app/admin/statistics/_actions/period-filter.action.tsx`                         | 공용 기간 세그먼트(7일/30일/전체)   |
-| `src/app/admin/statistics/_components/period-change-badge.tsx`                       | 직전 기간 대비 증감 뱃지 (순수)     |
-| `src/app/admin/statistics/_components/period-change-badge.test.tsx`                  | 증감률 계산 분기 검증               |
-| `src/app/admin/statistics/referrers/_services/edit-referrer-excludes.ts`             | "항상 제외" 규칙 저장 Server Action |
-| `src/app/admin/statistics/referrers/_services/edit-referrer-excludes.test.ts`        | 인증·정제·저장 검증                 |
-| `src/app/admin/statistics/referrers/_actions/referrer-excludes-form.action.tsx`      | 제외 규칙 칩 목록 + 추가 입력       |
-| `src/app/admin/statistics/referrers/_actions/referrer-excludes-form.action.test.tsx` | 추가·삭제·에러 분기 검증            |
-| `src/app/admin/settings/_components/settings-nav.tsx`                                | 좌측 앵커 내비게이션 (순수)         |
+| 파일 | 책임 |
+|---|---|
+| `src/app/admin/statistics/_actions/period-filter.action.tsx` | 공용 기간 세그먼트(7일/30일/전체) |
+| `src/app/admin/statistics/_components/period-change-badge.tsx` | 직전 기간 대비 증감 뱃지 (순수) |
+| `src/app/admin/statistics/_components/period-change-badge.test.tsx` | 증감률 계산 분기 검증 |
+| `src/app/admin/statistics/referrers/_services/edit-referrer-excludes.ts` | "항상 제외" 규칙 저장 Server Action |
+| `src/app/admin/statistics/referrers/_services/edit-referrer-excludes.test.ts` | 인증·정제·저장 검증 |
+| `src/app/admin/statistics/referrers/_actions/referrer-excludes-form.action.tsx` | 제외 규칙 칩 목록 + 추가 입력 |
+| `src/app/admin/statistics/referrers/_actions/referrer-excludes-form.action.test.tsx` | 추가·삭제·에러 분기 검증 |
+| `src/app/admin/settings/_components/settings-nav.tsx` | 좌측 앵커 내비게이션 (순수) |
 
 **수정**
 
-| 파일                                                            | 변경                                                                                     |
-| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `src/db/schema.ts`                                              | `blogSettings.referrerExcludes` 컬럼 추가                                                |
-| `src/db/queries/settings.ts`                                    | `updateReferrerExcludes` 추가                                                            |
-| `src/db/queries/daily-stats.ts`                                 | `selectPeriodComparison` 추가                                                            |
-| `src/db/queries/statistics.ts`                                  | `selectTopReferrers`를 exclude 필터 + JS 집계로 재작성                                   |
-| `src/app/admin/statistics/page.tsx`                             | `searchParams.days` 연동, 직전 기간 비교 카드, `PeriodFilterAction`                      |
-| `src/app/admin/statistics/_components/stat-card.tsx`            | `change?` prop 추가                                                                      |
-| `src/app/admin/statistics/referrers/page.tsx`                   | `PeriodFilterAction`으로 교체, exclude 필터 적용, `ReferrerExcludesFormAction` 추가      |
-| `src/app/admin/page.tsx`                                        | `AdminPageHeader` 적용, `StatsChart` 위젯 추가                                           |
-| `src/app/admin/settings/page.tsx`                               | 좌측 앵커 내비게이션 + 폼 2컬럼 레이아웃                                                 |
-| `src/app/admin/settings/_actions/settings-form.action.tsx`      | 섹션에 `id` 부여, `isDirty` 기반 하단 플로팅 저장 바, `editSettings` 결과 처리 방식 변경 |
-| `src/app/admin/settings/_actions/settings-form.action.test.tsx` | 위 변경에 맞춰 mock·단언 갱신                                                            |
-| `src/app/admin/settings/_services/edit-settings.ts`             | Clerk 인증 추가, `Result` 유니언 반환으로 변경                                           |
+| 파일 | 변경 |
+|---|---|
+| `src/db/schema.ts` | `blogSettings.referrerExcludes` 컬럼 추가 |
+| `src/db/queries/settings.ts` | `updateReferrerExcludes` 추가 |
+| `src/db/queries/daily-stats.ts` | `selectPeriodComparison` 추가 |
+| `src/db/queries/statistics.ts` | `selectTopReferrers`를 exclude 필터 + JS 집계로 재작성 |
+| `src/app/admin/statistics/page.tsx` | `searchParams.days` 연동, 직전 기간 비교 카드, `PeriodFilterAction` |
+| `src/app/admin/statistics/_components/stat-card.tsx` | `change?` prop 추가 |
+| `src/app/admin/statistics/referrers/page.tsx` | `PeriodFilterAction`으로 교체, exclude 필터 적용, `ReferrerExcludesFormAction` 추가 |
+| `src/app/admin/page.tsx` | `AdminPageHeader` 적용, `StatsChart` 위젯 추가 |
+| `src/app/admin/settings/page.tsx` | 좌측 앵커 내비게이션 + 폼 2컬럼 레이아웃 |
+| `src/app/admin/settings/_actions/settings-form.action.tsx` | 섹션에 `id` 부여, `isDirty` 기반 하단 플로팅 저장 바, `editSettings` 결과 처리 방식 변경 |
+| `src/app/admin/settings/_actions/settings-form.action.test.tsx` | 위 변경에 맞춰 mock·단언 갱신 |
+| `src/app/admin/settings/_services/edit-settings.ts` | Clerk 인증 추가, `Result` 유니언 반환으로 변경 |
 
 **이동**
 
-| 파일                                                   | 이동 후                                     |
-| ------------------------------------------------------ | ------------------------------------------- |
+| 파일 | 이동 후 |
+|---|---|
 | `src/app/admin/statistics/_components/stats-chart.tsx` | `src/app/admin/_components/stats-chart.tsx` |
 
 **삭제**
 
-| 파일                                                                            | 이유                          |
-| ------------------------------------------------------------------------------- | ----------------------------- |
+| 파일 | 이유 |
+|---|---|
 | `src/app/admin/statistics/referrers/_actions/referrer-period-filter.action.tsx` | `PeriodFilterAction`으로 대체 |
 
 ---
@@ -138,13 +137,11 @@ PR 4 조사에서 발견된 기존 결함이다 — `editSettings`는 `Promise<v
 ## Task 1: `blog_settings.referrerExcludes` 스키마 + 쿼리 2종
 
 **Files:**
-
 - Modify: `src/db/schema.ts`
 - Modify: `src/db/queries/settings.ts` (`updateReferrerExcludes`)
 - Modify: `src/db/queries/daily-stats.ts` (`selectPeriodComparison`)
 
 **Interfaces:**
-
 - Consumes: 없음 (첫 태스크)
 - Produces:
   - `blogSettings.referrerExcludes: string[]`, `jsonb().default([])`
@@ -178,9 +175,7 @@ npx drizzle-kit push
  * 유입경로 "항상 제외" 규칙만 갱신한다. blog_settings row(id=1)가
  * 이미 존재한다고 가정한다 — 최초 블로그 설정은 항상 SettingsFormAction으로 먼저 만들어진다.
  */
-export async function updateReferrerExcludes(
-  excludes: string[]
-): Promise<void> {
+export async function updateReferrerExcludes(excludes: string[]): Promise<void> {
   await db
     .update(blogSettings)
     .set({ referrerExcludes: excludes, updatedAt: new Date() })
@@ -257,14 +252,12 @@ git commit -m "✨ feat: referrerExcludes 컬럼과 기간 비교 쿼리 추가"
 ## Task 2: 공용 기간 세그먼트 + 방문 통계 페이지 기간 연동
 
 **Files:**
-
 - Create: `src/app/admin/statistics/_actions/period-filter.action.tsx`
 - Delete: `src/app/admin/statistics/referrers/_actions/referrer-period-filter.action.tsx`
 - Modify: `src/app/admin/statistics/page.tsx`
 - Modify: `src/app/admin/statistics/referrers/page.tsx`
 
 **Interfaces:**
-
 - Consumes: Task 1의 `selectPeriodComparison`
 - Produces: `PeriodFilterAction({ basePath, current })` — Task 3(직전 기간 카드)이 같은 페이지에서 `days` 값을 공유한다
 
@@ -316,6 +309,8 @@ export function PeriodFilterAction({ basePath, current }: Props) {
 `src/app/admin/statistics/page.tsx` 전체 교체:
 
 ```tsx
+export const revalidate = 60;
+
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -332,12 +327,10 @@ import {
   selectStatsSummary,
 } from '@/db/queries/daily-stats';
 import { selectPopularPosts } from '@/db/queries/statistics';
-import { PeriodFilterAction } from './_actions/period-filter.action';
 import { AnalyticsLinkButton } from './_components/analytics-link-button';
+import { PeriodFilterAction } from './_actions/period-filter.action';
 import { StatCard } from './_components/stat-card';
 import { StatsChart } from './_components/stats-chart';
-
-export const revalidate = 60;
 
 type Props = {
   searchParams: Promise<{ days?: string }>;
@@ -491,10 +484,10 @@ import { PeriodFilterAction } from '../_actions/period-filter.action';
 ```
 
 ```tsx
-<PeriodFilterAction
-  basePath="/admin/statistics/referrers"
-  current={currentPeriod}
-/>
+          <PeriodFilterAction
+            basePath="/admin/statistics/referrers"
+            current={currentPeriod}
+          />
 ```
 
 - [x] **Step 4: 옛 필터 컴포넌트 삭제**
@@ -517,13 +510,11 @@ git commit -m "✨ feat: 방문 통계·유입경로에 공용 기간 세그먼�
 ## Task 3: 직전 기간 대비 증감 카드
 
 **Files:**
-
 - Create: `src/app/admin/statistics/_components/period-change-badge.tsx`
 - Test: `src/app/admin/statistics/_components/period-change-badge.test.tsx`
 - Modify: `src/app/admin/statistics/_components/stat-card.tsx`
 
 **Interfaces:**
-
 - Consumes: Task 2가 이미 `page.tsx`에서 넘기기 시작한 `StatCard`의 `change` prop
 - Produces: `PeriodChangeBadge({ current, previous })`, `StatCard`의 `change?: { current: number; previous: number }` prop — Task 2의 `page.tsx`가 이미 소비하고 있다
 
@@ -592,8 +583,7 @@ export function PeriodChangeBadge({ current, previous }: Props) {
     );
   }
 
-  const changePercent =
-    Math.round(((current - previous) / previous) * 1000) / 10;
+  const changePercent = Math.round(((current - previous) / previous) * 1000) / 10;
 
   if (changePercent === 0) {
     return <span className="text-muted-foreground text-xs">변동 없음</span>;
@@ -642,10 +632,7 @@ export function StatCard({ label, value, change }: Props) {
       <span className="text-muted-foreground text-xs">{label}</span>
       <span className="text-2xl font-bold">{value.toLocaleString()}</span>
       {change && (
-        <PeriodChangeBadge
-          current={change.current}
-          previous={change.previous}
-        />
+        <PeriodChangeBadge current={change.current} previous={change.previous} />
       )}
     </div>
   );
@@ -674,13 +661,11 @@ git commit -m "✨ feat: 직전 기간 대비 증감 뱃지 추가"
 ## Task 4: 대시보드 추이 차트
 
 **Files:**
-
 - Move: `src/app/admin/statistics/_components/stats-chart.tsx` → `src/app/admin/_components/stats-chart.tsx`
 - Modify: `src/app/admin/statistics/page.tsx` (import 경로만)
 - Modify: `src/app/admin/page.tsx`
 
 **Interfaces:**
-
 - Consumes: 기존 `selectDailyStatsForRange`(`@/db/queries/daily-stats`)
 - Produces: 어드민 공용 위치의 `StatsChart` — 이 태스크 이후로는 대시보드·방문 통계 양쪽이 같은 파일을 참조한다
 
@@ -707,16 +692,13 @@ import { StatsChart } from '../_components/stats-chart';
 ```tsx
 import { Eye, FileText, MessageSquare, PenLine } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getAdminDashboardStats, getRecentPostsForAdmin } from '@/db/queries/posts';
 import { getRecentComments } from '@/db/queries/comments';
 import { selectDailyStatsForRange } from '@/db/queries/daily-stats';
-import {
-  getAdminDashboardStats,
-  getRecentPostsForAdmin,
-} from '@/db/queries/posts';
 import { AdminPageHeader } from './_components/admin-page-header';
-import { QuickActions } from './_components/quick-actions';
-import { RecentCommentsWidget } from './_components/recent-comments-widget';
 import { RecentPostsWidget } from './_components/recent-posts-widget';
+import { RecentCommentsWidget } from './_components/recent-comments-widget';
+import { QuickActions } from './_components/quick-actions';
 import { StatsChart } from './_components/stats-chart';
 
 export default async function AdminDashboardPage() {
@@ -802,12 +784,10 @@ git commit -m "✨ feat: 대시보드에 방문 추이 차트 추가"
 ## Task 5: 유입경로 — "항상 제외" 필터 적용
 
 **Files:**
-
 - Modify: `src/db/queries/statistics.ts` (`selectTopReferrers`)
 - Modify: `src/app/admin/statistics/referrers/page.tsx`
 
 **Interfaces:**
-
 - Consumes: Task 1의 `blogSettings.referrerExcludes`
 - Produces: `selectTopReferrers(limit?, days?, excludes?: string[])` — 「결정 사항」대로 JS 집계로 재작성
 
@@ -876,12 +856,12 @@ import { getBlogSettings } from '@/db/queries/settings';
 ```
 
 ```tsx
-const settings = await getBlogSettings();
-const referrerList = await selectTopReferrers(
-  20,
-  days,
-  settings?.referrerExcludes ?? []
-);
+  const settings = await getBlogSettings();
+  const referrerList = await selectTopReferrers(
+    20,
+    days,
+    settings?.referrerExcludes ?? []
+  );
 ```
 
 - [x] **Step 3: 타입 체크**
@@ -904,7 +884,6 @@ git commit -m "♻️ refactor: 유입경로 집계에 항상 제외 규칙 적�
 ## Task 6: 유입경로 — "항상 제외" 규칙 관리 UI
 
 **Files:**
-
 - Create: `src/app/admin/statistics/referrers/_services/edit-referrer-excludes.ts`
 - Test: `src/app/admin/statistics/referrers/_services/edit-referrer-excludes.test.ts`
 - Create: `src/app/admin/statistics/referrers/_actions/referrer-excludes-form.action.tsx`
@@ -912,7 +891,6 @@ git commit -m "♻️ refactor: 유입경로 집계에 항상 제외 규칙 적�
 - Modify: `src/app/admin/statistics/referrers/page.tsx`
 
 **Interfaces:**
-
 - Consumes: Task 1의 `updateReferrerExcludes`
 - Produces: `editReferrerExcludes(excludes: string[]): Promise<Result>`, `ReferrerExcludesFormAction({ excludes: string[] })` — `page.tsx`가 현재 저장된 `referrerExcludes`를 넘겨 렌더한다
 
@@ -990,9 +968,7 @@ import { updateReferrerExcludes } from '@/db/queries/settings';
 
 type Result = { success: true } | { success: false; error: string };
 
-export async function editReferrerExcludes(
-  excludes: string[]
-): Promise<Result> {
+export async function editReferrerExcludes(excludes: string[]): Promise<Result> {
   const { userId } = await auth();
   if (!userId) {
     return { success: false, error: '인증이 필요합니다' };
@@ -1070,9 +1046,7 @@ describe('ReferrerExcludesFormAction', () => {
 
   it('칩의 삭제 버튼을 누르면 그 항목을 뺀 목록으로 저장한다', async () => {
     vi.mocked(editReferrerExcludes).mockResolvedValue({ success: true });
-    render(
-      <ReferrerExcludesFormAction excludes={['t.co', 'l.facebook.com']} />
-    );
+    render(<ReferrerExcludesFormAction excludes={['t.co', 'l.facebook.com']} />);
 
     fireEvent.click(
       screen.getByRole('button', { name: 't.co 제외 목록에서 삭제' })
@@ -1215,14 +1189,14 @@ import { ReferrerExcludesFormAction } from './_actions/referrer-excludes-form.ac
 ```
 
 ```tsx
-<Card className="mb-6">
-  <CardHeader>
-    <CardTitle className="text-base">항상 제외</CardTitle>
-  </CardHeader>
-  <CardContent>
-    <ReferrerExcludesFormAction excludes={settings?.referrerExcludes ?? []} />
-  </CardContent>
-</Card>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-base">항상 제외</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ReferrerExcludesFormAction excludes={settings?.referrerExcludes ?? []} />
+        </CardContent>
+      </Card>
 ```
 
 - [x] **Step 10: 전체 검증**
@@ -1253,13 +1227,11 @@ git commit -m "✨ feat: 유입경로 항상 제외 규칙 관리 UI 추가"
 ## Task 7: 블로그 설정 — 하단 플로팅 저장 바 + `editSettings` 정리
 
 **Files:**
-
 - Modify: `src/app/admin/settings/_services/edit-settings.ts`
 - Modify: `src/app/admin/settings/_actions/settings-form.action.tsx`
 - Modify: `src/app/admin/settings/_actions/settings-form.action.test.tsx`
 
 **Interfaces:**
-
 - Consumes: 없음
 - Produces: `editSettings(data: BlogSettingsFormValues): Promise<{ success: true } | { success: false; error: string }>` — 다른 Server Action과 동일한 반환 패턴. `SettingsFormAction`의 섹션 `id="basic"`/`id="social"` — Task 8의 좌측 내비게이션이 이 id로 이동한다
 
@@ -1315,16 +1287,16 @@ export async function editSettings(
 ```tsx
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import type { BlogSettings } from '@/db/queries/settings';
+import { Label } from '@/components/ui/label';
 import { editSettings } from '../_services/edit-settings';
+import type { BlogSettings } from '@/db/queries/settings';
 
 const blogSettingsSchema = z.object({
   blogName: z.string().min(1, '블로그 이름은 필수입니다').max(100),
@@ -1337,11 +1309,7 @@ const blogSettingsSchema = z.object({
     .optional()
     .or(z.literal('')),
   defaultMetaDescription: z.string().max(300).optional(),
-  github: z
-    .string()
-    .url('유효한 URL을 입력하세요')
-    .optional()
-    .or(z.literal('')),
+  github: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
   twitter: z
     .string()
     .url('유효한 URL을 입력하세요')
@@ -1401,9 +1369,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
           <Label htmlFor="blogName">블로그 이름 *</Label>
           <Input id="blogName" {...register('blogName')} />
           {errors.blogName && (
-            <p className="text-destructive text-sm">
-              {errors.blogName.message}
-            </p>
+            <p className="text-destructive text-sm">{errors.blogName.message}</p>
           )}
         </div>
 
@@ -1489,9 +1455,7 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('linkedin')}
           />
           {errors.linkedin && (
-            <p className="text-destructive text-sm">
-              {errors.linkedin.message}
-            </p>
+            <p className="text-destructive text-sm">{errors.linkedin.message}</p>
           )}
         </div>
       </section>
@@ -1525,12 +1489,9 @@ export function SettingsFormAction({ defaultValues }: Props) {
 새 컴포넌트는 폼이 dirty할 때만 저장 버튼(문구도 `저장` → `변경사항 저장`)을 렌더한다. 기존 "저장 버튼이 렌더링된다"·"블로그 이름이 없으면 유효성 에러가 표시된다" 테스트가 이 전제를 깨므로, `src/app/admin/settings/_actions/settings-form.action.test.tsx`를 아래 내용으로 전체 교체한다 (zod 스키마 테스트 블록은 그대로 유지):
 
 ```tsx
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { toast } from 'sonner';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { z } from 'zod';
-import { editSettings } from '../_services/edit-settings';
-import { SettingsFormAction } from './settings-form.action';
 
 // next/link mock
 vi.mock('next/link', () => ({
@@ -1559,6 +1520,10 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
+import { SettingsFormAction } from './settings-form.action';
+import { editSettings } from '../_services/edit-settings';
+import { toast } from 'sonner';
+
 // -------------------------------------------------------------------
 // zod 스키마 단위 테스트
 // -------------------------------------------------------------------
@@ -1574,11 +1539,7 @@ const blogSettingsSchema = z.object({
     .optional()
     .or(z.literal('')),
   defaultMetaDescription: z.string().max(300).optional(),
-  github: z
-    .string()
-    .url('유효한 URL을 입력하세요')
-    .optional()
-    .or(z.literal('')),
+  github: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
   twitter: z
     .string()
     .url('유효한 URL을 입력하세요')
@@ -1702,7 +1663,7 @@ describe('SettingsFormAction', () => {
     expect(screen.getByLabelText('태그라인')).toHaveValue('기록하는 블로그');
     expect(screen.getByLabelText('소개')).toHaveValue('개발자');
     expect(screen.getByLabelText('GitHub')).toHaveValue(
-      'https://github.com/test'
+      'https://github.com/test',
     );
   });
 
@@ -1715,7 +1676,9 @@ describe('SettingsFormAction', () => {
     fireEvent.click(screen.getByRole('button', { name: '변경사항 저장' }));
 
     await waitFor(() => {
-      expect(screen.getByText('블로그 이름은 필수입니다')).toBeInTheDocument();
+      expect(
+        screen.getByText('블로그 이름은 필수입니다'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -1730,7 +1693,7 @@ describe('SettingsFormAction', () => {
 
     await waitFor(() => {
       expect(editSettings).toHaveBeenCalledWith(
-        expect.objectContaining({ blogName: 'YJlogs' })
+        expect.objectContaining({ blogName: 'YJlogs' }),
       );
     });
   });
@@ -1796,12 +1759,10 @@ git commit -m "✨ feat: 블로그 설정 하단 플로팅 저장 바 + editSett
 ## Task 8: 블로그 설정 — 좌측 앵커 내비게이션
 
 **Files:**
-
 - Create: `src/app/admin/settings/_components/settings-nav.tsx`
 - Modify: `src/app/admin/settings/page.tsx`
 
 **Interfaces:**
-
 - Consumes: Task 7이 붙인 `id="basic"`/`id="social"`
 - Produces: `SettingsNav({ sections: { id: string; label: string }[] })` — `page.tsx`가 렌더한다
 
@@ -1892,7 +1853,6 @@ git commit -m "✨ feat: 블로그 설정에 좌측 앵커 내비게이션 추�
 **Files:** 없음 (검증 전용)
 
 **Interfaces:**
-
 - Consumes: Task 1~8 전부
 - Produces: 없음
 

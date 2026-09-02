@@ -57,18 +57,12 @@ import { renderToString } from 'react-dom/server';
 import { HeroArea } from './hero.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
-  ),
+  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
 }));
 vi.mock('next/link', () => ({
-  default: ({
-    href,
-    children,
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => <a href={href}>{children}</a>,
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 beforeAll(() => {
@@ -83,7 +77,7 @@ beforeAll(() => {
         addEventListener: () => {},
         removeEventListener: () => {},
         dispatchEvent: () => false,
-      }) as MediaQueryList
+      }) as MediaQueryList,
   );
 });
 
@@ -134,12 +128,10 @@ rm "src/app/(main)/apps/ralli/_areas/__probe.test.tsx"
 ## Task 1: hero.area.tsx의 `isStatic` 분기를 평범한 엘리먼트로 교체
 
 **Files:**
-
 - Modify: `src/app/(main)/apps/ralli/_areas/hero.area.tsx`
 - Test: `src/app/(main)/apps/ralli/_areas/hero.area.reduced-motion.test.tsx` (신규)
 
 **Interfaces:**
-
 - Consumes: `useSectionProgress(offset)` → `{ ref, progress, isStatic }` (기존), `scoreAt(progress)` → `RalliScore` (기존)
 - Produces: 없음 (외부 인터페이스 변화 없음 — `HeroArea`의 props와 export는 그대로다)
 
@@ -154,19 +146,13 @@ import { renderToString } from 'react-dom/server';
 import { HeroArea } from './hero.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
-  ),
+  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
 }));
 
 vi.mock('next/link', () => ({
-  default: ({
-    href,
-    children,
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => <a href={href}>{children}</a>,
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 /**
@@ -186,7 +172,7 @@ beforeAll(() => {
         addEventListener: () => {},
         removeEventListener: () => {},
         dispatchEvent: () => false,
-      }) as MediaQueryList
+      }) as MediaQueryList,
   );
 });
 
@@ -258,9 +244,7 @@ describe('HeroArea — reduced-motion hydration 회귀', () => {
   it('App Store CTA와 태그라인이 DOM에 존재한다', async () => {
     const { container, cleanup } = await hydrateHero();
 
-    expect(container.querySelector('h1')?.textContent).toContain(
-      'right on your wrist.'
-    );
+    expect(container.querySelector('h1')?.textContent).toContain('right on your wrist.');
     expect(container.querySelector('a[href*="apps.apple.com"]')).toBeTruthy();
 
     await cleanup();
@@ -309,14 +293,12 @@ function HeroWatchShot() {
 function HeroScore({ score }: { score: RalliScore }) {
   return (
     <>
-      <p className="mb-1.5 text-xs font-bold tracking-[0.22em] text-ralli-fg/45">
-        GAME POINT
-      </p>
+      <p className="mb-1.5 text-xs font-bold tracking-[0.22em] text-ralli-fg/45">GAME POINT</p>
       <p
         data-testid="ralli-hero-score"
         className={cn(
           'font-extrabold leading-[0.85] tracking-[-0.05em] text-ralli-lime tabular-nums',
-          score === 'GAME' ? 'text-[min(7vw,84px)]' : 'text-[min(11vw,132px)]'
+          score === 'GAME' ? 'text-[min(7vw,84px)]' : 'text-[min(11vw,132px)]',
         )}
       >
         {score}
@@ -340,9 +322,7 @@ function HeroCopy() {
       </p>
       <div className="flex flex-wrap items-center gap-3">
         <RalliCtaButton appStoreUrl={ralliMeta.appStoreUrl} />
-        <span className="text-[13px] text-ralli-fg/40">
-          {ralliMeta.platforms}
-        </span>
+        <span className="text-[13px] text-ralli-fg/40">{ralliMeta.platforms}</span>
       </div>
     </>
   );
@@ -354,27 +334,21 @@ function HeroCopy() {
 기존:
 
 ```tsx
-<motion.div
-  aria-hidden="true"
-  style={isStatic ? undefined : { scale: glowScale }}
-  className="absolute size-[120vh] rounded-full bg-[radial-gradient(circle,rgba(200,255,61,0.16)_0%,rgba(52,199,89,0.06)_40%,transparent_68%)] blur-[10px]"
-/>
+        <motion.div
+          aria-hidden="true"
+          style={isStatic ? undefined : { scale: glowScale }}
+          className="absolute size-[120vh] rounded-full bg-[radial-gradient(circle,rgba(200,255,61,0.16)_0%,rgba(52,199,89,0.06)_40%,transparent_68%)] blur-[10px]"
+        />
 ```
 
 교체:
 
 ```tsx
-{
-  isStatic ? (
-    <div aria-hidden="true" className={GLOW_CLASS} />
-  ) : (
-    <motion.div
-      aria-hidden="true"
-      style={{ scale: glowScale }}
-      className={GLOW_CLASS}
-    />
-  );
-}
+        {isStatic ? (
+          <div aria-hidden="true" className={GLOW_CLASS} />
+        ) : (
+          <motion.div aria-hidden="true" style={{ scale: glowScale }} className={GLOW_CLASS} />
+        )}
 ```
 
 - [x] **Step 5: 워치 이미지를 엘리먼트 타입 분기로 바꾼다**
@@ -382,50 +356,38 @@ function HeroCopy() {
 기존 (`RalliShot`을 감싼 `motion.div` 블록 전체):
 
 ```tsx
-<motion.div
-  style={
-    isStatic
-      ? undefined
-      : {
-          scale: watchScale,
-          rotate: watchRotate,
-          y: watchY,
-          opacity: watchOpacity,
-        }
-  }
-  className="relative z-3"
->
-  <RalliShot
-    image={ralliHeroShot}
-    priority
-    sizes="(max-width: 768px) 44vh, 64vh"
-    className="h-[44vh] max-h-140 md:h-[64vh]"
-  />
-</motion.div>
+        <motion.div
+          style={
+            isStatic
+              ? undefined
+              : { scale: watchScale, rotate: watchRotate, y: watchY, opacity: watchOpacity }
+          }
+          className="relative z-3"
+        >
+          <RalliShot
+            image={ralliHeroShot}
+            priority
+            sizes="(max-width: 768px) 44vh, 64vh"
+            className="h-[44vh] max-h-140 md:h-[64vh]"
+          />
+        </motion.div>
 ```
 
 교체:
 
 ```tsx
-{
-  isStatic ? (
-    <div className={WATCH_CLASS}>
-      <HeroWatchShot />
-    </div>
-  ) : (
-    <motion.div
-      style={{
-        scale: watchScale,
-        rotate: watchRotate,
-        y: watchY,
-        opacity: watchOpacity,
-      }}
-      className={WATCH_CLASS}
-    >
-      <HeroWatchShot />
-    </motion.div>
-  );
-}
+        {isStatic ? (
+          <div className={WATCH_CLASS}>
+            <HeroWatchShot />
+          </div>
+        ) : (
+          <motion.div
+            style={{ scale: watchScale, rotate: watchRotate, y: watchY, opacity: watchOpacity }}
+            className={WATCH_CLASS}
+          >
+            <HeroWatchShot />
+          </motion.div>
+        )}
 ```
 
 - [x] **Step 6: 스코어 블록을 엘리먼트 타입 분기로 바꾼다**
@@ -433,17 +395,15 @@ function HeroCopy() {
 기존 `style={isStatic ? undefined : { opacity: scoreOpacity }}`를 가진 `motion.div` 블록 전체를 교체:
 
 ```tsx
-{
-  isStatic ? (
-    <div className={SCORE_CLASS}>
-      <HeroScore score={score} />
-    </div>
-  ) : (
-    <motion.div style={{ opacity: scoreOpacity }} className={SCORE_CLASS}>
-      <HeroScore score={score} />
-    </motion.div>
-  );
-}
+        {isStatic ? (
+          <div className={SCORE_CLASS}>
+            <HeroScore score={score} />
+          </div>
+        ) : (
+          <motion.div style={{ opacity: scoreOpacity }} className={SCORE_CLASS}>
+            <HeroScore score={score} />
+          </motion.div>
+        )}
 ```
 
 - [x] **Step 7: 태그라인·CTA 블록을 엘리먼트 타입 분기로 바꾼다**
@@ -451,20 +411,15 @@ function HeroCopy() {
 기존 `style={isStatic ? undefined : { opacity: copyOpacity, y: copyY }}`를 가진 `motion.div` 블록 전체를 교체:
 
 ```tsx
-{
-  isStatic ? (
-    <div className={COPY_CLASS}>
-      <HeroCopy />
-    </div>
-  ) : (
-    <motion.div
-      style={{ opacity: copyOpacity, y: copyY }}
-      className={COPY_CLASS}
-    >
-      <HeroCopy />
-    </motion.div>
-  );
-}
+        {isStatic ? (
+          <div className={COPY_CLASS}>
+            <HeroCopy />
+          </div>
+        ) : (
+          <motion.div style={{ opacity: copyOpacity, y: copyY }} className={COPY_CLASS}>
+            <HeroCopy />
+          </motion.div>
+        )}
 ```
 
 - [x] **Step 8: 회귀 테스트가 통과하는지 확인한다**
@@ -479,12 +434,12 @@ Expected: PASS (4 tests)
 Step 7에서 바꾼 태그라인 블록을 **일시적으로** 원래의 결함 패턴으로 되돌린다:
 
 ```tsx
-<motion.div
-  style={isStatic ? undefined : { opacity: copyOpacity, y: copyY }}
-  className={COPY_CLASS}
->
-  <HeroCopy />
-</motion.div>
+        <motion.div
+          style={isStatic ? undefined : { opacity: copyOpacity, y: copyY }}
+          className={COPY_CLASS}
+        >
+          <HeroCopy />
+        </motion.div>
 ```
 
 Run: `npx vitest run "src/app/(main)/apps/ralli/_areas/hero.area.reduced-motion.test.tsx"`
@@ -532,13 +487,11 @@ renderToString + hydrateRoot로 실제 hydration 시퀀스를 재현하는 회�
 README의 "남아있는 개선 여지"에 기록되어 있던 항목이다. Task 1과 파일도 성격도 다르므로 별도 커밋으로 분리한다.
 
 **Files:**
-
 - Modify: `src/app/(main)/apps/ralli/_components/ralli-shot.tsx`
 - Modify: `src/app/(main)/apps/ralli/_areas/watch.area.tsx`
 - Test: `src/app/(main)/apps/ralli/_areas/watch.area.test.tsx` (기존 파일에 케이스 추가)
 
 **Interfaces:**
-
 - Consumes: `RalliShot({ image, className?, sizes?, priority? })` (기존)
 - Produces: `RalliShot({ image, className?, sizes?, priority?, ariaHidden? })` — `ariaHidden`은 optional이라 기존 호출부(`replay`·`rules`·`workout`·`hero` area) 전부 무영향
 
@@ -565,17 +518,17 @@ vi.mock('next/image', () => ({
 그리고 케이스를 추가한다:
 
 ```tsx
-it('비활성 이미지는 스크린 리더에서 숨긴다', () => {
-  render(<WatchArea />);
+  it('비활성 이미지는 스크린 리더에서 숨긴다', () => {
+    render(<WatchArea />);
 
-  // 이미지 자신에 aria-hidden이 붙어야 한다 — 래퍼 div에 걸면 접근성 트리에서
-  // img 요소 자체는 여전히 노출된다
-  const images = screen.getAllByRole('img', { hidden: true });
-  expect(images).toHaveLength(ralliWatchSection.steps.length);
-  expect(images[0]).not.toHaveAttribute('aria-hidden', 'true');
-  expect(images[1]).toHaveAttribute('aria-hidden', 'true');
-  expect(images[2]).toHaveAttribute('aria-hidden', 'true');
-});
+    // 이미지 자신에 aria-hidden이 붙어야 한다 — 래퍼 div에 걸면 접근성 트리에서
+    // img 요소 자체는 여전히 노출된다
+    const images = screen.getAllByRole('img', { hidden: true });
+    expect(images).toHaveLength(ralliWatchSection.steps.length);
+    expect(images[0]).not.toHaveAttribute('aria-hidden', 'true');
+    expect(images[1]).toHaveAttribute('aria-hidden', 'true');
+    expect(images[2]).toHaveAttribute('aria-hidden', 'true');
+  });
 ```
 
 파일 상단 import에 추가한다:
@@ -606,25 +559,14 @@ type Props = {
   ariaHidden?: boolean;
 };
 
-export function RalliShot({
-  image,
-  className,
-  sizes,
-  priority = false,
-  ariaHidden,
-}: Props) {
+export function RalliShot({ image, className, sizes, priority = false, ariaHidden }: Props) {
   return (
     <Image
       src={image.src}
       alt={image.alt}
       width={image.width}
       height={image.height}
-      sizes={
-        sizes ??
-        (image.kind === 'watch'
-          ? '(max-width: 768px) 40vw, 26vw'
-          : '(max-width: 768px) 60vw, 30vw')
-      }
+      sizes={sizes ?? (image.kind === 'watch' ? '(max-width: 768px) 40vw, 26vw' : '(max-width: 768px) 60vw, 30vw')}
       priority={priority}
       aria-hidden={ariaHidden}
       className={cn('ralli-shot-mask w-auto object-contain', className)}
@@ -640,53 +582,43 @@ export function RalliShot({
 기존:
 
 ```tsx
-{
-  ralliWatchSection.steps.map((step, index) => (
-    <motion.div
-      key={step.id}
-      className="absolute"
-      animate={{
-        opacity: isStatic
-          ? index === 0
-            ? 1
-            : 0
-          : index === activeIndex
-            ? 1
-            : 0,
-        scale: index === activeIndex ? 1 : 0.94,
-      }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
-    >
-      <RalliShot image={step.image} className="max-h-[38vh] md:max-h-[58vh]" />
-    </motion.div>
-  ));
-}
+          {ralliWatchSection.steps.map((step, index) => (
+            <motion.div
+              key={step.id}
+              className="absolute"
+              animate={{
+                opacity: isStatic ? (index === 0 ? 1 : 0) : index === activeIndex ? 1 : 0,
+                scale: index === activeIndex ? 1 : 0.94,
+              }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+            >
+              <RalliShot image={step.image} className="max-h-[38vh] md:max-h-[58vh]" />
+            </motion.div>
+          ))}
 ```
 
 교체 — "지금 보여줄 이미지"를 변수 하나로 뽑아 `opacity`·`scale`·`aria-hidden` 셋이 항상 같은 판단을 따르게 한다:
 
 ```tsx
-{
-  ralliWatchSection.steps.map((step, index) => {
-    // static일 때는 첫 장만 보여준다. scale도 이 판단을 따라야
-    // 정적 모드에서 축소된 채로 남지 않는다.
-    const isShown = isStatic ? index === 0 : index === activeIndex;
-    return (
-      <motion.div
-        key={step.id}
-        className="absolute"
-        animate={{ opacity: isShown ? 1 : 0, scale: isShown ? 1 : 0.94 }}
-        transition={{ duration: 0.35, ease: 'easeOut' }}
-      >
-        <RalliShot
-          image={step.image}
-          ariaHidden={!isShown}
-          className="max-h-[38vh] md:max-h-[58vh]"
-        />
-      </motion.div>
-    );
-  });
-}
+          {ralliWatchSection.steps.map((step, index) => {
+            // static일 때는 첫 장만 보여준다. scale도 이 판단을 따라야
+            // 정적 모드에서 축소된 채로 남지 않는다.
+            const isShown = isStatic ? index === 0 : index === activeIndex;
+            return (
+              <motion.div
+                key={step.id}
+                className="absolute"
+                animate={{ opacity: isShown ? 1 : 0, scale: isShown ? 1 : 0.94 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <RalliShot
+                  image={step.image}
+                  ariaHidden={!isShown}
+                  className="max-h-[38vh] md:max-h-[58vh]"
+                />
+              </motion.div>
+            );
+          })}
 ```
 
 > `animate`에 항상 구체적 값을 넘기는 방식은 그대로 유지한다. 이 패턴은 framer-motion이 스타일 소유권을 계속 갖고 있어 Task 1이 고친 결함과 무관하다.
@@ -723,11 +655,9 @@ isShown 하나로 판단을 통일해 함께 고쳤다."
 ## Task 3: E2E reduced-motion 테스트 강화
 
 **Files:**
-
 - Modify: `e2e/ralli.spec.ts`
 
 **Interfaces:**
-
 - Consumes: Task 1·2의 수정 결과
 - Produces: 없음
 
@@ -753,48 +683,44 @@ lsof -i :3000
 `e2e/ralli.spec.ts`의 `test.describe('reduced-motion', ...)` 블록 안, 기존 `test` 뒤에 추가한다:
 
 ```ts
-test('히어로 태그라인·CTA·스코어가 실제로 보인다', async ({ page }) => {
-  await page.goto('/apps/ralli');
+  test('히어로 태그라인·CTA·스코어가 실제로 보인다', async ({ page }) => {
+    await page.goto('/apps/ralli');
 
-  // toBeVisible()은 opacity:0을 감지하지 못한다.
-  // stale 스타일은 래퍼에 붙으므로 조상의 opacity까지 곱해 실효값을 구한다.
-  const effectiveOpacity = (selector: string) =>
-    page
-      .locator(selector)
+    // toBeVisible()은 opacity:0을 감지하지 못한다.
+    // stale 스타일은 래퍼에 붙으므로 조상의 opacity까지 곱해 실효값을 구한다.
+    const effectiveOpacity = (selector: string) =>
+      page
+        .locator(selector)
+        .first()
+        .evaluate((el) => {
+          let node: HTMLElement | null = el as HTMLElement;
+          let acc = 1;
+          while (node) {
+            acc *= Number(getComputedStyle(node).opacity);
+            node = node.parentElement;
+          }
+          return acc;
+        });
+
+    expect(await effectiveOpacity('h1')).toBeGreaterThan(0.9);
+    expect(await effectiveOpacity(`a[href="${APP_STORE_URL}"]`)).toBeGreaterThan(0.9);
+    expect(await effectiveOpacity('[data-testid="ralli-hero-score"]')).toBeGreaterThan(0.9);
+  });
+
+  test('히어로 워치 이미지가 축소되지 않는다', async ({ page }) => {
+    await page.goto('/apps/ralli');
+
+    const transform = await page
+      .locator('img[alt*="Apple Watch"]')
       .first()
       .evaluate((el) => {
-        let node: HTMLElement | null = el as HTMLElement;
-        let acc = 1;
-        while (node) {
-          acc *= Number(getComputedStyle(node).opacity);
-          node = node.parentElement;
-        }
-        return acc;
+        const wrapper = el.closest('div');
+        return wrapper ? getComputedStyle(wrapper).transform : '';
       });
 
-  expect(await effectiveOpacity('h1')).toBeGreaterThan(0.9);
-  expect(await effectiveOpacity(`a[href="${APP_STORE_URL}"]`)).toBeGreaterThan(
-    0.9
-  );
-  expect(
-    await effectiveOpacity('[data-testid="ralli-hero-score"]')
-  ).toBeGreaterThan(0.9);
-});
-
-test('히어로 워치 이미지가 축소되지 않는다', async ({ page }) => {
-  await page.goto('/apps/ralli');
-
-  const transform = await page
-    .locator('img[alt*="Apple Watch"]')
-    .first()
-    .evaluate((el) => {
-      const wrapper = el.closest('div');
-      return wrapper ? getComputedStyle(wrapper).transform : '';
-    });
-
-  // 결함이 있으면 scale(0.62) rotate(-4deg)가 남는다
-  expect(['none', '']).toContain(transform);
-});
+    // 결함이 있으면 scale(0.62) rotate(-4deg)가 남는다
+    expect(['none', '']).toContain(transform);
+  });
 ```
 
 - [x] **Step 4: E2E를 실행한다**
@@ -821,11 +747,9 @@ toBeVisible()이 opacity:0을 감지하지 못해 이 결함을 놓쳤다.
 ## Task 4: README 갱신과 최종 검증
 
 **Files:**
-
 - Modify: `src/app/(main)/apps/ralli/README.md`
 
 **Interfaces:**
-
 - Consumes: Task 1·2의 수정 결과
 - Produces: 없음
 
@@ -850,14 +774,10 @@ toBeVisible()이 opacity:0을 감지하지 못해 이 결함을 놓쳤다.
 ```tsx
 // ✅ 엘리먼트 타입을 바꾼다 — React가 노드를 교체해 stale 스타일이 따라오지 않는다
 if (isStatic) return <div className={CLASS}>{children}</div>;
-return (
-  <motion.div style={{ opacity }} className={CLASS}>
-    {children}
-  </motion.div>
-);
+return <motion.div style={{ opacity }} className={CLASS}>{children}</motion.div>;
 
 // ✅ 구체적인 값을 넘긴다 — framer-motion이 소유권을 유지하며 값을 갱신한다
-<motion.div animate={{ opacity: isShown ? 1 : 0 }} />;
+<motion.div animate={{ opacity: isShown ? 1 : 0 }} />
 ```
 
 이 결함은 2026-08-18에 실제로 발견되어 수정됐다. 당시 히어로의 h1·부제·App Store CTA·스코어가 reduced-motion 사용자에게 보이지 않았다. 회귀 테스트는 [`_areas/hero.area.reduced-motion.test.tsx`](_areas/hero.area.reduced-motion.test.tsx)에 있다 — RTL의 `render()`(`createRoot`)로는 이 시퀀스를 재현할 수 없어 `renderToString` + `hydrateRoot`를 쓴다.

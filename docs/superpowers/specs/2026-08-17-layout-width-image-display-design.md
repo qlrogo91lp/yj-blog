@@ -17,21 +17,21 @@
 
 ### 1. 폭 기준이 다섯 갈래
 
-| 폭                      | 페이지                                                  |
-| ----------------------- | ------------------------------------------------------- |
-| `--content-width` 980px | 헤더, 푸터, 홈, 글 목록, 태그·카테고리 상세             |
-| `--article-width` 653px | 글 상세 본문, 댓글                                      |
-| `max-w-3xl` 768px       | 시리즈 목록·상세, 태그 목록, apps 목록·상세, playground |
-| `max-w-2xl` 672px       | ralli privacy                                           |
-| `max-w-295` 1180px      | ralli 랜딩 (자체 디자인 스케일)                         |
+| 폭 | 페이지 |
+|------|--------|
+| `--content-width` 980px | 헤더, 푸터, 홈, 글 목록, 태그·카테고리 상세 |
+| `--article-width` 653px | 글 상세 본문, 댓글 |
+| `max-w-3xl` 768px | 시리즈 목록·상세, 태그 목록, apps 목록·상세, playground |
+| `max-w-2xl` 672px | ralli privacy |
+| `max-w-295` 1180px | ralli 랜딩 (자체 디자인 스케일) |
 
 ### 2. 컨테이너마다 변수의 의미가 다름
 
-| 위치                       | 클래스                                         | 변수값 | 실제 콘텐츠 폭 |
-| -------------------------- | ---------------------------------------------- | ------ | -------------- |
-| `content-container.tsx:10` | `max-w-[var(--content-width)] px-4`            | 980    | **948px**      |
-| `posts/[slug]/page.tsx:97` | `max-w-[calc(var(--article-width)+2rem)] px-4` | 653    | **653px**      |
-| `comment-section.tsx:13`   | `max-w-[var(--article-width)] px-4`            | 653    | **621px**      |
+| 위치 | 클래스 | 변수값 | 실제 콘텐츠 폭 |
+|------|--------|--------|----------------|
+| `content-container.tsx:10` | `max-w-[var(--content-width)] px-4` | 980 | **948px** |
+| `posts/[slug]/page.tsx:97` | `max-w-[calc(var(--article-width)+2rem)] px-4` | 653 | **653px** |
+| `comment-section.tsx:13` | `max-w-[var(--article-width)] px-4` | 653 | **621px** |
 
 같은 변수를 쓰면서 실폭이 32px씩 어긋난다. 그 결과 댓글이 본문보다 좁게 렌더되고, 목록 실폭(948px)과 `full` 이미지 폭(980px)의 기준선도 맞지 않는다.
 
@@ -47,13 +47,13 @@
 
 ## 실측 레퍼런스 — Apple Newsroom (뷰포트 1280px)
 
-| 항목             | 실측값                                                                               |
-| ---------------- | ------------------------------------------------------------------------------------ |
-| 본문 텍스트 컬럼 | 653px, `font-size: 17px` / `line-height: 25px`                                       |
-| 본문 이미지      | 980px full-bleed, **`border-radius: 0`**                                             |
-| 갤러리 컨테이너  | `.gallery-images` grid 1열 980px                                                     |
-| 갤러리 전환      | 이미지를 겹쳐 쌓고 활성 1장만 `visibility: visible`, 좌우 화살표(`paddlenav`)로 전환 |
-| 갤러리 캡션      | 12px, 슬라이드별 개별 캡션                                                           |
+| 항목 | 실측값 |
+|------|--------|
+| 본문 텍스트 컬럼 | 653px, `font-size: 17px` / `line-height: 25px` |
+| 본문 이미지 | 980px full-bleed, **`border-radius: 0`** |
+| 갤러리 컨테이너 | `.gallery-images` grid 1열 980px |
+| 갤러리 전환 | 이미지를 겹쳐 쌓고 활성 1장만 `visibility: visible`, 좌우 화살표(`paddlenav`)로 전환 |
+| 갤러리 캡션 | 12px, 슬라이드별 개별 캡션 |
 
 > Apple 본문 이미지에는 radius가 없다. 이번에 적용하는 16px radius는 Apple 참조가 아니라 이 블로그의 선택이다.
 >
@@ -74,9 +74,9 @@
 
 ```css
 :root {
-  --content-width: 980px; /* 목록·인덱스 콘텐츠 실폭 */
-  --article-width: 720px; /* 읽는 산문 콘텐츠 실폭 (653px에서 변경) */
-  --radius-image: 1rem; /* 16px — 본문 이미지 (신규) */
+  --content-width: 980px;   /* 목록·인덱스 콘텐츠 실폭 */
+  --article-width: 720px;   /* 읽는 산문 콘텐츠 실폭 (653px에서 변경) */
+  --radius-image: 1rem;     /* 16px — 본문 이미지 (신규) */
 }
 ```
 
@@ -103,29 +103,29 @@
 
 ### 3. 페이지 매핑
 
-| 컨테이너                   | 페이지                                           | 현재                                 |
-| -------------------------- | ------------------------------------------------ | ------------------------------------ |
-| `ArticleContainer` (720px) | 글 상세 본문 (`posts/[slug]/page.tsx:97`)        | `max-w-[calc(--article-width+2rem)]` |
-|                            | 댓글 섹션 (`comment-section.tsx:13`)             | `max-w-[var(--article-width)]`       |
-|                            | ralli privacy (`apps/ralli/privacy/page.tsx:14`) | `max-w-2xl`                          |
-| `ContentContainer` (980px) | 시리즈 목록 (`series/page.tsx:14`)               | `max-w-3xl`                          |
-|                            | 시리즈 상세 (`series/[slug]/page.tsx:42`)        | `max-w-3xl`                          |
-|                            | 태그 목록 (`tags/page.tsx:15`)                   | `max-w-3xl`                          |
-|                            | apps 목록 (`apps/page.tsx:13`)                   | `max-w-3xl`                          |
-|                            | apps 상세 (`apps/[slug]/page.tsx:36`)            | `max-w-3xl`                          |
-|                            | playground (`playground/page.tsx:11`)            | `max-w-3xl`                          |
-|                            | 홈·글 목록·태그/카테고리 상세·헤더·푸터          | 이미 `ContentContainer`              |
-| 변경 없음                  | ralli 랜딩 (`apps/ralli/**`)                     | 자체 디자인 스케일                   |
+| 컨테이너 | 페이지 | 현재 |
+|----------|--------|------|
+| `ArticleContainer` (720px) | 글 상세 본문 (`posts/[slug]/page.tsx:97`) | `max-w-[calc(--article-width+2rem)]` |
+| | 댓글 섹션 (`comment-section.tsx:13`) | `max-w-[var(--article-width)]` |
+| | ralli privacy (`apps/ralli/privacy/page.tsx:14`) | `max-w-2xl` |
+| `ContentContainer` (980px) | 시리즈 목록 (`series/page.tsx:14`) | `max-w-3xl` |
+| | 시리즈 상세 (`series/[slug]/page.tsx:42`) | `max-w-3xl` |
+| | 태그 목록 (`tags/page.tsx:15`) | `max-w-3xl` |
+| | apps 목록 (`apps/page.tsx:13`) | `max-w-3xl` |
+| | apps 상세 (`apps/[slug]/page.tsx:36`) | `max-w-3xl` |
+| | playground (`playground/page.tsx:11`) | `max-w-3xl` |
+| | 홈·글 목록·태그/카테고리 상세·헤더·푸터 | 이미 `ContentContainer` |
+| 변경 없음 | ralli 랜딩 (`apps/ralli/**`) | 자체 디자인 스케일 |
 
 작업 후 `(main)` 하위에 `max-w-3xl`·`max-w-2xl` 하드코딩은 남지 않는다.
 
 ### 4. 이미지 크기 단계 (`prose.css`, `image-extension.ts`, `image-toolbar.tsx`)
 
-| 값                     | CSS                                   | 실제 폭               | radius | 툴바 라벨  |
-| ---------------------- | ------------------------------------- | --------------------- | ------ | ---------- |
-| `small`                | `width: 40%`                          | 288px                 | 16px   | `40%`      |
-| `default` **(기본값)** | `width: 100%`                         | 720px                 | 16px   | `기본`     |
-| `full`                 | `width: var(--content-width)` + bleed | 980px (좌우 각 130px) | 16px   | `⟺` 아이콘 |
+| 값 | CSS | 실제 폭 | radius | 툴바 라벨 |
+|----|-----|---------|--------|-----------|
+| `small` | `width: 40%` | 288px | 16px | `40%` |
+| `default` **(기본값)** | `width: 100%` | 720px | 16px | `기본` |
+| `full` | `width: var(--content-width)` + bleed | 980px (좌우 각 130px) | 16px | `⟺` 아이콘 |
 
 변경 지점:
 
@@ -147,10 +147,10 @@
 
 ### 5. 에디터 폭 정합성
 
-| 파일                                | 현재                          | 변경 후                                                     |
-| ----------------------------------- | ----------------------------- | ----------------------------------------------------------- |
-| `admin/posts/new/page.tsx:31`       | `max-w-4xl px-6` (실폭 848px) | `max-w-[calc(var(--article-width)+3rem)] px-6` (실폭 720px) |
-| `admin/posts/[id]/edit/page.tsx:48` | 동일                          | 동일하게 변경                                               |
+| 파일 | 현재 | 변경 후 |
+|------|------|---------|
+| `admin/posts/new/page.tsx:31` | `max-w-4xl px-6` (실폭 848px) | `max-w-[calc(var(--article-width)+3rem)] px-6` (실폭 720px) |
+| `admin/posts/[id]/edit/page.tsx:48` | 동일 | 동일하게 변경 |
 
 `px-6`(좌우 24px씩 = 3rem)에 맞춰 `+3rem`을 더한다. 제목·카테고리·태그·썸네일·SEO 영역까지 함께 720px이 되어, 편집 화면 전체가 발행 결과와 같은 기준선을 갖는다.
 
@@ -191,12 +191,12 @@ UPDATE posts SET content = replace(content, 'data-size="medium"', 'data-size="de
 
 ### 8. 테스트
 
-| 파일                                             | 작업                                                                    |
-| ------------------------------------------------ | ----------------------------------------------------------------------- |
-| `components/layout/content-container.test.tsx`   | 클래스 문자열 기대값을 `max-w-[calc(var(--content-width)+2rem)]`로 갱신 |
-| `components/layout/article-container.test.tsx`   | 신규 — 렌더링과 클래스 검증                                             |
-| `admin/posts/new/_utils/image-extension.test.ts` | `medium` → `default` 기대값 갱신 (기본값 직렬화, 속성 파싱)             |
-| `lib/markdown.test.ts`                           | 픽스처 HTML의 `data-size="medium"` → `default`                          |
+| 파일 | 작업 |
+|------|------|
+| `components/layout/content-container.test.tsx` | 클래스 문자열 기대값을 `max-w-[calc(var(--content-width)+2rem)]`로 갱신 |
+| `components/layout/article-container.test.tsx` | 신규 — 렌더링과 클래스 검증 |
+| `admin/posts/new/_utils/image-extension.test.ts` | `medium` → `default` 기대값 갱신 (기본값 직렬화, 속성 파싱) |
+| `lib/markdown.test.ts` | 픽스처 HTML의 `data-size="medium"` → `default` |
 
 E2E는 추가하지 않는다. 폭은 픽셀 단언이 필요한데 뷰포트·폰트에 따라 쉽게 깨져 유지 비용이 이득보다 크다.
 

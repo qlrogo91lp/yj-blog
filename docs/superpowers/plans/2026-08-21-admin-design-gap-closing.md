@@ -39,13 +39,13 @@
 
 ## 로드맵
 
-| 순서 | 브랜치                             | plan 문서                                                | 상태          |
-| ---- | ---------------------------------- | -------------------------------------------------------- | ------------- |
-| 1    | `refactor/admin-shell-cell-a`      | [shell-cell-a](./2026-08-20-admin-shell-cell-a.md)       | 완료 (PR #83) |
-| 2    | `refactor/admin-content-screens`   | [content-screens](./2026-08-20-admin-content-screens.md) | 완료 (PR #84) |
-| 3    | `feature/admin-comment-reply`      | [comment-reply](./2026-08-20-admin-comment-reply.md)     | 완료 (PR #86) |
-| 4    | `refactor/admin-stats-settings`    | [stats-settings](./2026-08-20-admin-stats-settings.md)   | 완료 (PR #85) |
-| 5    | `feature/admin-design-gap-closing` | 이 문서                                                  | 진행 예정     |
+| 순서 | 브랜치 | plan 문서 | 상태 |
+|---|---|---|---|
+| 1 | `refactor/admin-shell-cell-a` | [shell-cell-a](./2026-08-20-admin-shell-cell-a.md) | 완료 (PR #83) |
+| 2 | `refactor/admin-content-screens` | [content-screens](./2026-08-20-admin-content-screens.md) | 완료 (PR #84) |
+| 3 | `feature/admin-comment-reply` | [comment-reply](./2026-08-20-admin-comment-reply.md) | 완료 (PR #86) |
+| 4 | `refactor/admin-stats-settings` | [stats-settings](./2026-08-20-admin-stats-settings.md) | 완료 (PR #85) |
+| 5 | `feature/admin-design-gap-closing` | 이 문서 | 진행 예정 |
 
 ---
 
@@ -55,7 +55,7 @@
 
 ### 통계·유입경로 메뉴는 그대로 둔다
 
-시안 2c의 캡션은 _"방문 통계·유입경로를 별도 메뉴로 두지 않고 대시보드가 곧 분석 화면"_ 이라고 못 박는다. 하지만 그대로 따르면 PR 4가 만든 두 화면(인기 글 Top 10, 글별 일별 추이, 유입 제외 규칙 폼)을 통째로 버려야 한다. 이 화면들은 대시보드 한 장에 들어갈 밀도가 아니다.
+시안 2c의 캡션은 *"방문 통계·유입경로를 별도 메뉴로 두지 않고 대시보드가 곧 분석 화면"* 이라고 못 박는다. 하지만 그대로 따르면 PR 4가 만든 두 화면(인기 글 Top 10, 글별 일별 추이, 유입 제외 규칙 폼)을 통째로 버려야 한다. 이 화면들은 대시보드 한 장에 들어갈 밀도가 아니다.
 
 **대시보드를 시안 2c의 레이아웃·정보 구성대로 만들되, 두 화면은 상세 드릴다운으로 남긴다.** 대시보드의 "인기 글"·"유입경로" 블록에 각각 `/admin/statistics`·`/admin/statistics/referrers`로 가는 링크를 달아 관계를 드러낸다. 사이드바 통계 그룹도 유지한다.
 
@@ -71,7 +71,7 @@
 
 ### 개발 트래픽은 호스트네임 패턴으로 자동 판별한다
 
-시안 3e의 _"localhost·개발 트래픽 112회는 접어뒀습니다"_ 를 구현하려면 무엇이 개발 트래픽인지 정해야 한다. `localhost`, `127.0.0.1`, `0.0.0.0`, `::1`, `*.local`, 사설 IP 대역(`10.`/`192.168.`/`172.16~31.`)을 개발 트래픽으로 본다. 사용자가 등록한 `referrerExcludes`와는 **별개 축**이다 — 개발 트래픽은 자동 감지되어 접히고(펼쳐볼 수 있음), `referrerExcludes`는 집계에서 완전히 빠진다.
+시안 3e의 *"localhost·개발 트래픽 112회는 접어뒀습니다"* 를 구현하려면 무엇이 개발 트래픽인지 정해야 한다. `localhost`, `127.0.0.1`, `0.0.0.0`, `::1`, `*.local`, 사설 IP 대역(`10.`/`192.168.`/`172.16~31.`)을 개발 트래픽으로 본다. 사용자가 등록한 `referrerExcludes`와는 **별개 축**이다 — 개발 트래픽은 자동 감지되어 접히고(펼쳐볼 수 있음), `referrerExcludes`는 집계에서 완전히 빠진다.
 
 ### 유입경로는 호스트네임으로 묶는다
 
@@ -83,65 +83,63 @@
 
 **생성**
 
-| 파일                                                                             | 책임                                                        |
-| -------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `src/app/admin/_utils/referrer-group.ts`                                         | 호스트네임 → 서비스 그룹 매핑, 개발 트래픽 판별 (순수 함수) |
-| `src/app/admin/_utils/referrer-group.test.ts`                                    | 그룹핑·개발 트래픽 판별 검증                                |
-| `src/app/admin/_components/dashboard-stat-panel.tsx`                             | 다크 스탯 카드 + 라인차트 (시안 2c 좌상단)                  |
-| `src/app/admin/_components/dashboard-stat-panel.test.tsx`                        | 지표·증감 렌더 검증                                         |
-| `src/app/admin/_components/dashboard-rank-list.tsx`                              | 인기 글 / 유입경로 순위 블록 (순수, 퍼센트 바 포함)         |
-| `src/app/admin/_components/dashboard-rank-list.test.tsx`                         | 순위·퍼센트 바 렌더 검증                                    |
-| `src/app/admin/_components/draft-queue-widget.tsx`                               | "이어 쓸 글 N" 우측 칼럼 위젯                               |
-| `src/app/admin/_components/draft-queue-widget.test.tsx`                          | 임시저장 한정·상대시각 검증                                 |
-| `src/app/admin/_components/pending-comments-widget.tsx`                          | "새 댓글 N" 우측 칼럼 위젯                                  |
-| `src/app/admin/_components/pending-comments-widget.test.tsx`                     | 인용 표기·상대시각 검증                                     |
-| `src/app/admin/statistics/referrers/_components/referrer-row.tsx`                | letter 뱃지 + 그룹명 + 하위 호스트 보조 라인 (순수)         |
-| `src/app/admin/statistics/referrers/_components/referrer-row.test.tsx`           | 행 렌더 검증                                                |
-| `src/app/admin/statistics/referrers/_actions/dev-traffic-notice.action.tsx`      | 개발 트래픽 접힘 알림 + [펼치기]                            |
-| `src/app/admin/statistics/referrers/_actions/dev-traffic-notice.action.test.tsx` | 접힘/펼침 검증                                              |
-| `src/app/admin/comments/_components/comment-avatar.tsx`                          | 작성자 이니셜 아바타 (순수)                                 |
-| `src/app/admin/comments/_components/comment-avatar.test.tsx`                     | 이니셜 추출 검증                                            |
+| 파일 | 책임 |
+|---|---|
+| `src/app/admin/_utils/referrer-group.ts` | 호스트네임 → 서비스 그룹 매핑, 개발 트래픽 판별 (순수 함수) |
+| `src/app/admin/_utils/referrer-group.test.ts` | 그룹핑·개발 트래픽 판별 검증 |
+| `src/app/admin/_components/dashboard-stat-panel.tsx` | 다크 스탯 카드 + 라인차트 (시안 2c 좌상단) |
+| `src/app/admin/_components/dashboard-stat-panel.test.tsx` | 지표·증감 렌더 검증 |
+| `src/app/admin/_components/dashboard-rank-list.tsx` | 인기 글 / 유입경로 순위 블록 (순수, 퍼센트 바 포함) |
+| `src/app/admin/_components/dashboard-rank-list.test.tsx` | 순위·퍼센트 바 렌더 검증 |
+| `src/app/admin/_components/draft-queue-widget.tsx` | "이어 쓸 글 N" 우측 칼럼 위젯 |
+| `src/app/admin/_components/draft-queue-widget.test.tsx` | 임시저장 한정·상대시각 검증 |
+| `src/app/admin/_components/pending-comments-widget.tsx` | "새 댓글 N" 우측 칼럼 위젯 |
+| `src/app/admin/_components/pending-comments-widget.test.tsx` | 인용 표기·상대시각 검증 |
+| `src/app/admin/statistics/referrers/_components/referrer-row.tsx` | letter 뱃지 + 그룹명 + 하위 호스트 보조 라인 (순수) |
+| `src/app/admin/statistics/referrers/_components/referrer-row.test.tsx` | 행 렌더 검증 |
+| `src/app/admin/statistics/referrers/_actions/dev-traffic-notice.action.tsx` | 개발 트래픽 접힘 알림 + [펼치기] |
+| `src/app/admin/statistics/referrers/_actions/dev-traffic-notice.action.test.tsx` | 접힘/펼침 검증 |
+| `src/app/admin/comments/_components/comment-avatar.tsx` | 작성자 이니셜 아바타 (순수) |
+| `src/app/admin/comments/_components/comment-avatar.test.tsx` | 이니셜 추출 검증 |
 
 **수정**
 
-| 파일                                                       | 변경                                                                      |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `src/db/queries/daily-stats.ts`                            | `selectDashboardOverview(days)` 추가                                      |
-| `src/db/queries/statistics.ts`                             | `selectTopReferrers`를 호스트네임 그룹 집계로 교체, 개발 트래픽 분리 반환 |
-| `src/db/queries/posts.ts`                                  | `selectDraftQueue(limit)` 추가 (임시저장 글, 최근 수정 순)                |
-| `src/db/queries/comments.ts`                               | `selectPendingComments(limit)` 추가 (답변 대기 스레드)                    |
-| `src/db/queries/tags.ts`                                   | `getAllTags` 정렬을 사용량 내림차순 → 이름 순으로                         |
-| `src/app/admin/_components/stats-chart.tsx`                | 직전 기간 계열 추가 (`previousViews`·`previousVisitors`)                  |
-| `src/app/admin/page.tsx`                                   | 시안 2c 레이아웃으로 전면 재작성                                          |
-| `src/app/admin/statistics/page.tsx`                        | `AdminPageHeader` 적용 + 부제                                             |
-| `src/app/admin/statistics/referrers/page.tsx`              | `AdminPageHeader` + 부제 + 개발 트래픽 알림 + 새 행 컴포넌트              |
-| `src/app/admin/settings/page.tsx`                          | `AdminPageHeader` + 부제, 앵커에 "SEO · 공유" 추가                        |
-| `src/app/admin/settings/_actions/settings-form.action.tsx` | SEO 섹션 분리, 필드 라벨 시안화, 저장 바를 알약 + "변경사항 N개"로        |
-| `src/app/admin/categories/page.tsx`                        | 헤더에 [새 카테고리] 버튼                                                 |
-| `src/app/admin/series/page.tsx`                            | 헤더에 [새 시리즈] 버튼                                                   |
-| `src/app/admin/comments/page.tsx`                          | `AdminPageHeader` + "답변 대기 N · 전체 N" 부제                           |
-| `src/app/admin/comments/_actions/comment-card.action.tsx`  | 아바타 추가, 상대시각, 글 제목을 메타 줄로 이동                           |
-| `src/app/admin/_actions/admin-sidebar.action.tsx`          | `pendingReplyCount` prop 주석의 과거 시제 정리                            |
+| 파일 | 변경 |
+|---|---|
+| `src/db/queries/daily-stats.ts` | `selectDashboardOverview(days)` 추가 |
+| `src/db/queries/statistics.ts` | `selectTopReferrers`를 호스트네임 그룹 집계로 교체, 개발 트래픽 분리 반환 |
+| `src/db/queries/posts.ts` | `selectDraftQueue(limit)` 추가 (임시저장 글, 최근 수정 순) |
+| `src/db/queries/comments.ts` | `selectPendingComments(limit)` 추가 (답변 대기 스레드) |
+| `src/db/queries/tags.ts` | `getAllTags` 정렬을 사용량 내림차순 → 이름 순으로 |
+| `src/app/admin/_components/stats-chart.tsx` | 직전 기간 계열 추가 (`previousViews`·`previousVisitors`) |
+| `src/app/admin/page.tsx` | 시안 2c 레이아웃으로 전면 재작성 |
+| `src/app/admin/statistics/page.tsx` | `AdminPageHeader` 적용 + 부제 |
+| `src/app/admin/statistics/referrers/page.tsx` | `AdminPageHeader` + 부제 + 개발 트래픽 알림 + 새 행 컴포넌트 |
+| `src/app/admin/settings/page.tsx` | `AdminPageHeader` + 부제, 앵커에 "SEO · 공유" 추가 |
+| `src/app/admin/settings/_actions/settings-form.action.tsx` | SEO 섹션 분리, 필드 라벨 시안화, 저장 바를 알약 + "변경사항 N개"로 |
+| `src/app/admin/categories/page.tsx` | 헤더에 [새 카테고리] 버튼 |
+| `src/app/admin/series/page.tsx` | 헤더에 [새 시리즈] 버튼 |
+| `src/app/admin/comments/page.tsx` | `AdminPageHeader` + "답변 대기 N · 전체 N" 부제 |
+| `src/app/admin/comments/_actions/comment-card.action.tsx` | 아바타 추가, 상대시각, 글 제목을 메타 줄로 이동 |
+| `src/app/admin/_actions/admin-sidebar.action.tsx` | `pendingReplyCount` prop 주석의 과거 시제 정리 |
 
 **삭제**
 
-| 파일                                                   | 이유                                      |
-| ------------------------------------------------------ | ----------------------------------------- |
-| `src/app/admin/_components/quick-actions.tsx`          | 시안 2c의 "새 글 쓰기" 단독 버튼으로 대체 |
-| `src/app/admin/_components/recent-posts-widget.tsx`    | `draft-queue-widget.tsx`로 대체           |
-| `src/app/admin/_components/recent-comments-widget.tsx` | `pending-comments-widget.tsx`로 대체      |
+| 파일 | 이유 |
+|---|---|
+| `src/app/admin/_components/quick-actions.tsx` | 시안 2c의 "새 글 쓰기" 단독 버튼으로 대체 |
+| `src/app/admin/_components/recent-posts-widget.tsx` | `draft-queue-widget.tsx`로 대체 |
+| `src/app/admin/_components/recent-comments-widget.tsx` | `pending-comments-widget.tsx`로 대체 |
 
 ---
 
 ## Task 1: 유입경로 그룹핑 유틸
 
 **Files:**
-
 - Create: `src/app/admin/_utils/referrer-group.ts`
 - Test: `src/app/admin/_utils/referrer-group.test.ts`
 
 **Interfaces:**
-
 - Consumes: 없음 (순수 모듈)
 - Produces:
   - `extractHostname(referrer: string): string` — URL 파싱 실패 시 빈 문자열
@@ -275,13 +273,7 @@ export function extractHostname(referrer: string): string {
   }
 }
 
-const DEV_HOSTS = new Set([
-  'localhost',
-  '127.0.0.1',
-  '0.0.0.0',
-  '::1',
-  '[::1]',
-]);
+const DEV_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]']);
 const PRIVATE_IP =
   /^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})$/;
 
@@ -294,46 +286,17 @@ export function isDevTraffic(hostname: string): boolean {
 }
 
 /** 하위 호스트를 하나로 묶을 알려진 서비스들 */
-const KNOWN_SERVICES: {
-  match: RegExp;
-  key: string;
-  label: string;
-  letter: string;
-}[] = [
-  {
-    match: /(^|\.)naver\.com$/,
-    key: 'naver',
-    label: '네이버 검색',
-    letter: 'N',
-  },
-  {
-    match: /(^|\.)google\.[a-z.]+$/,
-    key: 'google',
-    label: '구글 검색',
-    letter: 'G',
-  },
-  { match: /(^|\.)daum\.net$/, key: 'daum', label: '다음 검색', letter: 'D' },
-  { match: /(^|\.)bing\.com$/, key: 'bing', label: 'Bing 검색', letter: 'B' },
-  {
-    match: /(^|\.)(x|twitter)\.com$|^t\.co$/,
-    key: 'x',
-    label: 'X (Twitter)',
-    letter: 'X',
-  },
-  {
-    match: /(^|\.)facebook\.com$/,
-    key: 'facebook',
-    label: 'Facebook',
-    letter: 'F',
-  },
-  { match: /(^|\.)github\.com$/, key: 'github', label: 'GitHub', letter: 'G' },
-  {
-    match: /(^|\.)news\.ycombinator\.com$/,
-    key: 'hn',
-    label: 'Hacker News',
-    letter: 'H',
-  },
-];
+const KNOWN_SERVICES: { match: RegExp; key: string; label: string; letter: string }[] =
+  [
+    { match: /(^|\.)naver\.com$/, key: 'naver', label: '네이버 검색', letter: 'N' },
+    { match: /(^|\.)google\.[a-z.]+$/, key: 'google', label: '구글 검색', letter: 'G' },
+    { match: /(^|\.)daum\.net$/, key: 'daum', label: '다음 검색', letter: 'D' },
+    { match: /(^|\.)bing\.com$/, key: 'bing', label: 'Bing 검색', letter: 'B' },
+    { match: /(^|\.)(x|twitter)\.com$|^t\.co$/, key: 'x', label: 'X (Twitter)', letter: 'X' },
+    { match: /(^|\.)facebook\.com$/, key: 'facebook', label: 'Facebook', letter: 'F' },
+    { match: /(^|\.)github\.com$/, key: 'github', label: 'GitHub', letter: 'G' },
+    { match: /(^|\.)news\.ycombinator\.com$/, key: 'hn', label: 'Hacker News', letter: 'H' },
+  ];
 
 /**
  * 호스트네임을 표시용 그룹으로 정규화한다.
@@ -387,11 +350,9 @@ git commit -m "✨ feat: 유입경로 도메인 그룹핑·개발 트래픽 판�
 ## Task 2: 유입경로 집계 쿼리 교체
 
 **Files:**
-
 - Modify: `src/db/queries/statistics.ts` (`selectTopReferrers` 교체)
 
 **Interfaces:**
-
 - Consumes: Task 1의 `extractHostname`, `isDevTraffic`, `resolveReferrerGroup`
 - Produces: `selectTopReferrers(limit, days, excludes, siteUrl)` 반환 타입 변경
 
@@ -400,16 +361,16 @@ export type ReferrerGroupRow = {
   key: string;
   label: string;
   letter: string;
-  hosts: string[]; // 이 그룹에 묶인 하위 호스트네임 (직접 접근이면 빈 배열)
+  hosts: string[];      // 이 그룹에 묶인 하위 호스트네임 (직접 접근이면 빈 배열)
   count: number;
   percentage: number;
 };
 
 export type TopReferrersResult = {
   rows: ReferrerGroupRow[];
-  devTrafficCount: number; // 개발 트래픽으로 접힌 방문 수
-  externalCount: number; // 직접 접근·내부 링크·개발 트래픽을 뺀 외부 유입 수
-  totalCount: number; // 제외 규칙 적용 후 전체 방문 수
+  devTrafficCount: number;   // 개발 트래픽으로 접힌 방문 수
+  externalCount: number;     // 직접 접근·내부 링크·개발 트래픽을 뺀 외부 유입 수
+  totalCount: number;        // 제외 규칙 적용 후 전체 방문 수
 };
 ```
 
@@ -516,8 +477,7 @@ export async function selectTopReferrers(
 
   const shown = sorted.reduce((acc, row) => acc + row.count, 0);
   for (const row of sorted) {
-    row.percentage =
-      shown > 0 ? Math.round((row.count / shown) * 1000) / 10 : 0;
+    row.percentage = shown > 0 ? Math.round((row.count / shown) * 1000) / 10 : 0;
     row.hosts.sort();
   }
 
@@ -553,32 +513,24 @@ git commit -m "♻️ refactor: 유입경로를 호스트네임 그룹으로 집
 ## Task 3: 대시보드 집계 쿼리
 
 **Files:**
-
 - Modify: `src/db/queries/daily-stats.ts` (`selectDashboardOverview` 추가)
 - Modify: `src/db/queries/posts.ts` (`selectDraftQueue` 추가)
 - Modify: `src/db/queries/comments.ts` (`selectPendingComments` 추가)
 
 **Interfaces:**
-
 - Consumes: Task 2의 `selectTopReferrers`
 - Produces:
   - `selectDashboardOverview(days: number)` →
     ```ts
     {
-      rangeStart: string; // 'yyyy-MM-dd'
+      rangeStart: string;   // 'yyyy-MM-dd'
       rangeEnd: string;
       visitors: number;
       views: number;
       previousVisitors: number;
       previousViews: number;
-      daily: {
-        date: string;
-        views: number;
-        visitors: number;
-        previousViews: number;
-        previousVisitors: number;
-      }
-      [];
+      daily: { date: string; views: number; visitors: number;
+               previousViews: number; previousVisitors: number }[];
     }
     ```
     `daily`는 선택 기간의 일자별 값에 **같은 인덱스의 직전 기간 값을 나란히 붙인** 배열이다. Task 4의 차트가 이 형태를 그대로 먹는다.
@@ -620,10 +572,7 @@ export async function selectDashboardOverview(days: number) {
   // 데이터가 없는 날은 0으로 채워 두 기간의 길이를 맞춘다.
   const fill = (rows: typeof currentRows, start: string) =>
     Array.from({ length: days }, (_, i) => {
-      const date = format(
-        subDays(new Date(`${start}T00:00:00`), -i),
-        'yyyy-MM-dd'
-      );
+      const date = format(subDays(new Date(`${start}T00:00:00`), -i), 'yyyy-MM-dd');
       const found = rows.find((row) => row.date === date);
       return {
         date,
@@ -747,12 +696,10 @@ git commit -m "✨ feat: 대시보드 기간 집계·이어 쓸 글·답변 대�
 ## Task 4: 차트에 직전 기간 계열 추가
 
 **Files:**
-
 - Modify: `src/app/admin/_components/stats-chart.tsx`
 - Test: `src/app/admin/_components/stats-chart.test.tsx` (신규)
 
 **Interfaces:**
-
 - Consumes: Task 3의 `daily` 배열 형태
 - Produces: `StatsChart` props 확장
 
@@ -770,7 +717,7 @@ type Props = {
 };
 ```
 
-**왜 이 태스크가 중요한가** — 스펙 75행이 _"직전 기간 대비 증감 — `dailyStats`로 계산 가능하므로 **유지한다** (시안의 `+12%` 및 '이번 기간 / 직전 기간' 비교 막대)"_ 라고 명시적으로 채택했는데, PR 4는 `+12%` 뱃지만 만들고 차트 계열을 빠뜨렸다. 스펙이 채택한 항목 중 유일하게 누락된 건이다.
+**왜 이 태스크가 중요한가** — 스펙 75행이 *"직전 기간 대비 증감 — `dailyStats`로 계산 가능하므로 **유지한다** (시안의 `+12%` 및 '이번 기간 / 직전 기간' 비교 막대)"* 라고 명시적으로 채택했는데, PR 4는 `+12%` 뱃지만 만들고 차트 계열을 빠뜨렸다. 스펙이 채택한 항목 중 유일하게 누락된 건이다.
 
 > 색 지정은 기존 hex 상수 방식을 그대로 둔다 (PR 4 플랜 44행의 보류 결정). 직전 기간 계열은 같은 색 계열의 흐린 점선으로 그려 "이번 기간"과 구분한다.
 
@@ -785,20 +732,8 @@ import { describe, expect, it } from 'vitest';
 import { buildChartData } from './stats-chart';
 
 const data = [
-  {
-    date: '2026-08-15',
-    views: 10,
-    visitors: 5,
-    previousViews: 8,
-    previousVisitors: 4,
-  },
-  {
-    date: '2026-08-16',
-    views: 20,
-    visitors: 9,
-    previousViews: 12,
-    previousVisitors: 6,
-  },
+  { date: '2026-08-15', views: 10, visitors: 5, previousViews: 8, previousVisitors: 4 },
+  { date: '2026-08-16', views: 20, visitors: 9, previousViews: 12, previousVisitors: 6 },
 ];
 
 describe('buildChartData', () => {
@@ -895,32 +830,30 @@ export function StatsChart({ data, showPrevious = false }: Props) {
 기존 `<Line dataKey="visitors" .../>` 바로 뒤에 넣는다.
 
 ```tsx
-{
-  showPrevious && (
-    <>
-      <Line
-        type="monotone"
-        dataKey="previousViews"
-        name="직전 기간 조회수"
-        stroke={PREVIOUS_COLOR}
-        strokeWidth={2}
-        strokeDasharray="4 4"
-        dot={false}
-        activeDot={false}
-      />
-      <Line
-        type="monotone"
-        dataKey="previousVisitors"
-        name="직전 기간 방문자"
-        stroke={PREVIOUS_COLOR}
-        strokeWidth={1}
-        strokeDasharray="2 4"
-        dot={false}
-        activeDot={false}
-      />
-    </>
-  );
-}
+          {showPrevious && (
+            <>
+              <Line
+                type="monotone"
+                dataKey="previousViews"
+                name="직전 기간 조회수"
+                stroke={PREVIOUS_COLOR}
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={false}
+                activeDot={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="previousVisitors"
+                name="직전 기간 방문자"
+                stroke={PREVIOUS_COLOR}
+                strokeWidth={1}
+                strokeDasharray="2 4"
+                dot={false}
+                activeDot={false}
+              />
+            </>
+          )}
 ```
 
 - [x] **Step 4: 테스트 통과 확인**
@@ -943,7 +876,6 @@ git commit -m "✨ feat: 통계 차트에 직전 기간 비교 계열 추가"
 ## Task 5: 대시보드 2c 재작성
 
 **Files:**
-
 - Create: `src/app/admin/_components/dashboard-stat-panel.tsx` + `.test.tsx`
 - Create: `src/app/admin/_components/dashboard-rank-list.tsx` + `.test.tsx`
 - Create: `src/app/admin/_components/draft-queue-widget.tsx` + `.test.tsx`
@@ -952,7 +884,6 @@ git commit -m "✨ feat: 통계 차트에 직전 기간 비교 계열 추가"
 - Delete: `src/app/admin/_components/quick-actions.tsx`, `recent-posts-widget.tsx`, `recent-comments-widget.tsx`
 
 **Interfaces:**
-
 - Consumes: Task 2·3·4 전부. PR 1의 `AdminPageHeader`, PR 4의 `PeriodFilterAction`·`PeriodChangeBadge`
 - Produces: 시안 2c 레이아웃 — 좌측 분석 칼럼(다크 스탯 카드 + 차트, 인기 글, 유입경로) + 우측 액션 칼럼(새 글 쓰기, 이어 쓸 글, 새 댓글)
 
@@ -984,15 +915,7 @@ const props = {
   views: 3104,
   externalCount: 179,
   previousVisitors: 1644,
-  daily: [
-    {
-      date: '2026-08-15',
-      views: 10,
-      visitors: 5,
-      previousViews: 8,
-      previousVisitors: 4,
-    },
-  ],
+  daily: [{ date: '2026-08-15', views: 10, visitors: 5, previousViews: 8, previousVisitors: 4 }],
 };
 
 describe('DashboardStatPanel', () => {
@@ -1034,13 +957,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { DashboardRankList } from './dashboard-rank-list';
 
 vi.mock('next/link', () => ({
-  default: ({
-    href,
-    children,
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => <a href={href}>{children}</a>,
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 const items = [
@@ -1050,13 +969,7 @@ const items = [
 
 describe('DashboardRankList', () => {
   it('제목과 항목을 순위와 함께 렌더한다', () => {
-    render(
-      <DashboardRankList
-        title="인기 글"
-        items={items}
-        moreHref="/admin/statistics"
-      />
-    );
+    render(<DashboardRankList title="인기 글" items={items} moreHref="/admin/statistics" />);
 
     expect(screen.getByText('인기 글')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();
@@ -1065,13 +978,7 @@ describe('DashboardRankList', () => {
   });
 
   it('더보기 링크를 렌더한다', () => {
-    render(
-      <DashboardRankList
-        title="인기 글"
-        items={items}
-        moreHref="/admin/statistics"
-      />
-    );
+    render(<DashboardRankList title="인기 글" items={items} moreHref="/admin/statistics" />);
     expect(screen.getByRole('link', { name: /더보기/ })).toHaveAttribute(
       'href',
       '/admin/statistics'
@@ -1089,19 +996,11 @@ describe('DashboardRankList', () => {
     );
 
     expect(screen.getByText('62%')).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-slot="rank-bar"]')
-    ).toBeInTheDocument();
+    expect(container.querySelector('[data-slot="rank-bar"]')).toBeInTheDocument();
   });
 
   it('항목이 없으면 빈 상태를 보여준다', () => {
-    render(
-      <DashboardRankList
-        title="인기 글"
-        items={[]}
-        moreHref="/admin/statistics"
-      />
-    );
+    render(<DashboardRankList title="인기 글" items={[]} moreHref="/admin/statistics" />);
     expect(screen.getByText('아직 데이터가 없습니다.')).toBeInTheDocument();
   });
 });
@@ -1117,26 +1016,14 @@ import { describe, expect, it, vi } from 'vitest';
 import { DraftQueueWidget } from './draft-queue-widget';
 
 vi.mock('next/link', () => ({
-  default: ({
-    href,
-    children,
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => <a href={href}>{children}</a>,
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 const drafts = [
-  {
-    id: 1,
-    title: '키보드 배열 바꾸고 3개월',
-    updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-  },
-  {
-    id: 2,
-    title: '',
-    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-  },
+  { id: 1, title: '키보드 배열 바꾸고 3개월', updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 2, title: '', updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
 ];
 
 describe('DraftQueueWidget', () => {
@@ -1161,9 +1048,7 @@ describe('DraftQueueWidget', () => {
 
   it('제목이 비면 (제목 없음)으로 표시한다', () => {
     render(<DraftQueueWidget drafts={drafts} />);
-    expect(
-      screen.getByRole('link', { name: /\(제목 없음\)/ })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /\(제목 없음\)/ })).toBeInTheDocument();
   });
 
   it('임시저장 글이 없으면 빈 상태를 보여준다', () => {
@@ -1181,13 +1066,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { PendingCommentsWidget } from './pending-comments-widget';
 
 vi.mock('next/link', () => ({
-  default: ({
-    href,
-    children,
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => <a href={href}>{children}</a>,
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
 }));
 
 const comments = [
@@ -1264,11 +1145,7 @@ export function DashboardStatPanel({
   daily,
 }: Props) {
   const metrics = [
-    {
-      label: '방문',
-      value: visitors,
-      change: { current: visitors, previous: previousVisitors },
-    },
+    { label: '방문', value: visitors, change: { current: visitors, previous: previousVisitors } },
     { label: '페이지뷰', value: views },
     { label: '외부 유입', value: externalCount },
   ];
@@ -1358,16 +1235,11 @@ export function DashboardRankList({
                     {index + 1}
                   </span>
                   {item.href ? (
-                    <Link
-                      href={item.href}
-                      className="min-w-0 flex-1 truncate hover:underline"
-                    >
+                    <Link href={item.href} className="min-w-0 flex-1 truncate hover:underline">
                       {item.label}
                     </Link>
                   ) : (
-                    <span className="min-w-0 flex-1 truncate">
-                      {item.label}
-                    </span>
+                    <span className="min-w-0 flex-1 truncate">{item.label}</span>
                   )}
                   <span className="text-muted-foreground shrink-0 text-xs">
                     {item.value.toLocaleString()}
@@ -1381,10 +1253,7 @@ export function DashboardRankList({
                       {item.value}%
                     </span>
                   </div>
-                  <div
-                    data-slot="rank-bar"
-                    className="bg-muted h-1.5 rounded-full"
-                  >
+                  <div data-slot="rank-bar" className="bg-muted h-1.5 rounded-full">
                     <div
                       className="bg-foreground h-full rounded-full"
                       style={{ width: `${Math.min(item.value, 100)}%` }}
@@ -1525,17 +1394,14 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { selectPendingComments } from '@/db/queries/comments';
 import { selectDashboardOverview } from '@/db/queries/daily-stats';
 import { selectDraftQueue } from '@/db/queries/posts';
+import { selectPendingComments } from '@/db/queries/comments';
+import { selectPopularPosts, selectTopReferrers } from '@/db/queries/statistics';
 import { getBlogSettings } from '@/db/queries/settings';
-import {
-  selectPopularPosts,
-  selectTopReferrers,
-} from '@/db/queries/statistics';
 import { AdminPageHeader } from './_components/admin-page-header';
-import { DashboardRankList } from './_components/dashboard-rank-list';
 import { DashboardStatPanel } from './_components/dashboard-stat-panel';
+import { DashboardRankList } from './_components/dashboard-rank-list';
 import { DraftQueueWidget } from './_components/draft-queue-widget';
 import { PendingCommentsWidget } from './_components/pending-comments-widget';
 import { PeriodFilterAction } from './statistics/_actions/period-filter.action';
@@ -1561,12 +1427,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
     await Promise.all([
       selectDashboardOverview(days),
       selectPopularPosts(3),
-      selectTopReferrers(
-        3,
-        days,
-        settings?.referrerExcludes ?? [],
-        settings?.siteUrl
-      ),
+      selectTopReferrers(3, days, settings?.referrerExcludes ?? [], settings?.siteUrl),
       selectDraftQueue(3),
       selectPendingComments(3),
     ]);
@@ -1678,13 +1539,11 @@ git commit -m "✨ feat: 대시보드를 시안 2c 분석 화면으로 재작성
 ## Task 6: 유입경로 화면
 
 **Files:**
-
 - Create: `src/app/admin/statistics/referrers/_components/referrer-row.tsx` + `.test.tsx`
 - Create: `src/app/admin/statistics/referrers/_actions/dev-traffic-notice.action.tsx` + `.test.tsx`
 - Modify: `src/app/admin/statistics/referrers/page.tsx`
 
 **Interfaces:**
-
 - Consumes: Task 2의 `TopReferrersResult`, PR 1의 `AdminPageHeader`
 - Produces:
   - `ReferrerRow({ row, rank }: { row: ReferrerGroupRow; rank: number })`
@@ -1744,9 +1603,7 @@ describe('ReferrerRow', () => {
 
   it('하위 호스트가 그룹명과 같으면 보조 라인을 생략한다', () => {
     renderRow({ label: 'example.com', hosts: ['example.com'] });
-    expect(
-      screen.queryByText('example.com', { selector: 'span.text-xs' })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('example.com', { selector: 'span.text-xs' })).not.toBeInTheDocument();
   });
 
   it('하위 호스트가 없으면 보조 라인이 없다', () => {
@@ -1810,14 +1667,11 @@ type Props = {
 
 export function ReferrerRow({ row, rank }: Props) {
   const showHosts =
-    row.hosts.length > 0 &&
-    !(row.hosts.length === 1 && row.hosts[0] === row.label);
+    row.hosts.length > 0 && !(row.hosts.length === 1 && row.hosts[0] === row.label);
 
   return (
     <TableRow>
-      <TableCell className="text-muted-foreground text-center">
-        {rank}
-      </TableCell>
+      <TableCell className="text-muted-foreground text-center">{rank}</TableCell>
       <TableCell>
         <div className="flex items-center gap-2.5">
           <span className="bg-muted text-muted-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
@@ -1899,13 +1753,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getBlogSettings } from '@/db/queries/settings';
 import { selectTopReferrers } from '@/db/queries/statistics';
+import { getBlogSettings } from '@/db/queries/settings';
 import { AdminPageHeader } from '../../_components/admin-page-header';
-import { PeriodFilterAction } from '../_actions/period-filter.action';
 import { AnalyticsLinkButton } from '../_components/analytics-link-button';
-import { DevTrafficNoticeAction } from './_actions/dev-traffic-notice.action';
+import { PeriodFilterAction } from '../_actions/period-filter.action';
 import { ReferrerExcludesFormAction } from './_actions/referrer-excludes-form.action';
+import { DevTrafficNoticeAction } from './_actions/dev-traffic-notice.action';
 import { ReferrerRow } from './_components/referrer-row';
 
 export const revalidate = 60;
@@ -2015,7 +1869,6 @@ git commit -m "💄 style: 유입경로에 도메인 그룹 행·개발 트래�
 ## Task 7: 헤더 통일과 누락 CTA
 
 **Files:**
-
 - Modify: `src/app/admin/statistics/page.tsx`
 - Modify: `src/app/admin/settings/page.tsx`
 - Modify: `src/app/admin/comments/page.tsx`
@@ -2025,7 +1878,6 @@ git commit -m "💄 style: 유입경로에 도메인 그룹 행·개발 트래�
 - Modify: `src/app/admin/series/_actions/series-stack.action.tsx`
 
 **Interfaces:**
-
 - Consumes: PR 1의 `AdminPageHeader`
 - Produces:
   - `CategoryBoardAction`·`SeriesStackAction`이 다이얼로그 열림 상태를 헤더 버튼과 공유하도록 **`headerSlot` 없이**, 자체적으로 헤더 버튼까지 렌더한다 (아래 설명 참조)
@@ -2039,23 +1891,23 @@ git commit -m "💄 style: 유입경로에 도메인 그룹 행·개발 트래�
 `src/app/admin/statistics/page.tsx`의 `<div className="mb-6 flex items-center justify-between">` 블록을 교체한다.
 
 ```tsx
-<AdminPageHeader
-  title="방문 통계"
-  description={
-    days
-      ? `최근 ${days}일 · 방문 ${summary.totalVisitors.toLocaleString()}회 누적`
-      : `전체 기간 · 방문 ${summary.totalVisitors.toLocaleString()}회 누적`
-  }
-  action={
-    <div className="flex items-center gap-2">
-      <AnalyticsLinkButton />
-      <PeriodFilterAction
-        basePath="/admin/statistics"
-        current={currentPeriod}
+      <AdminPageHeader
+        title="방문 통계"
+        description={
+          days
+            ? `최근 ${days}일 · 방문 ${summary.totalVisitors.toLocaleString()}회 누적`
+            : `전체 기간 · 방문 ${summary.totalVisitors.toLocaleString()}회 누적`
+        }
+        action={
+          <div className="flex items-center gap-2">
+            <AnalyticsLinkButton />
+            <PeriodFilterAction
+              basePath="/admin/statistics"
+              current={currentPeriod}
+            />
+          </div>
+        }
       />
-    </div>
-  }
-/>
 ```
 
 import를 추가한다.
@@ -2069,10 +1921,7 @@ import { AdminPageHeader } from '../_components/admin-page-header';
 `src/app/admin/comments/page.tsx`를 교체한다. 답변 대기 수는 `getPendingReplyCount()`를 함께 호출해 얻는다.
 
 ```tsx
-import {
-  getAllCommentsForAdmin,
-  getPendingReplyCount,
-} from '@/db/queries/comments';
+import { getAllCommentsForAdmin, getPendingReplyCount } from '@/db/queries/comments';
 import { AdminPageHeader } from '../_components/admin-page-header';
 import { CommentCardAction } from './_actions/comment-card.action';
 
@@ -2188,16 +2037,16 @@ import { AdminPageHeader } from '../../_components/admin-page-header';
 `src/app/admin/categories/page.tsx`에서 `AdminPageHeader` 렌더를 없애고 설명 문구만 넘긴다.
 
 ```tsx
-return (
-  <CategoryBoardAction
-    categories={categories}
-    description={
-      uncategorized.length > 0
-        ? `글 ${categorizedCount}개가 카테고리에 묶여 있고, ${uncategorized.length}개는 아직 미분류입니다`
-        : `글 ${categorizedCount}개가 카테고리에 묶여 있습니다`
-    }
-  />
-);
+  return (
+    <CategoryBoardAction
+      categories={categories}
+      description={
+        uncategorized.length > 0
+          ? `글 ${categorizedCount}개가 카테고리에 묶여 있고, ${uncategorized.length}개는 아직 미분류입니다`
+          : `글 ${categorizedCount}개가 카테고리에 묶여 있습니다`
+      }
+    />
+  );
 ```
 
 > `UncategorizedBanner`는 `CategoryBoardAction` 바깥에 남아 있으므로, `page.tsx`가 `<>...</>`로 보드와 배너를 감싸도록 유지한다.
@@ -2214,15 +2063,15 @@ type Props = {
 ```
 
 ```tsx
-<AdminPageHeader
-  title="시리즈"
-  description={description}
-  action={
-    <Button className="rounded-full" onClick={() => setFormOpen(true)}>
-      <Plus size={16} />새 시리즈
-    </Button>
-  }
-/>
+      <AdminPageHeader
+        title="시리즈"
+        description={description}
+        action={
+          <Button className="rounded-full" onClick={() => setFormOpen(true)}>
+            <Plus size={16} />새 시리즈
+          </Button>
+        }
+      />
 ```
 
 `src/app/admin/series/page.tsx`에서 `AdminPageHeader`를 없애고 `description`을 넘긴다.
@@ -2249,11 +2098,9 @@ git commit -m "💄 style: 어드민 화면 헤더를 AdminPageHeader로 통일�
 ## Task 8: 설정 화면 마무리
 
 **Files:**
-
 - Modify: `src/app/admin/settings/_actions/settings-form.action.tsx`
 
 **Interfaces:**
-
 - Consumes: Task 7이 추가한 `seo` 앵커
 - Produces: 없음 (화면 전용)
 
@@ -2268,11 +2115,11 @@ git commit -m "💄 style: 어드민 화면 헤더를 AdminPageHeader로 통일�
 `settings-form.action.tsx`에서 `tagline`·`authorBio` 라벨을 바꾼다.
 
 ```tsx
-<Label htmlFor="tagline">한 줄 소개</Label>
+          <Label htmlFor="tagline">한 줄 소개</Label>
 ```
 
 ```tsx
-<Label htmlFor="authorBio">홈 문구</Label>
+          <Label htmlFor="authorBio">홈 문구</Label>
 ```
 
 - [x] **Step 2: SEO 섹션 분리**
@@ -2280,36 +2127,36 @@ git commit -m "💄 style: 어드민 화면 헤더를 AdminPageHeader로 통일�
 `기본 정보` 섹션에서 `defaultMetaDescription` 필드 블록을 잘라내고, `기본 정보` `</section>` 바로 뒤에 새 섹션으로 옮긴다. `사이트 URL`도 SEO 쪽이 더 자연스러우므로 함께 옮긴다.
 
 ```tsx
-<section id="seo" className="space-y-4">
-  <h2 className="text-lg font-semibold">SEO · 공유</h2>
+      <section id="seo" className="space-y-4">
+        <h2 className="text-lg font-semibold">SEO · 공유</h2>
 
-  <div className="space-y-2">
-    <Label htmlFor="siteUrl">사이트 URL</Label>
-    <Input
-      id="siteUrl"
-      placeholder="https://example.com"
-      {...register('siteUrl')}
-    />
-    {errors.siteUrl && (
-      <p className="text-destructive text-sm">{errors.siteUrl.message}</p>
-    )}
-  </div>
+        <div className="space-y-2">
+          <Label htmlFor="siteUrl">사이트 URL</Label>
+          <Input
+            id="siteUrl"
+            placeholder="https://example.com"
+            {...register('siteUrl')}
+          />
+          {errors.siteUrl && (
+            <p className="text-destructive text-sm">{errors.siteUrl.message}</p>
+          )}
+        </div>
 
-  <div className="space-y-2">
-    <Label htmlFor="defaultMetaDescription">기본 메타 설명</Label>
-    <Textarea
-      id="defaultMetaDescription"
-      rows={2}
-      placeholder="검색 엔진에 표시될 기본 설명"
-      {...register('defaultMetaDescription')}
-    />
-    {errors.defaultMetaDescription && (
-      <p className="text-destructive text-sm">
-        {errors.defaultMetaDescription.message}
-      </p>
-    )}
-  </div>
-</section>
+        <div className="space-y-2">
+          <Label htmlFor="defaultMetaDescription">기본 메타 설명</Label>
+          <Textarea
+            id="defaultMetaDescription"
+            rows={2}
+            placeholder="검색 엔진에 표시될 기본 설명"
+            {...register('defaultMetaDescription')}
+          />
+          {errors.defaultMetaDescription && (
+            <p className="text-destructive text-sm">
+              {errors.defaultMetaDescription.message}
+            </p>
+          )}
+        </div>
+      </section>
 ```
 
 - [x] **Step 3: 저장 바를 알약으로**
@@ -2321,33 +2168,31 @@ git commit -m "💄 style: 어드민 화면 헤더를 AdminPageHeader로 통일�
 ```
 
 ```tsx
-{
-  isDirty && (
-    <div className="pointer-events-none sticky bottom-6 z-10 flex justify-center">
-      <div className="bg-foreground text-background pointer-events-auto flex items-center gap-3 rounded-full py-2 pr-2 pl-5 shadow-lg">
-        <span className="text-sm">
-          변경사항 {Object.keys(dirtyFields).length}개
-        </span>
-        <button
-          type="button"
-          onClick={() => reset(defaultFormValues)}
-          disabled={isSubmitting}
-          className="text-background/70 hover:text-background text-sm transition-colors disabled:opacity-50"
-        >
-          되돌리기
-        </button>
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-background text-foreground hover:bg-background/90 rounded-full"
-          size="sm"
-        >
-          {isSubmitting ? '저장 중...' : '저장'}
-        </Button>
-      </div>
-    </div>
-  );
-}
+      {isDirty && (
+        <div className="pointer-events-none sticky bottom-6 z-10 flex justify-center">
+          <div className="bg-foreground text-background pointer-events-auto flex items-center gap-3 rounded-full py-2 pr-2 pl-5 shadow-lg">
+            <span className="text-sm">
+              변경사항 {Object.keys(dirtyFields).length}개
+            </span>
+            <button
+              type="button"
+              onClick={() => reset(defaultFormValues)}
+              disabled={isSubmitting}
+              className="text-background/70 hover:text-background text-sm transition-colors disabled:opacity-50"
+            >
+              되돌리기
+            </button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-background text-foreground hover:bg-background/90 rounded-full"
+              size="sm"
+            >
+              {isSubmitting ? '저장 중...' : '저장'}
+            </Button>
+          </div>
+        </div>
+      )}
 ```
 
 - [x] **Step 4: 기존 테스트 갱신**
@@ -2370,14 +2215,12 @@ git commit -m "💄 style: 설정 화면 SEO 섹션 분리·라벨 시안화·�
 ## Task 9: 댓글 카드 디테일과 태그 정렬
 
 **Files:**
-
 - Create: `src/app/admin/comments/_components/comment-avatar.tsx` + `.test.tsx`
 - Modify: `src/app/admin/comments/_actions/comment-card.action.tsx`
 - Modify: `src/db/queries/tags.ts`
 - Modify: `src/app/admin/_actions/admin-sidebar.action.tsx` (주석 정리)
 
 **Interfaces:**
-
 - Consumes: 없음
 - Produces: `CommentAvatar({ name }: { name: string })` — 이름의 첫 글자를 원형 뱃지로
 
@@ -2459,42 +2302,42 @@ import { CommentAvatar } from '../_components/comment-avatar';
 카드 상단의 글 제목 블록(`:23-38`)과 작성자 줄(`:46-58`)을 아래 하나로 합친다.
 
 ```tsx
-<div className="flex items-start gap-3">
-  <CommentAvatar name={thread.isDeleted ? '' : thread.authorName} />
-  <div className="min-w-0 flex-1">
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-semibold">
-        {thread.isDeleted ? '(삭제됨)' : thread.authorName}
-      </span>
-      {thread.isAuthor && (
-        <Badge variant="secondary" className="text-xs">
-          작성자
-        </Badge>
-      )}
-    </div>
-    <p className="text-muted-foreground mt-0.5 text-xs">
-      <a
-        href={`/posts/${thread.postSlug}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:underline"
-      >
-        {thread.postTitle}
-      </a>
-      {' · '}
-      {formatDistanceToNow(new Date(thread.createdAt), {
-        addSuffix: true,
-        locale: ko,
-      })}
-    </p>
-  </div>
-  {!thread.isDeleted &&
-    (hasAdminReply ? (
-      <Badge variant="secondary">답변 완료</Badge>
-    ) : (
-      <Badge variant="outline">답변 대기</Badge>
-    ))}
-</div>
+      <div className="flex items-start gap-3">
+        <CommentAvatar name={thread.isDeleted ? '' : thread.authorName} />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold">
+              {thread.isDeleted ? '(삭제됨)' : thread.authorName}
+            </span>
+            {thread.isAuthor && (
+              <Badge variant="secondary" className="text-xs">
+                작성자
+              </Badge>
+            )}
+          </div>
+          <p className="text-muted-foreground mt-0.5 text-xs">
+            <a
+              href={`/posts/${thread.postSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              {thread.postTitle}
+            </a>
+            {' · '}
+            {formatDistanceToNow(new Date(thread.createdAt), {
+              addSuffix: true,
+              locale: ko,
+            })}
+          </p>
+        </div>
+        {!thread.isDeleted &&
+          (hasAdminReply ? (
+            <Badge variant="secondary">답변 완료</Badge>
+          ) : (
+            <Badge variant="outline">답변 대기</Badge>
+          ))}
+      </div>
 ```
 
 이어지는 본문·액션·답글 폼은 그대로 두되, 아바타 폭만큼 들여쓰기를 맞춘다 (`ml-11`).
@@ -2524,7 +2367,7 @@ grep -rn "getAllTags" src/
 `src/app/admin/_actions/admin-sidebar.action.tsx:28`의 주석을 현재 사실에 맞게 고친다.
 
 ```tsx
-/** 답변 대기 댓글 수. admin/layout.tsx가 주입한다. */
+  /** 답변 대기 댓글 수. admin/layout.tsx가 주입한다. */
 ```
 
 - [x] **Step 7: 테스트 확인**
@@ -2617,22 +2460,22 @@ npm run build
 
 **갭 커버리지** — 2026-08-21 시안 대조에서 나온 항목별 대응:
 
-| 갭                                            | 대응                                   |
-| --------------------------------------------- | -------------------------------------- |
-| 대시보드 2c 미반영                            | Task 3·5                               |
-| "직전 기간" 비교 차트 누락 (스펙 채택 항목)   | Task 4                                 |
-| 유입경로 도메인 그룹핑 안 됨                  | Task 1·2                               |
-| 개발 트래픽 자동 접힘 미구현                  | Task 1·2·6                             |
-| letter 뱃지·하위 호스트 보조 라인·"내부 링크" | Task 1·6                               |
-| 유입경로·설정 헤더 부제 누락                  | Task 6·7                               |
-| [새 카테고리]·[새 시리즈] 버튼 누락           | Task 7                                 |
-| 댓글 "답변 대기 N" 헤더 카운트                | Task 7                                 |
-| 댓글 아바타 누락                              | Task 9                                 |
-| 태그 칩 사용량 순 정렬                        | Task 9                                 |
-| 저장 바 "변경사항 N개"·알약·문구              | Task 8                                 |
-| SEO·공유 섹션 분리                            | Task 7·8                               |
-| 시각 표기 상대시각화                          | Task 5·9 (대댓글은 결정 사항대로 제외) |
-| 헤더 스타일 불일치 (parked minor)             | Task 7                                 |
+| 갭 | 대응 |
+|---|---|
+| 대시보드 2c 미반영 | Task 3·5 |
+| "직전 기간" 비교 차트 누락 (스펙 채택 항목) | Task 4 |
+| 유입경로 도메인 그룹핑 안 됨 | Task 1·2 |
+| 개발 트래픽 자동 접힘 미구현 | Task 1·2·6 |
+| letter 뱃지·하위 호스트 보조 라인·"내부 링크" | Task 1·6 |
+| 유입경로·설정 헤더 부제 누락 | Task 6·7 |
+| [새 카테고리]·[새 시리즈] 버튼 누락 | Task 7 |
+| 댓글 "답변 대기 N" 헤더 카운트 | Task 7 |
+| 댓글 아바타 누락 | Task 9 |
+| 태그 칩 사용량 순 정렬 | Task 9 |
+| 저장 바 "변경사항 N개"·알약·문구 | Task 8 |
+| SEO·공유 섹션 분리 | Task 7·8 |
+| 시각 표기 상대시각화 | Task 5·9 (대댓글은 결정 사항대로 제외) |
+| 헤더 스타일 불일치 (parked minor) | Task 7 |
 
 대조에서 "의도적 제외"로 분류된 항목(지표 3종·설정 외형 토글·태그 rename/병합·시리즈 드래그)은 「이 PR의 범위 밖」에 그대로 유지했다.
 

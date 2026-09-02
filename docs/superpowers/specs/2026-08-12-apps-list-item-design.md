@@ -16,26 +16,26 @@
 
 브레인스토밍에서 시안을 비교해 아래로 확정했다.
 
-| 항목        | 결정                                   | 비고                                                      |
-| ----------- | -------------------------------------- | --------------------------------------------------------- |
-| 아이템 형태 | **카드** (테두리 + radius + hover)     | 리스트 행(구분선만) 안 / 기존 `AppCard`의 톤 유지         |
-| 배치        | **`[아이콘 \| 내용 \| chevron]` 가로** | 아이콘은 카드 **내부** 좌측                               |
-| 태그 칩     | **표시하지 않음**                      | 상세 페이지에만 유지. 2열에서 카드가 세로로 길어짐        |
-| 플랫폼 라벨 | **아이콘 + 텍스트 칩**                 | 아이콘만(의미 불분명) 안 / 한 줄 텍스트(3개 이상 잘림) 안 |
-| 목록 그리드 | **`sm:grid-cols-2` 유지**              | 1열 전환 검토했으나 현행 유지로 결정                      |
-| 카드 radius | **`rounded-2xl` (18px)**               | 아래 radius 절 참고                                       |
-| 적용 범위   | 목록 + **상세 페이지 헤더까지**        | 두 화면의 플랫폼 표기를 일치시킨다                        |
+| 항목 | 결정 | 비고 |
+|---|---|---|
+| 아이템 형태 | **카드** (테두리 + radius + hover) | 리스트 행(구분선만) 안 / 기존 `AppCard`의 톤 유지 |
+| 배치 | **`[아이콘 \| 내용 \| chevron]` 가로** | 아이콘은 카드 **내부** 좌측 |
+| 태그 칩 | **표시하지 않음** | 상세 페이지에만 유지. 2열에서 카드가 세로로 길어짐 |
+| 플랫폼 라벨 | **아이콘 + 텍스트 칩** | 아이콘만(의미 불분명) 안 / 한 줄 텍스트(3개 이상 잘림) 안 |
+| 목록 그리드 | **`sm:grid-cols-2` 유지** | 1열 전환 검토했으나 현행 유지로 결정 |
+| 카드 radius | **`rounded-2xl` (18px)** | 아래 radius 절 참고 |
+| 적용 범위 | 목록 + **상세 페이지 헤더까지** | 두 화면의 플랫폼 표기를 일치시킨다 |
 
 ### radius 값 근거
 
 `globals.css`의 토큰만 쓴다 (`--radius: 0.625rem` = 10px 기준).
 
-| 토큰           | 계산             | 값   | 이 설계에서의 용도               |
-| -------------- | ---------------- | ---- | -------------------------------- |
-| `rounded-lg`   | `var(--radius)`  | 10px | — (기존 `AppCard` 값, 교체됨)    |
-| `rounded-xl`   | `--radius + 4px` | 14px | **목록 아이콘 56px**             |
-| `rounded-2xl`  | `--radius + 8px` | 18px | **카드**, 상세 아이콘 72px       |
-| `rounded-card` | `2rem`           | 32px | — (post 타일 전용, 여기선 안 씀) |
+| 토큰 | 계산 | 값 | 이 설계에서의 용도 |
+|---|---|---|---|
+| `rounded-lg` | `var(--radius)` | 10px | — (기존 `AppCard` 값, 교체됨) |
+| `rounded-xl` | `--radius + 4px` | 14px | **목록 아이콘 56px** |
+| `rounded-2xl` | `--radius + 8px` | 18px | **카드**, 상세 아이콘 72px |
+| `rounded-card` | `2rem` | 32px | — (post 타일 전용, 여기선 안 씀) |
 
 - **아이콘 `rounded-xl`(14px)** — `post-archive-row.tsx:19`의 썸네일과 **같은 토큰**이다(그쪽은 64px, 여기는 56px). iOS 앱 아이콘의 실제 곡률 비율(≈22%)로 계산하면 56px에서 12.5px라, 토큰 중 14px이 가장 가깝다.
 - **카드 `rounded-2xl`(18px)** — post 타일은 `rounded-card`(32px)를 쓰지만 그 값은 세로 400px+ 타일 기준이다. 앱 카드는 높이 ~88px라 32px를 주면 양 끝이 거의 반원이 된다. 기존 10px보다 부드럽고 32px보다 과하지 않은 18px을 쓴다.
@@ -54,7 +54,7 @@ export type App = {
   slug: string;
   name: string;
   description: string;
-  iconSrc: string; // 추가
+  iconSrc: string;          // 추가
   platforms: AppPlatform[]; // type 대체
   tags: string[];
   longDescription: string;
@@ -127,8 +127,8 @@ export function AppPlatformChips({ platforms }: Props) {
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import type { App } from '../_utils/apps-data';
 import { AppPlatformChips } from './app-platform-chips';
+import type { App } from '../_utils/apps-data';
 
 type Props = {
   app: App;
@@ -152,9 +152,7 @@ export function AppListItem({ app }: Props) {
       <div className="min-w-0 flex-1">
         <AppPlatformChips platforms={app.platforms} />
         <h2 className="mt-1.5 font-semibold">{app.name}</h2>
-        <p className="mt-0.5 truncate text-sm text-muted-foreground">
-          {app.description}
-        </p>
+        <p className="mt-0.5 truncate text-sm text-muted-foreground">{app.description}</p>
       </div>
 
       <ChevronRight
@@ -218,27 +216,27 @@ export function AppListItem({ app }: Props) {
 
 검증 항목:
 
-| 테스트                          | 확인 대상                                               |
-| ------------------------------- | ------------------------------------------------------- |
-| 앱 이름과 설명을 렌더한다       | `getByRole('heading', { name: 'Ralli' })`, 설명 텍스트  |
-| 상세 페이지로 링크한다          | `getByRole('link')`의 `href === '/apps/ralli'`          |
+| 테스트 | 확인 대상 |
+|---|---|
+| 앱 이름과 설명을 렌더한다 | `getByRole('heading', { name: 'Ralli' })`, 설명 텍스트 |
+| 상세 페이지로 링크한다 | `getByRole('link')`의 `href === '/apps/ralli'` |
 | 앱 아이콘을 alt와 함께 렌더한다 | `getByRole('img')`의 `alt === 'Ralli 앱 아이콘'`, `src` |
-| 플랫폼 칩을 모두 렌더한다       | `platforms: ['ios','watch']` → `iPhone`·`Watch` 표시    |
-| 웹앱은 Web 칩을 렌더한다        | `platforms: ['web']` → `Web` 표시, `iPhone` 미표시      |
+| 플랫폼 칩을 모두 렌더한다 | `platforms: ['ios','watch']` → `iPhone`·`Watch` 표시 |
+| 웹앱은 Web 칩을 렌더한다 | `platforms: ['web']` → `Web` 표시, `iPhone` 미표시 |
 
 마지막 항목은 현재 데이터에 웹앱이 없으므로 **테스트 전용 fixture**로 검증한다 — 세 번째 분기가 죽은 코드가 아님을 보장한다.
 
 ## 영향 범위
 
-| 파일                                 | 변경                                    |
-| ------------------------------------ | --------------------------------------- |
-| `_utils/apps-data.ts`                | `type` 제거, `platforms`·`iconSrc` 추가 |
-| `_components/app-list-item.tsx`      | 신규                                    |
-| `_components/app-platform-chips.tsx` | 신규                                    |
-| `_components/app-card.tsx`           | 삭제                                    |
-| `_components/app-list-item.test.tsx` | 신규                                    |
-| `apps/page.tsx`                      | import·컴포넌트 교체                    |
-| `apps/[slug]/page.tsx`               | 플랫폼 표기 교체, 아이콘 추가           |
+| 파일 | 변경 |
+|---|---|
+| `_utils/apps-data.ts` | `type` 제거, `platforms`·`iconSrc` 추가 |
+| `_components/app-list-item.tsx` | 신규 |
+| `_components/app-platform-chips.tsx` | 신규 |
+| `_components/app-card.tsx` | 삭제 |
+| `_components/app-list-item.test.tsx` | 신규 |
+| `apps/page.tsx` | import·컴포넌트 교체 |
+| `apps/[slug]/page.tsx` | 플랫폼 표기 교체, 아이콘 추가 |
 
 `next.config.ts`의 이미지 설정은 건드리지 않는다 — `/ralli/icon1.png`는 `public/` 로컬 자산이라 remote patterns 등록이 필요 없다.
 

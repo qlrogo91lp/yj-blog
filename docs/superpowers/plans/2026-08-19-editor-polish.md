@@ -49,16 +49,16 @@ Minor 8건은 보류(코드 결함 아니거나 낮은 영향, 상세는 SDD led
 
 ## 배경 — 리뷰에서 확인된 문제
 
-| #   | 문제                                                                                                                                                         | 위치                                                                                                                               |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | slug를 편집할 UI가 없다. 한글 제목은 `generateSlug`가 한글을 제거해 `post-<timestamp>`가 된다                                                                | `_store.ts submitPost`, `src/lib/slugify.ts`                                                                                       |
-| 2   | 저장 실패(예: slug 중복) 시 `DraftAction`·`PublishAction`이 결과를 무시해 하단의 "저장 실패" 문구 외 안내가 없다                                             | `draft.action.tsx`, `publish.action.tsx`                                                                                           |
-| 3   | 코드블록 버튼이 없고(단축키 ```만 가능), 기본모드(HTML) 글의 코드블록은 공개 페이지에서 하이라이트가 안 된다 —`htmlToHtmlWithToc`에 `rehypeHighlight`가 없다 | `editor-toolbar.action.tsx`, `src/lib/markdown.ts`                                                                                 |
-| 4   | 카테고리는 한 번 고르면 해제할 수 없다(시리즈는 "시리즈 없음"이 있음)                                                                                        | `category-selector.action.tsx`                                                                                                     |
-| 5   | 태그 입력·드롭다운 폭이 `w-48`(192px)로 고정돼 긴 태그명이 잘린다                                                                                            | `tag-selector.action.tsx`                                                                                                          |
-| 6   | 아이콘 크기를 `className="h-4 w-4"`로 지정한 곳이 남아 있다(프로젝트 규칙: `size={16}`)                                                                      | `editor-toolbar.action.tsx`(4곳), `preview-button.action.tsx`, `table-insert.action.tsx`, `color-picker.tsx`, `toolbar-button.tsx` |
-| 7   | `metaDescription`은 스키마·DB 컬럼·Zod에는 있으나 UI·스토어에 없어 사실상 미사용                                                                             | `schema.ts`, `types/post.ts`, `posts/[slug]/page.tsx`, `build-article-json-ld.ts`                                                  |
-| 8   | `[id]/edit/layout.tsx`는 `'use client'` 레이아웃으로 사이드바를 접고, `new/layout.tsx`는 `SidebarCollapseHandler`를 쓴다 — 같은 일을 두 방식으로             | 두 layout 파일                                                                                                                     |
+| # | 문제 | 위치 |
+|---|---|---|
+| 1 | slug를 편집할 UI가 없다. 한글 제목은 `generateSlug`가 한글을 제거해 `post-<timestamp>`가 된다 | `_store.ts submitPost`, `src/lib/slugify.ts` |
+| 2 | 저장 실패(예: slug 중복) 시 `DraftAction`·`PublishAction`이 결과를 무시해 하단의 "저장 실패" 문구 외 안내가 없다 | `draft.action.tsx`, `publish.action.tsx` |
+| 3 | 코드블록 버튼이 없고(단축키 ``` 만 가능), 기본모드(HTML) 글의 코드블록은 공개 페이지에서 하이라이트가 안 된다 — `htmlToHtmlWithToc`에 `rehypeHighlight`가 없다 | `editor-toolbar.action.tsx`, `src/lib/markdown.ts` |
+| 4 | 카테고리는 한 번 고르면 해제할 수 없다(시리즈는 "시리즈 없음"이 있음) | `category-selector.action.tsx` |
+| 5 | 태그 입력·드롭다운 폭이 `w-48`(192px)로 고정돼 긴 태그명이 잘린다 | `tag-selector.action.tsx` |
+| 6 | 아이콘 크기를 `className="h-4 w-4"`로 지정한 곳이 남아 있다(프로젝트 규칙: `size={16}`) | `editor-toolbar.action.tsx`(4곳), `preview-button.action.tsx`, `table-insert.action.tsx`, `color-picker.tsx`, `toolbar-button.tsx` |
+| 7 | `metaDescription`은 스키마·DB 컬럼·Zod에는 있으나 UI·스토어에 없어 사실상 미사용 | `schema.ts`, `types/post.ts`, `posts/[slug]/page.tsx`, `build-article-json-ld.ts` |
+| 8 | `[id]/edit/layout.tsx`는 `'use client'` 레이아웃으로 사이드바를 접고, `new/layout.tsx`는 `SidebarCollapseHandler`를 쓴다 — 같은 일을 두 방식으로 | 두 layout 파일 |
 
 ## Global Constraints
 
@@ -73,27 +73,27 @@ Minor 8건은 보류(코드 결함 아니거나 낮은 영향, 상세는 SDD led
 
 ## 파일 구조
 
-| 파일                                                                                                                      | 역할                                                     | 변경 |
-| ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ---- |
-| `src/app/admin/posts/new/_actions/seo-section.action.tsx`                                                                 | slug 입력 필드 추가                                      | 수정 |
-| `src/app/admin/posts/new/_actions/seo-section.action.test.tsx`                                                            | slug 입력 테스트                                         | 수정 |
-| `src/app/admin/posts/new/_actions/draft.action.tsx`, `publish.action.tsx`                                                 | 실패 시 `toast.error(result.error)`                      | 수정 |
-| `src/app/admin/posts/new/_actions/draft.action.test.tsx`                                                                  | 실패 toast 테스트                                        | 수정 |
-| `src/app/admin/posts/new/_actions/publish.action.test.tsx`                                                                | 실패 toast·성공 이동 테스트                              | 신규 |
-| `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx`                                                              | `CodeBlockLowlight` 확장                                 | 수정 |
-| `src/app/admin/posts/new/_actions/editor-toolbar.action.tsx`                                                              | 코드·코드블록 버튼, 아이콘 규칙                          | 수정 |
-| `src/lib/markdown.ts`                                                                                                     | `htmlToHtmlWithToc`에 `rehypeHighlight`                  | 수정 |
-| `src/lib/markdown.test.ts`                                                                                                | 하이라이트 테스트                                        | 수정 |
-| `src/app/admin/posts/new/_actions/category-selector.action.tsx`                                                           | "카테고리 없음" 옵션                                     | 수정 |
-| `src/app/admin/posts/new/_actions/tag-selector.action.tsx`                                                                | 폭 `w-full max-w-md`                                     | 수정 |
-| `src/app/admin/posts/new/_components/toolbar-button.tsx`                                                                  | `icon` 타입 `LucideIcon`, `size={16}`                    | 수정 |
-| `preview-button.action.tsx`, `table-insert.action.tsx`, `color-picker.tsx`                                                | `size={16}`                                              | 수정 |
-| `src/db/schema.ts`                                                                                                        | `metaDescription` 컬럼 제거                              | 수정 |
-| `src/types/post.ts` + `post.test.ts`                                                                                      | Zod `metaDescription` 제거                               | 수정 |
-| `src/app/(main)/posts/[slug]/page.tsx`, `_utils/build-article-json-ld.ts` + `.test.ts`, `_components/article-json-ld.tsx` | `metaDescription` 참조 제거                              | 수정 |
-| `Post` 타입 픽스처를 쓰는 테스트 8개(`grep -rl metaDescription src`)                                                      | 픽스처에서 `metaDescription: null` 줄 제거               | 수정 |
-| `src/app/admin/posts/[id]/edit/layout.tsx`                                                                                | `SidebarCollapseHandler` 사용 서버 레이아웃으로 통일     | 수정 |
-| `package.json`                                                                                                            | `@tiptap/extension-code-block-lowlight`, `lowlight` 추가 | 수정 |
+| 파일 | 역할 | 변경 |
+|---|---|---|
+| `src/app/admin/posts/new/_actions/seo-section.action.tsx` | slug 입력 필드 추가 | 수정 |
+| `src/app/admin/posts/new/_actions/seo-section.action.test.tsx` | slug 입력 테스트 | 수정 |
+| `src/app/admin/posts/new/_actions/draft.action.tsx`, `publish.action.tsx` | 실패 시 `toast.error(result.error)` | 수정 |
+| `src/app/admin/posts/new/_actions/draft.action.test.tsx` | 실패 toast 테스트 | 수정 |
+| `src/app/admin/posts/new/_actions/publish.action.test.tsx` | 실패 toast·성공 이동 테스트 | 신규 |
+| `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx` | `CodeBlockLowlight` 확장 | 수정 |
+| `src/app/admin/posts/new/_actions/editor-toolbar.action.tsx` | 코드·코드블록 버튼, 아이콘 규칙 | 수정 |
+| `src/lib/markdown.ts` | `htmlToHtmlWithToc`에 `rehypeHighlight` | 수정 |
+| `src/lib/markdown.test.ts` | 하이라이트 테스트 | 수정 |
+| `src/app/admin/posts/new/_actions/category-selector.action.tsx` | "카테고리 없음" 옵션 | 수정 |
+| `src/app/admin/posts/new/_actions/tag-selector.action.tsx` | 폭 `w-full max-w-md` | 수정 |
+| `src/app/admin/posts/new/_components/toolbar-button.tsx` | `icon` 타입 `LucideIcon`, `size={16}` | 수정 |
+| `preview-button.action.tsx`, `table-insert.action.tsx`, `color-picker.tsx` | `size={16}` | 수정 |
+| `src/db/schema.ts` | `metaDescription` 컬럼 제거 | 수정 |
+| `src/types/post.ts` + `post.test.ts` | Zod `metaDescription` 제거 | 수정 |
+| `src/app/(main)/posts/[slug]/page.tsx`, `_utils/build-article-json-ld.ts` + `.test.ts`, `_components/article-json-ld.tsx` | `metaDescription` 참조 제거 | 수정 |
+| `Post` 타입 픽스처를 쓰는 테스트 8개(`grep -rl metaDescription src`) | 픽스처에서 `metaDescription: null` 줄 제거 | 수정 |
+| `src/app/admin/posts/[id]/edit/layout.tsx` | `SidebarCollapseHandler` 사용 서버 레이아웃으로 통일 | 수정 |
+| `package.json` | `@tiptap/extension-code-block-lowlight`, `lowlight` 추가 | 수정 |
 
 ---
 
@@ -115,7 +115,6 @@ Expected: 전부 PASS
 ### Task 1: slug 편집 UI + 저장 실패 toast
 
 **Files:**
-
 - Modify: `src/app/admin/posts/new/_actions/seo-section.action.tsx`
 - Modify: `src/app/admin/posts/new/_actions/seo-section.action.test.tsx`
 - Modify: `src/app/admin/posts/new/_actions/draft.action.tsx`
@@ -124,7 +123,6 @@ Expected: 전부 PASS
 - Create: `src/app/admin/posts/new/_actions/publish.action.test.tsx`
 
 **Interfaces:**
-
 - Consumes: 스토어 `slug`, `setSlug`, `title`; `generateSlug(title)` (`@/lib/slugify`); `submitPost` 결과 `{ success: false; error: string }`
 - Produces: SEO 섹션에 `<Input id="seo-slug">` (label "URL slug"). 비어 있으면 placeholder로 `generateSlug(title)` 미리보기. 허용 문자 외 입력 시 아래에 빨간 안내문 "영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다".
 
@@ -133,66 +131,59 @@ Expected: 전부 PASS
 `seo-section.action.test.tsx`에 추가:
 
 ```tsx
-it('slug 입력 필드가 있고 입력 시 store가 업데이트된다', () => {
-  render(<SeoSectionAction />);
-  fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
-  const input = screen.getByLabelText('URL slug');
-  fireEvent.change(input, { target: { value: 'my-post' } });
-  expect(useNewPostStore.getState().slug).toBe('my-post');
-});
-
-it('slug가 비어 있으면 제목 기반 자동 slug를 placeholder로 보여준다', () => {
-  useNewPostStore.getState().setTitle('Hello World');
-  render(<SeoSectionAction />);
-  fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
-  expect(screen.getByLabelText('URL slug')).toHaveAttribute(
-    'placeholder',
-    'hello-world'
-  );
-});
-
-it('허용되지 않는 문자가 있으면 안내문을 보여준다', () => {
-  render(<SeoSectionAction />);
-  fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
-  fireEvent.change(screen.getByLabelText('URL slug'), {
-    target: { value: 'Hello World!' },
+  it('slug 입력 필드가 있고 입력 시 store가 업데이트된다', () => {
+    render(<SeoSectionAction />);
+    fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
+    const input = screen.getByLabelText('URL slug');
+    fireEvent.change(input, { target: { value: 'my-post' } });
+    expect(useNewPostStore.getState().slug).toBe('my-post');
   });
-  expect(
-    screen.getByText('영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다')
-  ).toBeInTheDocument();
-});
+
+  it('slug가 비어 있으면 제목 기반 자동 slug를 placeholder로 보여준다', () => {
+    useNewPostStore.getState().setTitle('Hello World');
+    render(<SeoSectionAction />);
+    fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
+    expect(screen.getByLabelText('URL slug')).toHaveAttribute('placeholder', 'hello-world');
+  });
+
+  it('허용되지 않는 문자가 있으면 안내문을 보여준다', () => {
+    render(<SeoSectionAction />);
+    fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
+    fireEvent.change(screen.getByLabelText('URL slug'), { target: { value: 'Hello World!' } });
+    expect(
+      screen.getByText('영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다'),
+    ).toBeInTheDocument();
+  });
 ```
 
 `draft.action.test.tsx`에 추가 (파일 상단에 `vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));` 와 `import { toast } from 'sonner';` 추가):
 
 ```tsx
-it('저장 실패 시 toast.error로 사유를 보여준다', async () => {
-  vi.mocked(savePost).mockResolvedValue({
-    success: false,
-    error: '이미 사용 중인 slug입니다',
+  it('저장 실패 시 toast.error로 사유를 보여준다', async () => {
+    vi.mocked(savePost).mockResolvedValue({ success: false, error: '이미 사용 중인 slug입니다' });
+    render(<DraftAction />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+    });
+    expect(toast.error).toHaveBeenCalledWith('이미 사용 중인 slug입니다');
   });
-  render(<DraftAction />);
-  await act(async () => {
-    fireEvent.click(screen.getByRole('button'));
-  });
-  expect(toast.error).toHaveBeenCalledWith('이미 사용 중인 slug입니다');
-});
 ```
 
 `publish.action.test.tsx` 신규:
 
 ```tsx
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { toast } from 'sonner';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { savePost } from '../_services/save-post';
-import { useNewPostStore } from '../_store';
-import { PublishAction } from './publish.action';
 
 const push = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 vi.mock('../_services/save-post', () => ({ savePost: vi.fn() }));
+
+import { toast } from 'sonner';
+import { savePost } from '../_services/save-post';
+import { useNewPostStore } from '../_store';
+import { PublishAction } from './publish.action';
 
 describe('PublishAction', () => {
   beforeEach(() => {
@@ -206,10 +197,7 @@ describe('PublishAction', () => {
 
   it('성공하면 상세 페이지로 이동한다', async () => {
     vi.mocked(savePost).mockResolvedValue({
-      success: true,
-      postId: 1,
-      status: 'published',
-      publishedAt: new Date(),
+      success: true, postId: 1, status: 'published', publishedAt: new Date(),
     });
     useNewPostStore.getState().setSlug('my-post');
     render(<PublishAction />);
@@ -220,10 +208,7 @@ describe('PublishAction', () => {
   });
 
   it('실패하면 toast.error로 사유를 보여주고 이동하지 않는다', async () => {
-    vi.mocked(savePost).mockResolvedValue({
-      success: false,
-      error: '이미 사용 중인 slug입니다',
-    });
+    vi.mocked(savePost).mockResolvedValue({ success: false, error: '이미 사용 중인 slug입니다' });
     render(<PublishAction />);
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: '완료' }));
@@ -250,37 +235,34 @@ import { generateSlug } from '@/lib/slugify';
 스토어 구독 추가:
 
 ```tsx
-const title = useNewPostStore((s) => s.title);
-const slug = useNewPostStore((s) => s.slug);
-const setSlug = useNewPostStore((s) => s.setSlug);
-const slugPattern = /^[a-z0-9가-힣-]*$/;
-const isSlugValid = slugPattern.test(slug);
+  const title = useNewPostStore((s) => s.title);
+  const slug = useNewPostStore((s) => s.slug);
+  const setSlug = useNewPostStore((s) => s.setSlug);
+  const slugPattern = /^[a-z0-9가-힣-]*$/;
+  const isSlugValid = slugPattern.test(slug);
 ```
 
 펼침 영역(`{open && (<div className="space-y-4 px-4 pb-4">`) 맨 앞에 블록 추가:
 
 ```tsx
-<div>
-  <Label htmlFor="seo-slug" className="mb-1 block">
-    URL slug
-  </Label>
-  <Input
-    id="seo-slug"
-    value={slug}
-    onChange={(e) => setSlug(e.target.value.trim())}
-    placeholder={title ? generateSlug(title) : 'my-post'}
-    aria-invalid={!isSlugValid}
-  />
-  <p className="mt-1 text-xs text-muted-foreground">
-    /posts/{slug || (title ? generateSlug(title) : '…')} — 비우면 제목으로 자동
-    생성됩니다.
-  </p>
-  {!isSlugValid && (
-    <p className="mt-1 text-xs text-destructive">
-      영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다
-    </p>
-  )}
-</div>
+          <div>
+            <Label htmlFor="seo-slug" className="mb-1 block">URL slug</Label>
+            <Input
+              id="seo-slug"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value.trim())}
+              placeholder={title ? generateSlug(title) : 'my-post'}
+              aria-invalid={!isSlugValid}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              /posts/{slug || (title ? generateSlug(title) : '…')} — 비우면 제목으로 자동 생성됩니다.
+            </p>
+            {!isSlugValid && (
+              <p className="mt-1 text-xs text-destructive">
+                영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다
+              </p>
+            )}
+          </div>
 ```
 
 - [x] **Step 4: `draft.action.tsx`·`publish.action.tsx`에 toast**
@@ -288,23 +270,23 @@ const isSlugValid = slugPattern.test(slug);
 `draft.action.tsx`: `import { toast } from 'sonner';` 추가, `handleClick`:
 
 ```tsx
-const handleClick = async () => {
-  const result = await submitPost(status);
-  if (!result.success) toast.error(result.error);
-};
+  const handleClick = async () => {
+    const result = await submitPost(status);
+    if (!result.success) toast.error(result.error);
+  };
 ```
 
 `publish.action.tsx`: `import { toast } from 'sonner';` 추가, `handleClick`:
 
 ```tsx
-const handleClick = async () => {
-  const result = await submitPost('published');
-  if (result.success) {
-    router.push(`/posts/${result.slug}`);
-  } else {
-    toast.error(result.error);
-  }
-};
+  const handleClick = async () => {
+    const result = await submitPost('published');
+    if (result.success) {
+      router.push(`/posts/${result.slug}`);
+    } else {
+      toast.error(result.error);
+    }
+  };
 ```
 
 - [x] **Step 5: 통과 확인**
@@ -324,7 +306,6 @@ git commit -m "✨ feat: SEO 섹션에 slug 편집 필드 추가, 저장 실패 
 ### Task 2: 코드블록 — 편집기 lowlight 하이라이트 + 툴바 버튼 + 공개 페이지 하이라이트
 
 **Files:**
-
 - Modify: `package.json`
 - Modify: `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx`
 - Modify: `src/app/admin/posts/new/_actions/editor-toolbar.action.tsx`
@@ -332,7 +313,6 @@ git commit -m "✨ feat: SEO 섹션에 slug 편집 필드 추가, 저장 실패 
 - Modify: `src/lib/markdown.test.ts`
 
 **Interfaces:**
-
 - Consumes: `ToolbarButton` (기존)
 - Produces: 툴바에 "코드"(인라인, `toggleCode`)·"코드 블록"(`toggleCodeBlock`) 버튼. 공개 페이지 `htmlToHtmlWithToc` 출력의 `<pre><code class="language-xx">`가 `hljs` 클래스로 하이라이트됨
 
@@ -347,8 +327,7 @@ npm install @tiptap/extension-code-block-lowlight@^3.20 lowlight
 ```ts
 describe('htmlToHtmlWithToc — 코드 하이라이트', () => {
   it('language 클래스가 있는 code를 hljs 토큰으로 하이라이트한다', async () => {
-    const html =
-      '<pre><code class="language-javascript">const a = 1;</code></pre>';
+    const html = '<pre><code class="language-javascript">const a = 1;</code></pre>';
     const { html: result } = await htmlToHtmlWithToc(html);
     expect(result).toContain('hljs');
     expect(result).toContain('hljs-keyword');
@@ -370,13 +349,13 @@ Expected: 새 테스트 FAIL (`hljs` 없음)
 - [x] **Step 4: `src/lib/markdown.ts` 수정** — `htmlToHtmlWithToc`의 processor에서 `.use(rehypeSlug)` 다음에 `.use(rehypeHighlight)` 추가:
 
 ```ts
-const processor = unified()
-  .use(rehypeParse, { fragment: true })
-  .use(rehypeSlug)
-  // detect: true — 편집기 코드블록은 언어를 안 고르면 class 없이 저장되므로 자동 감지가 필요하다
-  .use(rehypeHighlight, { detect: true })
-  .use(rehypeImageCaption);
-// ...이하 동일
+  const processor = unified()
+    .use(rehypeParse, { fragment: true })
+    .use(rehypeSlug)
+    // detect: true — 편집기 코드블록은 언어를 안 고르면 class 없이 저장되므로 자동 감지가 필요하다
+    .use(rehypeHighlight, { detect: true })
+    .use(rehypeImageCaption)
+    // ...이하 동일
 ```
 
 - [x] **Step 5: 통과 확인**
@@ -441,7 +420,6 @@ git commit -m "✨ feat: 코드블록 툴바 버튼과 lowlight 하이라이트 
 ### Task 3: 카테고리 해제·태그 폭·아이콘 규칙
 
 **Files:**
-
 - Modify: `src/app/admin/posts/new/_actions/category-selector.action.tsx`
 - Modify: `src/app/admin/posts/new/_actions/tag-selector.action.tsx`
 - Modify: `src/app/admin/posts/new/_components/toolbar-button.tsx`
@@ -456,26 +434,15 @@ git commit -m "✨ feat: 코드블록 툴바 버튼과 lowlight 하이라이트 
 ```tsx
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useNewPostStore } from '../_store';
-import { CategorySelectorAction } from './category-selector.action';
 
 vi.mock('../_services/save-post', () => ({ savePost: vi.fn() }));
 
+import { useNewPostStore } from '../_store';
+import { CategorySelectorAction } from './category-selector.action';
+
 const categories = [
-  {
-    id: 1,
-    name: '개발',
-    slug: 'dev',
-    description: null,
-    createdAt: new Date(),
-  },
-  {
-    id: 2,
-    name: '일상',
-    slug: 'life',
-    description: null,
-    createdAt: new Date(),
-  },
+  { id: 1, name: '개발', slug: 'dev', description: null, createdAt: new Date() },
+  { id: 2, name: '일상', slug: 'life', description: null, createdAt: new Date() },
 ];
 
 describe('CategorySelectorAction', () => {
@@ -504,24 +471,22 @@ Expected: 첫 테스트 FAIL (placeholder "카테고리 선택")
 - [x] **Step 3: `category-selector.action.tsx` 수정** — 시리즈 셀렉터와 같은 `'none'` 센티널 방식
 
 ```tsx
-<Select
-  value={categoryId?.toString() ?? 'none'}
-  onValueChange={(value) =>
-    setCategoryId(value === 'none' ? null : Number(value))
-  }
->
-  <SelectTrigger className="w-48">
-    <SelectValue placeholder="카테고리 선택" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="none">카테고리 없음</SelectItem>
-    {categories.map((cat) => (
-      <SelectItem key={cat.id} value={cat.id.toString()}>
-        {cat.name}
-      </SelectItem>
-    ))}
-  </SelectContent>
-</Select>
+      <Select
+        value={categoryId?.toString() ?? 'none'}
+        onValueChange={(value) => setCategoryId(value === 'none' ? null : Number(value))}
+      >
+        <SelectTrigger className="w-48">
+          <SelectValue placeholder="카테고리 선택" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="none">카테고리 없음</SelectItem>
+          {categories.map((cat) => (
+            <SelectItem key={cat.id} value={cat.id.toString()}>
+              {cat.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 ```
 
 - [x] **Step 4: 태그 입력 폭** — `tag-selector.action.tsx`
@@ -553,7 +518,6 @@ git commit -m "💄 style: 카테고리 해제 옵션·태그 입력 폭 확장�
 ### Task 4: `metaDescription` 제거
 
 **Files:**
-
 - Modify: `src/db/schema.ts`
 - Modify: `src/types/post.ts`, `src/types/post.test.ts`
 - Modify: `src/app/(main)/posts/[slug]/page.tsx`
@@ -575,15 +539,15 @@ git commit -m "💄 style: 카테고리 해제 옵션·태그 입력 폭 확장�
 - `build-article-json-ld.test.ts`: `basePost`의 `metaDescription: null` 삭제, 테스트 "metaTitle/metaDescription이 있으면 우선 사용한다"를 아래로 교체:
 
 ```ts
-it('metaTitle이 있으면 headline로 우선 사용하고 description은 excerpt를 쓴다', () => {
-  const json = buildArticleJsonLd({
-    post: { ...basePost, metaTitle: 'SEO 제목', excerpt: '요약' },
-    blogName: 'YJlogs',
-    baseUrl: 'https://yjlogs.com',
+  it('metaTitle이 있으면 headline로 우선 사용하고 description은 excerpt를 쓴다', () => {
+    const json = buildArticleJsonLd({
+      post: { ...basePost, metaTitle: 'SEO 제목', excerpt: '요약' },
+      blogName: 'YJlogs',
+      baseUrl: 'https://yjlogs.com',
+    });
+    expect(json.headline).toBe('SEO 제목');
+    expect(json.description).toBe('요약');
   });
-  expect(json.headline).toBe('SEO 제목');
-  expect(json.description).toBe('요약');
-});
 ```
 
 - `article-json-ld.tsx`: props 타입에서 `metaDescription: string | null;` 삭제
@@ -615,7 +579,6 @@ git commit -m "🔥 remove: 미사용 metaDescription 컬럼·스키마·참조 
 ### Task 5: 편집 페이지 레이아웃을 `SidebarCollapseHandler`로 통일
 
 **Files:**
-
 - Modify: `src/app/admin/posts/[id]/edit/layout.tsx`
 
 - [x] **Step 1: 교체**

@@ -5,4 +5,4 @@ apps/*/dist
 apps/*/test-results
 apps/*/playwright-report
 .turbo
-docs/legacy
+docs/

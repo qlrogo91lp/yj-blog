@@ -12,9 +12,9 @@
 
 `src/app/admin/categories/_components/_actions/` 에 잘못 중첩된 인터랙션 컴포넌트 2개.
 
-| 현재                                                         | 이동 후                                          |
-| ------------------------------------------------------------ | ------------------------------------------------ |
-| `categories/_components/_actions/edit-category-action.tsx`   | `categories/_actions/edit-category.action.tsx`   |
+| 현재 | 이동 후 |
+|---|---|
+| `categories/_components/_actions/edit-category-action.tsx` | `categories/_actions/edit-category.action.tsx` |
 | `categories/_components/_actions/delete-category-action.tsx` | `categories/_actions/delete-category.action.tsx` |
 
 > 이동과 동시에 A축 규칙(dot-suffix)도 적용한다.

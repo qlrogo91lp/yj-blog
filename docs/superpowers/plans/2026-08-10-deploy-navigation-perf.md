@@ -39,16 +39,16 @@ git checkout -b fix/deploy-navigation-perf
 
 ## File Structure
 
-| 파일                                                     | 상태 | 책임                                                                                                |
-| -------------------------------------------------------- | ---- | --------------------------------------------------------------------------------------------------- |
-| `src/proxy.ts`                                           | 수정 | Clerk 미들웨어 적용 범위. `/admin`·`/api`로 한정                                                    |
-| `next.config.ts`                                         | 수정 | CSP 헤더(GA 도메인 허용) + 이미지 캐시 정책                                                         |
-| `next.config.test.ts`                                    | 신규 | 위 두 설정의 회귀 방지. GA CSP 누락은 실제로 배포되어 수개월간 방치된 이력이 있어 테스트로 고정한다 |
-| `src/app/admin/posts/new/_services/upload-image.ts`      | 수정 | R2 업로드 시 `CacheControl` 부여                                                                    |
-| `src/app/admin/posts/new/_services/upload-image.test.ts` | 신규 | 업로드가 `CacheControl`을 싣는지 검증                                                               |
-| `src/components/navigation-progress.tsx`                 | 신규 | 네비게이션 감지 + 상단 프로그레스 바. 순수 클라이언트, Suspense 경계 없음                           |
-| `src/components/navigation-progress.test.tsx`            | 신규 | 감지 제외 조건과 지연 노출 검증                                                                     |
-| `src/app/layout.tsx`                                     | 수정 | `<NavigationProgress />` 배치                                                                       |
+| 파일 | 상태 | 책임 |
+|------|------|------|
+| `src/proxy.ts` | 수정 | Clerk 미들웨어 적용 범위. `/admin`·`/api`로 한정 |
+| `next.config.ts` | 수정 | CSP 헤더(GA 도메인 허용) + 이미지 캐시 정책 |
+| `next.config.test.ts` | 신규 | 위 두 설정의 회귀 방지. GA CSP 누락은 실제로 배포되어 수개월간 방치된 이력이 있어 테스트로 고정한다 |
+| `src/app/admin/posts/new/_services/upload-image.ts` | 수정 | R2 업로드 시 `CacheControl` 부여 |
+| `src/app/admin/posts/new/_services/upload-image.test.ts` | 신규 | 업로드가 `CacheControl`을 싣는지 검증 |
+| `src/components/navigation-progress.tsx` | 신규 | 네비게이션 감지 + 상단 프로그레스 바. 순수 클라이언트, Suspense 경계 없음 |
+| `src/components/navigation-progress.test.tsx` | 신규 | 감지 제외 조건과 지연 노출 검증 |
+| `src/app/layout.tsx` | 수정 | `<NavigationProgress />` 배치 |
 
 `navigation-progress.tsx`는 `src/components/` 직하의 공통 클라이언트 컴포넌트이므로 `page-tracker.tsx`·`nav-links.tsx`와 동일하게 접미사 없는 kebab-case를 쓴다. `_actions/*.action.tsx` 규칙은 라우트 폴더 전용이라 해당 없음.
 
@@ -57,11 +57,9 @@ git checkout -b fix/deploy-navigation-perf
 ### Task 1: Clerk 미들웨어 범위 축소
 
 **Files:**
-
 - Modify: `src/proxy.ts`
 
 **Interfaces:**
-
 - Consumes: 없음
 - Produces: 없음 (설정 변경). 다른 태스크가 이 결과에 의존하지 않는다.
 
@@ -145,12 +143,10 @@ Clerk가 불필요하다. 전역 적용 시 CDN HIT 상태에서도 요청당 �
 ### Task 2: CSP에 Google Analytics 도메인 허용
 
 **Files:**
-
 - Modify: `next.config.ts`
 - Test: `next.config.test.ts` (신규)
 
 **Interfaces:**
-
 - Consumes: 없음
 - Produces: `next.config.test.ts`에 `getCspHeaderValue()` 헬퍼를 정의한다. Task 3이 같은 파일에 테스트를 추가하지만 이 헬퍼를 쓰지는 않는다.
 
@@ -185,9 +181,7 @@ function getDirective(csp: string, name: string): string[] {
 describe('next.config CSP', () => {
   it('script-src가 Google Tag Manager를 허용한다', async () => {
     const csp = await getCspHeaderValue();
-    expect(getDirective(csp, 'script-src')).toContain(
-      'https://www.googletagmanager.com'
-    );
+    expect(getDirective(csp, 'script-src')).toContain('https://www.googletagmanager.com');
   });
 
   it('connect-src가 Google Analytics 수집 엔드포인트를 허용한다', async () => {
@@ -251,12 +245,10 @@ script-src에 googletagmanager.com이 없어 GA 스크립트 로드가 배포 �
 ### Task 3: 이미지 캐시 정책 (next.config)
 
 **Files:**
-
 - Modify: `next.config.ts`
 - Modify: `next.config.test.ts` (Task 2에서 만든 파일 맨 끝에 `describe` 블록 추가)
 
 **Interfaces:**
-
 - Consumes: Task 2가 만든 `next.config.test.ts` 파일. 기존 import와 헬퍼를 그대로 두고 새 `describe` 블록만 덧붙인다.
 - Produces: 없음
 
@@ -351,12 +343,10 @@ deviceSizes도 콘텐츠 폭 980px에 맞춰 8종에서 4종으로 줄인다."
 ### Task 4: R2 업로드에 Cache-Control 부여
 
 **Files:**
-
 - Modify: `src/app/admin/posts/new/_services/upload-image.ts:93-99`
 - Test: `src/app/admin/posts/new/_services/upload-image.test.ts` (신규)
 
 **Interfaces:**
-
 - Consumes: 없음
 - Produces: 없음. `uploadImage`의 시그니처는 변하지 않는다 — `(formData: FormData, postId: number | null, type: 'thumbnail' | 'content') => Promise<UploadResult>`
 
@@ -368,7 +358,6 @@ Task 3이 기존 이미지를 구제한다면 이 태스크는 신규 업로드�
 
 ```ts
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { uploadImage } from './upload-image';
 
 /** PutObjectCommand에 전달된 인자를 순서대로 수집한다. */
 const putObjectArgs: Record<string, unknown>[] = [];
@@ -394,12 +383,11 @@ vi.mock('@/db', () => ({
   },
 }));
 
+import { uploadImage } from './upload-image';
+
 function buildFormData(): FormData {
   const formData = new FormData();
-  formData.append(
-    'file',
-    new File(['fake-bytes'], 'thumb.png', { type: 'image/png' })
-  );
+  formData.append('file', new File(['fake-bytes'], 'thumb.png', { type: 'image/png' }));
   return formData;
 }
 
@@ -419,9 +407,7 @@ describe('uploadImage', () => {
     await uploadImage(buildFormData(), 42, 'thumbnail');
 
     expect(putObjectArgs).toHaveLength(1);
-    expect(putObjectArgs[0].CacheControl).toBe(
-      'public, max-age=31536000, immutable'
-    );
+    expect(putObjectArgs[0].CacheControl).toBe('public, max-age=31536000, immutable');
   });
 
   it('기존 Key·ContentType 동작을 유지한다', async () => {
@@ -456,18 +442,18 @@ npx vitest run src/app/admin/posts/new/_services/upload-image.test.ts
 `upload-image.ts`의 `PutObjectCommand` 호출을 수정한다.
 
 ```ts
-await r2.send(
-  new PutObjectCommand({
-    Bucket: process.env.R2_BUCKET_NAME!,
-    Key: key,
-    Body: buffer,
-    ContentType: file.type,
-    // 업로드 키가 글 ID·인덱스로 고정되고 교체 시 새 키가 생기므로 immutable이 안전하다.
-    // 이 헤더가 없으면 next/image는 minimumCacheTTL로 폴백하고,
-    // 본문 raw <img>는 브라우저 캐시가 아예 걸리지 않는다.
-    CacheControl: 'public, max-age=31536000, immutable',
-  })
-);
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+        // 업로드 키가 글 ID·인덱스로 고정되고 교체 시 새 키가 생기므로 immutable이 안전하다.
+        // 이 헤더가 없으면 next/image는 minimumCacheTTL로 폴백하고,
+        // 본문 raw <img>는 브라우저 캐시가 아예 걸리지 않는다.
+        CacheControl: 'public, max-age=31536000, immutable',
+      }),
+    );
 ```
 
 - [x] **Step 4: 테스트 통과 확인**
@@ -493,13 +479,11 @@ git commit -m "⚡️ R2 업로드에 immutable Cache-Control 부여
 ### Task 5: 네비게이션 프로그레스 바
 
 **Files:**
-
 - Create: `src/components/navigation-progress.tsx`
 - Create: `src/components/navigation-progress.test.tsx`
 - Modify: `src/app/layout.tsx:69` (`<PageTracker />` 다음 줄)
 
 **Interfaces:**
-
 - Consumes: 없음
 - Produces:
   - `shouldStartProgress(event: MouseEvent, anchor: HTMLAnchorElement | null, currentPathname: string): boolean` — 클릭이 프로그레스 바를 띄울 내부 네비게이션인지 판정하는 순수 함수. 테스트 대상.
@@ -536,26 +520,17 @@ vi.mock('next/navigation', () => ({
 }));
 
 /** 지정한 href를 가진 앵커를 document에 붙이고 반환한다. */
-function appendAnchor(
-  href: string,
-  attrs: Record<string, string> = {}
-): HTMLAnchorElement {
+function appendAnchor(href: string, attrs: Record<string, string> = {}): HTMLAnchorElement {
   const anchor = document.createElement('a');
   anchor.href = href;
-  for (const [key, value] of Object.entries(attrs))
-    anchor.setAttribute(key, value);
+  for (const [key, value] of Object.entries(attrs)) anchor.setAttribute(key, value);
   document.body.appendChild(anchor);
   return anchor;
 }
 
 /** 좌클릭 MouseEvent를 만든다. */
 function leftClick(init: MouseEventInit = {}): MouseEvent {
-  return new MouseEvent('click', {
-    bubbles: true,
-    cancelable: true,
-    button: 0,
-    ...init,
-  });
+  return new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, ...init });
 }
 
 describe('shouldStartProgress', () => {
@@ -570,25 +545,15 @@ describe('shouldStartProgress', () => {
 
   it('수정키를 누른 클릭은 새 탭/창이므로 추적하지 않는다', () => {
     const anchor = appendAnchor('/posts');
-    expect(shouldStartProgress(leftClick({ metaKey: true }), anchor, '/')).toBe(
-      false
-    );
-    expect(shouldStartProgress(leftClick({ ctrlKey: true }), anchor, '/')).toBe(
-      false
-    );
-    expect(
-      shouldStartProgress(leftClick({ shiftKey: true }), anchor, '/')
-    ).toBe(false);
-    expect(shouldStartProgress(leftClick({ altKey: true }), anchor, '/')).toBe(
-      false
-    );
+    expect(shouldStartProgress(leftClick({ metaKey: true }), anchor, '/')).toBe(false);
+    expect(shouldStartProgress(leftClick({ ctrlKey: true }), anchor, '/')).toBe(false);
+    expect(shouldStartProgress(leftClick({ shiftKey: true }), anchor, '/')).toBe(false);
+    expect(shouldStartProgress(leftClick({ altKey: true }), anchor, '/')).toBe(false);
   });
 
   it('가운데 클릭은 추적하지 않는다', () => {
     const anchor = appendAnchor('/posts');
-    expect(shouldStartProgress(leftClick({ button: 1 }), anchor, '/')).toBe(
-      false
-    );
+    expect(shouldStartProgress(leftClick({ button: 1 }), anchor, '/')).toBe(false);
   });
 
   it('외부 링크는 추적하지 않는다', () => {
@@ -639,9 +604,7 @@ describe('NavigationProgress', () => {
 
   it('초기에는 숨겨져 있다', () => {
     render(<NavigationProgress />);
-    expect(screen.getByTestId('navigation-progress')).toHaveStyle({
-      opacity: '0',
-    });
+    expect(screen.getByTestId('navigation-progress')).toHaveStyle({ opacity: '0' });
   });
 
   it('클릭 후 150ms 전에는 나타나지 않는다', () => {
@@ -653,9 +616,7 @@ describe('NavigationProgress', () => {
       vi.advanceTimersByTime(149);
     });
 
-    expect(screen.getByTestId('navigation-progress')).toHaveStyle({
-      opacity: '0',
-    });
+    expect(screen.getByTestId('navigation-progress')).toHaveStyle({ opacity: '0' });
   });
 
   it('클릭 후 150ms가 지나면 나타난다', () => {
@@ -667,9 +628,7 @@ describe('NavigationProgress', () => {
       vi.advanceTimersByTime(150);
     });
 
-    expect(screen.getByTestId('navigation-progress')).toHaveStyle({
-      opacity: '1',
-    });
+    expect(screen.getByTestId('navigation-progress')).toHaveStyle({ opacity: '1' });
   });
 
   it('제외 대상 클릭은 150ms가 지나도 나타나지 않는다', () => {
@@ -681,9 +640,7 @@ describe('NavigationProgress', () => {
       vi.advanceTimersByTime(300);
     });
 
-    expect(screen.getByTestId('navigation-progress')).toHaveStyle({
-      opacity: '0',
-    });
+    expect(screen.getByTestId('navigation-progress')).toHaveStyle({ opacity: '0' });
   });
 });
 ```
@@ -706,9 +663,9 @@ npx vitest run src/components/navigation-progress.test.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { useNProgress } from '@tanem/react-nprogress';
-import { flushSync } from 'react-dom';
 
 /**
  * 전환이 이 시간보다 빨리 끝나면 바를 아예 띄우지 않는다.
@@ -731,15 +688,14 @@ const maxDurationMs = 10000;
 export function shouldStartProgress(
   event: MouseEvent,
   anchor: HTMLAnchorElement | null,
-  currentPathname: string
+  currentPathname: string,
 ): boolean {
   if (!anchor) return false;
   if (event.defaultPrevented) return false;
 
   // 좌클릭 외에는 브라우저가 새 탭·컨텍스트 메뉴 등으로 처리한다.
   if (event.button !== 0) return false;
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
-    return false;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
 
   if (anchor.target && anchor.target !== '_self') return false;
   if (anchor.hasAttribute('download')) return false;
@@ -753,8 +709,7 @@ export function shouldStartProgress(
   if (url.hash && url.pathname === currentPathname) return false;
 
   // 같은 경로 재클릭은 전환이 일어나지 않아 완료 신호도 오지 않는다.
-  if (url.pathname === currentPathname && url.search === window.location.search)
-    return false;
+  if (url.pathname === currentPathname && url.search === window.location.search) return false;
 
   return true;
 }
@@ -802,8 +757,7 @@ export function NavigationProgress() {
     };
 
     document.addEventListener('click', handleClick, { capture: true });
-    return () =>
-      document.removeEventListener('click', handleClick, { capture: true });
+    return () => document.removeEventListener('click', handleClick, { capture: true });
   }, []);
 
   useEffect(() => {

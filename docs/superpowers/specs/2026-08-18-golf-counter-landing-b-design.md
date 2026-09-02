@@ -13,13 +13,13 @@
 
 ### 1.1 시안 B의 구성
 
-| 구간   | 시안 B 구성                                                       | 스크롤 길이    |
-| ------ | ----------------------------------------------------------------- | -------------- |
-| Hero   | stage 컨테이너 확대(50→94vw) + 칩 4개 사방 비산 + 헤드 페이드아웃 | `300vh` sticky |
-| Watch  | 베이토 그리드 (세로 tall 카드 1 + 정사각 카드 2)                  | 일반 흐름      |
-| Health | 2컬럼 pin — 좌측 3-step 리스트 + 우측 이미지 크로스페이드         | `280vh` sticky |
-| iPhone | 3열 갤러리 + 룰 카드(2컬럼)                                       | 일반 흐름      |
-| Footer | 유리 카드 안에 아이콘 + 최종 CTA + 링크                           | 일반 흐름      |
+| 구간 | 시안 B 구성 | 스크롤 길이 |
+|------|-------------|------------|
+| Hero | stage 컨테이너 확대(50→94vw) + 칩 4개 사방 비산 + 헤드 페이드아웃 | `300vh` sticky |
+| Watch | 베이토 그리드 (세로 tall 카드 1 + 정사각 카드 2) | 일반 흐름 |
+| Health | 2컬럼 pin — 좌측 3-step 리스트 + 우측 이미지 크로스페이드 | `280vh` sticky |
+| iPhone | 3열 갤러리 + 룰 카드(2컬럼) | 일반 흐름 |
+| Footer | 유리 카드 안에 아이콘 + 최종 CTA + 링크 | 일반 흐름 |
 
 A안과 겹치는 부분이 없다. A안은 글자 비산 히어로 · 마퀴 · 카운트업 스탯 · 가로 드리프트 갤러리로 구성된 세로 흐름이고, B안은 stage 확대 히어로 · 베이토 · 2컬럼 pin이다. **두 랜딩은 나란히 놓아도 별개 디자인으로 읽힌다.**
 
@@ -36,11 +36,11 @@ A안과 겹치는 부분이 없다. A안은 글자 비산 히어로 · 마퀴 ·
 
 `(main)` 레이아웃에 그대로 두고 공용 `Header`·`Footer`를 받는다.
 
-| 시안 요소                                           | 처리                                                                        |
-| --------------------------------------------------- | --------------------------------------------------------------------------- |
-| fixed pill 내비 (`Ralli` 워드마크 + 앵커 3개 + CTA) | **전부 제거.** 공용 Header만 사용                                           |
-| 시안 푸터 유리 카드                                 | **최종 CTA 섹션**으로 렌더 (아이콘 · 헤드라인 · CTA · Privacy/Support 링크) |
-| 시안 푸터의 `© 2026 YJlogs`                         | **제거.** 공용 `Footer`가 이미 렌더                                         |
+| 시안 요소 | 처리 |
+|---|---|
+| fixed pill 내비 (`Ralli` 워드마크 + 앵커 3개 + CTA) | **전부 제거.** 공용 Header만 사용 |
+| 시안 푸터 유리 카드 | **최종 CTA 섹션**으로 렌더 (아이콘 · 헤드라인 · CTA · Privacy/Support 링크) |
+| 시안 푸터의 `© 2026 YJlogs` | **제거.** 공용 `Footer`가 이미 렌더 |
 
 A안은 시안의 pill 내비를 "섹션 앵커 서브 내비"로 축소해 남겼지만, **B안에서는 제거한다.** 사용자 결정이며, 근거도 있다 — B안 섹션은 4개뿐이고 각 섹션이 화면을 크게 점유해서 앵커 점프의 실익이 작다. 상단 고정 요소가 하나 줄어 hero의 stage 확대 연출이 더 잘 보인다.
 
@@ -54,13 +54,13 @@ Hero의 sticky 컨테이너는 A안과 동일하게 **`top-14 h-[calc(100vh-3.5r
 
 배경을 검게 하면 이 대비가 사라진다. 해결은 **이미지 카드를 페이지 배경보다 더 어둡게** 두는 것이다. 카드가 "패인 면"으로 읽히고, 스크린샷과의 이음매는 여전히 없다. A안이 `ralli-shot-mask`(radial 마스크 페이드)로 풀었던 문제를 여기서는 색만으로 푼다 — **따라서 B안에는 마스크가 필요 없다.**
 
-| 요소            | 시안 B (라이트)                                       | GolfCounter (다크)                            |
-| --------------- | ----------------------------------------------------- | --------------------------------------------- |
-| 페이지 배경     | `#F2F2F7`                                             | `--color-golf-bg` `#050a06`                   |
-| 이미지 카드     | `#0A0A0A`                                             | **순수 `#000`** + `border-white/8`            |
-| 유리 카드       | `rgba(250,250,250,.72)` + `blur(26px) saturate(180%)` | `bg-white/6` + 동일 blur + `border-white/10`  |
-| 본문 텍스트     | `#000` / `rgba(60,60,67,.6)`                          | `--color-golf-fg` `#f1f5f1` / `text-white/55` |
-| 메시 그라디언트 | green · blue · purple radial                          | green · orange radial, opacity 하향           |
+| 요소 | 시안 B (라이트) | GolfCounter (다크) |
+|---|---|---|
+| 페이지 배경 | `#F2F2F7` | `--color-golf-bg` `#050a06` |
+| 이미지 카드 | `#0A0A0A` | **순수 `#000`** + `border-white/8` |
+| 유리 카드 | `rgba(250,250,250,.72)` + `blur(26px) saturate(180%)` | `bg-white/6` + 동일 blur + `border-white/10` |
+| 본문 텍스트 | `#000` / `rgba(60,60,67,.6)` | `--color-golf-fg` `#f1f5f1` / `text-white/55` |
+| 메시 그라디언트 | green · blue · purple radial | green · orange radial, opacity 하향 |
 
 ### 3.2 강조색: iOS 블루 → 그린 + 오렌지
 
@@ -90,18 +90,18 @@ Hero의 sticky 컨테이너는 A안과 동일하게 **`top-14 h-[calc(100vh-3.5r
 
 파일명이 `ios-`로 시작하는 자산 4장 중 **3장은 실제로 워치 화면을 담은 세로 마케팅 이미지**다.
 
-| 파일                        | 원본      | 실제 내용                                                   |
-| --------------------------- | --------- | ----------------------------------------------------------- |
-| `watch-match-en.png`        | 422×514   | 워치 홀 스코어 다이얼 (목업만, 텍스트 없음)                 |
-| `watch-score-en.png`        | 422×514   | 워치 스코어카드 `Total: 46 +10`                             |
-| `watch-home-en.png`         | 422×514   | 워치 홈 `Start 18 Holes` · `Holes 18`                       |
-| `watch-workout-en.png`      | 422×514   | 워치 워크아웃 지표 (시간 · kcal · 심박)                     |
-| `watch-complication-en.png` | 422×514   | 워치 페이스 + 컴플리케이션                                  |
-| `ios-watch-match-en.png`    | 1284×2778 | **워치** 스코어 다이얼 + "One tap / One stroke"             |
-| `ios-watch-score-en.png`    | 1284×2778 | **워치** 스코어카드 + "The full scorecard, at a glance"     |
-| `complication-en.png`       | 1284×2778 | **워치** 페이스 + "Easy to launch"                          |
-| `connectivity-en.png`       | 1284×2778 | 아이폰 + 워치 나란히 + "Easy scoring, right on your wrist." |
-| `ios-stat-en.png`           | 1284×2778 | **아이폰 Stats 화면** + "Stats, too"                        |
+| 파일 | 원본 | 실제 내용 |
+|---|---|---|
+| `watch-match-en.png` | 422×514 | 워치 홀 스코어 다이얼 (목업만, 텍스트 없음) |
+| `watch-score-en.png` | 422×514 | 워치 스코어카드 `Total: 46 +10` |
+| `watch-home-en.png` | 422×514 | 워치 홈 `Start 18 Holes` · `Holes 18` |
+| `watch-workout-en.png` | 422×514 | 워치 워크아웃 지표 (시간 · kcal · 심박) |
+| `watch-complication-en.png` | 422×514 | 워치 페이스 + 컴플리케이션 |
+| `ios-watch-match-en.png` | 1284×2778 | **워치** 스코어 다이얼 + "One tap / One stroke" |
+| `ios-watch-score-en.png` | 1284×2778 | **워치** 스코어카드 + "The full scorecard, at a glance" |
+| `complication-en.png` | 1284×2778 | **워치** 페이스 + "Easy to launch" |
+| `connectivity-en.png` | 1284×2778 | 아이폰 + 워치 나란히 + "Easy scoring, right on your wrist." |
+| `ios-stat-en.png` | 1284×2778 | **아이폰 Stats 화면** + "Stats, too" |
 
 즉 순수 iPhone 앱 화면은 `ios-stat-en.png` 하나뿐이다. 시안의 `#iphone` 섹션(3열 아이폰 갤러리)을 채울 재료가 없다.
 
@@ -120,14 +120,14 @@ Hero의 sticky 컨테이너는 A안과 동일하게 **`top-14 h-[calc(100vh-3.5r
 
 ### 4.3 최종 배치
 
-| #   | 섹션                   | id       | 이미지                                                                   | 헤드라인                                                                                       |
-| --- | ---------------------- | -------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| 1   | Hero (pin 300vh)       | —        | `watch-match-en`                                                         | 배지 "● Live on Apple Watch & iPhone" (시안 그대로)<br>H1 "Play the round.<br>Not your phone." |
-| 2   | On the course (베이토) | `course` | tall `ios-watch-match-en`<br>`watch-complication-en`<br>`watch-score-en` | "Everything happens on your wrist."                                                            |
-| 3   | Health (pin 2-step)    | `health` | `watch-workout-en`<br>`connectivity-en`                                  | "A round is a workout — logged automatically."                                                 |
-| 4   | After the round (2열)  | `after`  | `ios-stat-en`<br>`ios-watch-score-en`                                    | "Every round adds up."                                                                         |
-| 5   | 룰 카드                | —        | `watch-home-en`                                                          | "Nine or eighteen. Your call."                                                                 |
-| 6   | Final CTA              | —        | `golf-counter.png`                                                       | "Ready for the first tee?"                                                                     |
+| # | 섹션 | id | 이미지 | 헤드라인 |
+|---|---|---|---|---|
+| 1 | Hero (pin 300vh) | — | `watch-match-en` | 배지 "● Live on Apple Watch & iPhone" (시안 그대로)<br>H1 "Play the round.<br>Not your phone." |
+| 2 | On the course (베이토) | `course` | tall `ios-watch-match-en`<br>`watch-complication-en`<br>`watch-score-en` | "Everything happens on your wrist." |
+| 3 | Health (pin 2-step) | `health` | `watch-workout-en`<br>`connectivity-en` | "A round is a workout — logged automatically." |
+| 4 | After the round (2열) | `after` | `ios-stat-en`<br>`ios-watch-score-en` | "Every round adds up." |
+| 5 | 룰 카드 | — | `watch-home-en` | "Nine or eighteen. Your call." |
+| 6 | Final CTA | — | `golf-counter.png` | "Ready for the first tee?" |
 
 `complication-en.png`만 미사용이다. `watch-complication-en.png`와 **같은 워치 페이스 화면**이라 정보 손실이 없다. 나머지 9장을 중복 없이 쓴다.
 
@@ -137,12 +137,12 @@ Hero의 sticky 컨테이너는 A안과 동일하게 **`top-14 h-[calc(100vh-3.5r
 
 **칩 4개** — 시안은 칩이 사방으로 흩어지는 구성이라 개수를 유지한다. 값은 **스크린샷에 실제로 찍힌 숫자만** 쓴다.
 
-| 칩  | 라벨    | 값            | 색     | 출처             |
-| --- | ------- | ------------- | ------ | ---------------- |
-| 0   | `TOTAL` | `46` `+10`    | green  | `watch-score-en` |
-| 1   | `HOLES` | `18`          | fg     | `watch-home-en`  |
-| 2   | `PUTTS` | `1.8` `/hole` | fg     | `ios-stat-en`    |
-| 3   | `BEST`  | `+9`          | orange | `ios-stat-en`    |
+| 칩 | 라벨 | 값 | 색 | 출처 |
+|---|---|---|---|---|
+| 0 | `TOTAL` | `46` `+10` | green | `watch-score-en` |
+| 1 | `HOLES` | `18` | fg | `watch-home-en` |
+| 2 | `PUTTS` | `1.8` `/hole` | fg | `ios-stat-en` |
+| 3 | `BEST` | `+9` | orange | `ios-stat-en` |
 
 A안은 시안 데모 수치(`642 kcal` · `148 bpm` · `87 min`)를 그대로 옮겼지만, 여기서는 실제 화면 값을 쓴다. 심박·칼로리 칩을 넣으려면 근거 없는 숫자를 지어내야 해서 제외했다 (10절 확인 사항).
 
@@ -163,13 +163,13 @@ https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372
 
 App Store에서 확인한 메타데이터:
 
-| 항목          | 값                           |
-| ------------- | ---------------------------- |
-| 스토어 표기명 | GolfCounter with Watch       |
-| 가격          | 무료                         |
-| 최소 버전     | iOS 16.4+ / **watchOS 9.0+** |
-| 카테고리      | 스포츠                       |
-| 지원 언어     | 영어                         |
+| 항목 | 값 |
+|---|---|
+| 스토어 표기명 | GolfCounter with Watch |
+| 가격 | 무료 |
+| 최소 버전 | iOS 16.4+ / **watchOS 9.0+** |
+| 카테고리 | 스포츠 |
+| 지원 언어 | 영어 |
 
 **랜딩 표기명은 `GolfCounter`를 쓴다** (`golfCounterMeta.name` 현재 값). 스토어 표기명의 `with Watch`는 검색 최적화용 접미사이고, 랜딩은 워치가 주인공이라는 걸 페이지 전체로 설명하므로 제목에 중복시킬 필요가 없다.
 
@@ -195,12 +195,12 @@ B안은 A안보다 상황이 나쁘다. 시안 hero의 stage는 데스크톱에�
 
 나머지 슬롯은 여유가 있다:
 
-| 슬롯                               | 표시 크기 | 원본      | 판정                 |
-| ---------------------------------- | --------- | --------- | -------------------- |
-| 베이토 tall (`ios-watch-match-en`) | 400px     | 1284×2778 | ✅                   |
-| 베이토 small 워치 2장              | 150px     | 422×514   | ✅ (2x = 300px 필요) |
-| After the round 2열                | 340px     | 1284×2778 | ✅                   |
-| 룰 카드 (`watch-home-en`)          | 200px     | 422×514   | ✅ (2x = 400px 필요) |
+| 슬롯 | 표시 크기 | 원본 | 판정 |
+|---|---|---|---|
+| 베이토 tall (`ios-watch-match-en`) | 400px | 1284×2778 | ✅ |
+| 베이토 small 워치 2장 | 150px | 422×514 | ✅ (2x = 300px 필요) |
+| After the round 2열 | 340px | 1284×2778 | ✅ |
+| 룰 카드 (`watch-home-en`) | 200px | 422×514 | ✅ (2x = 400px 필요) |
 
 시안의 `https://yjlogs.com/ralli/...` 절대 URL은 쓰지 않는다. 로컬 경로 `/golf-counter/...` + `next/image`를 유지하고, hero 워치 이미지만 `priority`를 준다.
 
@@ -210,22 +210,22 @@ B안은 A안보다 상황이 나쁘다. 시안 hero의 stage는 데스크톱에�
 
 A안이 만든 모션 부품을 **`apps/` 층으로 승격해 두 랜딩이 공유**한다. 검토한 대안은 셋이었다.
 
-| 방식                                                     | 채택 여부                                                                                                                      |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **`apps/` 공용 승격**                                    | ✅ **채택**                                                                                                                    |
-| golf-counter에 hook/util 복제                            | ralli 무손상이지만 hydration·reduced-motion 처리가 두 벌이 된다. A안 README가 기록한 미해결 이슈를 고칠 때 두 곳을 고쳐야 한다 |
-| 랜딩 프리미티브 컴포넌트 라이브러리화 (`LandingHero` 등) | A안과 B안은 레이아웃이 근본적으로 달라 공통 분모가 얇다. YAGNI                                                                 |
+| 방식 | 채택 여부 |
+|---|---|
+| **`apps/` 공용 승격** | ✅ **채택** |
+| golf-counter에 hook/util 복제 | ralli 무손상이지만 hydration·reduced-motion 처리가 두 벌이 된다. A안 README가 기록한 미해결 이슈를 고칠 때 두 곳을 고쳐야 한다 |
+| 랜딩 프리미티브 컴포넌트 라이브러리화 (`LandingHero` 등) | A안과 B안은 레이아웃이 근본적으로 달라 공통 분모가 얇다. YAGNI |
 
 랜딩이 2개가 되는 지금이 추출 적기다. `apps/_components`·`apps/_utils`가 이미 그 층에 있어 `page-folder.md` 규칙과도 맞는다.
 
 ### 6.2 이동 대상
 
-| 현재 위치                                            | 이동 위치                           | 근거                                                                                    |
-| ---------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------- |
-| `ralli/_hooks/useSectionProgress.ts`                 | `apps/_hooks/useSectionProgress.ts` | ralli 고유 개념이 없다. B안 hero·health pin이 그대로 사용                               |
-| `ralli/_hooks/useIsMobile.ts`                        | `apps/_hooks/useIsMobile.ts`        | B안도 필요 — 시안 rAF가 `mob = innerWidth < 768`로 칩 이동 벡터와 stage 크기를 분기한다 |
-| `ralli/_actions/reveal.action.tsx`                   | `apps/_actions/reveal.action.tsx`   | `[data-reveal]` 대체 래퍼. B안에도 `data-reveal`이 8곳                                  |
-| `ralli-motion.ts`의 `clamp`·`mapRange`·`stepIndexAt` | `apps/_utils/landing-motion.ts`     | 순수 수학 + 시안 공통 스텝 로직                                                         |
+| 현재 위치 | 이동 위치 | 근거 |
+|---|---|---|
+| `ralli/_hooks/useSectionProgress.ts` | `apps/_hooks/useSectionProgress.ts` | ralli 고유 개념이 없다. B안 hero·health pin이 그대로 사용 |
+| `ralli/_hooks/useIsMobile.ts` | `apps/_hooks/useIsMobile.ts` | B안도 필요 — 시안 rAF가 `mob = innerWidth < 768`로 칩 이동 벡터와 stage 크기를 분기한다 |
+| `ralli/_actions/reveal.action.tsx` | `apps/_actions/reveal.action.tsx` | `[data-reveal]` 대체 래퍼. B안에도 `data-reveal`이 8곳 |
+| `ralli-motion.ts`의 `clamp`·`mapRange`·`stepIndexAt` | `apps/_utils/landing-motion.ts` | 순수 수학 + 시안 공통 스텝 로직 |
 
 `scoreSequence`·`RalliScore`·`scoreAt`은 테니스 점수 전용이라 `ralli/_utils/ralli-motion.ts`에 남는다. 골프에 대응 개념이 없다.
 
@@ -288,28 +288,28 @@ src/app/(main)/apps/
 
 시안 rAF 로직 중 **framer-motion으로 흡수되지 않는 부분만** 순수 함수로 남긴다. 이징(`eio` = easeInOutQuad)은 `useTransform`의 `ease` 옵션으로, 값 보간은 `useTransform` 자체로 대체된다.
 
-| 함수 / 상수              | 시안 원본                                                                                                               |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| `chipRangeAt(index)`     | `t = clamp((p - 0.04 - i*0.045) / 0.46, 0, 1)` → 칩별 `[시작, 끝]` 구간                                                 |
-| `CHIP_OFFSETS`           | `mob ? [[-2,-11],[2,-13],[2,13],[-2,12]] : [[-16,-6],[16,-10],[14,12],[-14,10]]`                                        |
+| 함수 / 상수 | 시안 원본 |
+|---|---|
+| `chipRangeAt(index)` | `t = clamp((p - 0.04 - i*0.045) / 0.46, 0, 1)` → 칩별 `[시작, 끝]` 구간 |
+| `CHIP_OFFSETS` | `mob ? [[-2,-11],[2,-13],[2,13],[-2,12]] : [[-16,-6],[16,-10],[14,12],[-14,10]]` |
 | `stageRangeOf(isMobile)` | `width: 50→94vw / 86→96vw`, `height: 44→86vh / 32→58vh`. 시안의 `max-width:820px` 캡은 Tailwind `max-w-205`로 별도 적용 |
 
 ## 8. 모바일 레이아웃
 
 시안 B는 A안과 달리 **자체 미디어 쿼리를 갖고 있다** (`injectMedia()`가 `@media (max-width:768px)` 블록을 주입). 이를 Tailwind `md:` 분기로 옮긴다.
 
-| 섹션              | 데스크톱 (시안)                            | 모바일 (시안 미디어 쿼리)                       |
-| ----------------- | ------------------------------------------ | ----------------------------------------------- |
-| Hero 껍데기       | `300vh`                                    | `210vh`                                         |
-| └ stage           | `50→94vw` × `44→86vh`                      | `86→96vw` × `32→58vh`                           |
-| └ 칩 위치         | `left:9vw` 등 vw 기준                      | `left:12px` 등 px 고정, 폰트·패딩 축소          |
-| └ 칩 이동 벡터    | `[[-16,-6],[16,-10],[14,12],[-14,10]]`     | `[[-2,-11],[2,-13],[2,13],[-2,12]]` — 세로 위주 |
-| └ CTA             | 가로 배치                                  | 세로 스택, `bottom:5vh`                         |
-| 베이토 그리드     | `1.25fr 1fr`, tall 카드 `grid-row: span 2` | 1컬럼, tall 카드 `min-height:400px`             |
-| Health pin 껍데기 | `280vh`                                    | `170vh`                                         |
-| └ 그리드          | `1fr 1fr`                                  | 1컬럼, 패널 높이 `74vh → 38vh`                  |
-| After the round   | 2열                                        | 1컬럼                                           |
-| 룰 카드           | `1fr 1fr`                                  | 1컬럼                                           |
+| 섹션 | 데스크톱 (시안) | 모바일 (시안 미디어 쿼리) |
+|---|---|---|
+| Hero 껍데기 | `300vh` | `210vh` |
+| └ stage | `50→94vw` × `44→86vh` | `86→96vw` × `32→58vh` |
+| └ 칩 위치 | `left:9vw` 등 vw 기준 | `left:12px` 등 px 고정, 폰트·패딩 축소 |
+| └ 칩 이동 벡터 | `[[-16,-6],[16,-10],[14,12],[-14,10]]` | `[[-2,-11],[2,-13],[2,13],[-2,12]]` — 세로 위주 |
+| └ CTA | 가로 배치 | 세로 스택, `bottom:5vh` |
+| 베이토 그리드 | `1.25fr 1fr`, tall 카드 `grid-row: span 2` | 1컬럼, tall 카드 `min-height:400px` |
+| Health pin 껍데기 | `280vh` | `170vh` |
+| └ 그리드 | `1fr 1fr` | 1컬럼, 패널 높이 `74vh → 38vh` |
+| After the round | 2열 | 1컬럼 |
+| 룰 카드 | `1fr 1fr` | 1컬럼 |
 
 ### 8.1 JS 분기가 필요한 곳
 
@@ -331,14 +331,14 @@ pin 껍데기를 접지 않으면 진행도가 흐르지 않는 빈 화면을 30
 
 ## 9. 테스트
 
-| 파일                                      | 내용                                                                                                     |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `apps/_utils/landing-motion.test.ts`      | 이동분 — `clamp`·`mapRange`·`stepIndexAt`. **`stepIndexAt(p, 2)` 경계 케이스 추가** (2-step은 신규 사용) |
-| `apps/_actions/reveal.test.tsx`           | 이동분 (수정 없음)                                                                                       |
-| `ralli/_utils/ralli-motion.test.ts`       | `scoreAt` 케이스만 잔류                                                                                  |
-| `golf-counter/_utils/golf-motion.test.ts` | 신규 — 칩 구간 경계·겹침, 뷰포트 분기                                                                    |
-| `golf-counter/_areas/*.test.tsx`          | 신규 6개 — 렌더링·카피·이미지 `alt`·링크 (A안 area 테스트와 동일 형식)                                   |
-| `e2e/golf-counter.spec.ts`                | 신규 — `e2e/ralli.spec.ts`와 같은 수준                                                                   |
+| 파일 | 내용 |
+|---|---|
+| `apps/_utils/landing-motion.test.ts` | 이동분 — `clamp`·`mapRange`·`stepIndexAt`. **`stepIndexAt(p, 2)` 경계 케이스 추가** (2-step은 신규 사용) |
+| `apps/_actions/reveal.test.tsx` | 이동분 (수정 없음) |
+| `ralli/_utils/ralli-motion.test.ts` | `scoreAt` 케이스만 잔류 |
+| `golf-counter/_utils/golf-motion.test.ts` | 신규 — 칩 구간 경계·겹침, 뷰포트 분기 |
+| `golf-counter/_areas/*.test.tsx` | 신규 6개 — 렌더링·카피·이미지 `alt`·링크 (A안 area 테스트와 동일 형식) |
+| `e2e/golf-counter.spec.ts` | 신규 — `e2e/ralli.spec.ts`와 같은 수준 |
 
 `sitemap.ts`는 수정하지 않는다. `apps-data.ts`를 순회하므로 `/apps/golf-counter`가 이미 포함되어 있다.
 
@@ -358,5 +358,5 @@ pin 껍데기를 접지 않으면 진행도가 흐르지 않는 빈 화면을 30
 ## 참고
 
 - 선행 설계: [2026-08-12-ralli-landing-a-design.md](2026-08-12-ralli-landing-a-design.md)
-- A안 구현 해설: [`src/app/(main)/apps/ralli/README.md`](<../../../src/app/(main)/apps/ralli/README.md>) — MotionValue·sticky pin·`useScroll` offset 원리와 실제로 걸린 함정 4가지
+- A안 구현 해설: [`src/app/(main)/apps/ralli/README.md`](../../../src/app/\(main\)/apps/ralli/README.md) — MotionValue·sticky pin·`useScroll` offset 원리와 실제로 걸린 함정 4가지
 - 시안 원본: [`docs/design/ralli/Ralli Landing B.dc.html`](../../design/ralli/Ralli%20Landing%20B.dc.html)

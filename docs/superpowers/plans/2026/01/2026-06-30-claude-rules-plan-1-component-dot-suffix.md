@@ -6,7 +6,6 @@
 ## 규칙 근거
 
 `.claude/rules/page-folder.md` — 역할 컴포넌트는 dot-suffix(`<이름>.<역할>.tsx`)로 표기한다.
-
 - `_actions/*.action.tsx`, `_handlers/*.handler.tsx`, `_providers/*.provider.tsx`, `_suspenses/*.suspense.tsx`
 
 ## 작업: 파일 rename 매핑
@@ -15,44 +14,44 @@
 
 ### `_actions` → `.action.tsx`
 
-| 현재                                                                    | 변경                               |
-| ----------------------------------------------------------------------- | ---------------------------------- |
-| `src/app/(main)/_actions/view-toggle-action.tsx`                        | `view-toggle.action.tsx`           |
-| `src/app/(main)/posts/_actions/category-filter-action.tsx`              | `category-filter.action.tsx`       |
-| `src/app/(main)/posts/_actions/infinite-post-list-action.tsx`           | `infinite-post-list.action.tsx`    |
-| `src/app/(main)/posts/_actions/search-action.tsx`                       | `search.action.tsx`                |
-| `src/app/(main)/posts/_actions/tag-filter-action.tsx`                   | `tag-filter.action.tsx`            |
+| 현재 | 변경 |
+|---|---|
+| `src/app/(main)/_actions/view-toggle-action.tsx` | `view-toggle.action.tsx` |
+| `src/app/(main)/posts/_actions/category-filter-action.tsx` | `category-filter.action.tsx` |
+| `src/app/(main)/posts/_actions/infinite-post-list-action.tsx` | `infinite-post-list.action.tsx` |
+| `src/app/(main)/posts/_actions/search-action.tsx` | `search.action.tsx` |
+| `src/app/(main)/posts/_actions/tag-filter-action.tsx` | `tag-filter.action.tsx` |
 | `src/app/(main)/posts/[slug]/_actions/delete-comment-dialog-action.tsx` | `delete-comment-dialog.action.tsx` |
-| `src/app/admin/posts/new/_actions/category-selector-action.tsx`         | `category-selector.action.tsx`     |
-| `src/app/admin/posts/new/_actions/draft-action.tsx`                     | `draft.action.tsx`                 |
-| `src/app/admin/posts/new/_actions/editor-toolbar-action.tsx`            | `editor-toolbar.action.tsx`        |
-| `src/app/admin/posts/new/_actions/markdown-editor-action.tsx`           | `markdown-editor.action.tsx`       |
-| `src/app/admin/posts/new/_actions/publish-action.tsx`                   | `publish.action.tsx`               |
-| `src/app/admin/posts/new/_actions/save-status-action.tsx`               | `save-status.action.tsx`           |
-| `src/app/admin/posts/new/_actions/tag-selector-action.tsx`              | `tag-selector.action.tsx`          |
-| `src/app/admin/posts/new/_actions/thumbnail-upload-action.tsx`          | `thumbnail-upload.action.tsx`      |
-| `src/app/admin/posts/new/_actions/title-input-action.tsx`               | `title-input.action.tsx`           |
-| `src/app/admin/posts/new/_actions/wysiwyg-editor-action.tsx`            | `wysiwyg-editor.action.tsx`        |
-| `src/app/admin/tags/_actions/delete-tag-action.tsx`                     | `delete-tag.action.tsx`            |
+| `src/app/admin/posts/new/_actions/category-selector-action.tsx` | `category-selector.action.tsx` |
+| `src/app/admin/posts/new/_actions/draft-action.tsx` | `draft.action.tsx` |
+| `src/app/admin/posts/new/_actions/editor-toolbar-action.tsx` | `editor-toolbar.action.tsx` |
+| `src/app/admin/posts/new/_actions/markdown-editor-action.tsx` | `markdown-editor.action.tsx` |
+| `src/app/admin/posts/new/_actions/publish-action.tsx` | `publish.action.tsx` |
+| `src/app/admin/posts/new/_actions/save-status-action.tsx` | `save-status.action.tsx` |
+| `src/app/admin/posts/new/_actions/tag-selector-action.tsx` | `tag-selector.action.tsx` |
+| `src/app/admin/posts/new/_actions/thumbnail-upload-action.tsx` | `thumbnail-upload.action.tsx` |
+| `src/app/admin/posts/new/_actions/title-input-action.tsx` | `title-input.action.tsx` |
+| `src/app/admin/posts/new/_actions/wysiwyg-editor-action.tsx` | `wysiwyg-editor.action.tsx` |
+| `src/app/admin/tags/_actions/delete-tag-action.tsx` | `delete-tag.action.tsx` |
 
 > `src/app/admin/categories/_components/_actions/*` 2개 파일은 **플랜 2(D축)** 에서 이동과 함께 처리한다. 여기서 건드리지 않는다.
 
 ### `_handlers` → `.handler.tsx`
 
-| 현재                                                             | 변경                              |
-| ---------------------------------------------------------------- | --------------------------------- |
-| `src/app/(main)/_handlers/post-list-view-handler.tsx`            | `post-list-view.handler.tsx`      |
-| `src/app/(main)/_handlers/post-list-view-handler.test.tsx`       | `post-list-view.handler.test.tsx` |
-| `src/app/admin/posts/[id]/edit/_handlers/post-init-handler.tsx`  | `post-init.handler.tsx`           |
-| `src/app/admin/posts/new/_handlers/editor-view-handler.tsx`      | `editor-view.handler.tsx`         |
-| `src/app/admin/posts/new/_handlers/sidebar-collapse-handler.tsx` | `sidebar-collapse.handler.tsx`    |
+| 현재 | 변경 |
+|---|---|
+| `src/app/(main)/_handlers/post-list-view-handler.tsx` | `post-list-view.handler.tsx` |
+| `src/app/(main)/_handlers/post-list-view-handler.test.tsx` | `post-list-view.handler.test.tsx` |
+| `src/app/admin/posts/[id]/edit/_handlers/post-init-handler.tsx` | `post-init.handler.tsx` |
+| `src/app/admin/posts/new/_handlers/editor-view-handler.tsx` | `editor-view.handler.tsx` |
+| `src/app/admin/posts/new/_handlers/sidebar-collapse-handler.tsx` | `sidebar-collapse.handler.tsx` |
 
 ### `_providers` → `.provider.tsx`
 
-| 현재                                                        | 변경                     |
-| ----------------------------------------------------------- | ------------------------ |
+| 현재 | 변경 |
+|---|---|
 | `src/app/admin/posts/new/_providers/auto-save-provider.tsx` | `auto-save.provider.tsx` |
-| `src/app/admin/posts/new/_providers/editor-provider.tsx`    | `editor.provider.tsx`    |
+| `src/app/admin/posts/new/_providers/editor-provider.tsx` | `editor.provider.tsx` |
 
 ## 절차
 

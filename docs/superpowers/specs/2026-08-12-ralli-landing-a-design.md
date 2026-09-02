@@ -11,15 +11,15 @@
 
 시안 A는 성격이 다르다.
 
-| 구간            | 시안 A 구성                                                       | 스크롤 길이    |
-| --------------- | ----------------------------------------------------------------- | -------------- |
-| Hero            | `RALLI` 5글자 비산 + 워치 확대 + 코트 SVG 3D 회전 + 스코어 시퀀스 | `280vh` sticky |
-| 마퀴            | 텍스트 무한 루프                                                  | CSS only       |
-| 01 On the court | 3-step 이미지 크로스페이드 + 스텝 카드 하이라이트                 | `300vh` sticky |
-| 02 Health       | 카운트업 스탯 3장 + 이미지 2장                                    | 일반 흐름      |
-| 03 Replay       | 스크롤 연동 가로 드리프트 갤러리                                  | 일반 흐름      |
-| 04 Your rules   | 룰 칩 + 이미지 2장                                                | 일반 흐름      |
-| Footer          | 아이콘 + 최종 CTA + 링크                                          | 일반 흐름      |
+| 구간 | 시안 A 구성 | 스크롤 길이 |
+|------|-------------|------------|
+| Hero | `RALLI` 5글자 비산 + 워치 확대 + 코트 SVG 3D 회전 + 스코어 시퀀스 | `280vh` sticky |
+| 마퀴 | 텍스트 무한 루프 | CSS only |
+| 01 On the court | 3-step 이미지 크로스페이드 + 스텝 카드 하이라이트 | `300vh` sticky |
+| 02 Health | 카운트업 스탯 3장 + 이미지 2장 | 일반 흐름 |
+| 03 Replay | 스크롤 연동 가로 드리프트 갤러리 | 일반 흐름 |
+| 04 Your rules | 룰 칩 + 이미지 2장 | 일반 흐름 |
+| Footer | 아이콘 + 최종 CTA + 링크 | 일반 흐름 |
 
 즉 **기존 컴포넌트 4개는 재사용 대상이 아니라 교체 대상**이다. 유지되는 것은 `ralli-cta-button.tsx`, `ralli-json-ld.tsx`, `ralli-content.ts`(카피 재작성), `privacy/page.tsx`뿐이다.
 
@@ -35,12 +35,12 @@
 
 `(main)` 레이아웃에 그대로 남기고 공용 `Header`를 유지한다. `Header`는 이미 `sticky top-0 z-50`에 자체 `dark` 클래스와 `bg-black/80 backdrop-blur`를 갖고 있어 시안의 `#07100B` 배경과 정합한다.
 
-| 시안 요소                                           | 처리                                                                                          |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| fixed pill 내비 (`Ralli` 워드마크 + 앵커 3개 + CTA) | 워드마크 제거, **섹션 앵커 서브 내비**로 축소. 공용 Header 아래 `top-17.5`에 fixed            |
-| 시안 푸터                                           | **최종 CTA 섹션**으로 렌더. 아이콘 · "Go win the next one." · CTA · Privacy/Support 링크 유지 |
-| 시안 푸터의 `© 2026 YJlogs`                         | **제거**. 공용 `Footer`가 이미 동일 문구를 렌더하므로 중복                                    |
-| 기존 `page.tsx`의 `← Apps` 백링크                   | **제거**. 공용 Header의 `NavLinks`에 `Apps`가 이미 있다                                       |
+| 시안 요소 | 처리 |
+|---|---|
+| fixed pill 내비 (`Ralli` 워드마크 + 앵커 3개 + CTA) | 워드마크 제거, **섹션 앵커 서브 내비**로 축소. 공용 Header 아래 `top-17.5`에 fixed |
+| 시안 푸터 | **최종 CTA 섹션**으로 렌더. 아이콘 · "Go win the next one." · CTA · Privacy/Support 링크 유지 |
+| 시안 푸터의 `© 2026 YJlogs` | **제거**. 공용 `Footer`가 이미 동일 문구를 렌더하므로 중복 |
+| 기존 `page.tsx`의 `← Apps` 백링크 | **제거**. 공용 Header의 `NavLinks`에 `Apps`가 이미 있다 |
 
 Hero의 sticky 컨테이너는 `top-0 h-screen` 대신 **`top-14 h-[calc(100vh-3.5rem)]`** 로 둔다. 공용 Header 높이(`h-14` = 56px)만큼 내려 콘텐츠가 헤더 뒤로 숨지 않게 한다.
 
@@ -50,29 +50,29 @@ Hero의 sticky 컨테이너는 `top-0 h-screen` 대신 **`top-14 h-[calc(100vh-3
 
 시안은 전역 `rAF` 루프 하나가 매 프레임 모든 대상의 `getBoundingClientRect()`를 읽고 인라인 스타일을 직접 쓴다. 세 가지 대안을 비교했다.
 
-| 방식                                     | 장점                                                                    | 채택하지 않은 이유                                                                                                           |
-| ---------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| **framer-motion**                        | 이미 의존성에 있음, 선언형, MotionValue가 리렌더를 우회해 DOM에 직접 씀 | — **채택**                                                                                                                   |
-| CSS Scroll-driven (`animation-timeline`) | JS 0줄, 네이티브                                                        | Safari 26 미만에서 전부 정적으로 폴백. Apple 앱 랜딩에서 감수하기 어렵다. 스코어 텍스트 교체(`0→15→30→40→GAME`)는 CSS로 불가 |
-| 커스텀 `rAF` 훅으로 시안 로직 포팅       | 충실도 100%                                                             | 명령형 DOM 조작이라 테스트 불가에 가깝고, "순수 컴포넌트 + props" 컨벤션과 어긋남                                            |
+| 방식 | 장점 | 채택하지 않은 이유 |
+|---|---|---|
+| **framer-motion** | 이미 의존성에 있음, 선언형, MotionValue가 리렌더를 우회해 DOM에 직접 씀 | — **채택** |
+| CSS Scroll-driven (`animation-timeline`) | JS 0줄, 네이티브 | Safari 26 미만에서 전부 정적으로 폴백. Apple 앱 랜딩에서 감수하기 어렵다. 스코어 텍스트 교체(`0→15→30→40→GAME`)는 CSS로 불가 |
+| 커스텀 `rAF` 훅으로 시안 로직 포팅 | 충실도 100% | 명령형 DOM 조작이라 테스트 불가에 가깝고, "순수 컴포넌트 + props" 컨벤션과 어긋남 |
 
 framer-motion 12는 이미 `src/components/nav/nav-links.tsx`(공용 Header)에서 사용 중이다. Header는 모든 페이지에 렌더되므로 **번들 추가 비용은 사실상 0**이다. 이 사실이 선택을 결정했다.
 
 ### 3.2 시안 로직 → framer-motion 대응표
 
-| 시안 로직                                       | 대응                                                                       |
-| ----------------------------------------------- | -------------------------------------------------------------------------- |
-| `this.sp += (raw - this.sp) * 0.11` (수동 lerp) | `useSpring(scrollYProgress, { stiffness, damping })`                       |
-| `prog(el)` = `-rect.top / (height - vh)`        | `useScroll({ target, offset: ['start start', 'end end'] })`                |
-| 글자 5개 비산 (`dir * le * 58vw`)               | 글자별 `useTransform` → `motion.span`                                      |
-| 워치 `scale` · `rotate` · `opacity`             | `useTransform` 3개 → `motion.img`                                          |
-| 코트 SVG `rotateX(56→36deg)`                    | `useTransform` + `motion.svg` (`transformPerspective: 900`)                |
-| 스코어 `0→15→30→40→GAME`                        | `useMotionValueEvent` + `useState` (값이 바뀔 때만 리렌더)                 |
-| pin 섹션 3-step 인덱스                          | `useMotionValueEvent` → `stepIndexAt(p)` → `AnimatePresence` 크로스페이드  |
-| 갤러리 가로 드리프트                            | `useScroll({ offset: ['start end', 'end start'] })` → `useTransform` → `x` |
-| `[data-reveal]` 매 프레임 계산                  | `<Reveal>` 래퍼의 `whileInView` + `viewport={{ once: true }}`              |
-| `data-count` 카운트업                           | `animate(0, to, { onUpdate })` — 1회 발화 보장 내장                        |
-| 마퀴 · scroll hint bob                          | CSS `@keyframes` 그대로 (JS 불필요)                                        |
+| 시안 로직 | 대응 |
+|---|---|
+| `this.sp += (raw - this.sp) * 0.11` (수동 lerp) | `useSpring(scrollYProgress, { stiffness, damping })` |
+| `prog(el)` = `-rect.top / (height - vh)` | `useScroll({ target, offset: ['start start', 'end end'] })` |
+| 글자 5개 비산 (`dir * le * 58vw`) | 글자별 `useTransform` → `motion.span` |
+| 워치 `scale` · `rotate` · `opacity` | `useTransform` 3개 → `motion.img` |
+| 코트 SVG `rotateX(56→36deg)` | `useTransform` + `motion.svg` (`transformPerspective: 900`) |
+| 스코어 `0→15→30→40→GAME` | `useMotionValueEvent` + `useState` (값이 바뀔 때만 리렌더) |
+| pin 섹션 3-step 인덱스 | `useMotionValueEvent` → `stepIndexAt(p)` → `AnimatePresence` 크로스페이드 |
+| 갤러리 가로 드리프트 | `useScroll({ offset: ['start end', 'end start'] })` → `useTransform` → `x` |
+| `[data-reveal]` 매 프레임 계산 | `<Reveal>` 래퍼의 `whileInView` + `viewport={{ once: true }}` |
+| `data-count` 카운트업 | `animate(0, to, { onUpdate })` — 1회 발화 보장 내장 |
+| 마퀴 · scroll hint bob | CSS `@keyframes` 그대로 (JS 불필요) |
 
 핵심 이득은 `viewport={{ once: true }}` 다. 시안은 매 프레임 모든 `[data-reveal]`의 `getBoundingClientRect()`를 읽어 레이아웃을 강제 계산한다. framer-motion은 `IntersectionObserver`로 처리하고 1회 발화 후 관찰을 해제한다.
 
@@ -120,12 +120,12 @@ src/app/(main)/apps/ralli/
 
 그래서 `page-folder.md`에 `_areas/*.area.tsx` 역할을 신설했다. 기존 dot-suffix 컨벤션(`*.action.tsx`, `*.handler.tsx`)과 폴더↔suffix 짝 규칙을 그대로 따른다.
 
-| 대상                      | 위치                                    | 이유                                     |
-| ------------------------- | --------------------------------------- | ---------------------------------------- |
-| 히어로 · 01~04 · 최종 CTA | `_areas/*.area.tsx`                     | 여러 조각을 묶어 화면 한 구간을 완성한다 |
-| 마퀴                      | `_components/ralli-marquee.tsx`         | 조각 하나로 끝나는 단일 위젯             |
-| 앵커 내비 · 하단 CTA 바   | `_actions/ralli-section-nav.action.tsx` | 고정 오버레이라 세로 구간이 아니다       |
-| `Reveal` 래퍼             | `_actions/reveal.action.tsx`            | 영역 여러 곳에서 재사용한다              |
+| 대상 | 위치 | 이유 |
+|---|---|---|
+| 히어로 · 01~04 · 최종 CTA | `_areas/*.area.tsx` | 여러 조각을 묶어 화면 한 구간을 완성한다 |
+| 마퀴 | `_components/ralli-marquee.tsx` | 조각 하나로 끝나는 단일 위젯 |
+| 앵커 내비 · 하단 CTA 바 | `_actions/ralli-section-nav.action.tsx` | 고정 오버레이라 세로 구간이 아니다 |
+| `Reveal` 래퍼 | `_actions/reveal.action.tsx` | 영역 여러 곳에서 재사용한다 |
 
 `_areas`에는 **서버 데이터 페칭과 전역 상태를 두지 않는다**는 제약이 붙는다. 이 랜딩은 이를 자연히 만족한다 — 콘텐츠가 전부 `_utils/ralli-content.ts` 정적 모듈 import이고, `_queries`·`_services` 호출이나 zustand·tanstack-query 구독이 한 곳도 없다. 각 Area가 갖는 상태는 스크롤 진행도와 활성 스텝 인덱스뿐이며 영역 밖으로 나가지 않는 뷰 로컬 상태다.
 
@@ -139,10 +139,10 @@ src/app/(main)/apps/ralli/
 
 ### 5.1 Watch 스크린샷 해상도 부족
 
-| 자산          | 원본      | 시안 표시 크기                             | 2x DPR 요구 | 판정        |
-| ------------- | --------- | ------------------------------------------ | ----------- | ----------- |
-| `watch-*.png` | 422×514   | Hero `64vh`(최대 560px), pin 섹션 약 520px | 약 1120px   | ⚠️ **부족** |
-| `ios-*.png`   | 1284×2778 | 520px                                      | 1040px      | ✅ 충분     |
+| 자산 | 원본 | 시안 표시 크기 | 2x DPR 요구 | 판정 |
+|---|---|---|---|---|
+| `watch-*.png` | 422×514 | Hero `64vh`(최대 560px), pin 섹션 약 520px | 약 1120px | ⚠️ **부족** |
+| `ios-*.png` | 1284×2778 | 520px | 1040px | ✅ 충분 |
 
 Watch 스크린샷을 화면 절반 크기로 확대하는 시안 특성상 현재 자산으로는 뿌옇게 렌더된다. 해결책은 두 가지이며 **2x 재캡처를 우선**한다 (Apple Watch Ultra 49mm 시뮬레이터 → 820×1004px).
 
@@ -158,17 +158,17 @@ Watch 스크린샷을 화면 절반 크기로 확대하는 시안 특성상 현�
 
 `md`(768px) 단일 분기로 간다. 시안이 데스크톱 레이아웃 하나뿐이라 2단 분기로 충분하다.
 
-| 섹션                | 데스크톱 (시안)           | 모바일                                              |
-| ------------------- | ------------------------- | --------------------------------------------------- |
-| Hero                | `280vh` sticky            | `180vh` — 스와이프는 체감 스크롤 거리가 길다        |
-| └ 글자 비산         | `±58vw`                   | **동일** (아래 참조)                                |
-| └ 워치 이미지       | `64vh`                    | `44vh` — 스코어·태그라인 자리 확보                  |
-| └ 스코어 / 태그라인 | 좌우 절대배치             | 세로 스택 (스코어 상단 → 워치 → 카피 하단)          |
-| 01 Pin 섹션         | `300vh`, `1fr 1fr`        | `240vh`, 이미지 상단 + 스텝 카드 하단               |
-| 02 Workout 스탯     | `repeat(3,1fr)`           | 1컬럼 스택, 이미지 2장도 세로                       |
-| 03 Replay 갤러리    | 스크롤 연동 가로 드리프트 | `overflow-x:auto` + `scroll-snap`, 높이 `520→380px` |
-| 04 Rules            | `1fr 1fr`, `padding:56px` | 1컬럼, `padding:28px`                               |
-| 최종 CTA            | 중앙 정렬                 | 그대로 (`clamp()`가 이미 처리)                      |
+| 섹션 | 데스크톱 (시안) | 모바일 |
+|---|---|---|
+| Hero | `280vh` sticky | `180vh` — 스와이프는 체감 스크롤 거리가 길다 |
+| └ 글자 비산 | `±58vw` | **동일** (아래 참조) |
+| └ 워치 이미지 | `64vh` | `44vh` — 스코어·태그라인 자리 확보 |
+| └ 스코어 / 태그라인 | 좌우 절대배치 | 세로 스택 (스코어 상단 → 워치 → 카피 하단) |
+| 01 Pin 섹션 | `300vh`, `1fr 1fr` | `240vh`, 이미지 상단 + 스텝 카드 하단 |
+| 02 Workout 스탯 | `repeat(3,1fr)` | 1컬럼 스택, 이미지 2장도 세로 |
+| 03 Replay 갤러리 | 스크롤 연동 가로 드리프트 | `overflow-x:auto` + `scroll-snap`, 높이 `520→380px` |
+| 04 Rules | `1fr 1fr`, `padding:56px` | 1컬럼, `padding:28px` |
+| 최종 CTA | 중앙 정렬 | 그대로 (`clamp()`가 이미 처리) |
 
 글자 비산 폭은 데스크톱과 동일한 `±58vw`를 쓴다. 390px 기준으로 최외곽 글자(`dir=1.7`)는 `98.6vw`(385px)라 이미 화면 밖으로 나가고, 내측 글자(`dir=0.85`)는 `49.3vw`(192px)로 완전히 이탈하진 않지만 **`opacity`가 `p=0.56`에서 0에 도달**하는 반면 x 이동은 `p=0.84`까지 이어지므로 그 시점엔 보이지 않는다. 값을 키울 실익이 없고, 뷰포트 분기용 훅 하나를 덜 수 있다.
 
@@ -207,16 +207,8 @@ JS 분기가 필요한 곳은 **03 Replay 갤러리 한 곳뿐**이다. 데스�
 ```css
 /* src/styles/ralli.css — globals.css 하단에서 @import */
 .ralli-shot-mask {
-  -webkit-mask-image: radial-gradient(
-    ellipse 62% 74% at 50% 50%,
-    #000 42%,
-    transparent 84%
-  );
-  mask-image: radial-gradient(
-    ellipse 62% 74% at 50% 50%,
-    #000 42%,
-    transparent 84%
-  );
+  -webkit-mask-image: radial-gradient(ellipse 62% 74% at 50% 50%, #000 42%, transparent 84%);
+  mask-image: radial-gradient(ellipse 62% 74% at 50% 50%, #000 42%, transparent 84%);
 }
 ```
 
@@ -238,12 +230,12 @@ Tailwind v4 문법을 지킨다 — 그라디언트는 `bg-linear-to-*`(v3의 `b
 
 ### 8.1 Vitest — 순수 로직 집중
 
-| 파일                        | 검증                                                                                      |
-| --------------------------- | ----------------------------------------------------------------------------------------- |
-| `ralli-motion.test.ts`      | `scoreAt(p)` 경계값(`0/15/30/40/GAME`), `stepIndexAt(p)` → `0/1/2`, `mapRange` clamp 동작 |
-| `ralli-content.test.ts`     | 섹션 넘버링 연속성(01~04), 모든 `src`가 `/ralli/`로 시작, `alt` 비어있지 않음             |
-| `ralli-shot.test.tsx`       | 마스크 클래스 적용, `alt`·`width`·`height` 전달                                           |
-| `ralli-cta-button.test.tsx` | 기존 유지                                                                                 |
+| 파일 | 검증 |
+|---|---|
+| `ralli-motion.test.ts` | `scoreAt(p)` 경계값(`0/15/30/40/GAME`), `stepIndexAt(p)` → `0/1/2`, `mapRange` clamp 동작 |
+| `ralli-content.test.ts` | 섹션 넘버링 연속성(01~04), 모든 `src`가 `/ralli/`로 시작, `alt` 비어있지 않음 |
+| `ralli-shot.test.tsx` | 마스크 클래스 적용, `alt`·`width`·`height` 전달 |
+| `ralli-cta-button.test.tsx` | 기존 유지 |
 
 `_areas` 컴포넌트는 jsdom에 레이아웃이 없어 `useScroll`이 정상 동작하지 않는다. **정적 폴백(reduced-motion) 경로만** 렌더 테스트한다.
 
@@ -258,12 +250,12 @@ Tailwind v4 문법을 지킨다 — 그라디언트는 `bg-linear-to-*`(v3의 `b
 
 아래 4개는 실물 렌더를 보고 정한다. 재검토하지 않을 경우 **기본값**대로 진행한다.
 
-| #   | 항목                    | 선택지                                               | 기본값           | 근거                                                                                                                                |
-| --- | ----------------------- | ---------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 폰트                    | 시안의 Plus Jakarta Sans 추가 vs 프로젝트 Geist 통일 | **Geist 통일**   | 추가 로드 0 · 사이트 일관성. 다만 히어로 `RALLI` 800 weight 초대형 타이포는 자소 폭이 달라 인상이 바뀔 수 있어 실물 비교가 필요하다 |
-| 2   | Watch 이미지            | 2x 재캡처 vs 표시 크기 축소                          | **2x 재캡처**    | 5.1 참조. 시뮬레이터 재캡처 가능 여부 확인 필요                                                                                     |
-| 3   | 모바일 CTA              | 하단 고정 바 vs pill 내비 축소 유지                  | **하단 고정 바** | 6절 참조                                                                                                                            |
-| 4   | `watch-home-global.png` | 갤러리 추가 vs 콘텐츠에서 제거                       | **제거**         | 시안 어느 구간에도 쓰이지 않는다                                                                                                    |
+| # | 항목 | 선택지 | 기본값 | 근거 |
+|---|---|---|---|---|
+| 1 | 폰트 | 시안의 Plus Jakarta Sans 추가 vs 프로젝트 Geist 통일 | **Geist 통일** | 추가 로드 0 · 사이트 일관성. 다만 히어로 `RALLI` 800 weight 초대형 타이포는 자소 폭이 달라 인상이 바뀔 수 있어 실물 비교가 필요하다 |
+| 2 | Watch 이미지 | 2x 재캡처 vs 표시 크기 축소 | **2x 재캡처** | 5.1 참조. 시뮬레이터 재캡처 가능 여부 확인 필요 |
+| 3 | 모바일 CTA | 하단 고정 바 vs pill 내비 축소 유지 | **하단 고정 바** | 6절 참조 |
+| 4 | `watch-home-global.png` | 갤러리 추가 vs 콘텐츠에서 제거 | **제거** | 시안 어느 구간에도 쓰이지 않는다 |
 
 1번(폰트)이 인상을 가장 크게 좌우한다. 구현 첫 단계에서 히어로 타이포를 두 벌로 렌더해 나란히 비교한다.
 

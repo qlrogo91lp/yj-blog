@@ -12,17 +12,17 @@
 
 ## 실측 레퍼런스 (Newsroom에서 직접 추출)
 
-| 항목         | 값                                                                 |
-| ------------ | ------------------------------------------------------------------ |
-| 콘텐츠 폭    | **980px** (바깥 거터 1024px)                                       |
-| 그리드       | 6-col 베이스, **gap 36px** (hero=6칸 / 2up=3칸 / 3up=2칸)          |
-| 타일 radius  | **32px** (hero·2up·3up 전부 동일)                                  |
-| hero(1up)    | 980×362, 가로 대형 배너                                            |
-| 2up          | 470×472 (이미지 위 + 텍스트 아래)                                  |
-| 3up          | 303×372 (2up의 축소판)                                             |
-| 아카이브 행  | 작은 썸네일 + `날짜 · 유형` eyebrow + 제목 (얇은 행)               |
-| 글 상세 본문 | 텍스트 컬럼 ~653px, 이미지는 그보다 넓게 bleed                     |
-| 글로벌 nav   | 항상 어두운 서페이스 + `backdrop-filter: saturate(1.8) blur(20px)` |
+| 항목 | 값 |
+|------|-----|
+| 콘텐츠 폭 | **980px** (바깥 거터 1024px) |
+| 그리드 | 6-col 베이스, **gap 36px** (hero=6칸 / 2up=3칸 / 3up=2칸) |
+| 타일 radius | **32px** (hero·2up·3up 전부 동일) |
+| hero(1up) | 980×362, 가로 대형 배너 |
+| 2up | 470×472 (이미지 위 + 텍스트 아래) |
+| 3up | 303×372 (2up의 축소판) |
+| 아카이브 행 | 작은 썸네일 + `날짜 · 유형` eyebrow + 제목 (얇은 행) |
+| 글 상세 본문 | 텍스트 컬럼 ~653px, 이미지는 그보다 넓게 bleed |
+| 글로벌 nav | 항상 어두운 서페이스 + `backdrop-filter: saturate(1.8) blur(20px)` |
 
 ## 확정된 결정 사항
 
@@ -38,13 +38,13 @@
 
 ```css
 :root {
-  --content-width: 980px; /* 헤더·푸터·홈·목록 콘텐츠 폭 */
-  --article-width: 653px; /* 글 상세 본문(prose) 읽기 폭 */
+  --content-width: 980px;   /* 헤더·푸터·홈·목록 콘텐츠 폭 */
+  --article-width: 653px;   /* 글 상세 본문(prose) 읽기 폭 */
 }
 
 @theme inline {
   /* ...기존... */
-  --radius-card: 2rem; /* 32px — 카드/타일 radius → rounded-card 유틸 생성 */
+  --radius-card: 2rem;      /* 32px — 카드/타일 radius → rounded-card 유틸 생성 */
 }
 ```
 
@@ -60,12 +60,7 @@ type Props = { className?: string; children: React.ReactNode };
 
 export function ContentContainer({ className, children }: Props) {
   return (
-    <div
-      className={cn(
-        'mx-auto w-full max-w-[var(--content-width)] px-4',
-        className
-      )}
-    >
+    <div className={cn('mx-auto w-full max-w-[var(--content-width)] px-4', className)}>
       {children}
     </div>
   );
@@ -74,11 +69,11 @@ export function ContentContainer({ className, children }: Props) {
 
 적용 대상 — 전부 980px로 통일:
 
-| 위치             | 현재           | 변경 후          |
-| ---------------- | -------------- | ---------------- |
-| Header 내부      | `max-w-5xl`    | ContentContainer |
-| Footer 내부      | `max-w-3xl`    | ContentContainer |
-| 홈 `page.tsx`    | `max-w-4xl`    | ContentContainer |
+| 위치 | 현재 | 변경 후 |
+|------|------|---------|
+| Header 내부 | `max-w-5xl` | ContentContainer |
+| Footer 내부 | `max-w-3xl` | ContentContainer |
+| 홈 `page.tsx` | `max-w-4xl` | ContentContainer |
 | 글 목록 `/posts` | `max-w-3xl` 등 | ContentContainer |
 
 > 글 상세(`/posts/[slug]`)는 예외 — §7 참조.
@@ -87,11 +82,11 @@ export function ContentContainer({ className, children }: Props) {
 
 전부 `rounded-card`(32px) 적용. 2up/3up은 구조가 동일하므로 내부 공용 base(`_post-tile-vertical` 성격)를 공유하되 **export는 3개로 분리**한다.
 
-| 컴포넌트             | Apple 매핑 | 형태                                                                                      |
-| -------------------- | ---------- | ----------------------------------------------------------------------------------------- |
-| `post-tile-hero.tsx` | 1up hero   | 가로 대형. 이미지 풀블리드 배경 + 하단 그라데이션 위 eyebrow(카테고리·날짜)·제목 오버레이 |
-| `post-tile-2up.tsx`  | 2up        | 이미지 위(aspect) / 텍스트 아래(카테고리·날짜·제목·태그). 현재 `PostCard`의 진화형        |
-| `post-tile-3up.tsx`  | 3up        | 2up과 동일 구조의 축소판(폰트·패딩 축소)                                                  |
+| 컴포넌트 | Apple 매핑 | 형태 |
+|---------|-----------|------|
+| `post-tile-hero.tsx` | 1up hero | 가로 대형. 이미지 풀블리드 배경 + 하단 그라데이션 위 eyebrow(카테고리·날짜)·제목 오버레이 |
+| `post-tile-2up.tsx` | 2up | 이미지 위(aspect) / 텍스트 아래(카테고리·날짜·제목·태그). 현재 `PostCard`의 진화형 |
+| `post-tile-3up.tsx` | 3up | 2up과 동일 구조의 축소판(폰트·패딩 축소) |
 
 - props는 기존 `PostCard`와 동일 계열: `post: PostWithCategory`, `tags?: TagSummary[]`, `priority?: boolean`.
 - 날짜 포맷은 date-fns 사용(프로젝트 컨벤션 준수).
@@ -142,7 +137,6 @@ Newsroom처럼 **페이지 테마와 무관하게 항상 검정**.
 ## 영향 파일
 
 **신규**
-
 - `src/components/layout/content-container.tsx`
 - `src/components/post/post-tile-hero.tsx`
 - `src/components/post/post-tile-2up.tsx`
@@ -150,7 +144,6 @@ Newsroom처럼 **페이지 테마와 무관하게 항상 검정**.
 - `src/components/post/post-archive-row.tsx`
 
 **수정**
-
 - `src/app/globals.css` (토큰)
 - `src/components/nav/header.tsx` (다크 서페이스 + 컨테이너)
 - `src/components/layout/footer.tsx` (컨테이너)
@@ -161,7 +154,6 @@ Newsroom처럼 **페이지 테마와 무관하게 항상 검정**.
 - 글 상세 페이지 + `src/styles/prose.css` (653 본문 + 이미지 bleed)
 
 **제거(마이그레이션 후)**
-
 - `src/components/post/post-card.tsx`
 - `src/components/post/post-list-item.tsx`
 

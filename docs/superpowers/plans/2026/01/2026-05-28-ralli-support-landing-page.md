@@ -17,7 +17,6 @@
 ## File Structure
 
 생성:
-
 - `src/app/(main)/apps/ralli/page.tsx` — 랜딩/지원 페이지 조합 (서버 컴포넌트)
 - `src/app/(main)/apps/ralli/privacy/page.tsx` — 개인정보 처리방침 (서버 컴포넌트, 정적 텍스트)
 - `src/app/(main)/apps/ralli/_utils/ralli-content.ts` — 카피·기능·스크린샷 데이터·상수
@@ -32,7 +31,6 @@
 - `e2e/ralli.spec.ts` — 페이지·내비게이션 E2E
 
 이미 작업트리에 존재(미커밋):
-
 - `public/ralli/*` (이미지 11장 + 아이콘)
 - `src/app/(main)/apps/_utils/apps-data.ts` (Tennis Counter → Ralli 변경)
 
@@ -43,7 +41,6 @@
 기존 미커밋 자산(이미지·apps-data 변경)을 먼저 커밋해 토대를 만들고, 모든 카피/상수를 담는 콘텐츠 모듈을 작성한다.
 
 **Files:**
-
 - Create: `src/app/(main)/apps/ralli/_utils/ralli-content.ts`
 - Create: `src/app/(main)/apps/ralli/_utils/ralli-content.test.ts`
 - Commit: `public/ralli/`, `src/app/(main)/apps/_utils/apps-data.ts`
@@ -103,14 +100,8 @@ export const ralliFeatures: RalliFeature[] = [
       'At a glance on the Lock Screen and Dynamic Island',
     ],
     images: [
-      watchImage(
-        '/ralli/watch-match-global.png',
-        'Ralli match score on Apple Watch'
-      ),
-      watchImage(
-        '/ralli/watch-complication-global.png',
-        'Ralli complication on the Apple Watch face'
-      ),
+      watchImage('/ralli/watch-match-global.png', 'Ralli match score on Apple Watch'),
+      watchImage('/ralli/watch-complication-global.png', 'Ralli complication on the Apple Watch face'),
     ],
   },
   {
@@ -122,14 +113,8 @@ export const ralliFeatures: RalliFeature[] = [
       'Syncs with the Apple Fitness app',
     ],
     images: [
-      watchImage(
-        '/ralli/watch-workout-global.png',
-        'Ralli workout metrics on Apple Watch'
-      ),
-      iosImage(
-        '/ralli/ios-workout-global.png',
-        'Ralli workout metrics on iPhone'
-      ),
+      watchImage('/ralli/watch-workout-global.png', 'Ralli workout metrics on Apple Watch'),
+      iosImage('/ralli/ios-workout-global.png', 'Ralli workout metrics on iPhone'),
     ],
   },
   {
@@ -141,14 +126,8 @@ export const ralliFeatures: RalliFeature[] = [
       'Monthly and lifetime stats',
     ],
     images: [
-      iosImage(
-        '/ralli/ios-summary-global.png',
-        'Ralli match summary stats on iPhone'
-      ),
-      iosImage(
-        '/ralli/ios-live-global.png',
-        'Ralli Live Activity on the iPhone Lock Screen'
-      ),
+      iosImage('/ralli/ios-summary-global.png', 'Ralli match summary stats on iPhone'),
+      iosImage('/ralli/ios-live-global.png', 'Ralli Live Activity on the iPhone Lock Screen'),
     ],
   },
   {
@@ -160,54 +139,24 @@ export const ralliFeatures: RalliFeature[] = [
       'Start with the rules you actually play',
     ],
     images: [
-      watchImage(
-        '/ralli/watch-mode-global.png',
-        'Ralli match format on Apple Watch'
-      ),
-      iosImage(
-        '/ralli/ios-mode-global.png',
-        'Ralli match format selection on iPhone'
-      ),
+      watchImage('/ralli/watch-mode-global.png', 'Ralli match format on Apple Watch'),
+      iosImage('/ralli/ios-mode-global.png', 'Ralli match format selection on iPhone'),
     ],
   },
 ];
 
 export const ralliScreenshots: RalliImage[] = [
   iosImage('/ralli/ios-match-global.png', 'Ralli match score on iPhone'),
-  iosImage(
-    '/ralli/connectivity-global.png',
-    'Ralli on iPhone and Apple Watch together'
-  ),
-  iosImage(
-    '/ralli/ios-mode-global.png',
-    'Ralli match format selection on iPhone'
-  ),
+  iosImage('/ralli/connectivity-global.png', 'Ralli on iPhone and Apple Watch together'),
+  iosImage('/ralli/ios-mode-global.png', 'Ralli match format selection on iPhone'),
   iosImage('/ralli/ios-workout-global.png', 'Ralli workout metrics on iPhone'),
-  iosImage(
-    '/ralli/ios-summary-global.png',
-    'Ralli match summary stats on iPhone'
-  ),
-  iosImage(
-    '/ralli/ios-live-global.png',
-    'Ralli Live Activity on the iPhone Lock Screen'
-  ),
+  iosImage('/ralli/ios-summary-global.png', 'Ralli match summary stats on iPhone'),
+  iosImage('/ralli/ios-live-global.png', 'Ralli Live Activity on the iPhone Lock Screen'),
   watchImage('/ralli/watch-home-global.png', 'Ralli home on Apple Watch'),
-  watchImage(
-    '/ralli/watch-match-global.png',
-    'Ralli match score on Apple Watch'
-  ),
-  watchImage(
-    '/ralli/watch-mode-global.png',
-    'Ralli match format on Apple Watch'
-  ),
-  watchImage(
-    '/ralli/watch-complication-global.png',
-    'Ralli complication on the Apple Watch face'
-  ),
-  watchImage(
-    '/ralli/watch-workout-global.png',
-    'Ralli workout metrics on Apple Watch'
-  ),
+  watchImage('/ralli/watch-match-global.png', 'Ralli match score on Apple Watch'),
+  watchImage('/ralli/watch-mode-global.png', 'Ralli match format on Apple Watch'),
+  watchImage('/ralli/watch-complication-global.png', 'Ralli complication on the Apple Watch face'),
+  watchImage('/ralli/watch-workout-global.png', 'Ralli workout metrics on Apple Watch'),
 ];
 ```
 
@@ -216,12 +165,9 @@ export const ralliScreenshots: RalliImage[] = [
 `src/app/(main)/apps/ralli/_utils/ralli-content.test.ts`:
 
 ```ts
-import { ralliFeatures, ralliMeta, ralliScreenshots } from './ralli-content';
+import { ralliFeatures, ralliScreenshots, ralliMeta } from './ralli-content';
 
-const allImages = [
-  ...ralliScreenshots,
-  ...ralliFeatures.flatMap((f) => f.images),
-];
+const allImages = [...ralliScreenshots, ...ralliFeatures.flatMap((f) => f.images)];
 
 describe('ralli-content', () => {
   it('모든 이미지 src는 /ralli/ 경로이고 alt가 비어있지 않다', () => {
@@ -273,7 +219,6 @@ git commit -m "feat: Ralli 랜딩 콘텐츠 모듈·이미지 자산 추가"
 `appStoreUrl`이 있으면 다운로드 링크, 없으면 "Coming soon" 배지를 렌더하는 유일한 로직 컴포넌트. TDD 대상.
 
 **Files:**
-
 - Create: `src/app/(main)/apps/ralli/_components/ralli-cta-button.tsx`
 - Test: `src/app/(main)/apps/ralli/_components/ralli-cta-button.test.tsx`
 
@@ -355,7 +300,6 @@ git commit -m "feat: RalliCtaButton — App Store 링크/Coming soon 분기"
 문의 이메일 mailto와 개인정보 처리방침 링크. 링크 정확성이 중요하므로 TDD 대상.
 
 **Files:**
-
 - Create: `src/app/(main)/apps/ralli/_components/ralli-support.tsx`
 - Test: `src/app/(main)/apps/ralli/_components/ralli-support.test.tsx`
 
@@ -429,10 +373,7 @@ export function RalliSupport({ email }: Props) {
           {email}
         </a>
         <div className="mt-8 text-sm text-white/50">
-          <Link
-            href="/apps/ralli/privacy"
-            className="hover:text-white/80 hover:underline"
-          >
+          <Link href="/apps/ralli/privacy" className="hover:text-white/80 hover:underline">
             Privacy Policy
           </Link>
         </div>
@@ -461,7 +402,6 @@ git commit -m "feat: RalliSupport — 문의 이메일·개인정보 링크"
 아이콘·이름·태그라인·CTA. 외부 의존성 없는 순수 컴포넌트. E2E에서 검증하므로 별도 단위 테스트 없음.
 
 **Files:**
-
 - Create: `src/app/(main)/apps/ralli/_components/ralli-hero.tsx`
 
 - [ ] **Step 1: 컴포넌트 구현**
@@ -480,13 +420,7 @@ type Props = {
   appStoreUrl: string;
 };
 
-export function RalliHero({
-  name,
-  tagline,
-  subtitle,
-  iconSrc,
-  appStoreUrl,
-}: Props) {
+export function RalliHero({ name, tagline, subtitle, iconSrc, appStoreUrl }: Props) {
   return (
     <section className="py-20 text-center">
       <div className="mx-auto max-w-3xl px-4">
@@ -498,9 +432,7 @@ export function RalliHero({
           className="mx-auto rounded-[22px] shadow-lg"
           priority
         />
-        <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">
-          {name}
-        </h1>
+        <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">{name}</h1>
         <p className="mt-4 text-xl font-medium text-lime-400">{tagline}</p>
         <p className="mt-2 text-white/60">{subtitle}</p>
         <div className="mt-8">
@@ -526,7 +458,6 @@ git commit -m "feat: RalliHero — 아이콘·태그라인·CTA"
 헤드라인 + 불릿 + 이미지 1개 섹션. 짝수/홀수 인덱스로 이미지·텍스트 좌우 배치를 교차한다.
 
 **Files:**
-
 - Create: `src/app/(main)/apps/ralli/_components/ralli-feature-section.tsx`
 
 - [ ] **Step 1: 컴포넌트 구현**
@@ -552,7 +483,7 @@ export function RalliFeatureSection({ feature, index }: Props) {
       <div
         className={cn(
           'mx-auto flex max-w-4xl flex-col items-center gap-10 px-4 md:flex-row',
-          isReversed && 'md:flex-row-reverse'
+          isReversed && 'md:flex-row-reverse',
         )}
       >
         <div className="flex-1">
@@ -576,9 +507,7 @@ export function RalliFeatureSection({ feature, index }: Props) {
               height={img.height}
               className={cn(
                 'h-auto rounded-2xl',
-                img.kind === 'ios'
-                  ? 'w-full max-w-[180px]'
-                  : 'w-full max-w-[150px]'
+                img.kind === 'ios' ? 'w-full max-w-[180px]' : 'w-full max-w-[150px]',
               )}
               sizes="(max-width: 768px) 45vw, 180px"
             />
@@ -606,7 +535,6 @@ git commit -m "feat: RalliFeatureSection — 기능 소개 섹션"
 iOS·Watch 스크린샷을 종류별로 그룹화해 가로 스크롤로 표시.
 
 **Files:**
-
 - Create: `src/app/(main)/apps/ralli/_components/ralli-screenshot-gallery.tsx`
 
 - [ ] **Step 1: 컴포넌트 구현**
@@ -628,9 +556,7 @@ export function RalliScreenshotGallery({ screenshots }: Props) {
   return (
     <section className="border-t border-white/10 py-16">
       <div className="mx-auto max-w-4xl px-4">
-        <h2 className="text-center text-2xl font-bold sm:text-3xl">
-          See it in action
-        </h2>
+        <h2 className="text-center text-2xl font-bold sm:text-3xl">See it in action</h2>
 
         <h3 className="mt-10 text-sm font-semibold uppercase tracking-wide text-white/50">
           iPhone
@@ -685,7 +611,6 @@ git commit -m "feat: RalliScreenshotGallery — 스크린샷 갤러리"
 다크 톤 컨테이너에 Hero·기능 섹션·갤러리·지원 섹션을 조합. 메타데이터 포함.
 
 **Files:**
-
 - Create: `src/app/(main)/apps/ralli/page.tsx`
 
 - [ ] **Step 1: 페이지 구현**
@@ -697,20 +622,15 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { SITE_NAME } from '@/lib/constants';
-import { RalliFeatureSection } from './_components/ralli-feature-section';
+import { ralliMeta, ralliFeatures, ralliScreenshots } from './_utils/ralli-content';
 import { RalliHero } from './_components/ralli-hero';
+import { RalliFeatureSection } from './_components/ralli-feature-section';
 import { RalliScreenshotGallery } from './_components/ralli-screenshot-gallery';
 import { RalliSupport } from './_components/ralli-support';
-import {
-  ralliFeatures,
-  ralliMeta,
-  ralliScreenshots,
-} from './_utils/ralli-content';
 
 export const metadata: Metadata = {
   title: `${ralliMeta.name} — Tennis Score | ${SITE_NAME}`,
-  description:
-    'Ralli — a wrist-first tennis score & workout companion for Apple Watch and iPhone.',
+  description: 'Ralli — a wrist-first tennis score & workout companion for Apple Watch and iPhone.',
 };
 
 export default function RalliPage() {
@@ -769,7 +689,6 @@ git commit -m "feat: Ralli 랜딩·지원 페이지 조합"
 SwiftData + CloudKit 기준 영문 정적 텍스트.
 
 **Files:**
-
 - Create: `src/app/(main)/apps/ralli/privacy/page.tsx`
 
 - [ ] **Step 1: 페이지 구현**
@@ -805,53 +724,49 @@ export default function RalliPrivacyPage() {
           <strong>Effective date:</strong> May 28, 2026
         </p>
         <p>
-          Ralli (&ldquo;the app&rdquo;) respects your privacy. This policy
-          explains what data the app handles and how.
+          Ralli (&ldquo;the app&rdquo;) respects your privacy. This policy explains what data the
+          app handles and how.
         </p>
 
         <h2>Data stored on your device and iCloud</h2>
         <p>
-          Your match records (scores, sets, and dates) are stored on your device
-          using SwiftData and synced to your personal, private iCloud account
-          through Apple CloudKit so they stay in sync across your own devices.
-          This data is managed by Apple, and the developer cannot access it.
+          Your match records (scores, sets, and dates) are stored on your device using SwiftData and
+          synced to your personal, private iCloud account through Apple CloudKit so they stay in
+          sync across your own devices. This data is managed by Apple, and the developer cannot
+          access it.
         </p>
 
         <h2>HealthKit</h2>
         <p>
-          With your permission, Ralli reads and writes workout sessions, heart
-          rate, active energy (calories), and workout duration through Apple
-          HealthKit, solely to record your tennis matches as workouts. HealthKit
-          data is never used for advertising or marketing, and is never shared
-          with third parties.
+          With your permission, Ralli reads and writes workout sessions, heart rate, active energy
+          (calories), and workout duration through Apple HealthKit, solely to record your tennis
+          matches as workouts. HealthKit data is never used for advertising or marketing, and is
+          never shared with third parties.
         </p>
 
         <h2>Data we do not collect</h2>
         <p>
-          Ralli does not send any data to developer-operated servers. There are
-          no analytics SDKs, no third-party tracking, no advertising, and no
-          account sign-up. The app uses only your Apple ID-based iCloud.
+          Ralli does not send any data to developer-operated servers. There are no analytics SDKs,
+          no third-party tracking, no advertising, and no account sign-up. The app uses only your
+          Apple ID-based iCloud.
         </p>
 
         <h2>Children</h2>
         <p>
-          Ralli is not directed at children under 13 and does not knowingly
-          collect personal information from them.
+          Ralli is not directed at children under 13 and does not knowingly collect personal
+          information from them.
         </p>
 
         <h2>Changes to this policy</h2>
         <p>
-          We may update this policy from time to time. The effective date above
-          will change accordingly.
+          We may update this policy from time to time. The effective date above will change
+          accordingly.
         </p>
 
         <h2>Contact</h2>
         <p>
           Questions about this policy? Email{' '}
-          <a href={`mailto:${ralliMeta.supportEmail}`}>
-            {ralliMeta.supportEmail}
-          </a>
-          .
+          <a href={`mailto:${ralliMeta.supportEmail}`}>{ralliMeta.supportEmail}</a>.
         </p>
       </article>
     </div>
@@ -878,7 +793,6 @@ git commit -m "feat: Ralli 개인정보 처리방침 페이지"
 ### Task 9: E2E 테스트 (페이지·내비게이션)
 
 **Files:**
-
 - Create: `e2e/ralli.spec.ts`
 
 - [ ] **Step 1: E2E 테스트 작성**
@@ -886,21 +800,15 @@ git commit -m "feat: Ralli 개인정보 처리방침 페이지"
 `e2e/ralli.spec.ts`:
 
 ```ts
-import { expect, test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 test('랜딩 페이지가 핵심 요소를 렌더한다', async ({ page }) => {
   await page.goto('/apps/ralli');
 
-  await expect(
-    page.getByRole('heading', { name: 'Ralli', level: 1 })
-  ).toBeVisible();
-  await expect(
-    page.getByText('Tennis scores, right on your wrist.')
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Ralli', level: 1 })).toBeVisible();
+  await expect(page.getByText('Tennis scores, right on your wrist.')).toBeVisible();
   await expect(page.getByText('Coming soon to the App Store')).toBeVisible();
-  await expect(
-    page.getByRole('link', { name: /qlrogo91lp@gmail.com/i })
-  ).toBeVisible();
+  await expect(page.getByRole('link', { name: /qlrogo91lp@gmail.com/i })).toBeVisible();
 });
 
 test('개인정보 처리방침으로 이동한다', async ({ page }) => {
@@ -908,21 +816,15 @@ test('개인정보 처리방침으로 이동한다', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Privacy Policy' }).click();
   await expect(page).toHaveURL('/apps/ralli/privacy');
-  await expect(
-    page.getByRole('heading', { name: 'Privacy Policy', level: 1 })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Privacy Policy', level: 1 })).toBeVisible();
 });
 
-test('Apps 목록에서 Ralli 카드로 진입하면 커스텀 페이지가 열린다', async ({
-  page,
-}) => {
+test('Apps 목록에서 Ralli 카드로 진입하면 커스텀 페이지가 열린다', async ({ page }) => {
   await page.goto('/apps');
 
   await page.getByRole('link', { name: /Ralli/ }).click();
   await expect(page).toHaveURL('/apps/ralli');
-  await expect(
-    page.getByRole('heading', { name: 'Ralli', level: 1 })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Ralli', level: 1 })).toBeVisible();
 });
 ```
 
@@ -968,7 +870,6 @@ Expected: 성공. `/apps/ralli`, `/apps/ralli/privacy`가 정적(○ 또는 ●)
 ## Self-Review
 
 **Spec coverage 점검:**
-
 - 라우팅(정적 세그먼트 우선, apps-data 유지) → Task 1, 7 ✓
 - 이미지 호스팅 `public/ralli/` → Task 1 ✓
 - App Store 링크 상수 분기 → Task 1(상수), Task 2(분기) ✓

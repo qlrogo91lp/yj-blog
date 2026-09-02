@@ -8,16 +8,16 @@
 
 ## 결정 요약
 
-| 주제           | 결정                                                                                                     |
-| -------------- | -------------------------------------------------------------------------------------------------------- |
-| 입력 필드      | **excerpt + metaTitle** 두 개만 노출. `metaDescription`은 excerpt를 fallback으로 재사용 (별도 입력 없음) |
-| excerpt 채우기 | 기본 빈 칸 + **"AI로 요약 생성" 버튼**(Claude Haiku) + textarea 수동 보정                                |
-| OG 이미지      | 정적 — `thumbnailUrl` → `public/og-default.png` fallback (동적 생성 안 함)                               |
-| 메타 출력      | OpenGraph / Twitter Cards / canonical / metadataBase                                                     |
-| 구조화 데이터  | JSON-LD `BlogPosting` 풀필드                                                                             |
-| 이미지 alt     | `ImageToolbar`에 톱니 버튼 → alt 편집 popover                                                            |
-| 가이드         | SEO 운영 가이드 + 글 작성 체크리스트 문서 (`docs/seo-guide.md`)                                          |
-| 네이밍         | 현재 `.claude/rules` dot-suffix 컨벤션 준수 (`*.action.tsx` 등)                                          |
+| 주제 | 결정 |
+|------|------|
+| 입력 필드 | **excerpt + metaTitle** 두 개만 노출. `metaDescription`은 excerpt를 fallback으로 재사용 (별도 입력 없음) |
+| excerpt 채우기 | 기본 빈 칸 + **"AI로 요약 생성" 버튼**(Claude Haiku) + textarea 수동 보정 |
+| OG 이미지 | 정적 — `thumbnailUrl` → `public/og-default.png` fallback (동적 생성 안 함) |
+| 메타 출력 | OpenGraph / Twitter Cards / canonical / metadataBase |
+| 구조화 데이터 | JSON-LD `BlogPosting` 풀필드 |
+| 이미지 alt | `ImageToolbar`에 톱니 버튼 → alt 편집 popover |
+| 가이드 | SEO 운영 가이드 + 글 작성 체크리스트 문서 (`docs/seo-guide.md`) |
+| 네이밍 | 현재 `.claude/rules` dot-suffix 컨벤션 준수 (`*.action.tsx` 등) |
 
 ## 현재 상태 (이미 갖춰진 것)
 
@@ -137,7 +137,7 @@
 
 - **`docs/seo-guide.md`** (신규) — 날짜 없는 살아있는 운영 매뉴얼. 처음 SEO를 적용하는 본인을 위해 자세히 작성. 구성:
   1. **SEO가 뭐고 왜 하는가** — 검색엔진이 글을 발견·색인·순위화하는 흐름, 개인 블로그에 주는 효과
-  2. **이 블로그가 출력하는 메타데이터 지도** — 각 메타가 _누구에게 / 어디서_ 보이는지:
+  2. **이 블로그가 출력하는 메타데이터 지도** — 각 메타가 *누구에게 / 어디서* 보이는지:
      - `<title>` / `description` → 구글 검색 결과 제목·회색 설명
      - OpenGraph / Twitter → 카카오톡·슬랙·X 카드 미리보기
      - `canonical` → 중복 URL(쿼리 파라미터 등) 페널티 방지

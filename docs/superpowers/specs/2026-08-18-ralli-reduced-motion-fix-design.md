@@ -8,7 +8,7 @@
 
 ### 1.1 왜 발생하는가
 
-`useSectionProgress`가 반환하는 `isStatic`은 `prefersReducedMotion && mounted`이고, `mounted`는 [`apps/_hooks/useMounted.ts`](<../../../src/app/(main)/apps/_hooks/useMounted.ts>)의 `useSyncExternalStore`가 만든다. hydration mismatch를 피하려고 **서버·hydration 시점에는 항상 `false`** 를 반환한다.
+`useSectionProgress`가 반환하는 `isStatic`은 `prefersReducedMotion && mounted`이고, `mounted`는 [`apps/_hooks/useMounted.ts`](../../../src/app/\(main\)/apps/_hooks/useMounted.ts)의 `useSyncExternalStore`가 만든다. hydration mismatch를 피하려고 **서버·hydration 시점에는 항상 `false`** 를 반환한다.
 
 따라서 reduced-motion 사용자도 **첫 렌더는 반드시 애니메이션 경로를 탄다.** 이때 framer-motion이 `motion.div`의 DOM 노드에 인라인 스타일을 **직접 기록**한다 — React의 style diffing을 우회하는 명령형 쓰기다.
 
@@ -26,13 +26,13 @@ hydration이 끝나면 `mounted`가 `true`가 되어 `isStatic`이 `true`로 바
 
 `renderToString` → `hydrateRoot` 시퀀스를 `matchMedia`가 reduced-motion을 반환하도록 mock한 상태에서 재현해 DOM을 덤프했다. hydration 이후 **5개 요소에 stale 인라인 스타일이 잔존**한다.
 
-| 요소                                            | 잔존 스타일                                                                 | 진행도 0에서의 원인값                                      | 영향                        |
-| ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------- | --------------------------- |
-| 태그라인 블록 (`h1` + 부제 + **App Store CTA**) | `opacity:0; transform:translateY(40px)`                                     | `copyOpacity` 구간이 `[0.14, …]`에서 시작 → 0              | 🔴 **콘텐츠 손실**          |
-| GAME POINT 스코어                               | `opacity:0`                                                                 | `scoreOpacity` 구간이 `[0.2, …]`에서 시작 → 0              | 🔴 **콘텐츠 손실**          |
-| 워치 스크린샷                                   | `opacity:1; transform:scale(0.62) rotate(-4deg)`                            | `watchScale` 0.62, `watchRotate` -4                        | 🟡 62% 크기로 기울어져 렌더 |
-| 배경 glow (`aria-hidden`)                       | `transform:scale(0.7)`                                                      | `glowScale` 0.7                                            | 🟢 장식, 미세한 차이        |
-| 코트 SVG (`aria-hidden`)                        | `opacity:0.5; transform:perspective(900px) translateY(10vh) rotateX(56deg)` | `isStatic` 분기가 `{ opacity: 0.5 }`를 **명시적으로** 넘김 | 🟢 의도된 동작              |
+| 요소 | 잔존 스타일 | 진행도 0에서의 원인값 | 영향 |
+|---|---|---|---|
+| 태그라인 블록 (`h1` + 부제 + **App Store CTA**) | `opacity:0; transform:translateY(40px)` | `copyOpacity` 구간이 `[0.14, …]`에서 시작 → 0 | 🔴 **콘텐츠 손실** |
+| GAME POINT 스코어 | `opacity:0` | `scoreOpacity` 구간이 `[0.2, …]`에서 시작 → 0 | 🔴 **콘텐츠 손실** |
+| 워치 스크린샷 | `opacity:1; transform:scale(0.62) rotate(-4deg)` | `watchScale` 0.62, `watchRotate` -4 | 🟡 62% 크기로 기울어져 렌더 |
+| 배경 glow (`aria-hidden`) | `transform:scale(0.7)` | `glowScale` 0.7 | 🟢 장식, 미세한 차이 |
+| 코트 SVG (`aria-hidden`) | `opacity:0.5; transform:perspective(900px) translateY(10vh) rotateX(56deg)` | `isStatic` 분기가 `{ opacity: 0.5 }`를 **명시적으로** 넘김 | 🟢 의도된 동작 |
 
 **핵심**: 히어로의 주요 콘텐츠 두 블록과 이 페이지의 유일한 전환 동선(App Store 버튼)이 보이지 않는다.
 
@@ -58,20 +58,20 @@ return <motion.div style={{ … }}>{children}</motion.div>;
 
 `_areas/*.area.tsx` 6개 전체를 멀티라인 포맷까지 포함해 정규식으로 조사했다.
 
-| 파일                 | `style/animate={isStatic ? … undefined}` | 판정                                   |
-| -------------------- | ---------------------------------------- | -------------------------------------- |
-| `hero.area.tsx`      | **4건** (L86·L128·L144·L160)             | 🔴 수정 대상                           |
-| `watch.area.tsx`     | 0건                                      | ✅ `animate`에 항상 구체적 값을 넘긴다 |
-| `workout.area.tsx`   | 0건                                      | ✅                                     |
-| `replay.area.tsx`    | 0건 (오탐 — 아래 참고)                   | 🔴 수정 대상 (최종 통합 리뷰에서 발견) |
-| `rules.area.tsx`     | 0건                                      | ✅                                     |
-| `final-cta.area.tsx` | 0건                                      | ✅                                     |
+| 파일 | `style/animate={isStatic ? … undefined}` | 판정 |
+|---|---|---|
+| `hero.area.tsx` | **4건** (L86·L128·L144·L160) | 🔴 수정 대상 |
+| `watch.area.tsx` | 0건 | ✅ `animate`에 항상 구체적 값을 넘긴다 |
+| `workout.area.tsx` | 0건 | ✅ |
+| `replay.area.tsx` | 0건 (오탐 — 아래 참고) | 🔴 수정 대상 (최종 통합 리뷰에서 발견) |
+| `rules.area.tsx` | 0건 | ✅ |
+| `final-cta.area.tsx` | 0건 | ✅ |
 
-`Reveal`([`apps/_actions/reveal.action.tsx`](<../../../src/app/(main)/apps/_actions/reveal.action.tsx>))은 `isStatic`일 때 평범한 `<div>`를 반환하므로 안전하다. `HeroLetter`(`hero.area.tsx:36`)도 조기 반환으로 `<span>`을 렌더해 안전하다 — **이미 올바른 패턴이 같은 파일 안에 있었다.**
+`Reveal`([`apps/_actions/reveal.action.tsx`](../../../src/app/\(main\)/apps/_actions/reveal.action.tsx))은 `isStatic`일 때 평범한 `<div>`를 반환하므로 안전하다. `HeroLetter`(`hero.area.tsx:36`)도 조기 반환으로 `<span>`을 렌더해 안전하다 — **이미 올바른 패턴이 같은 파일 안에 있었다.**
 
 > GolfCounter 작업에서는 `health.area.tsx`가 `animate={isStatic ? undefined : {…}}`라는 변종을 갖고 있었다. ralli에는 이 변종이 없다.
 
-> **이 표의 `replay.area.tsx` 판정은 틀렸었다.** 정규식이 리터럴 토큰 `isStatic ?`만 찾았는데, 실제 코드는 `const useNativeScroll = isMobile || isStatic;` 로 `isStatic`을 별칭 뒤에 숨겨서 썼고, 문제의 줄도 `style={useNativeScroll ? undefined : { x: driftX }}`라 `isStatic`이라는 글자가 아예 등장하지 않는다. `useNativeScroll`은 여전히 `isStatic` 값에 좌우되므로 같은 결함 시퀀스(§1)를 그대로 가진다 — 게다가 `isMobile`도 `useMounted`와 동일하게 "첫 렌더는 항상 `false`, `useEffect`에서 갱신"되는 훅이라, 이 결함은 reduced-motion 사용자만이 아니라 **모바일 사용자 전반**(새로고침 시 스크롤 위치가 남아있는 채로 hydration이 끝나는 경우 등)에도 잠재했다. 최종 통합 리뷰에서 발견되어 `replay.area.tsx`와 [README §7.1](<../../../src/app/(main)/apps/ralli/README.md>)·§6 함정 3을 함께 수정했다. **교훈**: 이런 조사는 리터럴 토큰이 아니라 "해당 변수의 데이터 흐름"을 따라가야 한다 — 정규식 grep은 별칭·파생값을 놓친다.
+> **이 표의 `replay.area.tsx` 판정은 틀렸었다.** 정규식이 리터럴 토큰 `isStatic ?`만 찾았는데, 실제 코드는 `const useNativeScroll = isMobile || isStatic;` 로 `isStatic`을 별칭 뒤에 숨겨서 썼고, 문제의 줄도 `style={useNativeScroll ? undefined : { x: driftX }}`라 `isStatic`이라는 글자가 아예 등장하지 않는다. `useNativeScroll`은 여전히 `isStatic` 값에 좌우되므로 같은 결함 시퀀스(§1)를 그대로 가진다 — 게다가 `isMobile`도 `useMounted`와 동일하게 "첫 렌더는 항상 `false`, `useEffect`에서 갱신"되는 훅이라, 이 결함은 reduced-motion 사용자만이 아니라 **모바일 사용자 전반**(새로고침 시 스크롤 위치가 남아있는 채로 hydration이 끝나는 경우 등)에도 잠재했다. 최종 통합 리뷰에서 발견되어 `replay.area.tsx`와 [README §7.1](../../../src/app/\(main\)/apps/ralli/README.md)·§6 함정 3을 함께 수정했다. **교훈**: 이런 조사는 리터럴 토큰이 아니라 "해당 변수의 데이터 흐름"을 따라가야 한다 — 정규식 grep은 별칭·파생값을 놓친다.
 
 ## 3. 수정 방침
 
@@ -89,10 +89,10 @@ return <motion.div style={{ … }}>{children}</motion.div>;
 
 README의 "남아있는 개선 여지"에 이미 기록되어 있던 항목이다. 같은 접근성 주제이고 GolfCounter에서는 이미 처리한 내용이라 함께 해결해 두 랜딩의 패리티를 맞춘다.
 
-| 항목                               | 현재                                                                  | 수정                                                                                  |
-| ---------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| 비활성 이미지가 스크린 리더에 노출 | `opacity: 0`으로만 숨김 → 3장 모두 읽힘                               | `RalliShot`에 `ariaHidden` prop을 추가하고 `aria-hidden={index !== activeIndex}` 전달 |
-| static에서 scale wobble            | `opacity`만 `isStatic`을 반영하고 `scale`은 `activeIndex`를 계속 추종 | `scale`도 `isStatic` 분기에 포함                                                      |
+| 항목 | 현재 | 수정 |
+|---|---|---|
+| 비활성 이미지가 스크린 리더에 노출 | `opacity: 0`으로만 숨김 → 3장 모두 읽힘 | `RalliShot`에 `ariaHidden` prop을 추가하고 `aria-hidden={index !== activeIndex}` 전달 |
+| static에서 scale wobble | `opacity`만 `isStatic`을 반영하고 `scale`은 `activeIndex`를 계속 추종 | `scale`도 `isStatic` 분기에 포함 |
 
 `RalliShot`의 prop 추가는 GolfCounter의 `GolfShot`이 같은 이유로 이미 도입한 것과 동일한 형태다(optional prop이라 기존 호출부 무영향).
 
@@ -162,4 +162,4 @@ CLAUDE.md 규칙에 따라 `develop`에서 `fix/ralli-hero-reduced-motion`을 �
 
 - 동일 결함을 먼저 발견·수정한 작업: [2026-08-18-golf-counter-landing-b-design.md](2026-08-18-golf-counter-landing-b-design.md)
 - 참고 구현: `src/app/(main)/apps/golf-counter/_areas/hero.area.tsx`, `health.area.tsx`, `hero.area.reduced-motion.test.tsx`
-- 스크롤 애니메이션 해설: [`src/app/(main)/apps/ralli/README.md`](<../../../src/app/(main)/apps/ralli/README.md>)
+- 스크롤 애니메이션 해설: [`src/app/(main)/apps/ralli/README.md`](../../../src/app/\(main\)/apps/ralli/README.md)

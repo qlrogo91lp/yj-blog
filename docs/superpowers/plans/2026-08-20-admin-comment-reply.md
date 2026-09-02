@@ -1,7 +1,6 @@
 # 댓글 관리 인라인 답글 구현 계획 (어드민 리디자인 PR 3/4)
 
 > **완료: 2026-08-20.** Task 1~9 전부 완료. SDD(subagent-driven-development)로 실행 — 태스크별 구현·리뷰·(필요 시) 수정 루프 후 전체 브랜치 최종 리뷰까지 마쳤다. 결과 요약:
->
 > - Task 1~8: 전부 태스크 리뷰 통과. Task 5(삭제 다이얼로그 self-contained 리팩터)는 fix round 1에서 "다이얼로그를 닫았다 다시 열면 이전 에러 메시지가 남는" 결함을 발견·수정. Task 7(댓글 카드+대댓글 행)은 fix round 1에서 "답변완료 판정이 isAuthor=true 전용임을 검증하는 음성 테스트"와 "삭제된 부모의 답글이 계속 렌더되는지 검증하는 테스트" 2건을 보강.
 > - Task 9 검증: 단위 테스트 95 files/507 tests 전부 PASS, 린트·tsc 신규 에러 0건, 빌드 성공. 빌드 1차 시도에서 공유 Neon dev DB에 `comments.is_author` 컬럼이 없어 실패 — `refactor/admin-stats-settings` 워크트리가 자신의 스키마로 `drizzle-kit push`를 실행하며 유실시킨 것으로 추정. 데이터 손실 없이 `ALTER TABLE comments ADD COLUMN IF NOT EXISTS is_author ...`로 컬럼만 복구(다른 워크트리가 추가한 `blog_settings.referrer_excludes`는 그대로 유지)한 뒤 재빌드 성공.
 > - 전체 브랜치 최종 리뷰(opus)에서 Critical/Important 결함 없음. Minor 8건 중 3건(브랜치가 새로 유발한 prettier 포맷 위반, "전체 {total}개"가 스레드 수만 세는 것으로 바뀐 문구 오해 소지, 어드민 삭제 버튼·답글 textarea의 접근성 aria-label 부재)은 즉시 수정하고 스코프 재리뷰까지 통과. 나머지 5건은 머지를 막지 않는다고 판단해 SDD 원장에 근거와 함께 보류(park) — `addAdminReply`의 `postId`/`postSlug` 교차검증 부재, Discord 미호출 단언 테스트 부재, 헤더 마크업 3곳 중복(플랜 예제 코드 자체가 유발), `getPendingReplyCount`의 `unstable_cache` 미적용, 독자 페이지 삭제 버튼의 동일한 접근성 갭(이 PR 범위 밖 파일).
@@ -53,7 +52,7 @@
 | 1    | `refactor/admin-shell-cell-a`    | [2026-08-20-admin-shell-cell-a.md](./2026-08-20-admin-shell-cell-a.md)       | 완료 (PR [#83](https://github.com/qlrogo91lp/yj-blog/pull/83) 머지) |
 | 2    | `refactor/admin-content-screens` | [2026-08-20-admin-content-screens.md](./2026-08-20-admin-content-screens.md) | 완료 (PR [#84](https://github.com/qlrogo91lp/yj-blog/pull/84) 머지) |
 | 3    | `feature/admin-comment-reply`    | 이 문서                                                                      | 완료 (PR [#86](https://github.com/qlrogo91lp/yj-blog/pull/86) 머지) |
-| 4    | `refactor/admin-stats-settings`  | [2026-08-20-admin-stats-settings.md](./2026-08-20-admin-stats-settings.md)   | 완료 (PR [#85](https://github.com/qlrogo91lp/yj-blog/pull/85) 머지) |
+| 4    | `refactor/admin-stats-settings`  | [2026-08-20-admin-stats-settings.md](./2026-08-20-admin-stats-settings.md)  | 완료 (PR [#85](https://github.com/qlrogo91lp/yj-blog/pull/85) 머지) |
 
 ---
 

@@ -5,7 +5,6 @@
 **Goal:** 본문 이미지의 드래그 이동이 실제로 동작하게 하고, 이미지 툴바가 잘리거나 겹치는 UI 문제를 없애며, 이미지 삭제·정리를 저장 시점의 서버 사이드로 옮기고, 업로드 전 클라이언트 압축으로 원본 크기 문제를 해결한다.
 
 **Architecture:**
-
 - **드래그**: TipTap 3의 React NodeView는 `[data-drag-handle]` 요소에서 시작한 드래그만 노드 이동으로 처리한다(`@tiptap/core/src/NodeView.ts` `onDragStart` — 핸들이 없으면 즉시 return). 이미지·갤러리 NodeView에 핸들 속성을 추가한다.
 - **툴바**: 이미지 NodeView 안의 `absolute` 툴바를 제거하고, 에디터 레벨의 `BubbleMenu`(`@tiptap/react/menus`, floating-ui `flip`/`shift` 내장, portal 렌더)로 옮긴다. 툴바는 이미지 노드가 선택되면 이미지 위에 뜨고 뷰포트·컨테이너 경계에서 자동으로 위치를 조정한다. 갤러리 슬라이드 툴바는 슬라이드 폭에 무관하게 좌상단 고정으로 바꾼다.
 - **이미지 정리**: `onUpdate`마다 사라진 src를 즉시 R2에서 지우던 클라이언트 로직(잘라내기·Undo 시 파일 유실)을 제거하고, `savePost`가 저장 직후 본문 HTML·썸네일 URL에서 R2 키를 추출해 `post_images`와 대조, 고아만 삭제한다. R2 클라이언트는 `src/lib/r2.ts`로 통합한다.
@@ -58,16 +57,16 @@ Minor 5건은 보류(코드 결함 아니거나 낮은 영향): 저장·업로�
 
 ## 배경 — 리뷰에서 확인된 문제
 
-| #   | 문제                                                                                                                                                                                                                                                                             | 근거                                                                                                                        |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 이미지·갤러리 드래그로 위치 이동이 안 됨. `<img>`에 `cursor-grab`까지 있어 되는 것처럼 보이지만 네이티브 이미지 드래그만 일어나고, 드롭 시 사본이 삽입될 수 있음                                                                                                                 | `grep data-drag-handle src/app/admin/posts/new` → 0건. TipTap `NodeView.onDragStart`는 `!dragHandle`이면 return             |
-| 2   | 이미지 선택 시 툴바(정렬3+크기3+alt+삭제 ≈ 330px)가 `figure` 중앙 `absolute -top-11`에 뜸. `data-size="small"`(40% ≈ 290px)이면 양옆으로 튀어나가고, 왼쪽 정렬이면 에디터 밖으로 나감. `data-size="full"`은 `transform`이라 기준점이 어긋남. 문서 첫 블록이면 sticky 툴바와 겹침 | `image-node-view.tsx:26`, `prose.css:129-143`                                                                               |
-| 3   | 갤러리 슬라이드 툴바가 `overflow-x: auto` 컨테이너 안 슬라이드 중앙에 있어, 세로 사진(폭 좁음)이면 옆 슬라이드 위로 겹침                                                                                                                                                         | `gallery-node-view.tsx:46`, `prose.css:194-197`                                                                             |
-| 4   | 이미지 잘라내기(Ctrl+X)·삭제 후 Undo 시 R2 파일이 이미 지워져 깨진 이미지                                                                                                                                                                                                        | `wysiwyg-editor.action.tsx` `onUpdate` → `removeImage` 즉시 호출. 갤러리 plan(2026-08-17)에서 "알려진 제약"으로 남겼던 항목 |
-| 5   | 썸네일 교체·제거 시 이전 R2 파일과 `post_images` 행이 남음                                                                                                                                                                                                                       | `thumbnail-upload.action.tsx` X 버튼은 `setThumbnailUrl(null)`만                                                            |
-| 6   | 썸네일 1MB 제한은 OG 이미지(원본 URL 그대로 노출)·Server Action body 한도를 지키기 위해 필요하지만, 폰 사진은 대부분 걸림. 본문 이미지도 10MB 원본이 그대로 R2에 쌓임                                                                                                            | `thumbnail-upload.action.tsx`, `upload-image.ts`                                                                            |
-| 7   | 이미지 업로드로 생긴 빈 draft가 목록에 빈 제목 행으로 노출, 제목 링크가 공개 페이지(404)로 감                                                                                                                                                                                    | `upload-image.ts createDraftPost`, `columns.tsx`                                                                            |
-| 8   | 정렬 버튼이 `size !== 'small'`이면 disabled인데 이유 안내 없음. 활성 버튼 hover가 `bg-muted-foreground`로 바뀌어 눌린 상태가 흐릿해짐                                                                                                                                            | `image-toolbar.tsx`                                                                                                         |
+| # | 문제 | 근거 |
+|---|---|---|
+| 1 | 이미지·갤러리 드래그로 위치 이동이 안 됨. `<img>`에 `cursor-grab`까지 있어 되는 것처럼 보이지만 네이티브 이미지 드래그만 일어나고, 드롭 시 사본이 삽입될 수 있음 | `grep data-drag-handle src/app/admin/posts/new` → 0건. TipTap `NodeView.onDragStart`는 `!dragHandle`이면 return |
+| 2 | 이미지 선택 시 툴바(정렬3+크기3+alt+삭제 ≈ 330px)가 `figure` 중앙 `absolute -top-11`에 뜸. `data-size="small"`(40% ≈ 290px)이면 양옆으로 튀어나가고, 왼쪽 정렬이면 에디터 밖으로 나감. `data-size="full"`은 `transform`이라 기준점이 어긋남. 문서 첫 블록이면 sticky 툴바와 겹침 | `image-node-view.tsx:26`, `prose.css:129-143` |
+| 3 | 갤러리 슬라이드 툴바가 `overflow-x: auto` 컨테이너 안 슬라이드 중앙에 있어, 세로 사진(폭 좁음)이면 옆 슬라이드 위로 겹침 | `gallery-node-view.tsx:46`, `prose.css:194-197` |
+| 4 | 이미지 잘라내기(Ctrl+X)·삭제 후 Undo 시 R2 파일이 이미 지워져 깨진 이미지 | `wysiwyg-editor.action.tsx` `onUpdate` → `removeImage` 즉시 호출. 갤러리 plan(2026-08-17)에서 "알려진 제약"으로 남겼던 항목 |
+| 5 | 썸네일 교체·제거 시 이전 R2 파일과 `post_images` 행이 남음 | `thumbnail-upload.action.tsx` X 버튼은 `setThumbnailUrl(null)`만 |
+| 6 | 썸네일 1MB 제한은 OG 이미지(원본 URL 그대로 노출)·Server Action body 한도를 지키기 위해 필요하지만, 폰 사진은 대부분 걸림. 본문 이미지도 10MB 원본이 그대로 R2에 쌓임 | `thumbnail-upload.action.tsx`, `upload-image.ts` |
+| 7 | 이미지 업로드로 생긴 빈 draft가 목록에 빈 제목 행으로 노출, 제목 링크가 공개 페이지(404)로 감 | `upload-image.ts createDraftPost`, `columns.tsx` |
+| 8 | 정렬 버튼이 `size !== 'small'`이면 disabled인데 이유 안내 없음. 활성 버튼 hover가 `bg-muted-foreground`로 바뀌어 눌린 상태가 흐릿해짐 | `image-toolbar.tsx` |
 
 ## Global Constraints
 
@@ -83,30 +82,30 @@ Minor 5건은 보류(코드 결함 아니거나 낮은 영향): 저장·업로�
 
 ## 파일 구조
 
-| 파일                                                                        | 역할                                                                                     | 변경 |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---- |
-| `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx`      | 이미지 NodeView. 툴바 제거, `<img data-drag-handle>`                                     | 수정 |
-| `src/app/admin/posts/new/_components/_image-block/image-node-view.test.tsx` | 드래그 핸들·캡션 input 테스트                                                            | 신규 |
-| `src/app/admin/posts/new/_components/_image-block/image-toolbar.tsx`        | 순수 툴바(props). disabled 사유 `title`, hover 색 정리                                   | 수정 |
-| `src/app/admin/posts/new/_components/_image-block/image-toolbar.test.tsx`   | `title` 속성 테스트 추가                                                                 | 수정 |
-| `src/app/admin/posts/new/_actions/image-bubble-menu.action.tsx`             | `BubbleMenu` + `useEditorState`로 선택된 이미지 노드의 속성을 읽고 `ImageToolbar`에 연결 | 신규 |
-| `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx`                | `ImageBubbleMenuAction` 배치, 이미지 정리 로직 제거, 업로드 전 압축                      | 수정 |
-| `src/app/admin/posts/new/_components/_gallery/gallery-node-view.tsx`        | wrapper `data-drag-handle`, 슬라이드 툴바 좌상단 고정                                    | 수정 |
-| `src/app/admin/posts/new/_components/_gallery/gallery-node-view.test.tsx`   | 드래그 핸들 테스트 추가                                                                  | 수정 |
-| `src/lib/r2.ts`                                                             | R2 `S3Client` 단일 인스턴스 + `deleteR2Objects(keys)`                                    | 신규 |
-| `src/app/admin/posts/new/_utils/extract-r2-keys.ts`                         | HTML 문자열에서 R2 public URL로 시작하는 `src`의 키 추출(순수)                           | 신규 |
-| `src/app/admin/posts/new/_utils/extract-r2-keys.test.ts`                    | 추출 테스트                                                                              | 신규 |
-| `src/app/admin/posts/new/_services/save-post.ts`                            | 저장 후 `cleanupOrphanImages` 실행                                                       | 수정 |
-| `src/app/admin/posts/new/_services/upload-image.ts`                         | `src/lib/r2.ts` 사용                                                                     | 수정 |
-| `src/app/admin/posts/_services/remove-post.ts`                              | `src/lib/r2.ts` 사용                                                                     | 수정 |
-| `src/app/admin/posts/new/_services/remove-image.ts`                         | **삭제**                                                                                 |      |
-| `src/app/admin/posts/new/_utils/collect-image-srcs.ts` + `.test.ts`         | **삭제**                                                                                 |      |
-| `src/app/admin/posts/new/_utils/compress-image.ts`                          | 클라이언트 압축                                                                          | 신규 |
-| `src/app/admin/posts/new/_utils/compress-image.test.ts`                     | 대상 판별·폴백 테스트                                                                    | 신규 |
-| `src/app/admin/posts/new/_actions/thumbnail-upload.action.tsx`              | 압축 후 1MB 검사                                                                         | 수정 |
-| `src/app/admin/posts/new/_actions/_image-upload/image-upload.action.tsx`    | 압축 후 업로드                                                                           | 수정 |
-| `src/app/admin/posts/_components/columns.tsx`                               | 빈 제목 "(제목 없음)", draft는 편집 링크                                                 | 수정 |
-| `src/app/admin/posts/_components/columns.test.tsx`                          | 제목 셀 렌더 테스트                                                                      | 신규 |
+| 파일 | 역할 | 변경 |
+|---|---|---|
+| `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx` | 이미지 NodeView. 툴바 제거, `<img data-drag-handle>` | 수정 |
+| `src/app/admin/posts/new/_components/_image-block/image-node-view.test.tsx` | 드래그 핸들·캡션 input 테스트 | 신규 |
+| `src/app/admin/posts/new/_components/_image-block/image-toolbar.tsx` | 순수 툴바(props). disabled 사유 `title`, hover 색 정리 | 수정 |
+| `src/app/admin/posts/new/_components/_image-block/image-toolbar.test.tsx` | `title` 속성 테스트 추가 | 수정 |
+| `src/app/admin/posts/new/_actions/image-bubble-menu.action.tsx` | `BubbleMenu` + `useEditorState`로 선택된 이미지 노드의 속성을 읽고 `ImageToolbar`에 연결 | 신규 |
+| `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx` | `ImageBubbleMenuAction` 배치, 이미지 정리 로직 제거, 업로드 전 압축 | 수정 |
+| `src/app/admin/posts/new/_components/_gallery/gallery-node-view.tsx` | wrapper `data-drag-handle`, 슬라이드 툴바 좌상단 고정 | 수정 |
+| `src/app/admin/posts/new/_components/_gallery/gallery-node-view.test.tsx` | 드래그 핸들 테스트 추가 | 수정 |
+| `src/lib/r2.ts` | R2 `S3Client` 단일 인스턴스 + `deleteR2Objects(keys)` | 신규 |
+| `src/app/admin/posts/new/_utils/extract-r2-keys.ts` | HTML 문자열에서 R2 public URL로 시작하는 `src`의 키 추출(순수) | 신규 |
+| `src/app/admin/posts/new/_utils/extract-r2-keys.test.ts` | 추출 테스트 | 신규 |
+| `src/app/admin/posts/new/_services/save-post.ts` | 저장 후 `cleanupOrphanImages` 실행 | 수정 |
+| `src/app/admin/posts/new/_services/upload-image.ts` | `src/lib/r2.ts` 사용 | 수정 |
+| `src/app/admin/posts/_services/remove-post.ts` | `src/lib/r2.ts` 사용 | 수정 |
+| `src/app/admin/posts/new/_services/remove-image.ts` | **삭제** | |
+| `src/app/admin/posts/new/_utils/collect-image-srcs.ts` + `.test.ts` | **삭제** | |
+| `src/app/admin/posts/new/_utils/compress-image.ts` | 클라이언트 압축 | 신규 |
+| `src/app/admin/posts/new/_utils/compress-image.test.ts` | 대상 판별·폴백 테스트 | 신규 |
+| `src/app/admin/posts/new/_actions/thumbnail-upload.action.tsx` | 압축 후 1MB 검사 | 수정 |
+| `src/app/admin/posts/new/_actions/_image-upload/image-upload.action.tsx` | 압축 후 업로드 | 수정 |
+| `src/app/admin/posts/_components/columns.tsx` | 빈 제목 "(제목 없음)", draft는 편집 링크 | 수정 |
+| `src/app/admin/posts/_components/columns.test.tsx` | 제목 셀 렌더 테스트 | 신규 |
 
 ---
 
@@ -128,14 +127,12 @@ Expected: 전부 PASS
 ### Task 1: 이미지·갤러리 드래그 핸들
 
 **Files:**
-
 - Modify: `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx`
 - Create: `src/app/admin/posts/new/_components/_image-block/image-node-view.test.tsx`
 - Modify: `src/app/admin/posts/new/_components/_gallery/gallery-node-view.tsx`
 - Modify: `src/app/admin/posts/new/_components/_gallery/gallery-node-view.test.tsx`
 
 **Interfaces:**
-
 - Produces: `ImageNodeView`의 `<img>`에 `data-drag-handle`, `GalleryNodeView`의 wrapper(`data-gallery`)에 `data-drag-handle`
 
 - [x] **Step 1: 실패하는 테스트 작성**
@@ -149,28 +146,15 @@ import { describe, expect, it, vi } from 'vitest';
 import { ImageNodeView } from './image-node-view';
 
 vi.mock('@tiptap/react', () => ({
-  NodeViewWrapper: ({
-    children,
-    as: _as,
-    ...rest
-  }: {
-    children: React.ReactNode;
-    as?: string;
-  }) => <figure {...rest}>{children}</figure>,
+  NodeViewWrapper: ({ children, as: _as, ...rest }: { children: React.ReactNode; as?: string }) => (
+    <figure {...rest}>{children}</figure>
+  ),
 }));
 
 function setup(overrides: Partial<NodeViewProps> = {}) {
   const updateAttributes = vi.fn();
   const props = {
-    node: {
-      attrs: {
-        src: 'https://cdn/a.png',
-        alt: '',
-        size: 'default',
-        align: 'center',
-        caption: '',
-      },
-    },
+    node: { attrs: { src: 'https://cdn/a.png', alt: '', size: 'default', align: 'center', caption: '' } },
     updateAttributes,
     deleteNode: vi.fn(),
     selected: false,
@@ -188,9 +172,7 @@ describe('ImageNodeView', () => {
 
   it('선택되지 않았고 캡션이 없으면 캡션 input을 렌더하지 않는다', () => {
     setup();
-    expect(
-      screen.queryByPlaceholderText('캡션 추가...')
-    ).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('캡션 추가...')).not.toBeInTheDocument();
   });
 
   it('선택되면 캡션 input을 렌더하고 입력 시 updateAttributes({ caption })', () => {
@@ -202,9 +184,7 @@ describe('ImageNodeView', () => {
 
   it('NodeView 안에 툴바(정렬·삭제 버튼)를 렌더하지 않는다 — BubbleMenu로 이전', () => {
     setup({ selected: true });
-    expect(
-      screen.queryByRole('button', { name: '이미지 삭제' })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '이미지 삭제' })).not.toBeInTheDocument();
   });
 });
 ```
@@ -212,21 +192,19 @@ describe('ImageNodeView', () => {
 `gallery-node-view.test.tsx`에 추가:
 
 ```tsx
-it('갤러리 wrapper가 드래그 핸들이다 (data-drag-handle)', () => {
-  const { container } = render(
-    <GalleryNodeView
-      {...({
-        node: { attrs: { images } },
-        updateAttributes: vi.fn(),
-        deleteNode: vi.fn(),
-        selected: false,
-      } as unknown as NodeViewProps)}
-    />
-  );
-  expect(container.querySelector('[data-gallery]')).toHaveAttribute(
-    'data-drag-handle'
-  );
-});
+  it('갤러리 wrapper가 드래그 핸들이다 (data-drag-handle)', () => {
+    const { container } = render(
+      <GalleryNodeView
+        {...({
+          node: { attrs: { images } },
+          updateAttributes: vi.fn(),
+          deleteNode: vi.fn(),
+          selected: false,
+        } as unknown as NodeViewProps)}
+      />,
+    );
+    expect(container.querySelector('[data-gallery]')).toHaveAttribute('data-drag-handle');
+  });
 ```
 
 - [x] **Step 2: 실패 확인**
@@ -239,7 +217,7 @@ Expected: 새 테스트 4+1개 FAIL
 ```tsx
 'use client';
 
-import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
+import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
 
@@ -248,11 +226,7 @@ import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
  * - 툴바는 여기 두지 않는다 — 에디터 레벨 ImageBubbleMenuAction이 담당(폭·overflow 문제 회피).
  * - <img>가 드래그 핸들: TipTap React NodeView는 [data-drag-handle]에서 시작한 드래그만 노드 이동으로 처리한다.
  */
-export function ImageNodeView({
-  node,
-  updateAttributes,
-  selected,
-}: NodeViewProps) {
+export function ImageNodeView({ node, updateAttributes, selected }: NodeViewProps) {
   const size = (node.attrs.size as ImageSize) ?? 'default';
   const align = (node.attrs.align as ImageAlign) ?? 'center';
   const src = node.attrs.src as string;
@@ -275,7 +249,7 @@ export function ImageNodeView({
         data-drag-handle
         className={cn(
           'cursor-grab active:cursor-grabbing',
-          selected && 'ring-2 ring-primary ring-offset-2'
+          selected && 'ring-2 ring-primary ring-offset-2',
         )}
       />
       {(selected || caption) && (
@@ -321,14 +295,12 @@ git commit -m "🐛 fix: 이미지·갤러리에 data-drag-handle을 추가해 �
 ### Task 2: 이미지 툴바를 BubbleMenu로 이전
 
 **Files:**
-
 - Modify: `src/app/admin/posts/new/_components/_image-block/image-toolbar.tsx`
 - Modify: `src/app/admin/posts/new/_components/_image-block/image-toolbar.test.tsx`
 - Create: `src/app/admin/posts/new/_actions/image-bubble-menu.action.tsx`
 - Modify: `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx`
 
 **Interfaces:**
-
 - Consumes: `ImageToolbar` props(기존): `size, align, alt, onSizeChange, onAlignChange, onAltChange, onDelete`
 - Produces: `export function ImageBubbleMenuAction({ editor }: { editor: Editor | null })`
 
@@ -337,20 +309,18 @@ git commit -m "🐛 fix: 이미지·갤러리에 data-drag-handle을 추가해 �
 `image-toolbar.test.tsx`에 추가:
 
 ```tsx
-it('정렬 버튼이 disabled일 때 사유를 title로 안내한다', () => {
-  render(<ImageToolbar {...baseProps} size="default" />);
-  expect(screen.getByRole('button', { name: '왼쪽 정렬' })).toHaveAttribute(
-    'title',
-    '40% 크기에서만 정렬할 수 있습니다'
-  );
-});
+  it('정렬 버튼이 disabled일 때 사유를 title로 안내한다', () => {
+    render(<ImageToolbar {...baseProps} size="default" />);
+    expect(screen.getByRole('button', { name: '왼쪽 정렬' })).toHaveAttribute(
+      'title',
+      '40% 크기에서만 정렬할 수 있습니다',
+    );
+  });
 
-it('size=small이면 정렬 버튼에 title이 없다', () => {
-  render(<ImageToolbar {...baseProps} size="small" />);
-  expect(screen.getByRole('button', { name: '왼쪽 정렬' })).not.toHaveAttribute(
-    'title'
-  );
-});
+  it('size=small이면 정렬 버튼에 title이 없다', () => {
+    render(<ImageToolbar {...baseProps} size="small" />);
+    expect(screen.getByRole('button', { name: '왼쪽 정렬' })).not.toHaveAttribute('title');
+  });
 ```
 
 - [x] **Step 2: 실패 확인**
@@ -372,7 +342,7 @@ Expected: PASS
 ```tsx
 'use client';
 
-import { type Editor, useEditorState } from '@tiptap/react';
+import { useEditorState, type Editor } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import { ImageToolbar } from '../_components/_image-block/image-toolbar';
 import type { ImageAlign, ImageSize } from '../_utils/image-extension';
@@ -420,9 +390,7 @@ export function ImageBubbleMenuAction({ editor }: Props) {
           onAlignChange={(align) =>
             editor.chain().focus().updateAttributes('image', { align }).run()
           }
-          onAltChange={(alt) =>
-            editor.commands.updateAttributes('image', { alt })
-          }
+          onAltChange={(alt) => editor.commands.updateAttributes('image', { alt })}
           onDelete={() => editor.chain().focus().deleteSelection().run()}
         />
       )}
@@ -439,12 +407,12 @@ export function ImageBubbleMenuAction({ editor }: Props) {
 - return을 다음으로 교체:
 
 ```tsx
-return (
-  <>
-    <EditorContent editor={editor} />
-    <ImageBubbleMenuAction editor={editor} />
-  </>
-);
+  return (
+    <>
+      <EditorContent editor={editor} />
+      <ImageBubbleMenuAction editor={editor} />
+    </>
+  );
 ```
 
 - [x] **Step 7: 타입·기존 테스트**
@@ -464,13 +432,11 @@ git commit -m "✨ feat: 이미지 툴바를 BubbleMenu로 이전해 잘림·겹
 ### Task 3: R2 클라이언트 통합 (`src/lib/r2.ts`)
 
 **Files:**
-
 - Create: `src/lib/r2.ts`
 - Modify: `src/app/admin/posts/new/_services/upload-image.ts`
 - Modify: `src/app/admin/posts/_services/remove-post.ts`
 
 **Interfaces:**
-
 - Produces:
   - `export const r2: S3Client`
   - `export const r2Bucket: string` (= `process.env.R2_BUCKET_NAME!`)
@@ -504,7 +470,7 @@ export async function deleteR2Objects(keys: string[]): Promise<void> {
     new DeleteObjectsCommand({
       Bucket: r2Bucket,
       Delete: { Objects: keys.map((Key) => ({ Key })) },
-    })
+    }),
   );
 }
 ```
@@ -514,7 +480,7 @@ export async function deleteR2Objects(keys: string[]): Promise<void> {
 - `import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';` → `import { PutObjectCommand } from '@aws-sdk/client-s3';`
 - `const r2 = new S3Client({...});` 블록 삭제 → `import { r2, r2Bucket, r2PublicUrl } from '@/lib/r2';`
 - `Bucket: process.env.R2_BUCKET_NAME!` → `Bucket: r2Bucket`
-- `return { url: \`${process.env.R2_PUBLIC_URL}/${key}\`, ... }`→`return { url: \`${r2PublicUrl}/${key}\`, ... }`
+- `return { url: \`${process.env.R2_PUBLIC_URL}/${key}\`, ... }` → `return { url: \`${r2PublicUrl}/${key}\`, ... }`
 
 - [x] **Step 3: `remove-post.ts`에서 로컬 클라이언트 제거**
 
@@ -523,12 +489,12 @@ export async function deleteR2Objects(keys: string[]): Promise<void> {
 - 2단계 R2 삭제 블록을 다음으로 교체:
 
 ```ts
-// 2. R2에서 이미지 일괄 삭제 (실패해도 DB 삭제는 진행)
-try {
-  await deleteR2Objects(images.map(({ key }) => key));
-} catch {
-  // R2 삭제 실패는 무시 — 고아 이미지가 남는 게 글이 안 지워지는 것보다 나음
-}
+    // 2. R2에서 이미지 일괄 삭제 (실패해도 DB 삭제는 진행)
+    try {
+      await deleteR2Objects(images.map(({ key }) => key));
+    } catch {
+      // R2 삭제 실패는 무시 — 고아 이미지가 남는 게 글이 안 지워지는 것보다 나음
+    }
 ```
 
 - [x] **Step 4: 타입·테스트**
@@ -556,7 +522,6 @@ git commit -m "♻️ refactor: R2 클라이언트를 src/lib/r2.ts로 통합"
 ### Task 4: 이미지 정리를 저장 시점 서버 사이드로 이전
 
 **Files:**
-
 - Create: `src/app/admin/posts/new/_utils/extract-r2-keys.ts`
 - Create: `src/app/admin/posts/new/_utils/extract-r2-keys.test.ts`
 - Modify: `src/app/admin/posts/new/_services/save-post.ts`
@@ -565,7 +530,6 @@ git commit -m "♻️ refactor: R2 클라이언트를 src/lib/r2.ts로 통합"
 - Delete: `src/app/admin/posts/new/_utils/collect-image-srcs.ts`, `collect-image-srcs.test.ts`
 
 **Interfaces:**
-
 - Produces: `export function extractR2Keys(html: string, publicUrl: string): Set<string>` — `src="<publicUrl>/<key>"` 형태의 모든 `src`에서 `<key>`를 모은다. `publicUrl`이 빈 문자열이면 빈 Set.
 - Consumes: Task 3의 `deleteR2Objects`, `r2PublicUrl`
 
@@ -582,9 +546,7 @@ const publicUrl = 'https://pub.example.com';
 describe('extractR2Keys', () => {
   it('public URL로 시작하는 img src에서 키를 추출한다', () => {
     const html = `<figure><img src="${publicUrl}/images/post-1/image1-123.png"></figure>`;
-    expect(extractR2Keys(html, publicUrl)).toEqual(
-      new Set(['images/post-1/image1-123.png'])
-    );
+    expect(extractR2Keys(html, publicUrl)).toEqual(new Set(['images/post-1/image1-123.png']));
   });
 
   it('갤러리 안 여러 이미지의 키를 모두 모은다', () => {
@@ -592,7 +554,7 @@ describe('extractR2Keys', () => {
       `<div data-gallery=""><figure><img src="${publicUrl}/images/post-1/a.png"></figure>` +
       `<figure><img src="${publicUrl}/images/post-1/b.png"></figure></div>`;
     expect(extractR2Keys(html, publicUrl)).toEqual(
-      new Set(['images/post-1/a.png', 'images/post-1/b.png'])
+      new Set(['images/post-1/a.png', 'images/post-1/b.png']),
     );
   });
 
@@ -667,15 +629,11 @@ import { extractR2Keys } from '../_utils/extract-r2-keys';
 async function cleanupOrphanImages(
   postId: number,
   content: string,
-  thumbnailUrl: string | null
+  thumbnailUrl: string | null,
 ): Promise<void> {
   try {
     const keep = extractR2Keys(content, r2PublicUrl);
-    if (
-      thumbnailUrl &&
-      r2PublicUrl &&
-      thumbnailUrl.startsWith(`${r2PublicUrl}/`)
-    ) {
+    if (thumbnailUrl && r2PublicUrl && thumbnailUrl.startsWith(`${r2PublicUrl}/`)) {
       keep.add(thumbnailUrl.slice(r2PublicUrl.length + 1));
     }
 
@@ -691,8 +649,8 @@ async function cleanupOrphanImages(
     await db.delete(postImages).where(
       inArray(
         postImages.id,
-        orphans.map((row) => row.id)
-      )
+        orphans.map((row) => row.id),
+      ),
     );
   } catch {
     // 정리 실패는 저장 결과에 영향을 주지 않는다
@@ -705,17 +663,15 @@ async function cleanupOrphanImages(
 UPDATE 분기의 `await syncPostTags(input.postId, tagIds);` 뒤와 INSERT 분기의 `await syncPostTags(newPost.id, tagIds);` 뒤에 각각:
 
 ```ts
-await cleanupOrphanImages(input.postId, content, input.thumbnailUrl ?? null);
+      await cleanupOrphanImages(input.postId, content, input.thumbnailUrl ?? null);
 ```
-
 ```ts
-await cleanupOrphanImages(newPost.id, content, input.thumbnailUrl ?? null);
+      await cleanupOrphanImages(newPost.id, content, input.thumbnailUrl ?? null);
 ```
 
 - [x] **Step 6: 클라이언트 즉시 삭제 로직 제거**
 
 `wysiwyg-editor.action.tsx`:
-
 - import 삭제: `removeImage`, `collectImageSrcs`
 - `const prevImageSrcs = useRef<Set<string>>(new Set());` 삭제
 - `onUpdate`를 다음으로 교체:
@@ -752,7 +708,6 @@ git commit -m "♻️ refactor: 이미지 고아 정리를 저장 시점 서버 
 ### Task 5: 업로드 전 클라이언트 압축
 
 **Files:**
-
 - Create: `src/app/admin/posts/new/_utils/compress-image.ts`
 - Create: `src/app/admin/posts/new/_utils/compress-image.test.ts`
 - Modify: `src/app/admin/posts/new/_actions/thumbnail-upload.action.tsx`
@@ -760,7 +715,6 @@ git commit -m "♻️ refactor: 이미지 고아 정리를 저장 시점 서버 
 - Modify: `src/app/admin/posts/new/_actions/_image-upload/image-upload.action.tsx`
 
 **Interfaces:**
-
 - Produces:
   - `export function isCompressible(file: File): boolean` — `image/jpeg | image/png | image/webp`
   - `export async function compressImage(file: File): Promise<File>` — 긴 변 1600px·webp 0.85. 대상이 아니거나 실패하거나 결과가 더 크면 원본 반환
@@ -778,18 +732,12 @@ function fileOf(type: string, size = 10) {
 }
 
 describe('isCompressible', () => {
-  it.each(['image/jpeg', 'image/png', 'image/webp'])(
-    '%s 는 압축 대상',
-    (type) => {
-      expect(isCompressible(fileOf(type))).toBe(true);
-    }
-  );
-  it.each(['image/gif', 'image/svg+xml', 'image/avif', 'text/plain'])(
-    '%s 는 대상 아님',
-    (type) => {
-      expect(isCompressible(fileOf(type))).toBe(false);
-    }
-  );
+  it.each(['image/jpeg', 'image/png', 'image/webp'])('%s 는 압축 대상', (type) => {
+    expect(isCompressible(fileOf(type))).toBe(true);
+  });
+  it.each(['image/gif', 'image/svg+xml', 'image/avif', 'text/plain'])('%s 는 대상 아님', (type) => {
+    expect(isCompressible(fileOf(type))).toBe(false);
+  });
 });
 
 describe('compressImage', () => {
@@ -807,18 +755,10 @@ describe('compressImage', () => {
     const png = fileOf('image/png', 4);
     const bitmap = { width: 10, height: 10, close: vi.fn() };
     vi.stubGlobal('createImageBitmap', vi.fn().mockResolvedValue(bitmap));
-    const toBlob = vi.fn((cb: (b: Blob | null) => void) =>
-      cb(new Blob([new Uint8Array(100)], { type: 'image/webp' }))
-    );
+    const toBlob = vi.fn((cb: (b: Blob | null) => void) => cb(new Blob([new Uint8Array(100)], { type: 'image/webp' })));
     const getContext = vi.fn(() => ({ drawImage: vi.fn() }));
     vi.spyOn(document, 'createElement').mockImplementation(
-      () =>
-        ({
-          width: 0,
-          height: 0,
-          getContext,
-          toBlob,
-        }) as unknown as HTMLCanvasElement
+      () => ({ width: 0, height: 0, getContext, toBlob }) as unknown as HTMLCanvasElement,
     );
     expect(await compressImage(png)).toBe(png);
     vi.restoreAllMocks();
@@ -838,7 +778,7 @@ describe('compressImage', () => {
         cb(new Blob([new Uint8Array(10)], { type: 'image/webp' })),
     };
     vi.spyOn(document, 'createElement').mockImplementation(
-      () => canvas as unknown as HTMLCanvasElement
+      () => canvas as unknown as HTMLCanvasElement,
     );
     const out = await compressImage(png);
     expect(out.type).toBe('image/webp');
@@ -882,10 +822,7 @@ export async function compressImage(file: File): Promise<File> {
 
   try {
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(
-      1,
-      maxEdgePx / Math.max(bitmap.width, bitmap.height)
-    );
+    const scale = Math.min(1, maxEdgePx / Math.max(bitmap.width, bitmap.height));
     const width = Math.round(bitmap.width * scale);
     const height = Math.round(bitmap.height * scale);
 
@@ -898,7 +835,7 @@ export async function compressImage(file: File): Promise<File> {
     bitmap.close();
 
     const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, 'image/webp', webpQuality)
+      canvas.toBlob(resolve, 'image/webp', webpQuality),
     );
     if (!blob || blob.size >= file.size) return file;
 
@@ -918,53 +855,51 @@ Expected: PASS
 - [x] **Step 5: 썸네일 업로드에 적용**
 
 `thumbnail-upload.action.tsx`:
-
 - `import { compressImage } from '../_utils/compress-image';`
 - `handleFileChange`를 다음으로 교체:
 
 ```tsx
-const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const original = e.target.files?.[0];
-  if (!original) return;
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const original = e.target.files?.[0];
+    if (!original) return;
 
-  setIsUploading(true);
-  try {
-    const file = await compressImage(original);
-    if (file.size > THUMBNAIL_SIZE_LIMIT) {
-      toast.error('썸네일은 1MB 이하만 업로드 가능합니다 (압축 후에도 초과)');
-      return;
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    const result = await uploadImage(formData, postId, 'thumbnail');
-    if (result.url) {
-      setThumbnailUrl(result.url);
-      if (result.postId && !postId) {
-        setPostId(result.postId);
+    setIsUploading(true);
+    try {
+      const file = await compressImage(original);
+      if (file.size > THUMBNAIL_SIZE_LIMIT) {
+        toast.error('썸네일은 1MB 이하만 업로드 가능합니다 (압축 후에도 초과)');
+        return;
       }
-    } else if (result.error) {
-      toast.error(result.error);
+      const formData = new FormData();
+      formData.append('file', file);
+      const result = await uploadImage(formData, postId, 'thumbnail');
+      if (result.url) {
+        setThumbnailUrl(result.url);
+        if (result.postId && !postId) {
+          setPostId(result.postId);
+        }
+      } else if (result.error) {
+        toast.error(result.error);
+      }
+    } catch {
+      toast.error('업로드에 실패했습니다');
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
     }
-  } catch {
-    toast.error('업로드에 실패했습니다');
-  } finally {
-    setIsUploading(false);
-    e.target.value = '';
-  }
-};
+  };
 ```
 
 - [x] **Step 6: 본문 업로드(WYSIWYG)에 적용**
 
 `wysiwyg-editor.action.tsx`:
-
 - `import { compressImage } from '../_utils/compress-image';`
-- `uploadAndInsert` 안에서 `const formData = new FormData(); formData.append('file', file);` →
+- `uploadAndInsert` 안에서 `const formData = new FormData(); formData.append('file', file);` → 
 
 ```tsx
-const uploadFile = await compressImage(file);
-const formData = new FormData();
-formData.append('file', uploadFile);
+      const uploadFile = await compressImage(file);
+      const formData = new FormData();
+      formData.append('file', uploadFile);
 ```
 
 - `uploadFiles`의 for 루프 안 `const size = await readImageSize(file);` 앞에 `const uploadFile = await compressImage(file);`를 두고, `readImageSize(uploadFile)`·`formData.append('file', uploadFile)`로 바꾼다.
@@ -972,7 +907,6 @@ formData.append('file', uploadFile);
 - [x] **Step 7: 이미지 다이얼로그에 적용**
 
 `_image-upload/image-upload.action.tsx`:
-
 - `import { compressImage } from '../../_utils/compress-image';`
 - `handleFileChange`에서 `formData.append('file', file);` → `formData.append('file', await compressImage(file));`
 
@@ -993,12 +927,10 @@ git commit -m "✨ feat: 이미지 업로드 전 클라이언트 압축(1600px·
 ### Task 6: 관리 목록 — 빈 제목 표시, draft는 편집 링크
 
 **Files:**
-
 - Modify: `src/app/admin/posts/_components/columns.tsx`
 - Create: `src/app/admin/posts/_components/columns.test.tsx`
 
 **Interfaces:**
-
 - Produces: 제목 셀 — `title`이 비면 "(제목 없음)"(muted, italic). `status === 'draft'`면 `/admin/posts/{id}/edit`, 아니면 `/posts/{slug}`
 
 - [x] **Step 1: 실패하는 테스트 작성**
@@ -1012,18 +944,8 @@ import type { PostWithCategory } from '@/types';
 import { postColumns } from './columns';
 
 vi.mock('next/link', () => ({
-  default: ({
-    href,
-    children,
-    className,
-  }: {
-    href: string;
-    children: React.ReactNode;
-    className?: string;
-  }) => (
-    <a href={href} className={className}>
-      {children}
-    </a>
+  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
+    <a href={href} className={className}>{children}</a>
   ),
 }));
 
@@ -1049,35 +971,24 @@ const base = {
 
 function renderTitleCell(post: PostWithCategory) {
   const column = postColumns[0];
-  const cell = column.cell as (ctx: {
-    getValue: () => unknown;
-    row: { original: PostWithCategory };
-  }) => React.ReactNode;
+  const cell = column.cell as (ctx: { getValue: () => unknown; row: { original: PostWithCategory } }) => React.ReactNode;
   render(<>{cell({ getValue: () => post.title, row: { original: post } })}</>);
 }
 
 describe('postColumns 제목 셀', () => {
   it('발행 글은 공개 페이지로 링크한다', () => {
     renderTitleCell(base);
-    expect(screen.getByRole('link', { name: '글 제목' })).toHaveAttribute(
-      'href',
-      '/posts/my-post'
-    );
+    expect(screen.getByRole('link', { name: '글 제목' })).toHaveAttribute('href', '/posts/my-post');
   });
 
   it('draft 글은 편집 페이지로 링크한다', () => {
     renderTitleCell({ ...base, status: 'draft' });
-    expect(screen.getByRole('link', { name: '글 제목' })).toHaveAttribute(
-      'href',
-      '/admin/posts/1/edit'
-    );
+    expect(screen.getByRole('link', { name: '글 제목' })).toHaveAttribute('href', '/admin/posts/1/edit');
   });
 
   it('제목이 비어 있으면 "(제목 없음)"으로 표시한다', () => {
     renderTitleCell({ ...base, title: '', status: 'draft' });
-    expect(
-      screen.getByRole('link', { name: '(제목 없음)' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '(제목 없음)' })).toBeInTheDocument();
   });
 });
 ```
