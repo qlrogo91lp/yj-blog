@@ -3,17 +3,189 @@
 @source './components';
 
 @theme {
+  /* 텍스트 톤 4단계 (진한 순) */
   --color-primary: #1a1d24;
+  --color-secondary: #2f3540;
+  --color-tertiary: #5a6472;
+  --color-muted: #8a929e;
+  --color-line: #e3e6eb;
   --color-accent: #1f4e79;
+  --color-accent-soft: #eef2f7;
+  --color-surface: #f4f6f9;
   --color-page: #f0f2f5;
+
   --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* 이력서보다 한 단계 크게. 본문 12.5px, 행간 1.6 */
+  --text-2xs: 11px;
+  --text-2xs--line-height: 1.55;
+  --text-xs: 11.5px;
+  --text-xs--line-height: 1.55;
+  --text-base: 12.5px;
+  --text-base--line-height: 1.6;
+  --text-h: 14px;
+  --text-h--line-height: 1.4;
+  --text-title: 22px;
+  --text-title--line-height: 1.25;
 }
 
-.doc {
-  @apply max-w-205 mx-auto my-6 bg-white px-12 pt-11 pb-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)] print:my-0 print:max-w-full print:shadow-none print:px-1;
+@layer base {
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    letter-spacing: -0.01em;
+  }
 }
 
+@layer components {
+  /* 종이 */
+  .doc {
+    @apply max-w-205 mx-auto my-6 bg-white px-12 pt-11 pb-10 shadow-[0_4px_24px_rgba(0,0,0,0.08)] print:my-0 print:max-w-full print:shadow-none print:px-1 print:pt-0;
+  }
+
+  /* 프로젝트 장. 항상 새 페이지에서 시작 */
+  .page {
+    @apply break-before-page pt-2;
+  }
+
+  /* 장 헤더 */
+  .chapter-head {
+    @apply pb-3 mb-4 border-b-2 border-accent;
+  }
+  .chapter-no {
+    @apply text-xs font-extrabold tracking-[0.12em] text-accent uppercase;
+  }
+  .chapter-title {
+    @apply text-title font-extrabold tracking-[-0.02em] mt-1;
+  }
+  .chapter-summary {
+    @apply text-sm text-tertiary mt-1.5;
+  }
+
+  /* 기간·역할·인원·스택 */
+  .meta-table {
+    @apply grid grid-cols-[72px_1fr] gap-x-3 gap-y-1 text-xs mt-3;
+  }
+  .meta-table dt {
+    @apply text-muted font-semibold;
+  }
+  .meta-table dd {
+    @apply text-secondary;
+  }
+
+  /* 절 제목 */
+  .section-h {
+    @apply text-h font-bold text-accent mt-5 mb-2 flex items-center gap-2 break-after-avoid;
+  }
+  .section-h::before {
+    content: '';
+    @apply inline-block w-1 h-3.5 bg-accent rounded-sm;
+  }
+
+  /* 본문 */
+  .bullet {
+    @apply relative pl-3.5 text-secondary;
+  }
+  .bullet::before {
+    content: '';
+    @apply absolute left-0 top-[8px] w-1 h-1 rounded-full bg-accent opacity-55;
+  }
+  .stack {
+    @apply text-2xs text-accent bg-accent-soft inline-block px-2 py-0.5 rounded-[3px];
+  }
+
+  /* 그림 */
+  .figure {
+    @apply break-inside-avoid my-3;
+  }
+  .figure img,
+  .figure svg {
+    @apply block max-w-full mx-auto rounded border border-line;
+  }
+  .figure-row {
+    @apply grid grid-cols-2 gap-3;
+  }
+  .figure-placeholder {
+    @apply w-full bg-surface border border-dashed border-line rounded flex items-center justify-center text-xs text-muted;
+  }
+  .figure-caption {
+    @apply text-2xs text-muted text-center mt-1.5;
+  }
+
+  /* 결과 숫자 */
+  .kpi {
+    @apply inline-flex items-baseline gap-1.5 bg-accent-soft px-2.5 py-1 rounded;
+  }
+  .kpi-from {
+    @apply text-xs text-muted line-through;
+  }
+  .kpi-to {
+    @apply text-h font-extrabold text-accent;
+  }
+
+  /* 왜 이걸 골랐나 */
+  .callout {
+    @apply border-l-2 border-accent bg-accent-soft px-3 py-2 my-2 text-secondary rounded-r break-inside-avoid;
+  }
+
+  /* 대안 비교 */
+  .compare-table {
+    @apply w-full text-xs mt-2 border-collapse break-inside-avoid;
+  }
+  .compare-table th {
+    @apply text-left font-semibold text-muted border-b border-line pb-1 pr-3;
+  }
+  .compare-table td {
+    @apply align-top border-b border-line py-1.5 pr-3 text-secondary;
+  }
+
+  /* 구조도 (인라인 SVG) */
+  .dg-box {
+    fill: var(--color-accent-soft);
+    stroke: var(--color-accent);
+    stroke-width: 1;
+  }
+  .dg-box-soft {
+    fill: var(--color-surface);
+    stroke: var(--color-line);
+    stroke-width: 1;
+  }
+  .dg-text {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    fill: var(--color-primary);
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+  .dg-label {
+    font-family: var(--font-sans);
+    font-size: 9.5px;
+    fill: var(--color-tertiary);
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+  .dg-line {
+    stroke: var(--color-accent);
+    stroke-width: 1.2;
+    fill: none;
+    marker-end: url(#arrow);
+  }
+}
+
+/* @media print 안에 넣으면 Chrome이 용지 크기를 무시하므로 최상위에 둔다 */
 @page {
   size: A4;
   margin: 14mm 12mm;
+}
+
+@media print {
+  body {
+    background: #fff !important;
+  }
 }
