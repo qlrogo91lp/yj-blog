@@ -1,0 +1,35 @@
+<svg viewBox="0 0 720 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="배포 파이프라인 전후 비교">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f4e79" />
+    </marker>
+  </defs>
+
+  <!-- Before -->
+  <text x="14" y="22" class="dg-label" text-anchor="start">Before — 서버가 직접 빌드</text>
+  <rect x="14" y="34" width="120" height="40" rx="6" class="dg-box-soft" />
+  <text x="74" y="54" class="dg-text">git push</text>
+  <path d="M134,54 L214,54" class="dg-line" />
+  <rect x="216" y="34" width="200" height="40" rx="6" class="dg-box-soft" />
+  <text x="316" y="48" class="dg-text">운영 서버</text>
+  <text x="316" y="63" class="dg-label">git pull → npm install → build → 재시작</text>
+  <text x="316" y="88" class="dg-label">빌드 중 CPU·메모리 점유, 약 10분</text>
+
+  <!-- After -->
+  <text x="14" y="122" class="dg-label" text-anchor="start">After — 이미지 배포</text>
+  <rect x="14" y="134" width="120" height="40" rx="6" class="dg-box" />
+  <text x="74" y="154" class="dg-text">git push</text>
+  <path d="M134,154 L194,154" class="dg-line" />
+  <rect x="196" y="134" width="150" height="40" rx="6" class="dg-box" />
+  <text x="271" y="148" class="dg-text">GitHub Actions</text>
+  <text x="271" y="163" class="dg-label">Docker build · 실행 파일만</text>
+  <path d="M346,154 L406,154" class="dg-line" />
+  <rect x="408" y="134" width="110" height="40" rx="6" class="dg-box" />
+  <text x="463" y="148" class="dg-text">GHCR</text>
+  <text x="463" y="163" class="dg-label">이미지 500MB</text>
+  <path d="M518,154 L578,154" class="dg-line" />
+  <rect x="580" y="134" width="126" height="40" rx="6" class="dg-box" />
+  <text x="643" y="148" class="dg-text">운영 서버</text>
+  <text x="643" y="163" class="dg-label">pull → 재시작</text>
+  <text x="360" y="192" class="dg-label">서버는 빌드하지 않는다. 약 7분, Slack에 배포 알림</text>
+</svg>
