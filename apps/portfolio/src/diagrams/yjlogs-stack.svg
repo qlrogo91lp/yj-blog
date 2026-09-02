@@ -13,7 +13,7 @@
   <text x="164" y="80" class="dg-label">App Router · Drizzle · Server Actions · SEO</text>
   <rect x="30" y="108" width="268" height="52" rx="6" class="dg-box" />
   <text x="164" y="124" class="dg-text">apps/portfolio — Vite</text>
-  <text x="164" y="144" class="dg-label">이 문서. HTML 파티셜 + Tailwind, A4 인쇄</text>
+  <text x="164" y="144" class="dg-label">이 문서. HTML 파티셜 + Tailwind, 연속 PDF</text>
   <text x="164" y="176" class="dg-label">Skip deployments: 바뀐 앱만 배포</text>
 
   <!-- Vercel -->

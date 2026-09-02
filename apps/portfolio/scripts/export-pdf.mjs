@@ -48,9 +48,13 @@ try {
       '--headless=new',
       '--disable-gpu',
       '--no-pdf-header-footer',
+      // 페이지 폭은 뷰포트 폭을 그대로 쓴다. 페이지 안 스크립트가 이 폭에서 잰
+      // 문서 높이로 @page 크기를 잡으므로 둘이 어긋나지 않는다.
+      '--window-size=900,1200',
+      '--hide-scrollbars',
       '--virtual-time-budget=8000',
       `--print-to-pdf=${out}`,
-      `http://localhost:${port}/`,
+      `http://localhost:${port}/?print=1`,
     ],
     { stdio: 'ignore' }
   );
