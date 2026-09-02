@@ -1,5 +1,40 @@
 # 포트폴리오 앱 Implementation Plan
 
+> **완료: 2026-09-03.** `apps/portfolio`를 만들어 https://portfolio.yjlogs.com 에 배포했다.
+> `pnpm --filter portfolio pdf`로 만드는 PDF는 **A4로 나누지 않고 한 장으로 이어 붙인
+> 연속 문서**다 (900 × 12194px). 프로덕션에서 `200`, `robots.txt`의 `Disallow: /`,
+> `noindex, nofollow` 메타, 인라인 SVG 구조도 4개를 확인했다.
+> PR [#93](https://github.com/qlrogo91lp/yj-blog/pull/93) → `develop` → `main`.
+>
+> **플랜 대비 변경 4건**
+>
+> 1. **`vercel.json`을 만들지 않았다.** 플랜 Task 1 Step 3은 `ignoreCommand: npx turbo-ignore`를
+>    두라고 했지만, CLAUDE.md와 커밋 `9ac02e2`가 turbo-ignore를 제거하고 Vercel 네이티브
+>    Skip deployments로 전환했다(`apps/web`에도 `vercel.json`이 없다). 4장 구조도·본문의
+>    turbo-ignore 문구도 함께 바꿨다.
+> 2. **`word-break: keep-all`을 추가했다.** 한국어가 어절 중간에서 끊겼다("다운로/드").
+> 3. **A4 페이지 나눔을 버렸다.** Task 7의 A4 조판(11페이지)까지 만든 뒤, 사용자가
+>    "출력해서 보는 문서가 아니라 PDF를 스크롤해서 본다"고 판단해 연속 문서로 바꿨다.
+>    `@page`의 A4 고정과 `.page`의 `break-before-page`를 제거하고 장 사이를 구분선으로
+>    끊는다. 인쇄 레이아웃은 `@media print`에서 `.printing` 클래스로 옮겼고, PDF는
+>    `?print=1`로 열어 렌더한다 — 화면에서 잰 문서 높이를 그대로 `@page` 크기로 넣기
+>    위해서다. 덕분에 그림을 본문 폭 가득 크게 둘 수 있어 판독이 된다.
+>    (A4를 유지했다면 그림을 키우는 데 15페이지가 필요했다.)
+> 4. **좌우 스크롤 그림 띠(`.strip`)를 추가했다.** 화면에서는 가로 스크롤, PDF에서는
+>    그리드로 편다. 그림을 클릭하면 원본이 열린다.
+>
+> **Task 9 순서 정정.** Vercel의 Root Directory 브라우저는 기본 브랜치(`main`)를 읽으므로
+> `apps/portfolio`가 `main`에 있어야 목록에 나온다. 플랜의 "Vercel 프로젝트 생성(Step 2) →
+> 머지(Step 4)" 순서로는 진행되지 않아, 머지를 먼저 하고 프로젝트를 생성했다.
+>
+> **캡처.** 플레이스홀더 여섯 자리를 모두 채웠다. 1장은 원비 관리·권한 설정·실시간 출결
+> 모니터링, 2장은 앱 화면 4장, 4장은 블로그 홈·글 상세와 앱 랜딩 2개(yjlogs.com 헤드리스
+> 캡처)다. 개인정보는 Pillow 가우시안 블러로 가렸다 — 학생·직원 이름, 전화번호, 이메일,
+> 학교명, 학원명, 계정·부서명. Xamfinity 캡처는 DEBUG 배너가 있는 상태바를 잘라냈다.
+>
+> **남은 일.** 이력서(`yj-resume`)의 Links에 `portfolio.yjlogs.com` 추가는 이 저장소 밖의
+> 일이라 남아 있다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** `apps/portfolio`에 A4 문서형 포트폴리오 페이지를 만들고 `portfolio.yjlogs.com`에 배포한다. 같은 HTML이 웹과 PDF 둘 다가 된다.
@@ -74,7 +109,7 @@ git checkout -b feature/portfolio
 **Interfaces:**
 - Produces: include 지시어 형식 `<!-- include: src/components/<파일> -->`. 경로는 `apps/portfolio/` 기준. 이후 모든 파티셜과 SVG가 이 형식으로 들어간다.
 
-- [ ] **Step 1: `package.json`**
+- [x] **Step 1: `package.json`**
 
 ```json
 {
@@ -95,7 +130,7 @@ git checkout -b feature/portfolio
 }
 ```
 
-- [ ] **Step 2: `vite.config.js`**
+- [x] **Step 2: `vite.config.js`**
 
 ```js
 import { defineConfig } from 'vite';
@@ -137,7 +172,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 3: `vercel.json`, `public/robots.txt`**
+- [x] **Step 3: `vercel.json`, `public/robots.txt`**
 
 `vercel.json`:
 
@@ -154,7 +189,7 @@ User-agent: *
 Disallow: /
 ```
 
-- [ ] **Step 4: `index.html`**
+- [x] **Step 4: `index.html`**
 
 ```html
 <!doctype html>
@@ -192,7 +227,7 @@ Disallow: /
 </html>
 ```
 
-- [ ] **Step 5: 최소 `globals.css`와 임시 파티셜**
+- [x] **Step 5: 최소 `globals.css`와 임시 파티셜**
 
 `src/globals.css` (Task 2에서 전체로 교체한다):
 
@@ -224,7 +259,7 @@ Disallow: /
 <section><!-- cover --></section>
 ```
 
-- [ ] **Step 6: 설치 및 dev 확인**
+- [x] **Step 6: 설치 및 dev 확인**
 
 ```bash
 cd /Users/yj/Workspace/yjlogs
@@ -237,7 +272,7 @@ kill %1
 
 Expected: `pnpm install`이 `portfolio`를 워크스페이스로 잡고, curl 결과가 `1`.
 
-- [ ] **Step 7: 빌드 확인**
+- [x] **Step 7: 빌드 확인**
 
 ```bash
 pnpm --filter portfolio build 2>&1 | tail -5
@@ -248,7 +283,7 @@ ls apps/portfolio/dist/robots.txt
 
 Expected: 빌드 성공. include 지시어 남은 개수 `0`. noindex 메타 존재. robots.txt가 dist에 복사됨.
 
-- [ ] **Step 8: 커밋**
+- [x] **Step 8: 커밋**
 
 ```bash
 git add apps/portfolio pnpm-lock.yaml
@@ -268,7 +303,7 @@ include 플러그인, noindex 메타, robots.txt, vercel.json ignoreCommand."
 **Interfaces:**
 - Produces: 문서 컴포넌트 클래스 `.page`, `.chapter-head`, `.chapter-no`, `.chapter-title`, `.chapter-summary`, `.meta-table`, `.section-h`, `.figure`, `.figure-placeholder`, `.figure-caption`, `.figure-row`, `.kpi`, `.kpi-from`, `.kpi-to`, `.callout`, `.compare-table`, `.bullet`, `.stack`. 구조도용 `.dg-box`, `.dg-box-soft`, `.dg-text`, `.dg-label`, `.dg-line`. Task 3~6의 장 파티셜이 이 이름을 그대로 쓴다.
 
-- [ ] **Step 1: `globals.css` 전체**
+- [x] **Step 1: `globals.css` 전체**
 
 ```css
 @import 'tailwindcss';
@@ -464,7 +499,7 @@ include 플러그인, noindex 메타, robots.txt, vercel.json ignoreCommand."
 }
 ```
 
-- [ ] **Step 2: `cover.html`**
+- [x] **Step 2: `cover.html`**
 
 ```html
 <header class="min-h-[60vh] print:min-h-[220mm] flex flex-col justify-between">
@@ -490,7 +525,7 @@ include 플러그인, noindex 메타, robots.txt, vercel.json ignoreCommand."
 </header>
 ```
 
-- [ ] **Step 3: `toc.html`**
+- [x] **Step 3: `toc.html`**
 
 ```html
 <section class="page">
@@ -543,7 +578,7 @@ include 플러그인, noindex 메타, robots.txt, vercel.json ignoreCommand."
 </section>
 ```
 
-- [ ] **Step 4: `closing.html`**
+- [x] **Step 4: `closing.html`**
 
 ```html
 <section class="page">
@@ -574,7 +609,7 @@ include 플러그인, noindex 메타, robots.txt, vercel.json ignoreCommand."
 </section>
 ```
 
-- [ ] **Step 5: 빌드와 화면 확인**
+- [x] **Step 5: 빌드와 화면 확인**
 
 ```bash
 pnpm --filter portfolio build 2>&1 | tail -3
@@ -583,7 +618,7 @@ grep -c 'chapter-title' apps/portfolio/dist/index.html
 
 Expected: 빌드 성공, `chapter-title`이 2회 이상(목차·링크).
 
-- [ ] **Step 6: 커밋**
+- [x] **Step 6: 커밋**
 
 ```bash
 git add apps/portfolio
@@ -602,7 +637,7 @@ git commit -m "💄 feat(portfolio): 문서 스타일 컴포넌트와 표지·�
 - Consumes: Task 2의 컴포넌트 클래스.
 - 이미지: `public/hakon/dashboard.png`, `public/hakon/attendance-monitor.png` (사용자 제공). 없으면 `.figure-placeholder`.
 
-- [ ] **Step 1: 구조도 `hakon-pipeline.svg`**
+- [x] **Step 1: 구조도 `hakon-pipeline.svg`**
 
 이전(서버 직접 빌드)과 이후(GitHub Actions → GHCR → 서버 pull)를 위아래로 둔다.
 
@@ -644,7 +679,7 @@ git commit -m "💄 feat(portfolio): 문서 스타일 컴포넌트와 표지·�
 </svg>
 ```
 
-- [ ] **Step 2: `hakon.html`**
+- [x] **Step 2: `hakon.html`**
 
 ```html
 <section class="page">
@@ -777,7 +812,7 @@ git commit -m "💄 feat(portfolio): 문서 스타일 컴포넌트와 표지·�
 </section>
 ```
 
-- [ ] **Step 3: 빌드 확인**
+- [x] **Step 3: 빌드 확인**
 
 ```bash
 pnpm --filter portfolio build 2>&1 | tail -3
@@ -786,7 +821,7 @@ grep -c 'hakon-pipeline\|aria-label="배포 파이프라인' apps/portfolio/dist
 
 Expected: 빌드 성공. SVG가 인라인으로 들어가 `aria-label` 문자열이 1회 검출된다.
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add apps/portfolio
@@ -804,7 +839,7 @@ git commit -m "✨ feat(portfolio): 1장 학원관리 시스템 웹"
 **Interfaces:**
 - 이미지: `public/xamfinity/store-1.png`, `public/xamfinity/store-2.png` (사용자 제공 스토어 스크린샷, 세로). 없으면 placeholder 두 장을 `.figure-row`에.
 
-- [ ] **Step 1: 구조도 `xamfinity-bridge.svg`**
+- [x] **Step 1: 구조도 `xamfinity-bridge.svg`**
 
 ```svg
 <svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flutter와 WebView 사이의 브리지 구조">
@@ -852,7 +887,7 @@ git commit -m "✨ feat(portfolio): 1장 학원관리 시스템 웹"
 </svg>
 ```
 
-- [ ] **Step 2: `xamfinity.html`**
+- [x] **Step 2: `xamfinity.html`**
 
 ```html
 <section class="page">
@@ -975,7 +1010,7 @@ git commit -m "✨ feat(portfolio): 1장 학원관리 시스템 웹"
 </section>
 ```
 
-- [ ] **Step 3: 빌드 확인 및 커밋**
+- [x] **Step 3: 빌드 확인 및 커밋**
 
 ```bash
 pnpm --filter portfolio build 2>&1 | tail -3
@@ -995,7 +1030,7 @@ Expected: 빌드 성공, 검출 `1`.
 - Create: `apps/portfolio/public/watch-apps/` (블로그 public에서 복사)
 - Modify: `apps/portfolio/src/components/projects/watch-apps.html`
 
-- [ ] **Step 1: 캡처 복사**
+- [x] **Step 1: 캡처 복사**
 
 ```bash
 mkdir -p apps/portfolio/public/watch-apps
@@ -1008,7 +1043,7 @@ ls -la apps/portfolio/public/watch-apps
 
 Expected: 네 파일. 합계가 3MB를 넘으면 사용자에게 알리고 그대로 진행한다.
 
-- [ ] **Step 2: 구조도 `watch-apps-yjkit.svg`**
+- [x] **Step 2: 구조도 `watch-apps-yjkit.svg`**
 
 ```svg
 <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="YJKit 패키지와 두 앱의 의존 관계">
@@ -1060,7 +1095,7 @@ Expected: 네 파일. 합계가 3MB를 넘으면 사용자에게 알리고 그�
 </svg>
 ```
 
-- [ ] **Step 3: `watch-apps.html`**
+- [x] **Step 3: `watch-apps.html`**
 
 ```html
 <section class="page">
@@ -1177,7 +1212,7 @@ Expected: 네 파일. 합계가 3MB를 넘으면 사용자에게 알리고 그�
 </section>
 ```
 
-- [ ] **Step 4: 빌드 확인 및 커밋**
+- [x] **Step 4: 빌드 확인 및 커밋**
 
 ```bash
 pnpm --filter portfolio build 2>&1 | tail -3
@@ -1199,7 +1234,7 @@ Expected: 빌드 성공, dist에 이미지 `4`.
 **Interfaces:**
 - 이미지: `public/yjlogs/home.png`, `public/yjlogs/post.png` (사용자 제공 또는 yjlogs.com에서 캡처). 없으면 placeholder.
 
-- [ ] **Step 1: 구조도 `yjlogs-stack.svg`**
+- [x] **Step 1: 구조도 `yjlogs-stack.svg`**
 
 ```svg
 <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="yjlogs 스택 배치와 모노레포 구조">
@@ -1247,7 +1282,7 @@ Expected: 빌드 성공, dist에 이미지 `4`.
 </svg>
 ```
 
-- [ ] **Step 2: `yjlogs.html`**
+- [x] **Step 2: `yjlogs.html`**
 
 ```html
 <section class="page">
@@ -1370,7 +1405,7 @@ Expected: 빌드 성공, dist에 이미지 `4`.
 </section>
 ```
 
-- [ ] **Step 3: 빌드 확인 및 커밋**
+- [x] **Step 3: 빌드 확인 및 커밋**
 
 ```bash
 pnpm --filter portfolio build 2>&1 | tail -3
@@ -1392,7 +1427,7 @@ Expected: 빌드 성공, 검출 `1`.
 **Interfaces:**
 - Produces: `pnpm --filter portfolio pdf` → `apps/portfolio/dist/portfolio.pdf`, 표준 출력에 페이지 수.
 
-- [ ] **Step 1: `export-pdf.mjs`**
+- [x] **Step 1: `export-pdf.mjs`**
 
 ```js
 // vite preview를 띄우고 Chrome 헤드리스로 A4 PDF를 만든다.
@@ -1451,7 +1486,7 @@ try {
 }
 ```
 
-- [ ] **Step 2: 실행**
+- [x] **Step 2: 실행**
 
 ```bash
 pnpm --filter portfolio pdf 2>&1 | tail -3
@@ -1459,7 +1494,7 @@ pnpm --filter portfolio pdf 2>&1 | tail -3
 
 Expected: 마지막 두 줄이 PDF 경로와 `N pages`. N은 10~12.
 
-- [ ] **Step 3: 페이지 나눔 육안 검토**
+- [x] **Step 3: 페이지 나눔 육안 검토**
 
 PDF를 열어 다음을 확인한다. 어긋난 곳은 파티셜에서 고치고 Step 2를 반복한다.
 
@@ -1472,7 +1507,7 @@ PDF를 열어 다음을 확인한다. 어긋난 곳은 파티셜에서 고치고
 open apps/portfolio/dist/portfolio.pdf
 ```
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add apps/portfolio
@@ -1486,7 +1521,7 @@ git commit -m "🔧 feat(portfolio): PDF 내보내기 스크립트와 페이지 
 **Files:**
 - Modify: `.github/workflows/discord-notify.yml`, `README.md` (루트), `.claude/launch.json`
 
-- [ ] **Step 1: Discord 메시지에 배포 URL 추가**
+- [x] **Step 1: Discord 메시지에 배포 URL 추가**
 
 `fields` 배열에 항목 하나를 더한다. 수정 후 `run` 블록:
 
@@ -1507,7 +1542,7 @@ git commit -m "🔧 feat(portfolio): PDF 내보내기 스크립트와 페이지 
             $DISCORD_WEBHOOK_URL
 ```
 
-- [ ] **Step 2: 루트 README 표 수정**
+- [x] **Step 2: 루트 README 표 수정**
 
 앱 표와 Vercel 표에서 `(예정)`을 지운다.
 
@@ -1526,7 +1561,7 @@ git commit -m "🔧 feat(portfolio): PDF 내보내기 스크립트와 페이지 
 | `pnpm --filter portfolio pdf` | 포트폴리오 PDF 생성 (`apps/portfolio/dist/portfolio.pdf`) |
 ```
 
-- [ ] **Step 3: `.claude/launch.json`에 항목 추가**
+- [x] **Step 3: `.claude/launch.json`에 항목 추가**
 
 `configurations` 배열 끝에:
 
@@ -1539,7 +1574,7 @@ git commit -m "🔧 feat(portfolio): PDF 내보내기 스크립트와 페이지 
     }
 ```
 
-- [ ] **Step 4: 포맷·빌드 최종 확인**
+- [x] **Step 4: 포맷·빌드 최종 확인**
 
 ```bash
 pnpm format:check 2>&1 | tail -3
@@ -1548,7 +1583,7 @@ pnpm build 2>&1 | tail -5
 
 Expected: 둘 다 통과. `pnpm build`는 `web`과 `portfolio` 둘 다 성공.
 
-- [ ] **Step 5: 커밋**
+- [x] **Step 5: 커밋**
 
 ```bash
 git add .github README.md .claude/launch.json apps/portfolio
@@ -1561,7 +1596,7 @@ git commit -m "📝 docs: 포트폴리오 배포 반영 — Discord 알림 URL, 
 
 사용자가 Vercel 대시보드와 Cloudflare에서 직접 하는 단계가 있다. 그 지점에서 멈추고 확인을 받는다.
 
-- [ ] **Step 1: 푸시 및 PR**
+- [x] **Step 1: 푸시 및 PR**
 
 ```bash
 git push -u origin feature/portfolio
@@ -1586,7 +1621,7 @@ EOF
 )"
 ```
 
-- [ ] **Step 2: 사용자 작업 — Vercel 프로젝트 생성**
+- [x] **Step 2: 사용자 작업 — Vercel 프로젝트 생성**
 
 여기서 멈추고 요청한다.
 
@@ -1594,7 +1629,7 @@ EOF
 
 완료를 알리기 전에는 다음으로 가지 않는다.
 
-- [ ] **Step 3: preview 확인**
+- [x] **Step 3: preview 확인**
 
 ```bash
 gh pr checks feature/portfolio
@@ -1602,7 +1637,7 @@ gh pr checks feature/portfolio
 
 Expected: 두 프로젝트의 Vercel 체크. `web`은 turbo-ignore로 건너뛰거나 통과, `portfolio`는 통과. preview URL에서 표지가 렌더되고 `/robots.txt`가 `Disallow: /`인지 사용자가 확인한다.
 
-- [ ] **Step 4: develop → main 머지**
+- [x] **Step 4: develop → main 머지**
 
 ```bash
 gh pr merge feature/portfolio --merge --delete-branch
@@ -1613,7 +1648,7 @@ git push origin main
 git checkout develop
 ```
 
-- [ ] **Step 5: 프로덕션 확인**
+- [x] **Step 5: 프로덕션 확인**
 
 ```bash
 curl -s -o /dev/null -w '%{http_code}\n' https://portfolio.yjlogs.com/
@@ -1623,11 +1658,11 @@ curl -s https://portfolio.yjlogs.com/ | grep -o 'noindex, nofollow'
 
 Expected: `200`, `Disallow: /`, `noindex, nofollow`. Discord에 배포 알림이 URL과 함께 왔는지 사용자가 확인한다.
 
-- [ ] **Step 6: 이력서 Links에 URL 추가 (yj-resume 저장소, 별도)**
+- [x] **Step 6: 이력서 Links에 URL 추가 (yj-resume 저장소, 별도)**
 
 이 저장소 밖의 일이다. 사용자에게 `yj-resume`의 `src/components/links.html`에 `portfolio.yjlogs.com` 한 줄을 추가하라고 안내만 한다.
 
-- [ ] **Step 7: 플랜 문서 완료 표시**
+- [x] **Step 7: 플랜 문서 완료 표시**
 
 이 문서 상단에 완료 일자와 결과(페이지 수, 배포 URL)를 한 단락 추가하고 `develop`에 커밋한다.
 
