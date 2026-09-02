@@ -1,1 +1,155 @@
-<section><!-- yjlogs --></section>
+<section class="page">
+  <div class="chapter-head">
+    <div class="chapter-no">04 · 개인 프로젝트</div>
+    <div class="chapter-title">yjlogs</div>
+    <div class="chapter-summary">
+      DB·인증·이미지 스토리지·배포를 직접 고른 Next.js 개인 블로그. 출시 앱의
+      랜딩과 이 포트폴리오가 올라가 있다
+    </div>
+    <dl class="meta-table">
+      <dt>기간</dt>
+      <dd>2026.04 – 현재</dd>
+      <dt>역할</dt>
+      <dd>기획 · 설계 · 개발 · 운영 단독</dd>
+      <dt>스택</dt>
+      <dd>
+        <span class="stack"
+          >Next.js 16 · TypeScript · TailwindCSS · Drizzle · Neon · Clerk ·
+          Cloudflare R2 · Vercel · pnpm · Turborepo</span
+        >
+      </dd>
+    </dl>
+  </div>
+
+  <h3 class="section-h">개요</h3>
+  <p class="text-secondary">
+    글을 쓰고, 출시한 앱의 랜딩 페이지를 두고, 지원할 때 보여줄 이 포트폴리오를
+    올려두는 곳이다. 프론트엔드부터 DB, 인증, 이미지 스토리지, 배포, SEO, 유입
+    분석까지 직접 구성했다.
+  </p>
+  <div class="figure">
+    <div class="figure-placeholder" style="aspect-ratio: 16 / 9">
+      yjlogs.com 홈
+    </div>
+    <div class="figure-caption">홈. 최신 글과 앱 랜딩으로 이어진다.</div>
+  </div>
+
+  <h3 class="section-h">문제</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      회사에서는 백엔드가 있었다. 혼자 만들 때 "어떤 DB, 어떤 인증, 어떤
+      스토리지"를 스스로 고르고 그 선택을 책임지는 경험이 필요했다.
+    </li>
+    <li class="bullet">
+      앱 랜딩 페이지가 없어서 스토어 밖에서 앱을 설명할 곳이 없었다.
+    </li>
+    <li class="bullet">
+      나중에 포트폴리오를 같은 도메인에 두고 싶었다. 블로그와 포트폴리오는
+      스택이 달라 한 앱 안에 넣기 어려웠다.
+    </li>
+  </ul>
+
+  <h3 class="section-h">접근과 선택</h3>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>영역</th>
+        <th>선택</th>
+        <th>이유</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>데이터</td>
+        <td>Neon PostgreSQL + Drizzle ORM</td>
+        <td>
+          서버리스 Postgres라 유휴 비용이 없고, Drizzle은 스키마가 곧 타입이라
+          별도 코드 생성이 없다
+        </td>
+      </tr>
+      <tr>
+        <td>인증</td>
+        <td>Clerk</td>
+        <td>
+          관리자 한 명뿐이다. 직접 만들 이유가 없고, 세션·미들웨어를 바로 얻는다
+        </td>
+      </tr>
+      <tr>
+        <td>이미지</td>
+        <td>Cloudflare R2</td>
+        <td>
+          S3 호환에 egress 무료. 도메인이 이미 Cloudflare라 assets 서브도메인
+          연결이 한 줄
+        </td>
+      </tr>
+      <tr>
+        <td>배포</td>
+        <td>Vercel</td>
+        <td>
+          Next.js 기본 경로. 저장소 하나에 프로젝트 여럿을 붙일 수 있어
+          포트폴리오를 서브도메인으로 분리
+        </td>
+      </tr>
+      <tr>
+        <td>저장소</td>
+        <td>pnpm workspace + Turborepo</td>
+        <td>
+          블로그(Next.js)와 포트폴리오(Vite)를 한 저장소에 두되, 바뀐 앱만
+          빌드·배포하기 위해
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    포트폴리오를 블로그 라우트로 넣지 않고 별도 앱으로 뺀 이유는 인쇄 품질이다.
+    블로그의 루트 레이아웃(인증·분석·테마)이 PDF에 끼어들지 않아야 했다.
+  </div>
+
+  <h3 class="section-h">구현</h3>
+  <div class="figure">
+    <!-- include: src/diagrams/yjlogs-stack.svg -->
+    <div class="figure-caption">
+      저장소 하나, Vercel 프로젝트 둘, 외부 서비스 넷.
+    </div>
+  </div>
+  <ul class="space-y-1">
+    <li class="bullet">
+      <b>SEO.</b> 사이트맵, JSON-LD, OG 이미지 자동 생성. GA4로 유입을 본다.
+      포트폴리오는 반대로 noindex와 robots.txt로 검색에서 뺀다.
+    </li>
+    <li class="bullet">
+      <b>모노레포 전환.</b> 기존 저장소를 apps/web으로 옮기고 pnpm과 Turborepo를
+      얹었다. Vercel은 프로젝트별 Root Directory로 연결하고, 그 디렉터리와
+      무관한 커밋의 빌드는 Vercel의 Skip deployments가 건너뛴다.
+    </li>
+    <li class="bullet">
+      <b>포트폴리오 앱.</b> HTML 파티셜을 빌드 시 하나로 합치는 구조. 같은
+      HTML이 웹이자 PDF다.
+    </li>
+  </ul>
+
+  <h3 class="section-h">결과</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      yjlogs.com 운영 중. 앱 랜딩 2개, 글, 시리즈, 관리자 화면.
+    </li>
+    <li class="bullet">
+      portfolio.yjlogs.com에 이 문서. 블로그만 고친 커밋에는 포트폴리오가
+      배포되지 않는다.
+    </li>
+  </ul>
+  <div class="figure">
+    <div class="figure-placeholder" style="aspect-ratio: 16 / 9">
+      글 상세 페이지
+    </div>
+    <div class="figure-caption">글 상세. 코드 하이라이트와 목차, 댓글.</div>
+  </div>
+
+  <h3 class="section-h">회고</h3>
+  <p class="text-secondary">
+    서비스를 고를 때 "직접 만들 수 있는가"보다 "혼자 운영할 수 있는가"를
+    기준으로 삼은 것이 맞았다. 인증과 스토리지를 직접 만들었다면 지금 글을 쓰는
+    대신 그걸 고치고 있었을 것이다. 모노레포는 앱이 둘뿐이라 Turborepo의 이득이
+    아직 작다. 공유 패키지가 생기면 그때 진가가 나온다.
+  </p>
+</section>
