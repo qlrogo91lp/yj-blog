@@ -45,19 +45,21 @@ feature/xxx → develop → main
 
 ## 명령어
 
+의존성 설치와 pnpm 세팅은 저장소 루트 `README.md`의 "처음 세팅"을 따른다. 아래는 이 폴더(`apps/web`) 안에서 실행하는 기준이다.
+
 ```bash
-npm run dev      # 개발 서버 (http://localhost:3000)
-npm run build    # 프로덕션 빌드
-npm run lint     # ESLint
+pnpm dev         # 개발 서버 (http://localhost:3000)
+pnpm build       # 프로덕션 빌드
+pnpm lint        # ESLint
 
 # 테스트
-npm run test        # Vitest 단위/통합 테스트 (watch 모드)
-npm run test:run    # Vitest 1회 실행 (CI용)
-npm run test:e2e    # Playwright E2E 테스트
+pnpm test        # Vitest 단위/통합 테스트 (watch 모드)
+pnpm test:run    # Vitest 1회 실행 (CI용)
+pnpm test:e2e    # Playwright E2E 테스트
 
 # DB
-npx drizzle-kit push    # schema.ts 변경 후 DB에 바로 반영
-npx drizzle-kit studio  # DB 데이터 GUI로 확인
+pnpm exec drizzle-kit push    # schema.ts 변경 후 DB에 바로 반영
+pnpm exec drizzle-kit studio  # DB 데이터 GUI로 확인
 ```
 
 ## DB 스키마
