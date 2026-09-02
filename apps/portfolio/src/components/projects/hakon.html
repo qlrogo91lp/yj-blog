@@ -1,0 +1,175 @@
+<section class="page">
+  <div class="chapter-head">
+    <div class="chapter-no">01 · 회사 프로젝트</div>
+    <div class="chapter-title">학원관리 시스템 웹</div>
+    <div class="chapter-summary">
+      36개 학원, 약 7,000명이 쓰던 PHP 레거시를 Next.js로 다시 만들고 배포
+      파이프라인까지 재설계
+    </div>
+    <dl class="meta-table">
+      <dt>기간</dt>
+      <dd>2025.09 – 현재 (재구축) · 2025.05 – 2026.05 (배포 자동화)</dd>
+      <dt>역할</dt>
+      <dd>프론트엔드 설계·구현 전담, 배포 파이프라인 설계·주도</dd>
+      <dt>인원</dt>
+      <dd>프론트엔드 1 (본인) · 백엔드 협업</dd>
+      <dt>스택</dt>
+      <dd>
+        <span class="stack"
+          >Next.js · TypeScript · TailwindCSS · TanStack Query · Zustand ·
+          Socket.io · Vitest · Storybook · Docker · GitHub Actions · GHCR</span
+        >
+      </dd>
+    </dl>
+  </div>
+
+  <h3 class="section-h">개요</h3>
+  <p class="text-secondary">
+    학원 운영자가 출결, 수납, 상담, 공지를 한곳에서 처리하는 관리 시스템이다.
+    원래는 PHP로 만들어진 레거시였고, 학원 36곳에서 약 7,000명이 쓰고 있었다. 이
+    시스템을 Next.js·TypeScript 기반으로 새로 설계해 구축했고, 현재 약 500명
+    규모(일 약 160건 출결)로 베타 운영 중이다.
+  </p>
+  <div class="figure mx-auto max-w-[64%]">
+    <div class="figure-placeholder" style="aspect-ratio: 16 / 9">
+      대시보드 화면 (학원명·학생 정보 가림)
+    </div>
+    <div class="figure-caption">
+      재구축한 관리자 대시보드. 학원명과 학생 정보는 가렸다.
+    </div>
+  </div>
+
+  <h3 class="section-h">문제</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      페이지 이동마다 전체 리로드가 일어나 화면이 깜박였고, 출결처럼 자주 오가는
+      화면에서 체감이 컸다.
+    </li>
+    <li class="bullet">
+      출결은 QR 스캔으로 들어오는데, 관리자 화면은 새로고침해야 반영됐다.
+      실시간으로 봐야 할 정보가 실시간이 아니었다.
+    </li>
+    <li class="bullet">
+      배포는 운영 서버에서 직접 빌드했다. 빌드 동안 서버 리소스를 점유했고,
+      이미지가 약 2.4GB라 전체 과정이 약 10분 걸렸다.
+    </li>
+    <li class="bullet">
+      공통 컴포넌트에 문서가 없고 테스트도 없어, 화면을 고칠 때마다 다른 화면이
+      깨지는지 손으로 확인했다.
+    </li>
+  </ul>
+
+  <h3 class="section-h">접근과 선택</h3>
+  <p class="text-secondary">
+    레거시를 고쳐 쓸지, 새로 만들지가 첫 결정이었다. PHP 코드는 화면과 로직이
+    섞여 있어 부분 개선으로는 깜박임과 실시간성 문제를 풀 수 없다고 판단했고,
+    신규 구축을 제안해 주도했다.
+  </p>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>선택지</th>
+        <th>장점</th>
+        <th>탈락 이유</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>PHP 위에 부분 개선</td>
+        <td>당장 비용이 작다</td>
+        <td>화면 전환 구조 자체가 문제라 근본 해결이 안 된다</td>
+      </tr>
+      <tr>
+        <td>React SPA</td>
+        <td>전환은 매끄럽다</td>
+        <td>
+          초기 로딩이 길고, 관리 화면이 많아 라우팅·코드 분리를 직접 관리해야
+          한다
+        </td>
+      </tr>
+      <tr>
+        <td><b>Next.js (채택)</b></td>
+        <td>
+          파일 기반 라우팅, SSR·코드 스플리팅이 기본, prefetch로 전환 체감 개선
+        </td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    화면 수가 많은 관리 시스템에서는 "라우팅과 코드 분리를 프레임워크가
+    해주는가"가 유지보수 비용을 결정한다. Next.js를 고른 이유는 성능보다 이쪽이
+    컸다.
+  </div>
+
+  <h3 class="section-h">구현</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      <b>화면 전환.</b> 파일 기반 라우팅 위에 SSR과 코드 스플리팅을 두고, 자주
+      오가는 경로는 prefetch로 미리 받아 깜박임을 없앴다.
+    </li>
+    <li class="bullet">
+      <b>실시간 출결 모니터링.</b> QR 스캔 이벤트를 Socket.io로 받아 관리자
+      화면에 즉시 반영한다. 새로고침 없이 지금 누가 들어왔는지 보인다.
+    </li>
+    <li class="bullet">
+      <b>배포 파이프라인.</b> 서버 직접 빌드를 GitHub Actions에서 Docker
+      이미지를 만들어 GHCR에 올리고 서버는 pull만 하는 구조로 바꿨다. 실행에
+      필요한 파일만 이미지에 넣어 크기를 줄였다.
+    </li>
+    <li class="bullet">
+      <b>협업 기반.</b> Storybook으로 공통 컴포넌트를 문서화하고 Vitest로 핵심
+      로직을 테스트한다. 문의 확인이 늦어지는 문제는 Slack을 도입하고
+      Webhook·GitHub Actions를 연동해 실시간 알림으로 풀었다.
+    </li>
+  </ul>
+  <div class="figure">
+    <!-- include: src/diagrams/hakon-pipeline.svg -->
+    <div class="figure-caption">
+      배포 파이프라인 전후. 서버가 빌드하지 않는 구조로 바꿨다.
+    </div>
+  </div>
+
+  <h3 class="section-h">결과</h3>
+  <div class="flex flex-wrap gap-2 mb-2">
+    <span class="kpi"
+      ><span class="text-xs text-muted">Docker 이미지</span
+      ><span class="kpi-from">2.4GB</span
+      ><span class="kpi-to">500MB</span></span
+    >
+    <span class="kpi"
+      ><span class="text-xs text-muted">빌드·배포</span
+      ><span class="kpi-from">10분</span><span class="kpi-to">7분</span></span
+    >
+    <span class="kpi"
+      ><span class="text-xs text-muted">서버 빌드 부하</span
+      ><span class="kpi-to">0</span></span
+    >
+  </div>
+  <ul class="space-y-1">
+    <li class="bullet">
+      약 500명 규모, 일 약 160건 출결로 베타 운영 중. 전체 전환은 학원 단위로
+      진행한다.
+    </li>
+    <li class="bullet">
+      페이지 전환 깜박임 제거, 초기 로딩 개선. 출결 모니터링은 새로고침 없이
+      실시간 반영.
+    </li>
+  </ul>
+  <div class="figure mx-auto max-w-[56%]">
+    <div class="figure-placeholder" style="aspect-ratio: 16 / 9">
+      실시간 출결 모니터링 화면 (정보 가림)
+    </div>
+    <div class="figure-caption">
+      QR 스캔 출결이 WebSocket으로 즉시 반영되는 모니터링 페이지.
+    </div>
+  </div>
+
+  <h3 class="section-h">회고</h3>
+  <p class="text-secondary">
+    신규 구축을 결정할 때 레거시의 데이터 구조까지 같이 바꾸지 않은 것은 옳았다.
+    화면을 먼저 바꾸고 데이터는 그대로 두니 학원 단위로 점진 전환이 가능했다.
+    아쉬운 점은 테스트를 나중에 붙인 것이다. 처음부터 핵심 로직에 Vitest를
+    두었다면 재구축 초반의 회귀를 더 빨리 잡았을 것이다.
+  </p>
+</section>

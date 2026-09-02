@@ -1,0 +1,147 @@
+<section class="page">
+  <div class="chapter-head">
+    <div class="chapter-no">03 · 개인 프로젝트</div>
+    <div class="chapter-title">Ralli · GolfCounter</div>
+    <div class="chapter-summary">
+      워치가 메인 입력인 Apple Watch 스포츠 기록 앱 2종. 공통 패키지 분리,
+      모노레포, App Store 출시·운영
+    </div>
+    <dl class="meta-table">
+      <dt>기간</dt>
+      <dd>2026.05 – 현재</dd>
+      <dt>역할</dt>
+      <dd>기획 · 개발 · 디자인(아이콘·스크린샷) · 스토어 운영 단독</dd>
+      <dt>스택</dt>
+      <dd>
+        <span class="stack"
+          >Swift · SwiftUI · SwiftData · CloudKit · WatchConnectivity ·
+          HealthKit · WidgetKit · ActivityKit · SPM · GitHub Actions</span
+        >
+      </dd>
+    </dl>
+  </div>
+
+  <h3 class="section-h">개요</h3>
+  <p class="text-secondary">
+    Ralli는 테니스 점수를, GolfCounter는 골프 타수와 퍼팅을 기록한다. 둘 다 경기
+    중에는 워치만 조작하고, 아이폰은 기록과 통계를 보는 용도다. 두 앱 모두 App
+    Store에 출시해 유료로 판매 중이다.
+  </p>
+  <div class="figure mx-auto max-w-[64%]">
+    <div class="figure-row">
+      <img
+        src="./watch-apps/ralli-watch-match.png"
+        alt="Ralli 워치 경기 화면"
+      />
+      <img
+        src="./watch-apps/golf-watch-score.png"
+        alt="GolfCounter 워치 스코어 화면"
+      />
+    </div>
+    <div class="figure-caption">
+      왼쪽 Ralli, 오른쪽 GolfCounter. 경기 중 조작은 워치에서 끝난다.
+    </div>
+  </div>
+
+  <h3 class="section-h">문제</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      경기 중에 폰을 꺼내는 순간 흐름이 끊긴다. 기록은 손목에서 두 번 탭으로
+      끝나야 한다.
+    </li>
+    <li class="bullet">
+      첫 앱(Ralli)을 만들고 나니 HealthKit 세션, 워치↔폰 동기화, 저장 계층이
+      종목과 무관한 코드였다. 두 번째 앱을 같은 방식으로 만들면 그 코드를
+      복사하게 된다.
+    </li>
+    <li class="bullet">
+      출시 후에는 만드는 것보다 알리는 게 문제였다. 검색에 안 잡히면 다운로드가
+      없다.
+    </li>
+  </ul>
+
+  <h3 class="section-h">접근과 선택</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      <b>워치 중심 설계.</b> GolfCounter는 워치가 메인 입력, iOS는 기록·통계
+      전용으로 역할을 갈랐다. 라운드 중 폰을 볼 일이 없다.
+    </li>
+    <li class="bullet">
+      <b>코어 분리.</b> Ralli의 HealthKit·WatchConnectivity·SwiftData 계층을
+      공통 Swift Package(YJKit)로 추출했다. 코어는 도메인을 모르고, 종목별
+      규칙과 저장 정책은 앱이 소유한다.
+    </li>
+    <li class="bullet">
+      <b>모노레포.</b> 앱 2개와 패키지가 레포 3개로 흩어져 패키지를 고칠 때마다
+      푸시와 버전 갱신이 필요했다. 커밋 히스토리를 보존한 채 단일 Xcode
+      워크스페이스로 통합했다.
+    </li>
+  </ul>
+  <div class="callout">
+    두 번째 앱을 "도메인 로직만 쓰면 되는" 상태로 만드는 것이 목표였다.
+    GolfCounter는 그 검증이었고, 워치 워크아웃·동기화·저장은 한 줄도 다시 쓰지
+    않았다.
+  </div>
+
+  <h3 class="section-h">구현</h3>
+  <div class="figure">
+    <!-- include: src/diagrams/watch-apps-yjkit.svg -->
+    <div class="figure-caption">
+      YJKit 네 프로덕트와 두 앱의 의존. 경과시간은 워치가 단일 소스다.
+    </div>
+  </div>
+  <ul class="space-y-1">
+    <li class="bullet">
+      <b>동작 계약.</b> 경과시간은 워치가 단일 소스이고 폰은 앵커로 보간만 한다.
+      pause는 폰→워치 명령이고 상태는 워치 앵커로만 갱신한다. 두 앱이 같은
+      규칙을 지켜야 숫자 의미가 갈리지 않는다.
+    </li>
+    <li class="bullet">
+      <b>Live Activity · Complication · CloudKit.</b> 진행 중인 경기를 잠금
+      화면과 다이나믹 아일랜드에 실시간 표시하고, 워치 페이스에서 바로 진입하며,
+      기록은 기기 간 동기화된다.
+    </li>
+    <li class="bullet">
+      <b>CI.</b> PR마다 변경된 앱만 빌드·테스트한다. YJKit이 바뀌면 전 앱을
+      돌린다. job 분리로 전체 21분 → 6.4분, 문서만 바뀐 커밋은 6초.
+    </li>
+  </ul>
+
+  <h3 class="section-h">결과</h3>
+  <div class="flex flex-wrap gap-2 mb-2">
+    <span class="kpi"
+      ><span class="text-xs text-muted">월간 유료 판매 (앱 2종)</span
+      ><span class="kpi-from">19건</span><span class="kpi-to">42건</span></span
+    >
+    <span class="kpi"
+      ><span class="text-xs text-muted">전월 대비</span
+      ><span class="kpi-to">+121%</span></span
+    >
+  </div>
+  <ul class="space-y-1">
+    <li class="bullet">
+      스토어 검색 키워드를 검색량 대비 경쟁도가 낮은 조합으로 바꾸고 스크린샷을
+      리디자인했다. 7월 19건이던 판매가 8월 42건이 됐다.
+    </li>
+    <li class="bullet">
+      2026년 누적 판매 108건. 출시 후 매일 꾸준히 팔리는 기본 수요 위에 얹은
+      결과다.
+    </li>
+  </ul>
+  <div class="figure mx-auto max-w-[44%]">
+    <div class="figure-row">
+      <img src="./watch-apps/ralli-ios-live.png" alt="Ralli Live Activity" />
+      <img src="./watch-apps/golf-ios-stat.png" alt="GolfCounter iOS 통계" />
+    </div>
+    <div class="figure-caption">
+      왼쪽 Ralli의 Live Activity, 오른쪽 GolfCounter의 iOS 통계 화면.
+    </div>
+  </div>
+
+  <h3 class="section-h">회고</h3>
+  <p class="text-secondary">
+    코어 분리를 첫 앱 출시 전에 하지 않은 것은 옳았다. 무엇이 공통인지는 두 번째
+    앱을 만들 때 보인다. 아쉬운 점은 ASO를 출시 두 달 뒤에야 손댄 것이다.
+    키워드는 출시 전에 정해야 첫 노출을 놓치지 않는다.
+  </p>
+</section>
