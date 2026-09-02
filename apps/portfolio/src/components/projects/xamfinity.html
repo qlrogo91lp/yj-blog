@@ -1,1 +1,161 @@
-<section><!-- xamfinity --></section>
+<section class="page">
+  <div class="chapter-head">
+    <div class="chapter-no">02 · 회사 프로젝트</div>
+    <div class="chapter-title">Xamfinity 하이브리드 앱</div>
+    <div class="chapter-summary">
+      iOS·Android 네이티브 두 벌을 Flutter + WebView(React) 한 벌로 바꾼
+      학생·학부모용 학원 앱
+    </div>
+    <dl class="meta-table">
+      <dt>기간</dt>
+      <dd>2024.02 – 2024.12 (개발·출시) · 이후 운영</dd>
+      <dt>역할</dt>
+      <dd>
+        크로스플랫폼 구조 설계·주도, Flutter 앱과 React 웹 개발, 스토어 배포
+      </dd>
+      <dt>인원</dt>
+      <dd>앱·웹 1 (본인) · 백엔드 협업</dd>
+      <dt>스택</dt>
+      <dd>
+        <span class="stack"
+          >Flutter · Riverpod · Firebase (Messaging · Analytics · Remote Config
+          · Crashlytics) · React · TypeScript · Vanilla Extract · TanStack Query
+          · Recoil · Fastlane</span
+        >
+      </dd>
+    </dl>
+  </div>
+
+  <h3 class="section-h">개요</h3>
+  <p class="text-secondary">
+    학생과 학부모가 출결 확인, 수납, 공지, 상담 신청을 하는 앱이다. iOS와
+    Android 양쪽 스토어에 출시해 운영 중이며, 합산 누적 약 8,000 다운로드, 월
+    활성 사용자 약 3,000명이다.
+  </p>
+  <div class="figure">
+    <div class="figure-row">
+      <div class="figure-placeholder" style="aspect-ratio: 9 / 16">
+        스토어 스크린샷 1
+      </div>
+      <div class="figure-placeholder" style="aspect-ratio: 9 / 16">
+        스토어 스크린샷 2
+      </div>
+    </div>
+    <div class="figure-caption">App Store · Google Play 스크린샷.</div>
+  </div>
+
+  <h3 class="section-h">문제</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      iOS와 Android를 각각의 네이티브 코드로 관리하고 있었다. 같은 기능을 두 번
+      만들고, 두 번 고치고, 두 번 배포했다.
+    </li>
+    <li class="bullet">
+      화면 변경이 잦은 앱인데 매번 스토어 심사를 거쳐야 했다. 작은 문구 수정도
+      며칠이 걸렸다.
+    </li>
+    <li class="bullet">
+      스토어 업로드가 수동이라 빌드 번호, 서명, 스크린샷 관리에서 실수가
+      반복됐다.
+    </li>
+  </ul>
+
+  <h3 class="section-h">접근과 선택</h3>
+  <p class="text-secondary">
+    핵심 질문은 "무엇을 네이티브로 두고 무엇을 웹으로 보낼 것인가"였다.
+    결제·푸시·기기 권한처럼 웹으로 안 되는 것만 네이티브에 남기고, 화면과
+    비즈니스 로직은 WebView 안의 React 웹으로 옮겼다.
+  </p>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>선택지</th>
+        <th>장점</th>
+        <th>탈락 이유</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>네이티브 유지</td>
+        <td>성능·플랫폼 기능 최대</td>
+        <td>코드 두 벌, 배포 두 번. 팀 규모에 비해 비용이 크다</td>
+      </tr>
+      <tr>
+        <td>Flutter 순수 앱</td>
+        <td>한 벌 코드</td>
+        <td>화면 변경마다 스토어 심사. 웹팀 자산(React)을 못 쓴다</td>
+      </tr>
+      <tr>
+        <td><b>Flutter + WebView(React) (채택)</b></td>
+        <td>
+          한 벌 코드, 화면은 웹 배포로 즉시 반영, 네이티브 기능은 Flutter가 담당
+        </td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    하이브리드의 성패는 브리지 경계에서 갈린다. 네이티브가 해야 할 일의 목록을
+    먼저 확정하고, 그 외에는 전부 웹으로 보냈다. 경계가 흐려지면 두 벌 관리로
+    되돌아간다.
+  </div>
+
+  <h3 class="section-h">구현</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      <b>양방향 브리지.</b> Flutter → 웹은 MethodChannel, 웹 → Flutter는
+      EventChannel로 연결했다. 로그인 토큰 전달, 결제 결과 반환, 푸시 탭 시 화면
+      이동이 이 통로로 오간다.
+    </li>
+    <li class="bullet">
+      <b>네이티브 기능.</b> 인앱결제, FCM 푸시, Remote Config로 기능 플래그,
+      Crashlytics 에러 수집. Android는 학원 공용 태블릿용 Kiosk 모드와 자동
+      업데이트를 추가했다.
+    </li>
+    <li class="bullet">
+      <b>배포 자동화.</b> Fastlane으로 빌드·서명·업로드를 묶어 iOS 빌드는 App
+      Store Connect로, Android 빌드는 Google Play로 자동 올라간다. 수동 배포
+      절차를 없앴다.
+    </li>
+  </ul>
+  <div class="figure">
+    <!-- include: src/diagrams/xamfinity-bridge.svg -->
+    <div class="figure-caption">
+      네이티브가 맡는 것과 웹이 맡는 것, 그 사이의 두 채널.
+    </div>
+  </div>
+
+  <h3 class="section-h">결과</h3>
+  <div class="flex flex-wrap gap-2 mb-2">
+    <span class="kpi"
+      ><span class="text-xs text-muted">누적 다운로드</span
+      ><span class="kpi-to">약 8,000</span></span
+    >
+    <span class="kpi"
+      ><span class="text-xs text-muted">월 활성 사용자</span
+      ><span class="kpi-to">약 3,000</span></span
+    >
+    <span class="kpi"
+      ><span class="text-xs text-muted">현재 버전 비정상 종료</span
+      ><span class="kpi-to">0건</span></span
+    >
+  </div>
+  <ul class="space-y-1">
+    <li class="bullet">
+      단일 코드베이스로 양 플랫폼 운영. 화면 수정은 웹 배포로 즉시 반영, 스토어
+      심사는 네이티브 변경 때만.
+    </li>
+    <li class="bullet">
+      Crashlytics 기준 현재 버전 안정성 100%. 두 스토어 업로드가 명령 한 번으로
+      끝난다.
+    </li>
+  </ul>
+
+  <h3 class="section-h">회고</h3>
+  <p class="text-secondary">
+    브리지 API를 처음부터 문서로 고정해 둔 것이 가장 잘한 일이다. 웹과 앱이 따로
+    개발돼도 계약이 흔들리지 않았다. 아쉬운 점은 WebView 초기 로딩이다. 첫
+    화면을 네이티브로 두고 그 뒤부터 웹을 띄우는 구조였다면 첫 인상이 더 빨랐을
+    것이다.
+  </p>
+</section>
