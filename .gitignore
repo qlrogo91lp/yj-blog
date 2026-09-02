@@ -4,8 +4,8 @@
 .superpowers/
 
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -14,17 +14,23 @@
 !.yarn/versions
 
 # testing
-/coverage
-/test-results/
-/playwright-report/
-/playwright/.cache/
+coverage/
+test-results/
+playwright-report/
+playwright/.cache/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
+
+# vite
+dist/
+
+# turborepo
+.turbo/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
@@ -48,7 +54,7 @@ yarn-error.log*
 next-env.d.ts
 
 # clerk configuration (can include secrets)
-/.clerk/
+.clerk/
 
 # git worktrees
 .worktrees/

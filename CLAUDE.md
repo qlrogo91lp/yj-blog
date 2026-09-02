@@ -11,12 +11,13 @@
 
 ## 명령어
 
-```bash
-npm run dev      # 개발 서버 실행 (http://localhost:3000)
-npm run build    # 프로덕션 빌드
-npm run lint     # ESLint 실행
-npm run format   # Prettier 포맷팅 (전체 파일)
+저장소 루트에서 실행한다. 블로그 앱은 워크스페이스 이름 `web`이다.
 
+```bash
+pnpm dev --filter web    # 개발 서버 실행 (http://localhost:3000)
+pnpm build               # 프로덕션 빌드 (모든 앱, Turborepo 캐시)
+pnpm lint                # ESLint 실행 (모든 앱)
+pnpm format              # Prettier 포맷팅 (저장소 전체)
 ```
 
 ### DB 스키마
@@ -24,8 +25,8 @@ npm run format   # Prettier 포맷팅 (전체 파일)
 스키마 변경 시 `drizzle-kit push`를 사용한다. 개인 프로젝트이므로 generate + migrate 대신 push로 직접 DB에 반영한다.
 
 ```bash
-npx drizzle-kit push    # schema.ts 변경 후 DB에 바로 반영
-npx drizzle-kit studio  # DB 데이터 GUI로 확인
+pnpm --filter web exec drizzle-kit push    # schema.ts 변경 후 DB에 바로 반영
+pnpm --filter web exec drizzle-kit studio  # DB 데이터 GUI로 확인
 ```
 
 > **주의**: 컬럼 삭제·타입 변경 등 데이터 손실 가능성이 있는 작업은 push 전에 반드시 확인한다.
@@ -33,9 +34,9 @@ npx drizzle-kit studio  # DB 데이터 GUI로 확인
 ### 테스트
 
 ```bash
-npm run test        # Vitest 단위/통합 테스트 (watch 모드)
-npm run test:run    # Vitest 1회 실행 (CI용)
-npm run test:e2e    # Playwright E2E 테스트
+pnpm --filter web test        # Vitest 단위/통합 테스트 (watch 모드)
+pnpm test:run                 # Vitest 1회 실행 (CI용)
+pnpm --filter web test:e2e    # Playwright E2E 테스트
 ```
 
 
@@ -70,6 +71,18 @@ npm run test:e2e    # Playwright E2E 테스트
 - 제거 명령: `git worktree remove <worktree-경로>`
 - worktree 제거 전 해당 디렉토리에 커밋되지 않은 변경사항이 없는지 확인한다.
 - 강제 제거가 필요한 경우(미커밋 변경사항 있음): `git worktree remove --force <worktree-경로>`
+
+## 저장소 구조
+
+pnpm workspace + Turborepo 모노레포다. 앱은 `apps/` 아래에 있고 공유 패키지는 아직 없다.
+
+- `apps/web/` — 블로그 (Next.js). 이 문서와 `.claude/rules/*.md`에 적힌 `src/`, `public/`, `e2e/` 경로는 모두 `apps/web/` 기준이다.
+- `apps/portfolio/` — 포트폴리오 (Vite). 별도 스펙으로 추가한다.
+- `docs/`, `.claude/`, `.github/` — 루트. 앱과 무관하게 저장소 전체를 다룬다.
+- 루트 `package.json`은 워크스페이스 설정과 turbo 스크립트만 갖는다. 앱 의존성은 각 앱의 `package.json`에 둔다.
+
+Vercel은 프로젝트별 Root Directory(`apps/web`, `apps/portfolio`)로 연결되어 있고, 각 앱의 `vercel.json`
+`ignoreCommand`(`npx turbo-ignore`)가 무관한 커밋의 빌드를 건너뛴다.
 
 ## 아키텍처
 

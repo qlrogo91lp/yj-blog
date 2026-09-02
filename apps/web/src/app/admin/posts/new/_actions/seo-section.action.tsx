@@ -1,0 +1,128 @@
+'use client';
+
+import { useState } from 'react';
+import { ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { generateSlug } from '@/lib/slugify';
+import { CharacterCounter } from '../_components/character-counter';
+import { generateExcerpt } from '../_services/generate-excerpt';
+import { useNewPostStore } from '../_store';
+
+export function SeoSectionAction() {
+  const [open, setOpen] = useState(false);
+  const excerpt = useNewPostStore((s) => s.excerpt);
+  const setExcerpt = useNewPostStore((s) => s.setExcerpt);
+  const metaTitle = useNewPostStore((s) => s.metaTitle);
+  const setMetaTitle = useNewPostStore((s) => s.setMetaTitle);
+  const content = useNewPostStore((s) => s.content);
+  const isGenerating = useNewPostStore((s) => s.isGeneratingExcerpt);
+  const setIsGenerating = useNewPostStore((s) => s.setIsGeneratingExcerpt);
+  const title = useNewPostStore((s) => s.title);
+  const slug = useNewPostStore((s) => s.slug);
+  const setSlug = useNewPostStore((s) => s.setSlug);
+  const slugPattern = /^[a-z0-9가-힣-]*$/;
+  const isSlugValid = slugPattern.test(slug);
+
+  async function handleGenerate() {
+    setIsGenerating(true);
+    try {
+      const { excerpt: generated } = await generateExcerpt(content);
+      setExcerpt(generated);
+      toast.success('AI 요약을 생성했습니다');
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'AI 요약 생성에 실패했습니다'
+      );
+    } finally {
+      setIsGenerating(false);
+    }
+  }
+
+  return (
+    <section className="mt-6 rounded-md border border-border">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium hover:bg-accent/50 cursor-pointer"
+      >
+        {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+        SEO 설정
+      </button>
+      {open && (
+        <div className="space-y-4 px-4 pb-4">
+          <div>
+            <Label htmlFor="seo-slug" className="mb-1 block">
+              URL slug
+            </Label>
+            <Input
+              id="seo-slug"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value.trim())}
+              placeholder={title ? generateSlug(title) : 'my-post'}
+              aria-invalid={!isSlugValid}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              /posts/{slug || (title ? generateSlug(title) : '…')} — 비우면
+              제목으로 자동 생성됩니다.
+            </p>
+            {!isSlugValid && (
+              <p className="mt-1 text-xs text-destructive">
+                영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다
+              </p>
+            )}
+          </div>
+
+          <div>
+            <div className="mb-1 flex items-center justify-between">
+              <Label htmlFor="seo-excerpt">요약 (excerpt)</Label>
+              <CharacterCounter
+                value={excerpt}
+                recommendedMax={200}
+                hardMax={500}
+              />
+            </div>
+            <Textarea
+              id="seo-excerpt"
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+              placeholder="글 목록과 검색 결과 설명에 쓰입니다. AI 버튼으로 초안을 생성한 뒤 다듬으세요."
+              rows={3}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              disabled={isGenerating || content.length === 0}
+              onClick={handleGenerate}
+            >
+              <Sparkles size={16} />
+              {isGenerating ? '생성 중…' : 'AI로 요약 생성'}
+            </Button>
+          </div>
+
+          <div>
+            <div className="mb-1 flex items-center justify-between">
+              <Label htmlFor="seo-meta-title">SEO 제목 (meta title)</Label>
+              <CharacterCounter
+                value={metaTitle}
+                recommendedMax={60}
+                hardMax={100}
+              />
+            </div>
+            <Input
+              id="seo-meta-title"
+              value={metaTitle}
+              onChange={(e) => setMetaTitle(e.target.value)}
+              placeholder="비우면 글 제목이 그대로 사용됩니다 (50–60자 권장)"
+            />
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
