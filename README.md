@@ -66,8 +66,9 @@
 
 ## Vercel
 
-한 저장소에 프로젝트 두 개가 연결되어 있다. 프로젝트마다 Root Directory가 다르고, `apps/<앱>/vercel.json`의
-`ignoreCommand`(`npx turbo-ignore`)가 그 앱과 무관한 커밋의 빌드를 건너뛴다.
+한 저장소에 프로젝트 두 개가 연결되어 있다. 프로젝트마다 Root Directory가 다르고, 그 앱과 무관한 커밋의 빌드는
+Vercel 프로젝트 설정의 **Skip deployments**(Build and Deployment → Root Directory)가 건너뛴다. Root Directory와
+그 의존성에 변경이 없으면 배포하지 않는 Vercel 네이티브 기능이다.
 
 | Vercel 프로젝트  | Root Directory   | 도메인               |
 | ---------------- | ---------------- | -------------------- |

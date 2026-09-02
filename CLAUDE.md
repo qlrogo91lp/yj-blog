@@ -81,8 +81,9 @@ pnpm workspace + Turborepo 모노레포다. 앱은 `apps/` 아래에 있고 공�
 - `docs/`, `.claude/`, `.github/` — 루트. 앱과 무관하게 저장소 전체를 다룬다.
 - 루트 `package.json`은 워크스페이스 설정과 turbo 스크립트만 갖는다. 앱 의존성은 각 앱의 `package.json`에 둔다.
 
-Vercel은 프로젝트별 Root Directory(`apps/web`, `apps/portfolio`)로 연결되어 있고, 각 앱의 `vercel.json`
-`ignoreCommand`(`npx turbo-ignore`)가 무관한 커밋의 빌드를 건너뛴다.
+Vercel은 프로젝트별 Root Directory(`apps/web`, `apps/portfolio`)로 연결되어 있고, 무관한 커밋의 빌드는
+Vercel 프로젝트 설정의 **Skip deployments**(Build and Deployment → Root Directory)가 건너뛴다. `vercel.json`의
+`ignoreCommand`는 쓰지 않는다 — 대시보드의 Ignored Build Step 설정을 덮어쓰는 데다, `turbo-ignore`가 deprecated다.
 
 ## 아키텍처
 
