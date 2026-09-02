@@ -29,7 +29,8 @@ export function NavLinks({ className, onLinkClick, variant = 'pill' }: Props) {
   return (
     <nav
       className={cn(
-        variant === 'pill' && 'flex items-center gap-1 rounded-full bg-muted p-1',
+        variant === 'pill' &&
+          'flex items-center gap-1 rounded-full bg-muted p-1',
         className
       )}
     >

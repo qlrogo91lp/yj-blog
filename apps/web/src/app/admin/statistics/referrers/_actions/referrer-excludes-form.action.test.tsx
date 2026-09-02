@@ -43,7 +43,9 @@ describe('ReferrerExcludesFormAction', () => {
 
   it('칩의 삭제 버튼을 누르면 그 항목을 뺀 목록으로 저장한다', async () => {
     vi.mocked(editReferrerExcludes).mockResolvedValue({ success: true });
-    render(<ReferrerExcludesFormAction excludes={['t.co', 'l.facebook.com']} />);
+    render(
+      <ReferrerExcludesFormAction excludes={['t.co', 'l.facebook.com']} />
+    );
 
     fireEvent.click(
       screen.getByRole('button', { name: 't.co 제외 목록에서 삭제' })

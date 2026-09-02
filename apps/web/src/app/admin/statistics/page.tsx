@@ -1,5 +1,3 @@
-export const revalidate = 60;
-
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -17,10 +15,12 @@ import {
 } from '@/db/queries/daily-stats';
 import { selectPopularPosts } from '@/db/queries/statistics';
 import { AdminPageHeader } from '../_components/admin-page-header';
-import { AnalyticsLinkButton } from './_components/analytics-link-button';
-import { PeriodFilterAction } from './_actions/period-filter.action';
-import { StatCard } from './_components/stat-card';
 import { StatsChart } from '../_components/stats-chart';
+import { PeriodFilterAction } from './_actions/period-filter.action';
+import { AnalyticsLinkButton } from './_components/analytics-link-button';
+import { StatCard } from './_components/stat-card';
+
+export const revalidate = 60;
 
 type Props = {
   searchParams: Promise<{ days?: string }>;
@@ -30,7 +30,10 @@ export default async function AdminStatisticsPage({ searchParams }: Props) {
   const { days: daysParam } = await searchParams;
   const currentPeriod = daysParam ?? '30';
   const parsed = Number(currentPeriod);
-  const days = currentPeriod === 'all' || !Number.isFinite(parsed) || parsed <= 0 ? undefined : parsed;
+  const days =
+    currentPeriod === 'all' || !Number.isFinite(parsed) || parsed <= 0
+      ? undefined
+      : parsed;
   const chartDays = days ?? 30; // "전체" 선택 시에도 그래프는 최근 30일 고정
 
   const [summary, dailyStats, popularPosts, comparison] = await Promise.all([

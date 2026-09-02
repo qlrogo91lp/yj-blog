@@ -16,27 +16,27 @@ Next.js 16 기반 개인 블로그. App Router + Drizzle ORM + Neon PostgreSQL +
 
 ## 환경 변수
 
-| 변수 | 설명 | 필수 |
-|------|------|------|
-| `DATABASE_URL` | Neon PostgreSQL 연결 문자열 | ✅ |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk 공개 키 | ✅ |
-| `CLERK_SECRET_KEY` | Clerk 비밀 키 | ✅ |
-| `R2_ACCOUNT_ID` | Cloudflare R2 계정 ID | ✅ |
-| `R2_ACCESS_KEY_ID` | Cloudflare R2 액세스 키 | ✅ |
-| `R2_SECRET_ACCESS_KEY` | Cloudflare R2 시크릿 키 | ✅ |
-| `R2_BUCKET_NAME` | R2 버킷 이름 | ✅ |
-| `R2_PUBLIC_URL` | R2 퍼블릭 도메인 URL | ✅ |
-| `NEXT_PUBLIC_SITE_URL` | 사이트 URL (기본값: `https://yjlogs.com`) | - |
-| `NEXT_PUBLIC_BASE_URL` | sitemap/robots 기준 URL | - |
-| `RESEND_API_KEY` | Resend 이메일 전송 API 키 | - |
-| `DISCORD_WEBHOOK_URL` | Discord 댓글 알림 Webhook URL | - |
+| 변수                                | 설명                                      | 필수 |
+| ----------------------------------- | ----------------------------------------- | ---- |
+| `DATABASE_URL`                      | Neon PostgreSQL 연결 문자열               | ✅   |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk 공개 키                             | ✅   |
+| `CLERK_SECRET_KEY`                  | Clerk 비밀 키                             | ✅   |
+| `R2_ACCOUNT_ID`                     | Cloudflare R2 계정 ID                     | ✅   |
+| `R2_ACCESS_KEY_ID`                  | Cloudflare R2 액세스 키                   | ✅   |
+| `R2_SECRET_ACCESS_KEY`              | Cloudflare R2 시크릿 키                   | ✅   |
+| `R2_BUCKET_NAME`                    | R2 버킷 이름                              | ✅   |
+| `R2_PUBLIC_URL`                     | R2 퍼블릭 도메인 URL                      | ✅   |
+| `NEXT_PUBLIC_SITE_URL`              | 사이트 URL (기본값: `https://yjlogs.com`) | -    |
+| `NEXT_PUBLIC_BASE_URL`              | sitemap/robots 기준 URL                   | -    |
+| `RESEND_API_KEY`                    | Resend 이메일 전송 API 키                 | -    |
+| `DISCORD_WEBHOOK_URL`               | Discord 댓글 알림 Webhook URL             | -    |
 
 ## 브랜치 전략
 
-| 브랜치 | 역할 |
-|--------|------|
-| `main` | 프로덕션 배포 브랜치 |
-| `develop` | 통합 개발 브랜치. 기능 브랜치의 merge 대상 |
+| 브랜치      | 역할                                                  |
+| ----------- | ----------------------------------------------------- |
+| `main`      | 프로덕션 배포 브랜치                                  |
+| `develop`   | 통합 개발 브랜치. 기능 브랜치의 merge 대상            |
 | `feature/*` | 기능 단위 개발 브랜치. 작업 완료 후 `develop`에 merge |
 
 ```
@@ -62,11 +62,11 @@ npx drizzle-kit studio  # DB 데이터 GUI로 확인
 
 ## DB 스키마
 
-| 테이블 | 설명 |
-|--------|------|
-| `posts` | 블로그 글. slug 기반 URL, draft/published 상태, 조회수, 썸네일, SEO 메타(metaTitle, metaDescription), markdown/html 콘텐츠 |
-| `categories` | 글 분류 (1:N). slug 기반 URL, 설명 필드 |
-| `comments` | 비밀번호(bcrypt) 기반 댓글. parentId로 대댓글 지원, 소프트 삭제(isDeleted) |
+| 테이블       | 설명                                                                                                                       |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `posts`      | 블로그 글. slug 기반 URL, draft/published 상태, 조회수, 썸네일, SEO 메타(metaTitle, metaDescription), markdown/html 콘텐츠 |
+| `categories` | 글 분류 (1:N). slug 기반 URL, 설명 필드                                                                                    |
+| `comments`   | 비밀번호(bcrypt) 기반 댓글. parentId로 대댓글 지원, 소프트 삭제(isDeleted)                                                 |
 
 **관계**: categories 1:N posts, posts 1:N comments, comments 셀프 참조(parentId → 대댓글)
 
@@ -140,11 +140,13 @@ e2e/                                        # Playwright E2E 테스트
 ## 테스트 전략
 
 ### Vitest — 단위/통합 테스트
+
 - 테스트 파일은 대상 파일 옆에 `*.test.ts(x)` 로 위치 (예: `PostCard.tsx` → `PostCard.test.tsx`)
 - `types/` Zod 스키마 유효성 검증
 - `components/` 컴포넌트 렌더링 및 인터랙션
 
 ### Playwright — E2E 테스트
+
 - 실제 브라우저(Chromium)에서 사용자 시나리오 실행
 
 ```

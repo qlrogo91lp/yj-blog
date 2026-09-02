@@ -1,6 +1,6 @@
 import type { Series } from '@/types';
-import { EditSeriesAction } from '../_actions/edit-series.action';
 import { DeleteSeriesAction } from '../_actions/delete-series.action';
+import { EditSeriesAction } from '../_actions/edit-series.action';
 
 type Props = {
   series: Series;

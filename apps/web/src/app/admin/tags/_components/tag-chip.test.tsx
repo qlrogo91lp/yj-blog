@@ -25,7 +25,9 @@ describe('TagChip', () => {
 
   it('사용 중 태그에는 삭제 버튼이 없다', () => {
     render(<TagChip tag={usedTag} />);
-    expect(screen.queryByRole('button', { name: '삭제' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '삭제' })
+    ).not.toBeInTheDocument();
   });
 
   it('미사용 태그는 개수 없이 삭제 버튼을 보여준다', () => {

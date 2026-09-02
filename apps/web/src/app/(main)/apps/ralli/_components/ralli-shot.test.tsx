@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { RalliShot } from './ralli-shot';
 import type { RalliImage } from '../_utils/ralli-content';
+import { RalliShot } from './ralli-shot';
 
 vi.mock('next/image', () => ({
   default: ({
@@ -18,7 +18,14 @@ vi.mock('next/image', () => ({
     className?: string;
     sizes?: string;
   }) => (
-    <img src={src} alt={alt} width={width} height={height} className={className} sizes={sizes} />
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+      sizes={sizes}
+    />
   ),
 }));
 

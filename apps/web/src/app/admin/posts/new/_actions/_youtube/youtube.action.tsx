@@ -20,7 +20,11 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function YoutubeEmbedDialogAction({ editor, open, onOpenChange }: Props) {
+export function YoutubeEmbedDialogAction({
+  editor,
+  open,
+  onOpenChange,
+}: Props) {
   const [url, setUrl] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,7 +40,9 @@ export function YoutubeEmbedDialogAction({ editor, open, onOpenChange }: Props) 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>YouTube 영상 삽입</DialogTitle>
-          <DialogDescription className="sr-only">YouTube URL을 입력해 영상을 삽입합니다</DialogDescription>
+          <DialogDescription className="sr-only">
+            YouTube URL을 입력해 영상을 삽입합니다
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
@@ -51,7 +57,9 @@ export function YoutubeEmbedDialogAction({ editor, open, onOpenChange }: Props) 
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={!url}>삽입</Button>
+            <Button type="submit" disabled={!url}>
+              삽입
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

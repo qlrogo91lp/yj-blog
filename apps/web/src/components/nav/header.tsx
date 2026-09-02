@@ -1,11 +1,14 @@
 import Link from 'next/link';
+import { ContentContainer } from '@/components/layout/content-container';
+import {
+  HeaderAdminLink,
+  HeaderAuthButtons,
+} from '@/components/nav/header-auth';
 import { Logo } from '@/components/nav/logo';
-import { NavLinks } from '@/components/nav/nav-links';
 import { MobileMenu } from '@/components/nav/mobile-menu';
-import { HeaderAdminLink, HeaderAuthButtons } from '@/components/nav/header-auth';
+import { NavLinks } from '@/components/nav/nav-links';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SITE_NAME } from '@/lib/constants';
-import { ContentContainer } from '@/components/layout/content-container';
 
 export function Header() {
   return (

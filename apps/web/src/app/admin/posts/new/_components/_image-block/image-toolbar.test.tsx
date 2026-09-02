@@ -1,5 +1,5 @@
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
 import { ImageToolbar } from './image-toolbar';
 
 describe('ImageToolbar', () => {
@@ -15,13 +15,21 @@ describe('ImageToolbar', () => {
 
   it('정렬 3개, 사이즈 3개, 삭제 버튼을 렌더한다', () => {
     render(<ImageToolbar {...baseProps} />);
-    expect(screen.getByRole('button', { name: '왼쪽 정렬' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '가운데 정렬' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '오른쪽 정렬' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '왼쪽 정렬' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '가운데 정렬' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '오른쪽 정렬' })
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '40%' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '기본' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '전체 폭' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '이미지 삭제' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '이미지 삭제' })
+    ).toBeInTheDocument();
   });
 
   it('사이즈 버튼 클릭 시 onSizeChange 호출', () => {
@@ -33,7 +41,9 @@ describe('ImageToolbar', () => {
 
   it('정렬 버튼 클릭 시 onAlignChange 호출', () => {
     const onAlignChange = vi.fn();
-    render(<ImageToolbar {...baseProps} size="small" onAlignChange={onAlignChange} />);
+    render(
+      <ImageToolbar {...baseProps} size="small" onAlignChange={onAlignChange} />
+    );
     fireEvent.click(screen.getByRole('button', { name: '오른쪽 정렬' }));
     expect(onAlignChange).toHaveBeenCalledWith('right');
   });
@@ -63,18 +73,18 @@ describe('ImageToolbar', () => {
     render(<ImageToolbar {...baseProps} size="small" />);
     expect(screen.getByRole('button', { name: '40%' })).toHaveAttribute(
       'aria-pressed',
-      'true',
+      'true'
     );
     expect(screen.getByRole('button', { name: '기본' })).toHaveAttribute(
       'aria-pressed',
-      'false',
+      'false'
     );
   });
 
   it('alt 설정 톱니 버튼이 렌더된다', () => {
     render(<ImageToolbar {...baseProps} />);
     expect(
-      screen.getByRole('button', { name: '대체 텍스트 설정' }),
+      screen.getByRole('button', { name: '대체 텍스트 설정' })
     ).toBeInTheDocument();
   });
 
@@ -98,12 +108,14 @@ describe('ImageToolbar', () => {
     render(<ImageToolbar {...baseProps} size="default" />);
     expect(screen.getByRole('button', { name: '왼쪽 정렬' })).toHaveAttribute(
       'title',
-      '40% 크기에서만 정렬할 수 있습니다',
+      '40% 크기에서만 정렬할 수 있습니다'
     );
   });
 
   it('size=small이면 정렬 버튼에 title이 없다', () => {
     render(<ImageToolbar {...baseProps} size="small" />);
-    expect(screen.getByRole('button', { name: '왼쪽 정렬' })).not.toHaveAttribute('title');
+    expect(
+      screen.getByRole('button', { name: '왼쪽 정렬' })
+    ).not.toHaveAttribute('title');
   });
 });

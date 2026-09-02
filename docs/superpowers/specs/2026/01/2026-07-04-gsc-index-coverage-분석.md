@@ -8,14 +8,14 @@ GSC "페이지 색인 생성" 리포트에서 아래 카테고리로 URL이 제�
 
 ## 영향받은 URL과 원인
 
-| 카테고리 | URL | 원인 | 조치 |
-|---|---|---|---|
-| 리디렉션 포함 | `http://yjlogs.com/` | http→https 리디렉션 (정상) | 무시 |
-| 내용 없이 색인 | `clerk.yjlogs.com` | Clerk 인증 서브도메인, 콘텐츠 없음 | 무시 (블로그와 무관) |
-| 404 | `/posts/javascript-closure` | 예전 테스트 글, 현재 미존재 | 무시 (자연 소멸) |
-| 404 | `/posts/post-1773612232339` | 타임스탬프 자동생성 slug의 옛 테스트 글, 현재 미존재 | 무시 (자연 소멸) |
-| NOINDEX | `/apps/timelens` | GSC 데이터가 오래됨 (앱 추가 이전 404 시점 기록) | 재색인 요청 + sitemap 추가 |
-| NOINDEX | `/posts/react-hooks-deep-dive` | 예전 테스트 글, 현재 미존재 | 무시 (자연 소멸) |
+| 카테고리       | URL                            | 원인                                                 | 조치                       |
+| -------------- | ------------------------------ | ---------------------------------------------------- | -------------------------- |
+| 리디렉션 포함  | `http://yjlogs.com/`           | http→https 리디렉션 (정상)                           | 무시                       |
+| 내용 없이 색인 | `clerk.yjlogs.com`             | Clerk 인증 서브도메인, 콘텐츠 없음                   | 무시 (블로그와 무관)       |
+| 404            | `/posts/javascript-closure`    | 예전 테스트 글, 현재 미존재                          | 무시 (자연 소멸)           |
+| 404            | `/posts/post-1773612232339`    | 타임스탬프 자동생성 slug의 옛 테스트 글, 현재 미존재 | 무시 (자연 소멸)           |
+| NOINDEX        | `/apps/timelens`               | GSC 데이터가 오래됨 (앱 추가 이전 404 시점 기록)     | 재색인 요청 + sitemap 추가 |
+| NOINDEX        | `/posts/react-hooks-deep-dive` | 예전 테스트 글, 현재 미존재                          | 무시 (자연 소멸)           |
 
 ## 핵심 메커니즘: `notFound()` → noindex
 

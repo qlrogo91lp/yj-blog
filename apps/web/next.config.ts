@@ -33,7 +33,7 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://clerk.yjlogs.com https://www.googletagmanager.com",
               "style-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev",
               "img-src 'self' data: https:",
-              "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://*.clerk.accounts.dev",
+              'frame-src https://www.youtube.com https://www.youtube-nocookie.com https://*.clerk.accounts.dev',
               "connect-src 'self' https://*.clerk.accounts.dev https://clerk.yjlogs.com https://clerk-telemetry.com https://*.google-analytics.com https://*.analytics.google.com",
               "worker-src 'self' blob:",
             ].join('; '),

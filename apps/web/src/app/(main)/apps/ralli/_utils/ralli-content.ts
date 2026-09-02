@@ -24,7 +24,8 @@ function watchImage(src: string, alt: string): RalliImage {
 export const ralliMeta = {
   name: 'Ralli',
   taglineLines: ['Tennis scores,', 'right on your wrist.'],
-  subtitle: 'Score, track, and replay every match — without ever pulling out your phone.',
+  subtitle:
+    'Score, track, and replay every match — without ever pulling out your phone.',
   platforms: 'Apple Watch · iPhone',
   iconSrc: '/ralli/icon1.png',
   supportEmail: 'qlrogo91lp@gmail.com',
@@ -35,7 +36,7 @@ export const ralliHeroLetters = ['R', 'A', 'L', 'L', 'I'] as const;
 
 export const ralliHeroShot = watchImage(
   '/ralli/watch-match-global.png',
-  'Ralli match score on Apple Watch',
+  'Ralli match score on Apple Watch'
 );
 
 export const ralliMarqueeItems = [
@@ -64,7 +65,10 @@ export const ralliWatchSection = {
       id: 'score',
       title: 'Score without your phone',
       body: 'Pick a format, tap to score, check results — entirely from Apple Watch.',
-      image: watchImage('/ralli/watch-match-global.png', 'Ralli match score on Apple Watch'),
+      image: watchImage(
+        '/ralli/watch-match-global.png',
+        'Ralli match score on Apple Watch'
+      ),
     },
     {
       id: 'complication',
@@ -72,7 +76,7 @@ export const ralliWatchSection = {
       body: 'Add the complication and start a match the second you step on court.',
       image: watchImage(
         '/ralli/watch-complication-global.png',
-        'Ralli complication on the Apple Watch face',
+        'Ralli complication on the Apple Watch face'
       ),
     },
     {
@@ -81,7 +85,7 @@ export const ralliWatchSection = {
       body: 'The current score stays visible in Dynamic Island and Live Activities.',
       image: iosImage(
         '/ralli/ios-live-global.png',
-        'Ralli Live Activity on the iPhone Lock Screen',
+        'Ralli Live Activity on the iPhone Lock Screen'
       ),
     },
   ] satisfies RalliStep[],
@@ -126,8 +130,14 @@ export const ralliWorkoutSection = {
     },
   ] satisfies RalliStat[],
   images: [
-    watchImage('/ralli/watch-workout-global.png', 'Ralli workout metrics on Apple Watch'),
-    iosImage('/ralli/ios-workout-global.png', 'Ralli workout metrics on iPhone'),
+    watchImage(
+      '/ralli/watch-workout-global.png',
+      'Ralli workout metrics on Apple Watch'
+    ),
+    iosImage(
+      '/ralli/ios-workout-global.png',
+      'Ralli workout metrics on iPhone'
+    ),
   ],
 };
 
@@ -142,11 +152,23 @@ export const ralliReplaySection = {
   label: '03 — REPLAY',
   heading: 'Every match, back on your iPhone.',
   gallery: [
-    iosImage('/ralli/ios-summary-global.png', 'Ralli match summary stats on iPhone'),
+    iosImage(
+      '/ralli/ios-summary-global.png',
+      'Ralli match summary stats on iPhone'
+    ),
     iosImage('/ralli/ios-match-global.png', 'Ralli match score on iPhone'),
-    iosImage('/ralli/connectivity-global.png', 'Ralli on iPhone and Apple Watch together'),
-    iosImage('/ralli/ios-mode-global.png', 'Ralli match format selection on iPhone'),
-    iosImage('/ralli/ios-live-global.png', 'Ralli Live Activity on the iPhone Lock Screen'),
+    iosImage(
+      '/ralli/connectivity-global.png',
+      'Ralli on iPhone and Apple Watch together'
+    ),
+    iosImage(
+      '/ralli/ios-mode-global.png',
+      'Ralli match format selection on iPhone'
+    ),
+    iosImage(
+      '/ralli/ios-live-global.png',
+      'Ralli Live Activity on the iPhone Lock Screen'
+    ),
   ],
   notes: [
     {
@@ -174,8 +196,14 @@ export const ralliRulesSection = {
   body: 'Club night, league, or a quick hit — start with the format you actually play.',
   chips: ['4 games', '5 games', '6 games', 'No-ad', 'No-tie', 'Tiebreak'],
   images: [
-    watchImage('/ralli/watch-mode-global.png', 'Ralli match format on Apple Watch'),
-    iosImage('/ralli/ios-mode-global.png', 'Ralli match format selection on iPhone'),
+    watchImage(
+      '/ralli/watch-mode-global.png',
+      'Ralli match format on Apple Watch'
+    ),
+    iosImage(
+      '/ralli/ios-mode-global.png',
+      'Ralli match format selection on iPhone'
+    ),
   ],
 };
 

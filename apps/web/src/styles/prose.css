@@ -126,16 +126,16 @@
 .prose img {
   border-radius: var(--radius-image);
 }
-.prose figure[data-size="small"],
-.prose img[data-size="small"] {
+.prose figure[data-size='small'],
+.prose img[data-size='small'] {
   width: 40%;
 }
-.prose figure[data-size="default"],
-.prose img[data-size="default"] {
+.prose figure[data-size='default'],
+.prose img[data-size='default'] {
   width: 100%;
 }
-.prose figure[data-size="full"],
-.prose img[data-size="full"] {
+.prose figure[data-size='full'],
+.prose img[data-size='full'] {
   width: var(--content-width);
   max-width: calc(100vw - 2rem);
   margin-left: 50%;
@@ -147,18 +147,18 @@
   border-radius: var(--radius-image);
 }
 
-.prose figure[data-align="left"],
-.prose img[data-align="left"] {
+.prose figure[data-align='left'],
+.prose img[data-align='left'] {
   margin-right: auto;
   margin-left: 0;
 }
-.prose figure[data-align="center"],
-.prose img[data-align="center"] {
+.prose figure[data-align='center'],
+.prose img[data-align='center'] {
   margin-left: auto;
   margin-right: auto;
 }
-.prose figure[data-align="right"],
-.prose img[data-align="right"] {
+.prose figure[data-align='right'],
+.prose img[data-align='right'] {
   margin-left: auto;
   margin-right: 0;
 }
@@ -170,17 +170,17 @@
  * data-align 규칙이 margin-left를 덮어써 좌우 비대칭 bleed가 발생하므로,
  * [data-size="full"][data-align] 복합 셀렉터로 specificity를 높여 재정의한다.
  */
-.prose figure[data-size="full"][data-align],
-.prose img[data-size="full"][data-align] {
+.prose figure[data-size='full'][data-align],
+.prose img[data-size='full'][data-align] {
   margin-left: 50%;
   transform: translateX(-50%);
 }
 
 /* ── 단일 이미지 세로 길이 상한 ── */
-.prose img[data-size="default"],
-.prose img[data-size="small"],
-.prose figure[data-size="default"] img,
-.prose figure[data-size="small"] img {
+.prose img[data-size='default'],
+.prose img[data-size='small'],
+.prose figure[data-size='default'] img,
+.prose figure[data-size='small'] img {
   max-height: 80vh;
   width: auto;
 }
@@ -238,20 +238,20 @@
   .prose img[data-size] {
     width: 100%;
   }
-  .prose img[data-size="default"],
-  .prose img[data-size="small"],
-  .prose figure[data-size="default"] img,
-  .prose figure[data-size="small"] img {
+  .prose img[data-size='default'],
+  .prose img[data-size='small'],
+  .prose figure[data-size='default'] img,
+  .prose figure[data-size='small'] img {
     width: auto;
   }
-  .prose figure[data-size="full"],
-  .prose img[data-size="full"] {
+  .prose figure[data-size='full'],
+  .prose img[data-size='full'] {
     max-width: 100%;
     margin-left: 0;
     transform: none;
   }
-  .prose figure[data-size="full"][data-align],
-  .prose img[data-size="full"][data-align] {
+  .prose figure[data-size='full'][data-align],
+  .prose img[data-size='full'][data-align] {
     max-width: 100%;
     margin-left: 0;
     transform: none;

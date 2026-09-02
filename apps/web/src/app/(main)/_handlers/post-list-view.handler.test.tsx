@@ -34,7 +34,13 @@ vi.mock('next/image', () => ({
     height: number;
     className?: string;
   }) => (
-    <img src={src} alt={alt} width={width} height={height} className={className} />
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+    />
   ),
 }));
 

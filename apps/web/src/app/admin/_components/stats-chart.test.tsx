@@ -2,8 +2,20 @@ import { describe, expect, it } from 'vitest';
 import { buildChartData } from './stats-chart';
 
 const data = [
-  { date: '2026-08-15', views: 10, visitors: 5, previousViews: 8, previousVisitors: 4 },
-  { date: '2026-08-16', views: 20, visitors: 9, previousViews: 12, previousVisitors: 6 },
+  {
+    date: '2026-08-15',
+    views: 10,
+    visitors: 5,
+    previousViews: 8,
+    previousVisitors: 4,
+  },
+  {
+    date: '2026-08-16',
+    views: 20,
+    visitors: 9,
+    previousViews: 12,
+    previousVisitors: 6,
+  },
 ];
 
 describe('buildChartData', () => {

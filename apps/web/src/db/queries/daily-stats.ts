@@ -114,7 +114,10 @@ export async function selectDashboardOverview(days: number) {
   // 데이터가 없는 날은 0으로 채워 두 기간의 길이를 맞춘다.
   const fill = (rows: typeof currentRows, start: string) =>
     Array.from({ length: days }, (_, i) => {
-      const date = format(subDays(new Date(`${start}T00:00:00`), -i), 'yyyy-MM-dd');
+      const date = format(
+        subDays(new Date(`${start}T00:00:00`), -i),
+        'yyyy-MM-dd'
+      );
       const found = rows.find((row) => row.date === date);
       return {
         date,

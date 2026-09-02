@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { htmlToHtmlWithToc } from './markdown';
 
 describe('htmlToHtmlWithToc — 이미지 캡션', () => {
@@ -20,7 +20,8 @@ describe('htmlToHtmlWithToc — 이미지 캡션', () => {
   });
 
   it('data-caption이 없는 img는 변환하지 않는다', async () => {
-    const html = '<p><img src="a.png" data-size="default" data-align="center" /></p>';
+    const html =
+      '<p><img src="a.png" data-size="default" data-align="center" /></p>';
     const { html: result } = await htmlToHtmlWithToc(html);
     expect(result).not.toContain('<figure');
     expect(result).not.toContain('<figcaption>');
@@ -58,7 +59,8 @@ describe('htmlToHtmlWithToc — 갤러리', () => {
 
 describe('htmlToHtmlWithToc — 코드 하이라이트', () => {
   it('language 클래스가 있는 code를 hljs 토큰으로 하이라이트한다', async () => {
-    const html = '<pre><code class="language-javascript">const a = 1;</code></pre>';
+    const html =
+      '<pre><code class="language-javascript">const a = 1;</code></pre>';
     const { html: result } = await htmlToHtmlWithToc(html);
     expect(result).toContain('hljs');
     expect(result).toContain('hljs-keyword');

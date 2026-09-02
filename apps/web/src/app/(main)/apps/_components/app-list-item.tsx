@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { AppPlatformChips } from './app-platform-chips';
 import type { App } from '../_utils/apps-data';
+import { AppPlatformChips } from './app-platform-chips';
 
 type Props = {
   app: App;
@@ -26,7 +26,9 @@ export function AppListItem({ app }: Props) {
       <div className="min-w-0 flex-1">
         <AppPlatformChips platforms={app.platforms} />
         <h2 className="mt-1.5 font-semibold">{app.name}</h2>
-        <p className="mt-0.5 truncate text-sm text-muted-foreground">{app.description}</p>
+        <p className="mt-0.5 truncate text-sm text-muted-foreground">
+          {app.description}
+        </p>
       </div>
 
       <ChevronRight

@@ -5,13 +5,25 @@ import type { PostWithCategory } from '@/types';
 import { PostArchiveRow } from './post-archive-row';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockPost = {
@@ -36,7 +48,10 @@ const mockPost = {
 describe('PostArchiveRow', () => {
   it('제목을 글 상세 링크로 렌더링한다', () => {
     render(<PostArchiveRow post={mockPost} />);
-    expect(screen.getByRole('link', { name: '아카이브 항목' })).toHaveAttribute('href', '/posts/archive-item');
+    expect(screen.getByRole('link', { name: '아카이브 항목' })).toHaveAttribute(
+      'href',
+      '/posts/archive-item'
+    );
   });
 
   it('카테고리명을 표시한다', () => {

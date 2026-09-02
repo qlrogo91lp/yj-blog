@@ -60,7 +60,10 @@ type ChartDataPoint = {
   previousVisitors?: number;
 };
 
-export function buildChartData(data: ChartDatum[], showPrevious: boolean): ChartDataPoint[] {
+export function buildChartData(
+  data: ChartDatum[],
+  showPrevious: boolean
+): ChartDataPoint[] {
   return data.map((d) => {
     const base = {
       date: d.date,
@@ -79,7 +82,11 @@ export function buildChartData(data: ChartDatum[], showPrevious: boolean): Chart
   });
 }
 
-export function StatsChart({ data, showPrevious = false, tone = 'light' }: Props) {
+export function StatsChart({
+  data,
+  showPrevious = false,
+  tone = 'light',
+}: Props) {
   const chartData = buildChartData(data, showPrevious);
   const chrome = CHROME_COLORS[tone];
 

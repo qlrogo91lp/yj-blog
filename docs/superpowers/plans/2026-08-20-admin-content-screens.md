@@ -1,6 +1,7 @@
 # 어드민 콘텐츠 화면 셀 A 구현 계획 (어드민 리디자인 PR 2/4)
 
 > **완료: 2026-08-20.** Task 1~9 전부 완료. SDD(subagent-driven-development)로 실행 — 태스크별 구현·리뷰 후 전체 브랜치 최종 리뷰까지 마쳤다. 결과 요약:
+>
 > - Task 1~8: 전부 태스크 리뷰 통과. 플랜 자체의 결함 2건(Task 4의 "이어서 쓰기"/"삭제" 버튼 미구현, Task 7의 시리즈 삭제 확인 문구 postCount 전제 오류)은 사용자 확인을 거쳐 현재 구현을 유지하기로 결정.
 > - Task 9 검증 중 회귀 발견·수정: Task 1 수정 라운드가 유발한 `zodResolver` 제네릭 타입 충돌 → `SeriesFormValues`를 `z.input`으로 수정.
 > - 전체 브랜치 최종 리뷰(opus)에서 추가 발견·수정: 글 삭제 시 `CACHE_TAGS.tags` 무효화 누락(Task 6에서 고친 것과 같은 계열의 결함이 `remove-post.ts`에 남아있었음).
@@ -47,12 +48,12 @@
 
 ## 로드맵 — 어드민 리디자인 4개 PR
 
-| 순서 | 브랜치 | plan 문서 | 상태 |
-|---|---|---|---|
-| 1 | `refactor/admin-shell-cell-a` | [2026-08-20-admin-shell-cell-a.md](./2026-08-20-admin-shell-cell-a.md) | 완료 (PR #83 머지, 육안 확인 미완) |
-| 2 | `refactor/admin-content-screens` | 이 문서 | 진행 예정 |
-| 3 | `feature/admin-comment-reply` | 미작성 | 댓글 관리 + `comments.isAuthor` + 관리자 답글 |
-| 4 | `refactor/admin-stats-settings` | 미작성 | 대시보드·방문 통계·유입경로·블로그 설정 |
+| 순서 | 브랜치                           | plan 문서                                                              | 상태                                          |
+| ---- | -------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------- |
+| 1    | `refactor/admin-shell-cell-a`    | [2026-08-20-admin-shell-cell-a.md](./2026-08-20-admin-shell-cell-a.md) | 완료 (PR #83 머지, 육안 확인 미완)            |
+| 2    | `refactor/admin-content-screens` | 이 문서                                                                | 진행 예정                                     |
+| 3    | `feature/admin-comment-reply`    | 미작성                                                                 | 댓글 관리 + `comments.isAuthor` + 관리자 답글 |
+| 4    | `refactor/admin-stats-settings`  | 미작성                                                                 | 대시보드·방문 통계·유입경로·블로그 설정       |
 
 ---
 
@@ -86,67 +87,67 @@
 
 **생성**
 
-| 파일 | 책임 |
-|---|---|
-| `src/app/admin/posts/_services/edit-post-status.ts` | 발행 상태 토글 Server Action |
-| `src/app/admin/posts/_services/edit-post-status.test.ts` | 인증·검증·쿼리 호출 검증 |
-| `src/app/admin/posts/_actions/post-status-toggle.action.tsx` | 발행 스위치 (클라이언트) |
-| `src/app/admin/posts/_actions/post-status-toggle.action.test.tsx` | 토글 렌더·호출 검증 |
-| `src/app/admin/posts/_actions/post-status-filter.action.tsx` | 전체/발행/임시 세그먼트 |
-| `src/app/admin/posts/_components/post-row.tsx` | 썸네일 중심 글 행 (순수) |
-| `src/app/admin/posts/_components/post-row.test.tsx` | 행 렌더 검증 |
-| `src/app/admin/categories/_components/category-card.tsx` | 카테고리 카드 (순수) |
-| `src/app/admin/categories/_components/category-card.test.tsx` | 카드 렌더 검증 |
-| `src/app/admin/categories/_components/uncategorized-banner.tsx` | 미분류 글 배너 (순수) |
-| `src/app/admin/categories/_components/uncategorized-banner.test.tsx` | 배너 렌더·분기 검증 |
-| `src/app/admin/categories/_actions/category-board.action.tsx` | 카드 그리드 + 새 카테고리 다이얼로그 |
-| `src/app/admin/tags/_services/remove-unused-tags.ts` | 미사용 태그 일괄 삭제 Server Action |
-| `src/app/admin/tags/_services/remove-unused-tags.test.ts` | 인증·쿼리 호출 검증 |
-| `src/app/admin/tags/_components/tag-chip.tsx` | 태그 칩 (순수) |
-| `src/app/admin/tags/_components/tag-chip.test.tsx` | 칩 렌더 검증 |
-| `src/app/admin/tags/_actions/tag-board.action.tsx` | 칩 보드 + 새 태그 입력 + 미사용 정리 |
-| `src/app/admin/tags/_actions/tag-board.action.test.tsx` | 보드 렌더·구분 검증 |
-| `src/app/admin/series/_components/series-stack-item.tsx` | 시리즈 한 건 + 회차 목록 (순수) |
-| `src/app/admin/series/_components/series-stack-item.test.tsx` | 스택 아이템 렌더·접힘 검증 |
-| `src/app/admin/series/_actions/series-stack.action.tsx` | 스택 + 펼침 상태 + 새 시리즈 다이얼로그 |
+| 파일                                                                 | 책임                                    |
+| -------------------------------------------------------------------- | --------------------------------------- |
+| `src/app/admin/posts/_services/edit-post-status.ts`                  | 발행 상태 토글 Server Action            |
+| `src/app/admin/posts/_services/edit-post-status.test.ts`             | 인증·검증·쿼리 호출 검증                |
+| `src/app/admin/posts/_actions/post-status-toggle.action.tsx`         | 발행 스위치 (클라이언트)                |
+| `src/app/admin/posts/_actions/post-status-toggle.action.test.tsx`    | 토글 렌더·호출 검증                     |
+| `src/app/admin/posts/_actions/post-status-filter.action.tsx`         | 전체/발행/임시 세그먼트                 |
+| `src/app/admin/posts/_components/post-row.tsx`                       | 썸네일 중심 글 행 (순수)                |
+| `src/app/admin/posts/_components/post-row.test.tsx`                  | 행 렌더 검증                            |
+| `src/app/admin/categories/_components/category-card.tsx`             | 카테고리 카드 (순수)                    |
+| `src/app/admin/categories/_components/category-card.test.tsx`        | 카드 렌더 검증                          |
+| `src/app/admin/categories/_components/uncategorized-banner.tsx`      | 미분류 글 배너 (순수)                   |
+| `src/app/admin/categories/_components/uncategorized-banner.test.tsx` | 배너 렌더·분기 검증                     |
+| `src/app/admin/categories/_actions/category-board.action.tsx`        | 카드 그리드 + 새 카테고리 다이얼로그    |
+| `src/app/admin/tags/_services/remove-unused-tags.ts`                 | 미사용 태그 일괄 삭제 Server Action     |
+| `src/app/admin/tags/_services/remove-unused-tags.test.ts`            | 인증·쿼리 호출 검증                     |
+| `src/app/admin/tags/_components/tag-chip.tsx`                        | 태그 칩 (순수)                          |
+| `src/app/admin/tags/_components/tag-chip.test.tsx`                   | 칩 렌더 검증                            |
+| `src/app/admin/tags/_actions/tag-board.action.tsx`                   | 칩 보드 + 새 태그 입력 + 미사용 정리    |
+| `src/app/admin/tags/_actions/tag-board.action.test.tsx`              | 보드 렌더·구분 검증                     |
+| `src/app/admin/series/_components/series-stack-item.tsx`             | 시리즈 한 건 + 회차 목록 (순수)         |
+| `src/app/admin/series/_components/series-stack-item.test.tsx`        | 스택 아이템 렌더·접힘 검증              |
+| `src/app/admin/series/_actions/series-stack.action.tsx`              | 스택 + 펼침 상태 + 새 시리즈 다이얼로그 |
 
 **수정**
 
-| 파일 | 변경 |
-|---|---|
-| `src/db/schema.ts` | `seriesStatusEnum` + `series.status` 컬럼 추가 |
-| `src/types/series.ts` | `seriesFormSchema`에 `status` 추가 |
-| `src/types/series.test.ts` | `status` 검증 테스트 추가 |
-| `src/types/tag.ts` | `TagWithCount` 타입 추가 (삭제될 `columns.tsx`의 `TagRow` 대체) |
-| `src/types/index.ts` | `TagWithCount` 재export |
-| `src/db/queries/series.ts` | `insertSeries`/`updateSeries`에 `status` 반영, `selectSeriesListForAdmin` 추가 |
-| `src/db/queries/posts.ts` | `getAllPostsForAdmin`에 댓글 수·태그 추가, `updatePostStatus` 추가 |
-| `src/db/queries/categories.ts` | `getCategoriesWithPostCount`, `selectUncategorizedPosts` 추가 |
-| `src/db/queries/tags.ts` | `deleteUnusedTags` 추가 |
-| `src/app/admin/series/_actions/series-form-dialog.action.tsx` | 연재 중/완결 선택 필드 추가 |
-| `src/app/admin/posts/new/_services/save-post.ts` | `post_tags`를 다시 쓰면서 `CACHE_TAGS.tags`를 무효화하지 않던 결함 수정 (Task 6) |
-| `src/app/admin/posts/page.tsx` | 표 → 썸네일 행 목록 + 필터 |
-| `src/app/admin/categories/page.tsx` | 표 → 카드 그리드 + 미분류 배너 |
-| `src/app/admin/tags/page.tsx` | 표 → 칩 보드 |
-| `src/app/admin/series/page.tsx` | 표 → 접힘 스택 |
-| `src/app/admin/posts/loading.tsx` | 새 레이아웃에 맞는 스켈레톤 |
-| `src/app/admin/categories/loading.tsx` | 새 레이아웃에 맞는 스켈레톤 |
-| `src/app/admin/series/loading.tsx` | 새 레이아웃에 맞는 스켈레톤 |
-| `package.json` | `@tanstack/react-table` 제거 |
+| 파일                                                          | 변경                                                                             |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `src/db/schema.ts`                                            | `seriesStatusEnum` + `series.status` 컬럼 추가                                   |
+| `src/types/series.ts`                                         | `seriesFormSchema`에 `status` 추가                                               |
+| `src/types/series.test.ts`                                    | `status` 검증 테스트 추가                                                        |
+| `src/types/tag.ts`                                            | `TagWithCount` 타입 추가 (삭제될 `columns.tsx`의 `TagRow` 대체)                  |
+| `src/types/index.ts`                                          | `TagWithCount` 재export                                                          |
+| `src/db/queries/series.ts`                                    | `insertSeries`/`updateSeries`에 `status` 반영, `selectSeriesListForAdmin` 추가   |
+| `src/db/queries/posts.ts`                                     | `getAllPostsForAdmin`에 댓글 수·태그 추가, `updatePostStatus` 추가               |
+| `src/db/queries/categories.ts`                                | `getCategoriesWithPostCount`, `selectUncategorizedPosts` 추가                    |
+| `src/db/queries/tags.ts`                                      | `deleteUnusedTags` 추가                                                          |
+| `src/app/admin/series/_actions/series-form-dialog.action.tsx` | 연재 중/완결 선택 필드 추가                                                      |
+| `src/app/admin/posts/new/_services/save-post.ts`              | `post_tags`를 다시 쓰면서 `CACHE_TAGS.tags`를 무효화하지 않던 결함 수정 (Task 6) |
+| `src/app/admin/posts/page.tsx`                                | 표 → 썸네일 행 목록 + 필터                                                       |
+| `src/app/admin/categories/page.tsx`                           | 표 → 카드 그리드 + 미분류 배너                                                   |
+| `src/app/admin/tags/page.tsx`                                 | 표 → 칩 보드                                                                     |
+| `src/app/admin/series/page.tsx`                               | 표 → 접힘 스택                                                                   |
+| `src/app/admin/posts/loading.tsx`                             | 새 레이아웃에 맞는 스켈레톤                                                      |
+| `src/app/admin/categories/loading.tsx`                        | 새 레이아웃에 맞는 스켈레톤                                                      |
+| `src/app/admin/series/loading.tsx`                            | 새 레이아웃에 맞는 스켈레톤                                                      |
+| `package.json`                                                | `@tanstack/react-table` 제거                                                     |
 
 **삭제**
 
-| 파일 | 이유 |
-|---|---|
-| `src/components/data-table.tsx` | 마지막 사용처가 사라짐 |
-| `src/app/admin/posts/_components/columns.tsx` | 표 제거 |
-| `src/app/admin/categories/_components/columns.tsx` | 표 제거 |
-| `src/app/admin/series/_components/columns.tsx` | 표 제거 |
-| `src/app/admin/tags/_components/columns.tsx` | 표 제거 (`TagRow` 타입은 `types/tag.ts`로 이동) |
-| `src/app/admin/tags/_components/tag-table.tsx` | `tag-board.action.tsx`로 대체 |
-| `src/app/admin/tags/_components/tag-actions-cell.tsx` | 칩이 삭제 버튼을 직접 품음 |
-| `src/app/admin/categories/_actions/category-table.action.tsx` | `category-board.action.tsx`로 대체 |
-| `src/app/admin/series/_actions/series-table.action.tsx` | `series-stack.action.tsx`로 대체 |
+| 파일                                                          | 이유                                            |
+| ------------------------------------------------------------- | ----------------------------------------------- |
+| `src/components/data-table.tsx`                               | 마지막 사용처가 사라짐                          |
+| `src/app/admin/posts/_components/columns.tsx`                 | 표 제거                                         |
+| `src/app/admin/categories/_components/columns.tsx`            | 표 제거                                         |
+| `src/app/admin/series/_components/columns.tsx`                | 표 제거                                         |
+| `src/app/admin/tags/_components/columns.tsx`                  | 표 제거 (`TagRow` 타입은 `types/tag.ts`로 이동) |
+| `src/app/admin/tags/_components/tag-table.tsx`                | `tag-board.action.tsx`로 대체                   |
+| `src/app/admin/tags/_components/tag-actions-cell.tsx`         | 칩이 삭제 버튼을 직접 품음                      |
+| `src/app/admin/categories/_actions/category-table.action.tsx` | `category-board.action.tsx`로 대체              |
+| `src/app/admin/series/_actions/series-table.action.tsx`       | `series-stack.action.tsx`로 대체                |
 
 > `src/components/ui/table.tsx`는 남긴다 — 유입경로(3e)가 표를 유지하고, `admin/comments`도 자체 `<table>` 마크업을 쓴다.
 
@@ -155,6 +156,7 @@
 ## Task 1: `series.status` 스키마·타입·폼
 
 **Files:**
+
 - Modify: `src/db/schema.ts`
 - Modify: `src/types/series.ts`
 - Modify: `src/db/queries/series.ts:115-145` (`insertSeries`, `updateSeries`)
@@ -162,6 +164,7 @@
 - Test: `src/types/series.test.ts` (기존 파일에 추가)
 
 **Interfaces:**
+
 - Consumes: 없음 (첫 태스크)
 - Produces:
   - `seriesStatusEnum` — pg enum `series_status`, 값 `'ongoing' | 'completed'`
@@ -174,31 +177,31 @@
 `src/types/series.test.ts`의 마지막 `describe('description', ...)` 블록 **뒤, 최상위 `describe`가 닫히기 전**에 추가한다.
 
 ```ts
-  describe('status', () => {
-    it('ongoing이면 성공', () => {
-      expect(
-        seriesFormSchema.safeParse({ ...validData, status: 'ongoing' }).success
-      ).toBe(true);
-    });
-
-    it('completed면 성공', () => {
-      expect(
-        seriesFormSchema.safeParse({ ...validData, status: 'completed' }).success
-      ).toBe(true);
-    });
-
-    it('정의되지 않은 값이면 실패', () => {
-      expect(
-        seriesFormSchema.safeParse({ ...validData, status: 'paused' }).success
-      ).toBe(false);
-    });
-
-    it('생략하면 ongoing으로 채워진다', () => {
-      const result = seriesFormSchema.safeParse(validData);
-      expect(result.success).toBe(true);
-      if (result.success) expect(result.data.status).toBe('ongoing');
-    });
+describe('status', () => {
+  it('ongoing이면 성공', () => {
+    expect(
+      seriesFormSchema.safeParse({ ...validData, status: 'ongoing' }).success
+    ).toBe(true);
   });
+
+  it('completed면 성공', () => {
+    expect(
+      seriesFormSchema.safeParse({ ...validData, status: 'completed' }).success
+    ).toBe(true);
+  });
+
+  it('정의되지 않은 값이면 실패', () => {
+    expect(
+      seriesFormSchema.safeParse({ ...validData, status: 'paused' }).success
+    ).toBe(false);
+  });
+
+  it('생략하면 ongoing으로 채워진다', () => {
+    const result = seriesFormSchema.safeParse(validData);
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.status).toBe('ongoing');
+  });
+});
 ```
 
 - [x] **Step 2: 테스트가 실패하는지 확인**
@@ -283,23 +286,23 @@ import {
 `description` 필드 `<div className="grid gap-2">` 블록 **뒤**, `{error && ...}` 앞에 필드를 추가한다. `Select`는 `register`로 제어할 수 없으므로 `watch`/`setValue`로 연결한다.
 
 ```tsx
-          <div className="grid gap-2">
-            <Label htmlFor="status">연재 상태</Label>
-            <Select
-              value={form.watch('status')}
-              onValueChange={(value) =>
-                form.setValue('status', value as SeriesFormValues['status'])
-              }
-            >
-              <SelectTrigger id="status">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ongoing">연재 중</SelectItem>
-                <SelectItem value="completed">완결</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+<div className="grid gap-2">
+  <Label htmlFor="status">연재 상태</Label>
+  <Select
+    value={form.watch('status')}
+    onValueChange={(value) =>
+      form.setValue('status', value as SeriesFormValues['status'])
+    }
+  >
+    <SelectTrigger id="status">
+      <SelectValue />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="ongoing">연재 중</SelectItem>
+      <SelectItem value="completed">완결</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
 ```
 
 - [x] **Step 8: DB에 반영**
@@ -334,11 +337,13 @@ git commit -m "✨ feat: 시리즈에 연재 중/완결 상태 추가"
 ## Task 2: 발행 상태 토글 Server Action
 
 **Files:**
+
 - Modify: `src/db/queries/posts.ts` (`updatePostStatus` 추가)
 - Create: `src/app/admin/posts/_services/edit-post-status.ts`
 - Test: `src/app/admin/posts/_services/edit-post-status.test.ts`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces:
   - `updatePostStatus(id: number, status: 'draft' | 'published'): Promise<{ id: number }[]>` — DB 쿼리. `status`가 `'published'`이고 기존 `publishedAt`이 `null`이면 현재 시각을 채우고, 그 외에는 **`publishedAt`을 건드리지 않는다**(「결정 사항」 참조). `returning({ id })`로 갱신된 행을 돌려주므로 빈 배열이면 대상 글이 없다는 뜻이다.
@@ -419,7 +424,10 @@ describe('editPostStatus', () => {
 
     const result = await editPostStatus(7, 'published');
 
-    expect(result).toEqual({ success: false, error: '상태 변경에 실패했습니다' });
+    expect(result).toEqual({
+      success: false,
+      error: '상태 변경에 실패했습니다',
+    });
   });
 });
 ```
@@ -534,6 +542,7 @@ git commit -m "✨ feat: 글 발행 상태 토글 Server Action 추가"
 ## Task 3: 미사용 태그 일괄 정리 Server Action
 
 **Files:**
+
 - Modify: `src/db/queries/tags.ts` (`deleteUnusedTags` 추가)
 - Modify: `src/types/tag.ts` (`TagWithCount` 추가)
 - Modify: `src/types/index.ts` (재export)
@@ -541,6 +550,7 @@ git commit -m "✨ feat: 글 발행 상태 토글 Server Action 추가"
 - Test: `src/app/admin/tags/_services/remove-unused-tags.test.ts`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces:
   - `TagWithCount = Tag & { postCount: number }` — `getAllTags()`의 반환 원소 타입. 삭제될 `tags/_components/columns.tsx`의 `TagRow`를 대체한다. Task 6의 칩 보드가 이 타입을 쓴다.
@@ -722,6 +732,7 @@ git commit -m "✨ feat: 미사용 태그 일괄 정리 Server Action 추가"
 ## Task 4: 글 관리 화면 (시안 1b)
 
 **Files:**
+
 - Modify: `src/db/queries/posts.ts` (`getAllPostsForAdmin` 확장)
 - Create: `src/app/admin/posts/_components/post-row.tsx`
 - Test: `src/app/admin/posts/_components/post-row.test.tsx`
@@ -731,6 +742,7 @@ git commit -m "✨ feat: 미사용 태그 일괄 정리 Server Action 추가"
 - Modify: `src/app/admin/posts/page.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 2의 `editPostStatus`. PR 1의 `AdminPageHeader`, `Switch`, `--status-*` 토큰.
 - Produces:
   - `AdminPostRow = PostWithCategory & { commentCount: number; tagNames: string[] }` — `src/types/post.ts`에 추가하고 `types/index.ts`에서 재export한다. `getAllPostsForAdmin`의 새 반환 타입.
@@ -755,9 +767,13 @@ import type { AdminPostRow } from '@/types';
 import { PostRow } from './post-row';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 vi.mock('next/image', () => ({
@@ -794,7 +810,13 @@ const publishedPost = {
   publishedAt: new Date('2026-04-20'),
   createdAt: new Date('2026-04-20'),
   updatedAt: new Date('2026-04-20'),
-  category: { id: 1, name: '리뷰', slug: 'review', description: null, createdAt: new Date() },
+  category: {
+    id: 1,
+    name: '리뷰',
+    slug: 'review',
+    description: null,
+    createdAt: new Date(),
+  },
   commentCount: 3,
   tagNames: ['4k모니터', 'dell'],
 } as unknown as AdminPostRow;
@@ -856,7 +878,9 @@ describe('PostRow', () => {
 
   it('제목이 비어 있으면 (제목 없음)으로 표시한다', () => {
     render(<PostRow post={{ ...draftPost, title: '' } as AdminPostRow} />);
-    expect(screen.getByRole('link', { name: '(제목 없음)' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '(제목 없음)' })
+    ).toBeInTheDocument();
   });
 
   it('발행 상태 토글을 렌더한다', () => {
@@ -889,7 +913,14 @@ export type AdminPostRow = PostWithCategory & {
 `src/types/index.ts`의 post 줄에 `AdminPostRow`를 추가한다.
 
 ```ts
-export type { Post, PostWithCategory, PostWithTags, PostWithCategoryAndTags, AdminPostRow, PostFormValues } from './post';
+export type {
+  Post,
+  PostWithCategory,
+  PostWithTags,
+  PostWithCategoryAndTags,
+  AdminPostRow,
+  PostFormValues,
+} from './post';
 ```
 
 - [x] **Step 4: 행 컴포넌트 작성**
@@ -1022,7 +1053,10 @@ describe('PostStatusToggleAction', () => {
   it('임시저장 글은 꺼진 스위치와 "비공개" 라벨을 보여준다', () => {
     render(<PostStatusToggleAction postId={1} status="draft" />);
 
-    expect(screen.getByRole('switch')).toHaveAttribute('data-state', 'unchecked');
+    expect(screen.getByRole('switch')).toHaveAttribute(
+      'data-state',
+      'unchecked'
+    );
     expect(screen.getByText('비공개')).toBeInTheDocument();
   });
 
@@ -1041,7 +1075,9 @@ describe('PostStatusToggleAction', () => {
 
     fireEvent.click(screen.getByRole('switch'));
 
-    await waitFor(() => expect(editPostStatus).toHaveBeenCalledWith(7, 'draft'));
+    await waitFor(() =>
+      expect(editPostStatus).toHaveBeenCalledWith(7, 'draft')
+    );
   });
 });
 ```
@@ -1118,7 +1154,11 @@ npm run test:run -- src/app/admin/posts/_components/post-row.test.tsx src/app/ad
 `src/db/queries/posts.ts`의 `getAllPostsForAdmin`을 교체한다. 필요한 import는 Task 2 Step 3에서 이미 다 넣었다 — 스키마의 `comments`·`postTags`·`tags`는 원래부터 있었고 `sql`은 그때 추가했다. `AdminPostRow` 타입 import만 더한다.
 
 ```ts
-import type { AdminPostRow, PostWithCategory, PostWithCategoryAndTags } from '@/types';
+import type {
+  AdminPostRow,
+  PostWithCategory,
+  PostWithCategoryAndTags,
+} from '@/types';
 ```
 
 ```ts
@@ -1287,6 +1327,7 @@ git commit -m "💄 style: 글 관리를 썸네일 행 목록 + 발행 토글로
 ## Task 5: 카테고리 화면 (시안 3a)
 
 **Files:**
+
 - Modify: `src/db/queries/categories.ts` (`getCategoriesWithPostCount`, `selectUncategorizedPosts` 추가)
 - Create: `src/app/admin/categories/_components/category-card.tsx`
 - Test: `src/app/admin/categories/_components/category-card.test.tsx`
@@ -1296,6 +1337,7 @@ git commit -m "💄 style: 글 관리를 썸네일 행 목록 + 발행 토글로
 - Modify: `src/app/admin/categories/page.tsx`
 
 **Interfaces:**
+
 - Consumes: PR 1의 `AdminPageHeader`. 기존 `CategoryActionsCell`, `CategoryFormDialogAction`을 그대로 재사용한다.
 - Produces:
   - `CategoryWithCount = Category & { postCount: number }` — `src/types/category.ts`에 추가하고 `types/index.ts`에서 재export.
@@ -1359,9 +1401,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { UncategorizedBanner } from './uncategorized-banner';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 describe('UncategorizedBanner', () => {
@@ -1422,7 +1468,11 @@ export type CategoryWithCount = Category & { postCount: number };
 `src/types/index.ts`의 category 줄을 교체한다.
 
 ```ts
-export type { Category, CategoryWithCount, CategoryFormValues } from './category';
+export type {
+  Category,
+  CategoryWithCount,
+  CategoryFormValues,
+} from './category';
 ```
 
 - [x] **Step 5: 컴포넌트 작성**
@@ -1669,6 +1719,7 @@ git commit -m "💄 style: 카테고리를 카드 그리드 + 미분류 배너�
 ## Task 6: 태그 칩 보드 (시안 1d)
 
 **Files:**
+
 - Create: `src/app/admin/tags/_components/tag-chip.tsx`
 - Test: `src/app/admin/tags/_components/tag-chip.test.tsx`
 - Create: `src/app/admin/tags/_actions/tag-board.action.tsx`
@@ -1676,6 +1727,7 @@ git commit -m "💄 style: 카테고리를 카드 그리드 + 미분류 배너�
 - Modify: `src/app/admin/tags/page.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 3의 `removeUnusedTags`, `TagWithCount`. 기존 `addTag`(`admin/posts/new/_services/add-tag.ts`), `DeleteTagAction`. PR 1의 `AdminPageHeader`.
 - Produces:
   - `TagChip({ tag }: { tag: TagWithCount })` — 순수 칩. 사용 중이면 이름 + 개수, 미사용이면 흐리게 + 삭제 버튼.
@@ -1720,7 +1772,9 @@ describe('TagChip', () => {
 
   it('사용 중 태그에는 삭제 버튼이 없다', () => {
     render(<TagChip tag={usedTag} />);
-    expect(screen.queryByRole('button', { name: '삭제' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '삭제' })
+    ).not.toBeInTheDocument();
   });
 
   it('미사용 태그는 개수 없이 삭제 버튼을 보여준다', () => {
@@ -1749,7 +1803,10 @@ vi.mock('../_components/tag-chip', () => ({
 }));
 
 vi.mock('@/app/admin/posts/new/_services/add-tag', () => ({
-  addTag: vi.fn(async () => ({ success: true, tag: { id: 9, name: 'new', slug: 'new' } })),
+  addTag: vi.fn(async () => ({
+    success: true,
+    tag: { id: 9, name: 'new', slug: 'new' },
+  })),
 }));
 
 vi.mock('../_services/remove-unused-tags', () => ({
@@ -1760,7 +1817,13 @@ vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 const tags: TagWithCount[] = [
   { id: 1, name: '4k모니터', slug: '4k', createdAt: new Date(), postCount: 3 },
-  { id: 2, name: 'nextjs', slug: 'nextjs', createdAt: new Date(), postCount: 1 },
+  {
+    id: 2,
+    name: 'nextjs',
+    slug: 'nextjs',
+    createdAt: new Date(),
+    postCount: 1,
+  },
   { id: 3, name: 'dell', slug: 'dell', createdAt: new Date(), postCount: 0 },
 ];
 
@@ -1785,7 +1848,9 @@ describe('TagBoardAction', () => {
     render(<TagBoardAction tags={tags.filter((tag) => tag.postCount > 0)} />);
 
     expect(screen.queryByText('글에 쓰이지 않음')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /정리/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /정리/ })
+    ).not.toBeInTheDocument();
   });
 
   it('새 태그 입력창을 렌더한다', () => {
@@ -1858,9 +1923,9 @@ export function TagChip({ tag }: Props) {
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { addTag } from '@/app/admin/posts/new/_services/add-tag';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { addTag } from '@/app/admin/posts/new/_services/add-tag';
 import type { TagWithCount } from '@/types';
 import { TagChip } from '../_components/tag-chip';
 import { removeUnusedTags } from '../_services/remove-unused-tags';
@@ -1964,7 +2029,7 @@ export function TagBoardAction({ tags }: Props) {
 `save-post.ts`의 revalidate 블록 **두 곳 모두**에 한 줄씩 추가한다.
 
 ```ts
-      revalidateTag(CACHE_TAGS.tags, 'max');
+revalidateTag(CACHE_TAGS.tags, 'max');
 ```
 
 - [x] **Step 8: 페이지 교체**
@@ -2016,6 +2081,7 @@ git commit -m "💄 style: 태그 관리를 칩 보드 + 미사용 정리로 교
 ## Task 7: 시리즈 스택 (시안 3d)
 
 **Files:**
+
 - Modify: `src/db/queries/series.ts` (`selectSeriesListForAdmin` 추가)
 - Create: `src/app/admin/series/_components/series-stack-item.tsx`
 - Test: `src/app/admin/series/_components/series-stack-item.test.tsx`
@@ -2023,6 +2089,7 @@ git commit -m "💄 style: 태그 관리를 칩 보드 + 미사용 정리로 교
 - Modify: `src/app/admin/series/page.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 1의 `series.status`. 기존 `SeriesActionsCell`, `SeriesFormDialogAction`. PR 1의 `AdminPageHeader`.
 - Produces:
   - `AdminSeriesItem = Series & { posts: { id: number; title: string; publishedAt: Date | null; status: 'draft' | 'published' }[] }` — `src/types/series.ts`에 추가하고 `types/index.ts`에서 재export.
@@ -2047,9 +2114,13 @@ import type { AdminSeriesItem } from '@/types';
 import { SeriesStackItem } from './series-stack-item';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 vi.mock('./series-actions-cell', () => ({
@@ -2117,11 +2188,11 @@ describe('SeriesStackItem', () => {
   });
 
   it('펼친 상태에서는 회차와 글 추가 링크를 렌더한다', () => {
-    render(
-      <SeriesStackItem series={series} isExpanded onToggle={vi.fn()} />
-    );
+    render(<SeriesStackItem series={series} isExpanded onToggle={vi.fn()} />);
 
-    expect(screen.getByText('Next.js 15 App Router 이전기')).toBeInTheDocument();
+    expect(
+      screen.getByText('Next.js 15 App Router 이전기')
+    ).toBeInTheDocument();
     expect(screen.getByText('임시저장')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /이 시리즈에 글 추가/ })
@@ -2142,7 +2213,9 @@ describe('SeriesStackItem', () => {
     const { container } = render(
       <SeriesStackItem series={series} isExpanded onToggle={vi.fn()} />
     );
-    expect(container.querySelector('[data-drag-handle]')).not.toBeInTheDocument();
+    expect(
+      container.querySelector('[data-drag-handle]')
+    ).not.toBeInTheDocument();
   });
 });
 ```
@@ -2179,9 +2252,9 @@ export type AdminSeriesItem = Series & {
 
 ```tsx
 import Link from 'next/link';
-import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { AdminSeriesItem } from '@/types';
@@ -2312,7 +2385,10 @@ export const selectSeriesListForAdmin = unstable_cache(
         })
         .from(posts)
         .where(isNotNull(posts.seriesId))
-        .orderBy(sql`${posts.publishedAt} asc nulls last`, asc(posts.createdAt)),
+        .orderBy(
+          sql`${posts.publishedAt} asc nulls last`,
+          asc(posts.createdAt)
+        ),
     ]);
 
     return seriesRows.map((row) => ({
@@ -2449,6 +2525,7 @@ git commit -m "💄 style: 시리즈 관리를 접힘 스택으로 교체"
 ## Task 8: `@tanstack/react-table` 제거
 
 **Files:**
+
 - Delete: `src/components/data-table.tsx`
 - Delete: `src/app/admin/posts/_components/columns.tsx` + `src/app/admin/posts/_components/columns.test.tsx` (3개 테스트, 존재 확인됨)
 - Delete: `src/app/admin/categories/_components/columns.tsx`
@@ -2462,6 +2539,7 @@ git commit -m "💄 style: 시리즈 관리를 접힘 스택으로 교체"
 - Modify: `src/app/admin/posts/loading.tsx`, `src/app/admin/categories/loading.tsx`, `src/app/admin/series/loading.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 4~7이 모든 표 사용처를 교체했다는 사실
 - Produces: 없음 (제거 전용)
 
@@ -2499,51 +2577,51 @@ npm uninstall @tanstack/react-table
 `src/app/admin/posts/loading.tsx`의 `<div className="rounded-lg border">` 블록을 새 행 레이아웃에 맞춰 교체한다.
 
 ```tsx
-      <div className="flex flex-col gap-3">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-4 rounded-2xl border p-4">
-            <Skeleton className="size-20 shrink-0 rounded-xl" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-5 w-64" />
-              <Skeleton className="h-4 w-96" />
-              <Skeleton className="h-3 w-48" />
-            </div>
-            <Skeleton className="h-6 w-11 rounded-full" />
-          </div>
-        ))}
+<div className="flex flex-col gap-3">
+  {Array.from({ length: 5 }).map((_, i) => (
+    <div key={i} className="flex items-center gap-4 rounded-2xl border p-4">
+      <Skeleton className="size-20 shrink-0 rounded-xl" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-5 w-64" />
+        <Skeleton className="h-4 w-96" />
+        <Skeleton className="h-3 w-48" />
       </div>
+      <Skeleton className="h-6 w-11 rounded-full" />
+    </div>
+  ))}
+</div>
 ```
 
 `src/app/admin/categories/loading.tsx`의 같은 블록을 카드 그리드로 교체한다.
 
 ```tsx
-      <div className="grid gap-3 sm:grid-cols-2">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-3 rounded-2xl border p-4">
-            <Skeleton className="size-10 shrink-0 rounded-xl" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-5 w-32" />
-              <Skeleton className="h-4 w-40" />
-            </div>
-          </div>
-        ))}
+<div className="grid gap-3 sm:grid-cols-2">
+  {Array.from({ length: 4 }).map((_, i) => (
+    <div key={i} className="flex items-center gap-3 rounded-2xl border p-4">
+      <Skeleton className="size-10 shrink-0 rounded-xl" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-4 w-40" />
       </div>
+    </div>
+  ))}
+</div>
 ```
 
 `src/app/admin/series/loading.tsx`의 같은 블록을 스택으로 교체한다.
 
 ```tsx
-      <div className="flex flex-col gap-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-3 rounded-2xl border p-4">
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-5 w-40" />
-              <Skeleton className="h-4 w-56" />
-            </div>
-            <Skeleton className="size-5 rounded-full" />
-          </div>
-        ))}
+<div className="flex flex-col gap-3">
+  {Array.from({ length: 3 }).map((_, i) => (
+    <div key={i} className="flex items-center gap-3 rounded-2xl border p-4">
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-4 w-56" />
       </div>
+      <Skeleton className="size-5 rounded-full" />
+    </div>
+  ))}
+</div>
 ```
 
 - [x] **Step 5: 전체 검증**
@@ -2572,6 +2650,7 @@ git commit -m "🔥 remove: 표 화면 제거에 따라 @tanstack/react-table �
 **Files:** 없음 (검증 전용)
 
 **Interfaces:**
+
 - Consumes: Task 1~8 전부
 - Produces: 없음
 

@@ -25,7 +25,8 @@ export const golfCounterMeta = {
   name: 'GolfCounter',
   iconSrc: '/golf-counter/golf-counter.png',
   supportEmail: 'qlrogo91lp@gmail.com',
-  appStoreUrl: 'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
+  appStoreUrl:
+    'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
   platformNote: 'Free · watchOS 9.0+',
   minimumOs: 'iOS 16.4, watchOS 9.0',
 } as const;
@@ -44,7 +45,7 @@ export const golfHeroSection = {
   body: 'GolfCounter counts strokes, putts, and calories from your wrist — then hands the whole round back to your iPhone.',
   shot: watchImage(
     '/golf-counter/watch-match-en.png',
-    'GolfCounter hole score dial on Apple Watch',
+    'GolfCounter hole score dial on Apple Watch'
   ),
   stageLabel: 'Hole 2 · Par 4 · +3',
   // 값은 전부 스크린샷에 실제로 찍힌 숫자다 (설계 문서 4.4)
@@ -75,7 +76,7 @@ export const golfCourseSection = {
       body: 'Pick 9 or 18 holes, tap once per stroke, and undo a miscount instantly.',
       image: iosImage(
         '/golf-counter/ios-watch-match-en.png',
-        'GolfCounter stroke counter on Apple Watch',
+        'GolfCounter stroke counter on Apple Watch'
       ),
     },
     {
@@ -84,7 +85,7 @@ export const golfCourseSection = {
       body: 'Add the complication and start a round before the first tee.',
       image: watchImage(
         '/golf-counter/watch-complication-en.png',
-        'GolfCounter complication on the Apple Watch face',
+        'GolfCounter complication on the Apple Watch face'
       ),
     },
     {
@@ -93,7 +94,7 @@ export const golfCourseSection = {
       body: 'Total strokes, over-par, and every hole — without reaching for your phone.',
       image: watchImage(
         '/golf-counter/watch-score-en.png',
-        'GolfCounter scorecard on Apple Watch',
+        'GolfCounter scorecard on Apple Watch'
       ),
     },
   ] satisfies GolfCard[],
@@ -117,7 +118,7 @@ export const golfHealthSection = {
       body: 'Start a round, start a workout. Nothing extra to remember.',
       image: watchImage(
         '/golf-counter/watch-workout-en.png',
-        'GolfCounter workout metrics on Apple Watch',
+        'GolfCounter workout metrics on Apple Watch'
       ),
     },
     {
@@ -126,7 +127,7 @@ export const golfHealthSection = {
       body: 'Tracked live on your wrist, then synced to your iPhone.',
       image: iosImage(
         '/golf-counter/connectivity-en.png',
-        'GolfCounter on iPhone and Apple Watch together',
+        'GolfCounter on iPhone and Apple Watch together'
       ),
     },
   ] satisfies GolfStep[],
@@ -138,10 +139,13 @@ export const golfAfterSection = {
   heading: 'Every round adds up.',
   body: 'Over-par trend, putts per hole, and score distribution — built from the rounds you already played.',
   gallery: [
-    iosImage('/golf-counter/ios-stat-en.png', 'GolfCounter round statistics on iPhone'),
+    iosImage(
+      '/golf-counter/ios-stat-en.png',
+      'GolfCounter round statistics on iPhone'
+    ),
     iosImage(
       '/golf-counter/ios-watch-score-en.png',
-      'GolfCounter full scorecard on Apple Watch',
+      'GolfCounter full scorecard on Apple Watch'
     ),
   ],
 };
@@ -160,7 +164,7 @@ export const golfHolesSection = {
   ] satisfies GolfChip[],
   image: watchImage(
     '/golf-counter/watch-home-en.png',
-    'GolfCounter hole count selection on Apple Watch',
+    'GolfCounter hole count selection on Apple Watch'
   ),
 };
 

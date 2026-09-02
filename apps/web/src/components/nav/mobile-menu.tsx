@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { NavLinks } from '@/components/nav/nav-links';
+import { Button } from '@/components/ui/button';
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);

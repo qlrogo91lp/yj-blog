@@ -1,3 +1,4 @@
+import type { Element, Root } from 'hast';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeParse from 'rehype-parse';
 import rehypeSlug from 'rehype-slug';
@@ -7,7 +8,6 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
-import type { Element, Root } from 'hast';
 import { remarkYoutube } from './remark-youtube';
 
 export type TocItem = {
@@ -41,8 +41,12 @@ function rehypeImageCaption() {
         type: 'element',
         tagName: 'figure',
         properties: {
-          ...(img.properties?.dataSize && { dataSize: img.properties.dataSize }),
-          ...(img.properties?.dataAlign && { dataAlign: img.properties.dataAlign }),
+          ...(img.properties?.dataSize && {
+            dataSize: img.properties.dataSize,
+          }),
+          ...(img.properties?.dataAlign && {
+            dataAlign: img.properties.dataAlign,
+          }),
         },
         children: [
           img,
@@ -88,7 +92,9 @@ function extractText(node: Element): string {
   return text;
 }
 
-export async function markdownToHtmlWithToc(markdown: string): Promise<MarkdownResult> {
+export async function markdownToHtmlWithToc(
+  markdown: string
+): Promise<MarkdownResult> {
   const toc: TocItem[] = [];
 
   const processor = unified()

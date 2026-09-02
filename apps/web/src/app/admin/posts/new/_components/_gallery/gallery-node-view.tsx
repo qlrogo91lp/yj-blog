@@ -1,6 +1,6 @@
 'use client';
 
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
+import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import type { GalleryImage } from '../../_utils/gallery-extension';
 import { GallerySlideToolbar } from './gallery-slide-toolbar';
@@ -15,7 +15,9 @@ export function GalleryNodeView({
 
   const patch = (index: number, next: Partial<GalleryImage>) => {
     updateAttributes({
-      images: images.map((image, i) => (i === index ? { ...image, ...next } : image)),
+      images: images.map((image, i) =>
+        i === index ? { ...image, ...next } : image
+      ),
     });
   };
 

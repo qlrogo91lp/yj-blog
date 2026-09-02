@@ -1,5 +1,5 @@
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -11,7 +11,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { selectPostById } from '@/db/queries/posts';
-import { selectPostDailyViews, selectReferrersByPost } from '@/db/queries/statistics';
+import {
+  selectPostDailyViews,
+  selectReferrersByPost,
+} from '@/db/queries/statistics';
 import { PostDailyChart } from './_components/post-daily-chart';
 
 type Props = {
@@ -99,7 +102,9 @@ export default async function PostStatsPage({ params }: Props) {
                     <TableCell className="font-medium">
                       {formatReferrer(r.referrer)}
                     </TableCell>
-                    <TableCell className="text-right">{r.count.toLocaleString()}</TableCell>
+                    <TableCell className="text-right">
+                      {r.count.toLocaleString()}
+                    </TableCell>
                     <TableCell className="text-right text-muted-foreground">
                       {r.percentage}%
                     </TableCell>

@@ -1,12 +1,11 @@
-import { describe, expect, it, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useNewPostStore } from '../_store';
+import { SeoSectionAction } from './seo-section.action';
 
 vi.mock('../_services/generate-excerpt', () => ({
   generateExcerpt: vi.fn(),
 }));
-
-import { SeoSectionAction } from './seo-section.action';
-import { useNewPostStore } from '../_store';
 
 describe('SeoSectionAction', () => {
   beforeEach(() => {
@@ -43,7 +42,7 @@ describe('SeoSectionAction', () => {
     render(<SeoSectionAction />);
     fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
     expect(
-      screen.getByRole('button', { name: /AI로 요약 생성/ }),
+      screen.getByRole('button', { name: /AI로 요약 생성/ })
     ).toBeDisabled();
   });
 
@@ -52,7 +51,7 @@ describe('SeoSectionAction', () => {
     render(<SeoSectionAction />);
     fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
     expect(
-      screen.getByRole('button', { name: /AI로 요약 생성/ }),
+      screen.getByRole('button', { name: /AI로 요약 생성/ })
     ).toBeEnabled();
   });
 
@@ -68,15 +67,20 @@ describe('SeoSectionAction', () => {
     useNewPostStore.getState().setTitle('Hello World');
     render(<SeoSectionAction />);
     fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
-    expect(screen.getByLabelText('URL slug')).toHaveAttribute('placeholder', 'hello-world');
+    expect(screen.getByLabelText('URL slug')).toHaveAttribute(
+      'placeholder',
+      'hello-world'
+    );
   });
 
   it('허용되지 않는 문자가 있으면 안내문을 보여준다', () => {
     render(<SeoSectionAction />);
     fireEvent.click(screen.getByRole('button', { name: /SEO 설정/ }));
-    fireEvent.change(screen.getByLabelText('URL slug'), { target: { value: 'Hello World!' } });
+    fireEvent.change(screen.getByLabelText('URL slug'), {
+      target: { value: 'Hello World!' },
+    });
     expect(
-      screen.getByText('영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다'),
+      screen.getByText('영소문자, 숫자, 한글, 하이픈만 사용할 수 있습니다')
     ).toBeInTheDocument();
   });
 });

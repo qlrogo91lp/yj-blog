@@ -35,14 +35,14 @@ git checkout -b feature/apps-list-item
 
 ## File Structure
 
-| 파일 | 책임 | 태스크 |
-|---|---|---|
-| `src/app/(main)/apps/_utils/apps-data.ts` | `AppPlatform` 타입 · `platforms`·`iconSrc` 필드 · Ralli 데이터 | 1, 3 |
-| `src/app/(main)/apps/_components/app-platform-chips.tsx` | 플랫폼 → 아이콘·레이블 매핑의 **단일 출처**. 목록·상세가 공유 | 1 |
-| `src/app/(main)/apps/_components/app-list-item.tsx` | 목록의 가로 카드 하나. props만 받는 순수 컴포넌트 | 2 |
-| `src/app/(main)/apps/page.tsx` | 목록 조립 — 컴포넌트 교체만, 그리드는 유지 | 2 |
-| `src/app/(main)/apps/_components/app-card.tsx` | **삭제** — `app-list-item.tsx`로 대체 | 2 |
-| `src/app/(main)/apps/[slug]/page.tsx` | 상세 헤더에 아이콘 + 플랫폼 칩 적용 | 3 |
+| 파일                                                     | 책임                                                           | 태스크 |
+| -------------------------------------------------------- | -------------------------------------------------------------- | ------ |
+| `src/app/(main)/apps/_utils/apps-data.ts`                | `AppPlatform` 타입 · `platforms`·`iconSrc` 필드 · Ralli 데이터 | 1, 3   |
+| `src/app/(main)/apps/_components/app-platform-chips.tsx` | 플랫폼 → 아이콘·레이블 매핑의 **단일 출처**. 목록·상세가 공유  | 1      |
+| `src/app/(main)/apps/_components/app-list-item.tsx`      | 목록의 가로 카드 하나. props만 받는 순수 컴포넌트              | 2      |
+| `src/app/(main)/apps/page.tsx`                           | 목록 조립 — 컴포넌트 교체만, 그리드는 유지                     | 2      |
+| `src/app/(main)/apps/_components/app-card.tsx`           | **삭제** — `app-list-item.tsx`로 대체                          | 2      |
+| `src/app/(main)/apps/[slug]/page.tsx`                    | 상세 헤더에 아이콘 + 플랫폼 칩 적용                            | 3      |
 
 ### 태스크 분할 근거
 
@@ -59,11 +59,13 @@ git checkout -b feature/apps-list-item
 `App`에 플랫폼 배열과 아이콘 경로를 추가하고, 플랫폼 표기 컴포넌트를 만든다. 이 태스크는 기존 화면의 동작을 바꾸지 않는다 — 새 필드를 심고 새 컴포넌트를 준비만 한다.
 
 **Files:**
+
 - Modify: `src/app/(main)/apps/_utils/apps-data.ts`
 - Create: `src/app/(main)/apps/_components/app-platform-chips.tsx`
 - Test: `src/app/(main)/apps/_components/app-platform-chips.test.tsx`
 
 **Interfaces:**
+
 - Produces:
   - `AppPlatform` = `'ios' | 'watch' | 'web'` — Task 2·3이 사용
   - `App.platforms: AppPlatform[]`, `App.iconSrc: string` — Task 2·3이 사용
@@ -216,12 +218,14 @@ git commit -m "✨ 앱 데이터에 플랫폼·아이콘 필드와 플랫폼 칩
 목록 카드를 가로 배치로 바꾸고 기존 `AppCard`를 지운다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/_components/app-list-item.tsx`
 - Test: `src/app/(main)/apps/_components/app-list-item.test.tsx`
 - Modify: `src/app/(main)/apps/page.tsx`
 - Delete: `src/app/(main)/apps/_components/app-card.tsx`
 
 **Interfaces:**
+
 - Consumes: `App` · `AppPlatform` (Task 1), `AppPlatformChips` (Task 1)
 - Produces: `AppListItem({ app }: { app: App })` — `apps/page.tsx`가 사용
 
@@ -234,8 +238,8 @@ git commit -m "✨ 앱 데이터에 플랫폼·아이콘 필드와 플랫폼 칩
 ```tsx
 import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
-import { AppListItem } from './app-list-item';
 import type { App } from '../_utils/apps-data';
+import { AppListItem } from './app-list-item';
 
 vi.mock('next/link', () => ({
   default: ({
@@ -254,7 +258,9 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockApp: App = {
@@ -272,7 +278,9 @@ describe('AppListItem', () => {
   it('앱 이름과 설명을 렌더한다', () => {
     render(<AppListItem app={mockApp} />);
     expect(screen.getByRole('heading', { name: 'Ralli' })).toBeInTheDocument();
-    expect(screen.getByText('테니스 경기 중 점수 카운터 앱')).toBeInTheDocument();
+    expect(
+      screen.getByText('테니스 경기 중 점수 카운터 앱')
+    ).toBeInTheDocument();
   });
 
   it('상세 페이지로 링크한다', () => {
@@ -317,8 +325,8 @@ Expected: FAIL — `Failed to resolve import "./app-list-item"`
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { AppPlatformChips } from './app-platform-chips';
 import type { App } from '../_utils/apps-data';
+import { AppPlatformChips } from './app-platform-chips';
 
 type Props = {
   app: App;
@@ -342,7 +350,9 @@ export function AppListItem({ app }: Props) {
       <div className="min-w-0 flex-1">
         <AppPlatformChips platforms={app.platforms} />
         <h2 className="mt-1.5 font-semibold">{app.name}</h2>
-        <p className="mt-0.5 truncate text-sm text-muted-foreground">{app.description}</p>
+        <p className="mt-0.5 truncate text-sm text-muted-foreground">
+          {app.description}
+        </p>
       </div>
 
       <ChevronRight
@@ -370,9 +380,9 @@ import 한 줄과 컴포넌트 이름만 바꾼다. 그리드(`gap-4 sm:grid-col
 
 ```tsx
 import type { Metadata } from 'next';
-import { apps } from './_utils/apps-data';
-import { AppListItem } from './_components/app-list-item';
 import { SITE_NAME } from '@/lib/constants';
+import { AppListItem } from './_components/app-list-item';
+import { apps } from './_utils/apps-data';
 
 export const metadata: Metadata = {
   title: `Apps | ${SITE_NAME}`,
@@ -383,7 +393,9 @@ export default function AppsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <h1 className="text-2xl font-bold">Apps</h1>
-      <p className="mt-2 text-muted-foreground">개발한 웹앱과 앱스토어 앱을 소개합니다.</p>
+      <p className="mt-2 text-muted-foreground">
+        개발한 웹앱과 앱스토어 앱을 소개합니다.
+      </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {apps.map((app) => (
           <AppListItem key={app.slug} app={app} />
@@ -430,10 +442,12 @@ git commit -m "✨ Apps 목록을 앱 아이콘 가로 배치 카드로 교체"
 상세 헤더에도 아이콘과 플랫폼 칩을 적용하고, 더 이상 쓰이지 않는 `type` 필드를 완전히 제거한다.
 
 **Files:**
+
 - Modify: `src/app/(main)/apps/[slug]/page.tsx`
 - Modify: `src/app/(main)/apps/_utils/apps-data.ts`
 
 **Interfaces:**
+
 - Consumes: `AppPlatformChips` (Task 1), `App.iconSrc`·`App.platforms` (Task 1)
 - **삭제**: `App.type` — 이 태스크 이후 어디에도 남지 않는다
 
@@ -443,13 +457,13 @@ git commit -m "✨ Apps 목록을 앱 아이콘 가로 배치 카드로 교체"
 
 ```tsx
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { apps, getApp } from '../_utils/apps-data';
-import { AppPlatformChips } from '../_components/app-platform-chips';
 import { SITE_NAME } from '@/lib/constants';
+import { AppPlatformChips } from '../_components/app-platform-chips';
+import { apps, getApp } from '../_utils/apps-data';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -516,7 +530,9 @@ export default async function AppDetailPage({ params }: Props) {
       </div>
 
       <div className="mt-8">
-        <p className="text-muted-foreground leading-relaxed">{app.longDescription}</p>
+        <p className="text-muted-foreground leading-relaxed">
+          {app.longDescription}
+        </p>
       </div>
 
       {app.links.length > 0 && (
@@ -537,7 +553,9 @@ export default async function AppDetailPage({ params }: Props) {
       )}
 
       {app.links.length === 0 && (
-        <p className="mt-8 text-sm text-muted-foreground">출시 준비 중입니다.</p>
+        <p className="mt-8 text-sm text-muted-foreground">
+          출시 준비 중입니다.
+        </p>
       )}
     </div>
   );

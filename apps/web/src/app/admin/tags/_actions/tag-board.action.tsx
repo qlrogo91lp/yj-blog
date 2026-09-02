@@ -3,9 +3,9 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { addTag } from '@/app/admin/posts/new/_services/add-tag';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { addTag } from '@/app/admin/posts/new/_services/add-tag';
 import type { TagWithCount } from '@/types';
 import { TagChip } from '../_components/tag-chip';
 import { removeUnusedTags } from '../_services/remove-unused-tags';

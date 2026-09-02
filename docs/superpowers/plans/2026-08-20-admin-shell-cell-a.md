@@ -33,12 +33,12 @@
 
 ## 로드맵 — 어드민 리디자인 4개 PR
 
-| 순서 | 브랜치 | plan 문서 | 요지 |
-|---|---|---|---|
-| 1 | `refactor/admin-shell-cell-a` | 이 문서 | 디자인 토큰 + 다크모드 + 셀 A 셸 + `Switch` |
-| 2 | `refactor/admin-content-screens` | 미작성 | 글 관리·카테고리·태그·시리즈 + `series.status` + `@tanstack/react-table` 제거 |
-| 3 | `feature/admin-comment-reply` | 미작성 | 댓글 관리 + `comments.isAuthor` + 관리자 답글 |
-| 4 | `refactor/admin-stats-settings` | 미작성 | 대시보드·방문 통계·유입경로·블로그 설정 |
+| 순서 | 브랜치                           | plan 문서 | 요지                                                                          |
+| ---- | -------------------------------- | --------- | ----------------------------------------------------------------------------- |
+| 1    | `refactor/admin-shell-cell-a`    | 이 문서   | 디자인 토큰 + 다크모드 + 셀 A 셸 + `Switch`                                   |
+| 2    | `refactor/admin-content-screens` | 미작성    | 글 관리·카테고리·태그·시리즈 + `series.status` + `@tanstack/react-table` 제거 |
+| 3    | `feature/admin-comment-reply`    | 미작성    | 댓글 관리 + `comments.isAuthor` + 관리자 답글                                 |
+| 4    | `refactor/admin-stats-settings`  | 미작성    | 대시보드·방문 통계·유입경로·블로그 설정                                       |
 
 ---
 
@@ -46,36 +46,38 @@
 
 **생성**
 
-| 파일 | 책임 |
-|---|---|
-| `src/app/globals.test.ts` | 토큰이 `:root`·`.dark` 양쪽에 정의됐는지 지키는 회귀 가드 |
-| `src/components/ui/switch.tsx` | shadcn Switch 프리미티브 (PR 2의 발행 토글이 소비) |
-| `src/components/ui/switch.test.tsx` | Switch 토글 동작 |
-| `src/app/admin/_utils/admin-nav.ts` | 어드민 라우트 메타데이터 + `getBreadcrumb` 순수 함수 |
-| `src/app/admin/_utils/admin-nav.test.ts` | 브레드크럼 경로 매칭 |
-| `src/app/admin/_actions/admin-sidebar.action.test.tsx` | 사이드바 렌더·활성 표시·뱃지 분기 |
-| `src/app/admin/_actions/admin-header.action.test.tsx` | 헤더 브레드크럼·에디터 분기 |
-| `src/app/admin/_components/admin-page-header.tsx` | 모든 어드민 화면이 공유하는 페이지 타이틀 + 설명 + 우측 액션 슬롯 |
-| `src/app/admin/_components/admin-page-header.test.tsx` | 타이틀·설명·액션 슬롯 렌더 |
+| 파일                                                   | 책임                                                              |
+| ------------------------------------------------------ | ----------------------------------------------------------------- |
+| `src/app/globals.test.ts`                              | 토큰이 `:root`·`.dark` 양쪽에 정의됐는지 지키는 회귀 가드         |
+| `src/components/ui/switch.tsx`                         | shadcn Switch 프리미티브 (PR 2의 발행 토글이 소비)                |
+| `src/components/ui/switch.test.tsx`                    | Switch 토글 동작                                                  |
+| `src/app/admin/_utils/admin-nav.ts`                    | 어드민 라우트 메타데이터 + `getBreadcrumb` 순수 함수              |
+| `src/app/admin/_utils/admin-nav.test.ts`               | 브레드크럼 경로 매칭                                              |
+| `src/app/admin/_actions/admin-sidebar.action.test.tsx` | 사이드바 렌더·활성 표시·뱃지 분기                                 |
+| `src/app/admin/_actions/admin-header.action.test.tsx`  | 헤더 브레드크럼·에디터 분기                                       |
+| `src/app/admin/_components/admin-page-header.tsx`      | 모든 어드민 화면이 공유하는 페이지 타이틀 + 설명 + 우측 액션 슬롯 |
+| `src/app/admin/_components/admin-page-header.test.tsx` | 타이틀·설명·액션 슬롯 렌더                                        |
 
 **수정**
 
-| 파일 | 변경 |
-|---|---|
-| `src/app/globals.css` | `--sidebar` 계열 차콜화, `--status-*` 3종 추가, `.dark` 재정의, `@theme inline` 매핑 |
-| `src/app/admin/_actions/admin-sidebar.action.tsx` | 셀 A 외형(흰 pill 활성·뱃지 슬롯·footer 재배치), `admin-nav.ts` 소비 |
-| `src/app/admin/_actions/admin-header.action.tsx` | 브레드크럼 + 검정 pill 글쓰기 버튼 |
-| `src/app/admin/layout.tsx` | 본문 컨테이너 폭·패딩 |
+| 파일                                              | 변경                                                                                 |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `src/app/globals.css`                             | `--sidebar` 계열 차콜화, `--status-*` 3종 추가, `.dark` 재정의, `@theme inline` 매핑 |
+| `src/app/admin/_actions/admin-sidebar.action.tsx` | 셀 A 외형(흰 pill 활성·뱃지 슬롯·footer 재배치), `admin-nav.ts` 소비                 |
+| `src/app/admin/_actions/admin-header.action.tsx`  | 브레드크럼 + 검정 pill 글쓰기 버튼                                                   |
+| `src/app/admin/layout.tsx`                        | 본문 컨테이너 폭·패딩                                                                |
 
 ---
 
 ## Task 1: 디자인 토큰
 
 **Files:**
+
 - Modify: `src/app/globals.css`
 - Test: `src/app/globals.test.ts` (신규)
 
 **Interfaces:**
+
 - Consumes: 없음 (첫 태스크)
 - Produces: CSS 변수 `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-border`, `--status-published`, `--status-draft`, `--status-danger`. Tailwind 유틸 `bg-status-published` / `bg-status-draft` / `text-status-danger` 등이 `@theme inline` 매핑으로 생성된다. PR 2·3의 상태 뱃지와 발행 스위치가 이 유틸을 쓴다.
 
@@ -102,14 +104,16 @@ function block(selector: string): string {
 
 /** `--name: oklch(L ...)` 에서 L 값을 뽑는다. */
 function lightness(source: string, token: string): number {
-  const matched = source.match(
-    new RegExp(`${token}:\\s*oklch\\(([\\d.]+)`)
-  );
+  const matched = source.match(new RegExp(`${token}:\\s*oklch\\(([\\d.]+)`));
   if (!matched) throw new Error(`${token} 의 oklch 값을 찾을 수 없습니다`);
   return Number(matched[1]);
 }
 
-const statusTokens = ['--status-published', '--status-draft', '--status-danger'];
+const statusTokens = [
+  '--status-published',
+  '--status-draft',
+  '--status-danger',
+];
 
 describe('globals.css 어드민 토큰', () => {
   it('상태 색 토큰이 :root와 .dark 양쪽에 정의된다', () => {
@@ -162,9 +166,9 @@ npm run test:run -- src/app/globals.test.ts
 `src/app/globals.css`의 `@theme inline` 블록에서 `--color-sidebar-ring` 줄 바로 앞에 추가한다.
 
 ```css
-  --color-status-published: var(--status-published);
-  --color-status-draft: var(--status-draft);
-  --color-status-danger: var(--status-danger);
+--color-status-published: var(--status-published);
+--color-status-draft: var(--status-draft);
+--color-status-danger: var(--status-danger);
 ```
 
 - [x] **Step 4: `:root` 사이드바 차콜화 + 상태 색 추가**
@@ -172,22 +176,22 @@ npm run test:run -- src/app/globals.test.ts
 `:root` 블록의 `--sidebar` 8줄을 아래로 교체한다.
 
 ```css
-  --sidebar: oklch(0.22 0.004 100);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(1 0 0);
-  --sidebar-primary-foreground: oklch(0.22 0.004 100);
-  --sidebar-accent: oklch(1 0 0);
-  --sidebar-accent-foreground: oklch(0.22 0.004 100);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.708 0 0);
+--sidebar: oklch(0.22 0.004 100);
+--sidebar-foreground: oklch(0.985 0 0);
+--sidebar-primary: oklch(1 0 0);
+--sidebar-primary-foreground: oklch(0.22 0.004 100);
+--sidebar-accent: oklch(1 0 0);
+--sidebar-accent-foreground: oklch(0.22 0.004 100);
+--sidebar-border: oklch(1 0 0 / 10%);
+--sidebar-ring: oklch(0.708 0 0);
 ```
 
 이어서 같은 `:root` 블록 끝에 상태 색을 추가한다.
 
 ```css
-  --status-published: oklch(0.72 0.19 145);
-  --status-draft: oklch(0.8 0.15 75);
-  --status-danger: oklch(0.62 0.23 27);
+--status-published: oklch(0.72 0.19 145);
+--status-draft: oklch(0.8 0.15 75);
+--status-danger: oklch(0.62 0.23 27);
 ```
 
 - [x] **Step 5: `.dark` 재정의**
@@ -195,22 +199,22 @@ npm run test:run -- src/app/globals.test.ts
 `.dark` 블록의 `--sidebar` 8줄을 아래로 교체한다. 사이드바가 본문 배경(`--background: oklch(0.145 0 0)`)보다 어두워야 라이트 모드와 같은 위계(사이드바 < 페이지 < 카드)가 유지된다.
 
 ```css
-  --sidebar: oklch(0.12 0.004 100);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.985 0 0);
-  --sidebar-primary-foreground: oklch(0.12 0.004 100);
-  --sidebar-accent: oklch(0.3 0.004 100);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+--sidebar: oklch(0.12 0.004 100);
+--sidebar-foreground: oklch(0.985 0 0);
+--sidebar-primary: oklch(0.985 0 0);
+--sidebar-primary-foreground: oklch(0.12 0.004 100);
+--sidebar-accent: oklch(0.3 0.004 100);
+--sidebar-accent-foreground: oklch(0.985 0 0);
+--sidebar-border: oklch(1 0 0 / 10%);
+--sidebar-ring: oklch(0.556 0 0);
 ```
 
 이어서 같은 `.dark` 블록 끝에 상태 색을 추가한다.
 
 ```css
-  --status-published: oklch(0.76 0.17 145);
-  --status-draft: oklch(0.78 0.14 75);
-  --status-danger: oklch(0.7 0.19 22);
+--status-published: oklch(0.76 0.17 145);
+--status-draft: oklch(0.78 0.14 75);
+--status-danger: oklch(0.7 0.19 22);
 ```
 
 - [x] **Step 6: 테스트 통과 확인**
@@ -233,10 +237,12 @@ git commit -m "🎨 style: 어드민 셀 A 디자인 토큰 정의 (차콜 사�
 ## Task 2: Switch 프리미티브
 
 **Files:**
+
 - Create: `src/components/ui/switch.tsx`
 - Test: `src/components/ui/switch.test.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 1의 토큰 (직접 참조는 없음. 색은 shadcn 기본 `bg-primary`를 쓰고, 발행 초록은 PR 2가 사용처에서 `data-[state=checked]:bg-status-published`로 덮는다)
 - Produces: `Switch` — radix `SwitchPrimitive.Root` 래퍼. props는 radix 원형 그대로(`checked`, `defaultChecked`, `onCheckedChange`, `disabled`, `aria-label`). `role="switch"`와 `data-state="checked" | "unchecked"`를 노출한다.
 
@@ -357,10 +363,12 @@ git commit -m "➕ feat: Switch 프리미티브 추가"
 ## Task 3: 어드민 라우트 메타데이터
 
 **Files:**
+
 - Create: `src/app/admin/_utils/admin-nav.ts`
 - Test: `src/app/admin/_utils/admin-nav.test.ts`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces:
   - `type AdminNavItem = { label: string; icon: LucideIcon; href: string }`
@@ -413,7 +421,10 @@ describe('getBreadcrumb', () => {
   });
 
   it('그룹에 속한 화면은 [그룹, 항목]을 반환한다', () => {
-    expect(getBreadcrumb('/admin/categories')).toEqual(['콘텐츠', '카테고리 관리']);
+    expect(getBreadcrumb('/admin/categories')).toEqual([
+      '콘텐츠',
+      '카테고리 관리',
+    ]);
   });
 
   it('더 긴 경로가 있으면 그쪽에 매칭한다', () => {
@@ -554,10 +565,12 @@ git commit -m "♻️ refactor: 어드민 라우트 메타데이터를 admin-nav
 ## Task 4: 사이드바 셀 A
 
 **Files:**
+
 - Modify: `src/app/admin/_actions/admin-sidebar.action.tsx`
 - Test: `src/app/admin/_actions/admin-sidebar.action.test.tsx` (신규)
 
 **Interfaces:**
+
 - Consumes: Task 3의 `adminNavGroups`, `adminFooterItems`. Task 1의 `--sidebar-*` 토큰(`Sidebar`가 `bg-sidebar`로 자동 소비)
 - Produces: `AdminSidebarAction({ pendingReplyCount }: { pendingReplyCount?: number })`. `pendingReplyCount`가 0보다 클 때만 "댓글 관리" 항목에 뱃지를 렌더한다. PR 3이 `admin/layout.tsx`에서 실제 값을 주입한다.
 
@@ -640,7 +653,9 @@ describe('AdminSidebarAction', () => {
     renderSidebar();
 
     expect(
-      screen.getByRole('link', { name: /카테고리 관리/ }).closest('[data-active]')
+      screen
+        .getByRole('link', { name: /카테고리 관리/ })
+        .closest('[data-active]')
     ).toHaveAttribute('data-active', 'true');
     expect(
       screen.getByRole('link', { name: /글 관리/ }).closest('[data-active]')
@@ -779,7 +794,9 @@ export function AdminSidebarAction({ pendingReplyCount }: Props) {
       </SidebarContent>
 
       <SidebarFooter className="border-sidebar-border border-t p-2">
-        <SidebarMenu>{adminFooterItems.map((item) => renderItem(item))}</SidebarMenu>
+        <SidebarMenu>
+          {adminFooterItems.map((item) => renderItem(item))}
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
@@ -808,10 +825,12 @@ git commit -m "💄 style: 어드민 사이드바를 셀 A 외형으로 교체"
 ## Task 5: 헤더 셀 A
 
 **Files:**
+
 - Modify: `src/app/admin/_actions/admin-header.action.tsx`
 - Test: `src/app/admin/_actions/admin-header.action.test.tsx` (신규)
 
 **Interfaces:**
+
 - Consumes: Task 3의 `getBreadcrumb`
 - Produces: `AdminHeaderAction()` — props 없음. 에디터 경로(`/admin/posts/new`, `/admin/posts/<id>/edit`)에서는 브레드크럼·사이드바 트리거·글쓰기 버튼을 숨기고 사이트명 링크만 남기는 기존 동작을 유지한다.
 
@@ -886,7 +905,9 @@ describe('AdminHeaderAction', () => {
     pathname.current = '/admin/posts/new';
     render(<AdminHeaderAction />);
 
-    expect(screen.queryByRole('link', { name: /글쓰기/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: /글쓰기/ })
+    ).not.toBeInTheDocument();
     expect(screen.queryByText('콘텐츠')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'YJlogs' })).toHaveAttribute(
       'href',
@@ -898,7 +919,9 @@ describe('AdminHeaderAction', () => {
     pathname.current = '/admin/posts/12/edit';
     render(<AdminHeaderAction />);
 
-    expect(screen.queryByRole('link', { name: /글쓰기/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: /글쓰기/ })
+    ).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'YJlogs' })).toBeInTheDocument();
   });
 
@@ -929,8 +952,8 @@ npm run test:run -- src/app/admin/_actions/admin-header.action.test.tsx
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Plus } from 'lucide-react';
 import { UserButton } from '@clerk/nextjs';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { SITE_NAME } from '@/lib/constants';
@@ -957,7 +980,10 @@ export function AdminHeaderAction() {
       ) : (
         <>
           <SidebarTrigger />
-          <nav aria-label="현재 위치" className="flex items-center gap-1.5 text-sm">
+          <nav
+            aria-label="현재 위치"
+            className="flex items-center gap-1.5 text-sm"
+          >
             {breadcrumb.map((crumb, index) => (
               <span key={crumb} className="flex items-center gap-1.5">
                 {index > 0 && <span className="text-muted-foreground">/</span>}
@@ -1012,11 +1038,13 @@ git commit -m "💄 style: 어드민 헤더에 브레드크럼 추가하고 셀 
 ## Task 6: 본문 셸과 공통 페이지 헤더
 
 **Files:**
+
 - Create: `src/app/admin/_components/admin-page-header.tsx`
 - Test: `src/app/admin/_components/admin-page-header.test.tsx`
 - Modify: `src/app/admin/layout.tsx`
 
 **Interfaces:**
+
 - Consumes: 없음 (순수 컴포넌트)
 - Produces: `AdminPageHeader({ title, description, action }: { title: string; description?: string; action?: React.ReactNode })`. PR 2~4의 모든 어드민 화면이 `<h1>` 직접 작성 대신 이 컴포넌트를 쓴다. 시안의 "카테고리 / 글 3개가 카테고리에 묶여 있고, 1개는 아직 미분류입니다 / [+ 새 카테고리]" 3단 구성에 대응한다.
 
@@ -1032,12 +1060,17 @@ import { AdminPageHeader } from './admin-page-header';
 describe('AdminPageHeader', () => {
   it('타이틀을 h1으로 렌더한다', () => {
     render(<AdminPageHeader title="카테고리" />);
-    expect(screen.getByRole('heading', { level: 1, name: '카테고리' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: '카테고리' })
+    ).toBeInTheDocument();
   });
 
   it('설명을 함께 렌더한다', () => {
     render(
-      <AdminPageHeader title="카테고리" description="글 3개가 카테고리에 묶여 있습니다" />
+      <AdminPageHeader
+        title="카테고리"
+        description="글 3개가 카테고리에 묶여 있습니다"
+      />
     );
     expect(
       screen.getByText('글 3개가 카테고리에 묶여 있습니다')
@@ -1110,9 +1143,9 @@ npm run test:run -- src/app/admin/_components/admin-page-header.test.tsx
 `src/app/admin/layout.tsx`의 `main` 줄을 교체한다. 시안의 본문은 좌우 여백이 넉넉하고 폭이 제한돼 있다.
 
 ```tsx
-        <main className="flex-1 px-8 py-8">
-          <div className="mx-auto max-w-360">{children}</div>
-        </main>
+<main className="flex-1 px-8 py-8">
+  <div className="mx-auto max-w-360">{children}</div>
+</main>
 ```
 
 > `max-w-360`은 1440px이다 (360 × 4px). Tailwind v4 spacing 스케일 규칙에 따라 `max-w-[1440px]` 임의값 대신 숫자 유틸리티를 쓴다.
@@ -1139,6 +1172,7 @@ git commit -m "✨ feat: 어드민 공통 페이지 헤더 추가하고 본문 �
 **Files:** 없음 (검증 전용)
 
 **Interfaces:**
+
 - Consumes: Task 1~6 전부
 - Produces: 없음
 

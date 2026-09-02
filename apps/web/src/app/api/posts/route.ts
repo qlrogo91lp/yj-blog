@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { selectPosts } from '@/db/queries/posts';
 import { selectCategoryBySlug } from '@/db/queries/categories';
+import { selectPosts } from '@/db/queries/posts';
 import { getTagBySlug } from '@/db/queries/tags';
 
 export async function GET(request: NextRequest) {

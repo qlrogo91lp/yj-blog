@@ -1,328 +1,1350 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
-</head>
-<body>
-<x-dc>
-<helmet data-dc-atomics>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
-<style>
-html{scroll-behavior:smooth}
-body{margin:0;background:#F2F2F7;font-family:'Plus Jakarta Sans',-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:#007AFF;text-decoration:none}
-a:hover{color:#0A84FF}
-::selection{background:rgba(0,122,255,0.18)}
-</style>
-</helmet>
-<div style="background:#F2F2F7;color:#000;position:relative;overflow-x:clip">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="./support.js"></script>
+  </head>
+  <body>
+    <x-dc>
+      <helmet data-dc-atomics>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap"
+          rel="stylesheet"
+        />
+        <style>
+          html {
+            scroll-behavior: smooth;
+          }
+          body {
+            margin: 0;
+            background: #f2f2f7;
+            font-family:
+              'Plus Jakarta Sans',
+              -apple-system,
+              system-ui,
+              sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+          }
+          a {
+            color: #007aff;
+            text-decoration: none;
+          }
+          a:hover {
+            color: #0a84ff;
+          }
+          ::selection {
+            background: rgba(0, 122, 255, 0.18);
+          }
+        </style>
+      </helmet>
+      <div
+        style="
+          background: #f2f2f7;
+          color: #000;
+          position: relative;
+          overflow-x: clip;
+        "
+      >
+        <div
+          data-a="mesh"
+          style="
+            position: fixed;
+            inset: -20% -10%;
+            z-index: 0;
+            pointer-events: none;
+            background:
+              radial-gradient(
+                50% 40% at 18% 12%,
+                rgba(52, 199, 89, 0.28),
+                transparent 70%
+              ),
+              radial-gradient(
+                46% 38% at 84% 26%,
+                rgba(0, 122, 255, 0.22),
+                transparent 72%
+              ),
+              radial-gradient(
+                56% 42% at 50% 96%,
+                rgba(88, 86, 214, 0.16),
+                transparent 70%
+              );
+            filter: blur(30px);
+          "
+        ></div>
 
-  <div data-a="mesh" style="position:fixed;inset:-20% -10%;z-index:0;pointer-events:none;background:radial-gradient(50% 40% at 18% 12%,rgba(52,199,89,0.28),transparent 70%),radial-gradient(46% 38% at 84% 26%,rgba(0,122,255,0.22),transparent 72%),radial-gradient(56% 42% at 50% 96%,rgba(88,86,214,0.16),transparent 70%);filter:blur(30px)"></div>
+        <nav
+          style="
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 8px 8px 8px 18px;
+            border-radius: 999px;
+            background: rgba(250, 250, 250, 0.7);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+          "
+        >
+          <span
+            style="font-size: 15px; font-weight: 700; letter-spacing: -0.4px"
+            >Ralli</span
+          >
+          <span
+            data-m="navlinks"
+            style="
+              display: flex;
+              gap: 16px;
+              font-size: 13px;
+              font-weight: 500;
+              color: rgba(60, 60, 67, 0.6);
+            "
+          >
+            <a href="#watch" style="color: inherit">Watch</a>
+            <a href="#health" style="color: inherit">Health</a>
+            <a href="#iphone" style="color: inherit">iPhone</a>
+          </span>
+          <a
+            href="https://apps.apple.com/us/app/ralli/id6449350578"
+            style="
+              display: inline-flex;
+              align-items: center;
+              padding: 8px 16px;
+              border-radius: 999px;
+              background: #007aff;
+              color: #fff;
+              font-size: 13px;
+              font-weight: 600;
+              letter-spacing: -0.2px;
+            "
+            >Get Ralli</a
+          >
+        </nav>
 
-  <nav style="position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:20px;padding:8px 8px 8px 18px;border-radius:999px;background:rgba(250,250,250,0.7);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(255,255,255,0.7);box-shadow:0 8px 40px rgba(0,0,0,0.12)">
-    <span style="font-size:15px;font-weight:700;letter-spacing:-0.4px">Ralli</span>
-    <span data-m="navlinks" style="display:flex;gap:16px;font-size:13px;font-weight:500;color:rgba(60,60,67,0.6)">
-      <a href="#watch" style="color:inherit">Watch</a>
-      <a href="#health" style="color:inherit">Health</a>
-      <a href="#iphone" style="color:inherit">iPhone</a>
-    </span>
-    <a href="https://apps.apple.com/us/app/ralli/id6449350578" style="display:inline-flex;align-items:center;padding:8px 16px;border-radius:999px;background:#007AFF;color:#fff;font-size:13px;font-weight:600;letter-spacing:-0.2px">Get Ralli</a>
-  </nav>
+        <div
+          data-a="hero"
+          data-m="hero-h"
+          style="position: relative; z-index: 1; height: 300vh"
+        >
+          <div
+            style="
+              position: sticky;
+              top: 0;
+              height: 100vh;
+              overflow: hidden;
+              display: grid;
+              place-items: center;
+            "
+          >
+            <div
+              data-a="head"
+              style="
+                position: absolute;
+                top: 6vh;
+                left: 0;
+                right: 0;
+                text-align: center;
+                z-index: 4;
+                padding: 0 24px;
+              "
+            >
+              <div
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 8px;
+                  padding: 6px 14px;
+                  border-radius: 999px;
+                  background: rgba(250, 250, 250, 0.7);
+                  backdrop-filter: blur(20px);
+                  -webkit-backdrop-filter: blur(20px);
+                  border: 1px solid rgba(255, 255, 255, 0.8);
+                  font-size: 12.5px;
+                  font-weight: 600;
+                  color: rgba(60, 60, 67, 0.7);
+                  margin-bottom: 16px;
+                "
+              >
+                <span
+                  style="
+                    width: 7px;
+                    height: 7px;
+                    border-radius: 50%;
+                    background: #34c759;
+                  "
+                ></span
+                >Live on Apple Watch &amp; iPhone
+              </div>
+              <h1
+                style="
+                  margin: 0 0 12px;
+                  font-size: clamp(30px, 4.8vw, 64px);
+                  font-weight: 700;
+                  letter-spacing: -0.045em;
+                  line-height: 0.98;
+                  text-wrap: balance;
+                "
+              >
+                Keep score.<br />Not your phone.
+              </h1>
+              <p
+                style="
+                  margin: 0 auto;
+                  max-width: 460px;
+                  font-size: 17px;
+                  line-height: 1.45;
+                  color: rgba(60, 60, 67, 0.6);
+                "
+              >
+                Ralli counts games, sets, and calories from your wrist — then
+                hands the whole match back to your iPhone.
+              </p>
+            </div>
 
-  <div data-a="hero" data-m="hero-h" style="position:relative;z-index:1;height:300vh">
-    <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center">
+            <div
+              data-a="stage"
+              style="
+                position: relative;
+                z-index: 2;
+                width: 50vw;
+                max-width: 820px;
+                height: 44vh;
+                border-radius: 40px;
+                transform: translate3d(0, 16vh, 0);
+                background: #0a0a0a;
+                overflow: hidden;
+                display: grid;
+                place-items: center;
+                box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+                will-change: transform, width, height;
+              "
+            >
+              <img
+                data-a="hwatch"
+                src="https://yjlogs.com/ralli/watch-match-global.png"
+                alt="Ralli match score on Apple Watch"
+                style="width: auto; max-width: 86%; object-fit: contain"
+              />
+              <div
+                data-a="stagelabel"
+                style="
+                  position: absolute;
+                  left: 24px;
+                  bottom: 20px;
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  padding: 8px 14px;
+                  border-radius: 999px;
+                  background: rgba(255, 255, 255, 0.08);
+                  backdrop-filter: blur(18px);
+                  -webkit-backdrop-filter: blur(18px);
+                  border: 1px solid rgba(255, 255, 255, 0.14);
+                  color: #fff;
+                  font-size: 12.5px;
+                  font-weight: 600;
+                  opacity: 0;
+                "
+              >
+                <span
+                  style="
+                    width: 7px;
+                    height: 7px;
+                    border-radius: 50%;
+                    background: #ff3b30;
+                  "
+                ></span
+                >Set 2 · 4–3 · your serve
+              </div>
+            </div>
 
-      <div data-a="head" style="position:absolute;top:6vh;left:0;right:0;text-align:center;z-index:4;padding:0 24px">
-        <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:rgba(250,250,250,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.8);font-size:12.5px;font-weight:600;color:rgba(60,60,67,0.7);margin-bottom:16px">
-          <span style="width:7px;height:7px;border-radius:50%;background:#34C759"></span>Live on Apple Watch &amp; iPhone
-        </div>
-        <h1 style="margin:0 0 12px;font-size:clamp(30px,4.8vw,64px);font-weight:700;letter-spacing:-0.045em;line-height:0.98;text-wrap:balance">Keep score.<br>Not your phone.</h1>
-        <p style="margin:0 auto;max-width:460px;font-size:17px;line-height:1.45;color:rgba(60,60,67,0.6)">Ralli counts games, sets, and calories from your wrist — then hands the whole match back to your iPhone.</p>
-      </div>
+            <div
+              data-a="chip0"
+              data-m="chip"
+              style="
+                position: absolute;
+                z-index: 5;
+                left: 9vw;
+                top: 34vh;
+                padding: 14px 18px;
+                border-radius: 22px;
+                background: rgba(250, 250, 250, 0.72);
+                backdrop-filter: blur(26px) saturate(180%);
+                -webkit-backdrop-filter: blur(26px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+              "
+            >
+              <div
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  letter-spacing: 0.14em;
+                  color: rgba(60, 60, 67, 0.5);
+                "
+              >
+                GAMES
+              </div>
+              <div
+                style="
+                  font-size: 30px;
+                  font-weight: 700;
+                  letter-spacing: -0.04em;
+                  line-height: 1.1;
+                "
+              >
+                4 <span style="color: rgba(60, 60, 67, 0.3)">–</span> 3
+              </div>
+            </div>
+            <div
+              data-a="chip1"
+              data-m="chip"
+              style="
+                position: absolute;
+                z-index: 5;
+                right: 8vw;
+                top: 30vh;
+                padding: 14px 18px;
+                border-radius: 22px;
+                background: rgba(250, 250, 250, 0.72);
+                backdrop-filter: blur(26px) saturate(180%);
+                -webkit-backdrop-filter: blur(26px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+              "
+            >
+              <div
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  letter-spacing: 0.14em;
+                  color: rgba(60, 60, 67, 0.5);
+                "
+              >
+                HEART RATE
+              </div>
+              <div
+                style="
+                  font-size: 30px;
+                  font-weight: 700;
+                  letter-spacing: -0.04em;
+                  line-height: 1.1;
+                  color: #ff3b30;
+                "
+              >
+                148<span style="font-size: 14px; color: rgba(60, 60, 67, 0.5)">
+                  bpm</span
+                >
+              </div>
+            </div>
+            <div
+              data-a="chip2"
+              data-m="chip"
+              style="
+                position: absolute;
+                z-index: 5;
+                right: 13vw;
+                bottom: 20vh;
+                padding: 14px 18px;
+                border-radius: 22px;
+                background: rgba(250, 250, 250, 0.72);
+                backdrop-filter: blur(26px) saturate(180%);
+                -webkit-backdrop-filter: blur(26px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+              "
+            >
+              <div
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  letter-spacing: 0.14em;
+                  color: rgba(60, 60, 67, 0.5);
+                "
+              >
+                ENERGY
+              </div>
+              <div
+                style="
+                  font-size: 30px;
+                  font-weight: 700;
+                  letter-spacing: -0.04em;
+                  line-height: 1.1;
+                  color: #34c759;
+                "
+              >
+                642<span style="font-size: 14px; color: rgba(60, 60, 67, 0.5)">
+                  kcal</span
+                >
+              </div>
+            </div>
+            <div
+              data-a="chip3"
+              data-m="chip"
+              style="
+                position: absolute;
+                z-index: 5;
+                left: 11vw;
+                bottom: 23vh;
+                padding: 14px 18px;
+                border-radius: 22px;
+                background: rgba(250, 250, 250, 0.72);
+                backdrop-filter: blur(26px) saturate(180%);
+                -webkit-backdrop-filter: blur(26px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+              "
+            >
+              <div
+                style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  letter-spacing: 0.14em;
+                  color: rgba(60, 60, 67, 0.5);
+                "
+              >
+                FORMAT
+              </div>
+              <div
+                style="
+                  font-size: 30px;
+                  font-weight: 700;
+                  letter-spacing: -0.04em;
+                  line-height: 1.1;
+                "
+              >
+                6 games
+              </div>
+            </div>
 
-      <div data-a="stage" style="position:relative;z-index:2;width:50vw;max-width:820px;height:44vh;border-radius:40px;transform:translate3d(0,16vh,0);background:#0A0A0A;overflow:hidden;display:grid;place-items:center;box-shadow:0 30px 90px rgba(0,0,0,0.28);will-change:transform,width,height">
-        <img data-a="hwatch" src="https://yjlogs.com/ralli/watch-match-global.png" alt="Ralli match score on Apple Watch" style="width:auto;max-width:86%;object-fit:contain">
-        <div data-a="stagelabel" style="position:absolute;left:24px;bottom:20px;display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,0.08);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.14);color:#fff;font-size:12.5px;font-weight:600;opacity:0">
-          <span style="width:7px;height:7px;border-radius:50%;background:#FF3B30"></span>Set 2 · 4–3 · your serve
-        </div>
-      </div>
-
-      <div data-a="chip0" data-m="chip" style="position:absolute;z-index:5;left:9vw;top:34vh;padding:14px 18px;border-radius:22px;background:rgba(250,250,250,0.72);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,0.8);box-shadow:0 8px 40px rgba(0,0,0,0.12)">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:rgba(60,60,67,0.5)">GAMES</div>
-        <div style="font-size:30px;font-weight:700;letter-spacing:-0.04em;line-height:1.1">4 <span style="color:rgba(60,60,67,0.3)">–</span> 3</div>
-      </div>
-      <div data-a="chip1" data-m="chip" style="position:absolute;z-index:5;right:8vw;top:30vh;padding:14px 18px;border-radius:22px;background:rgba(250,250,250,0.72);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,0.8);box-shadow:0 8px 40px rgba(0,0,0,0.12)">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:rgba(60,60,67,0.5)">HEART RATE</div>
-        <div style="font-size:30px;font-weight:700;letter-spacing:-0.04em;line-height:1.1;color:#FF3B30">148<span style="font-size:14px;color:rgba(60,60,67,0.5)"> bpm</span></div>
-      </div>
-      <div data-a="chip2" data-m="chip" style="position:absolute;z-index:5;right:13vw;bottom:20vh;padding:14px 18px;border-radius:22px;background:rgba(250,250,250,0.72);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,0.8);box-shadow:0 8px 40px rgba(0,0,0,0.12)">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:rgba(60,60,67,0.5)">ENERGY</div>
-        <div style="font-size:30px;font-weight:700;letter-spacing:-0.04em;line-height:1.1;color:#34C759">642<span style="font-size:14px;color:rgba(60,60,67,0.5)"> kcal</span></div>
-      </div>
-      <div data-a="chip3" data-m="chip" style="position:absolute;z-index:5;left:11vw;bottom:23vh;padding:14px 18px;border-radius:22px;background:rgba(250,250,250,0.72);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,0.8);box-shadow:0 8px 40px rgba(0,0,0,0.12)">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;color:rgba(60,60,67,0.5)">FORMAT</div>
-        <div style="font-size:30px;font-weight:700;letter-spacing:-0.04em;line-height:1.1">6 games</div>
-      </div>
-
-      <div data-a="cta" data-m="cta" style="position:absolute;z-index:6;bottom:7vh;left:0;right:0;display:flex;justify-content:center;gap:12px;align-items:center;flex-wrap:wrap;padding:0 20px;box-sizing:border-box">
-        <a href="https://apps.apple.com/us/app/ralli/id6449350578" style="display:inline-flex;padding:15px 26px;border-radius:999px;background:#007AFF;color:#fff;font-size:15.5px;font-weight:600;box-shadow:0 12px 34px rgba(0,122,255,0.32)">Download on the App Store</a>
-        <span style="font-size:13.5px;color:rgba(60,60,67,0.55)">Free · watchOS 10+</span>
-      </div>
-    </div>
-  </div>
-
-  <section id="watch" data-m="sec" style="position:relative;z-index:1;padding:110px max(6vw,28px)">
-    <div style="max-width:1120px;margin:0 auto">
-      <div data-reveal style="max-width:600px;margin-bottom:44px">
-        <div style="font-size:12px;font-weight:700;letter-spacing:0.18em;color:#34C759;margin-bottom:12px">ON THE COURT</div>
-        <h2 style="margin:0 0 12px;font-size:clamp(28px,3.8vw,48px);font-weight:700;letter-spacing:-0.04em;line-height:1.04;text-wrap:pretty">Everything happens on your wrist.</h2>
-        <p style="margin:0;font-size:17px;line-height:1.5;color:rgba(60,60,67,0.6)">No phone in your pocket. No paper scorecard. Just a tap between points.</p>
-      </div>
-      <div data-m="grid1" style="display:grid;grid-template-columns:1.25fr 1fr;gap:16px">
-        <div data-reveal data-m="tallcard" style="grid-row:span 2;border-radius:34px;background:#0A0A0A;min-height:520px;display:grid;place-items:center;padding:36px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
-          <img src="https://yjlogs.com/ralli/watch-match-global.png" alt="Ralli match score on Apple Watch" style="max-width:100%;max-height:400px;object-fit:contain">
-          <div style="position:absolute;left:30px;bottom:28px;color:#fff">
-            <div style="font-size:19px;font-weight:600;letter-spacing:-0.3px;margin-bottom:4px">Tap to score</div>
-            <div style="font-size:14.5px;color:rgba(235,235,245,0.6);max-width:280px">Pick a format, tap the winner of each point, undo mistakes instantly.</div>
+            <div
+              data-a="cta"
+              data-m="cta"
+              style="
+                position: absolute;
+                z-index: 6;
+                bottom: 7vh;
+                left: 0;
+                right: 0;
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                align-items: center;
+                flex-wrap: wrap;
+                padding: 0 20px;
+                box-sizing: border-box;
+              "
+            >
+              <a
+                href="https://apps.apple.com/us/app/ralli/id6449350578"
+                style="
+                  display: inline-flex;
+                  padding: 15px 26px;
+                  border-radius: 999px;
+                  background: #007aff;
+                  color: #fff;
+                  font-size: 15.5px;
+                  font-weight: 600;
+                  box-shadow: 0 12px 34px rgba(0, 122, 255, 0.32);
+                "
+                >Download on the App Store</a
+              >
+              <span style="font-size: 13.5px; color: rgba(60, 60, 67, 0.55)"
+                >Free · watchOS 10+</span
+              >
+            </div>
           </div>
         </div>
-        <div data-reveal style="border-radius:34px;background:rgba(250,250,250,0.72);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,0.75);box-shadow:0 8px 40px rgba(0,0,0,0.10);padding:30px;display:flex;flex-direction:column;justify-content:space-between;min-height:252px">
-          <div style="font-size:19px;font-weight:600;letter-spacing:-0.3px">One tap from the watch face</div>
-          <p style="margin:8px 0 18px;font-size:14.5px;line-height:1.45;color:rgba(60,60,67,0.6)">Add the Ralli complication and start a match before the first serve.</p>
-          <div style="border-radius:22px;background:#0A0A0A;overflow:hidden;display:grid;place-items:center;padding:14px;flex:1">
-            <img src="https://yjlogs.com/ralli/watch-complication-global.png" alt="Ralli complication on the Apple Watch face" style="max-width:100%;max-height:150px;object-fit:contain">
-          </div>
-        </div>
-        <div data-reveal style="border-radius:34px;background:rgba(250,250,250,0.72);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,0.75);box-shadow:0 8px 40px rgba(0,0,0,0.10);padding:30px;display:flex;flex-direction:column;justify-content:space-between;min-height:252px">
-          <div style="font-size:19px;font-weight:600;letter-spacing:-0.3px">Live on the Lock Screen</div>
-          <p style="margin:8px 0 18px;font-size:14.5px;line-height:1.45;color:rgba(60,60,67,0.6)">The running score sits in the Dynamic Island and Live Activities.</p>
-          <div style="border-radius:22px;background:#0A0A0A;overflow:hidden;display:grid;place-items:center;padding:14px;flex:1">
-            <img src="https://yjlogs.com/ralli/ios-live-global.png" alt="Ralli Live Activity on the iPhone Lock Screen" style="max-width:100%;max-height:150px;object-fit:contain">
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section id="health" data-a="pin" data-m="pin-h" style="position:relative;z-index:1;height:280vh">
-    <div data-m="pingrid" style="position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:48px;padding:0 max(6vw,28px);box-sizing:border-box;max-width:1300px;margin:0 auto">
-      <div>
-        <div style="font-size:12px;font-weight:700;letter-spacing:0.18em;color:#FF3B30;margin-bottom:12px">HEALTH</div>
-        <h2 style="margin:0 0 20px;font-size:clamp(28px,3.8vw,48px);font-weight:700;letter-spacing:-0.04em;line-height:1.04;text-wrap:pretty">A match is a workout — logged automatically.</h2>
-        <div style="display:flex;flex-direction:column;gap:10px;max-width:460px">
-          <div data-a="step0" style="padding:16px 18px;border-radius:20px;border:1px solid rgba(60,60,67,0.12)">
-            <div style="font-size:16.5px;font-weight:600;letter-spacing:-0.2px;margin-bottom:3px">Tied to a HealthKit session</div>
-            <div style="font-size:14.5px;line-height:1.45;color:rgba(60,60,67,0.6)">Start a match, start a workout. Nothing extra to remember.</div>
+        <section
+          id="watch"
+          data-m="sec"
+          style="position: relative; z-index: 1; padding: 110px max(6vw, 28px)"
+        >
+          <div style="max-width: 1120px; margin: 0 auto">
+            <div data-reveal style="max-width: 600px; margin-bottom: 44px">
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  letter-spacing: 0.18em;
+                  color: #34c759;
+                  margin-bottom: 12px;
+                "
+              >
+                ON THE COURT
+              </div>
+              <h2
+                style="
+                  margin: 0 0 12px;
+                  font-size: clamp(28px, 3.8vw, 48px);
+                  font-weight: 700;
+                  letter-spacing: -0.04em;
+                  line-height: 1.04;
+                  text-wrap: pretty;
+                "
+              >
+                Everything happens on your wrist.
+              </h2>
+              <p
+                style="
+                  margin: 0;
+                  font-size: 17px;
+                  line-height: 1.5;
+                  color: rgba(60, 60, 67, 0.6);
+                "
+              >
+                No phone in your pocket. No paper scorecard. Just a tap between
+                points.
+              </p>
+            </div>
+            <div
+              data-m="grid1"
+              style="
+                display: grid;
+                grid-template-columns: 1.25fr 1fr;
+                gap: 16px;
+              "
+            >
+              <div
+                data-reveal
+                data-m="tallcard"
+                style="
+                  grid-row: span 2;
+                  border-radius: 34px;
+                  background: #0a0a0a;
+                  min-height: 520px;
+                  display: grid;
+                  place-items: center;
+                  padding: 36px;
+                  position: relative;
+                  overflow: hidden;
+                  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+                "
+              >
+                <img
+                  src="https://yjlogs.com/ralli/watch-match-global.png"
+                  alt="Ralli match score on Apple Watch"
+                  style="
+                    max-width: 100%;
+                    max-height: 400px;
+                    object-fit: contain;
+                  "
+                />
+                <div
+                  style="
+                    position: absolute;
+                    left: 30px;
+                    bottom: 28px;
+                    color: #fff;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 19px;
+                      font-weight: 600;
+                      letter-spacing: -0.3px;
+                      margin-bottom: 4px;
+                    "
+                  >
+                    Tap to score
+                  </div>
+                  <div
+                    style="
+                      font-size: 14.5px;
+                      color: rgba(235, 235, 245, 0.6);
+                      max-width: 280px;
+                    "
+                  >
+                    Pick a format, tap the winner of each point, undo mistakes
+                    instantly.
+                  </div>
+                </div>
+              </div>
+              <div
+                data-reveal
+                style="
+                  border-radius: 34px;
+                  background: rgba(250, 250, 250, 0.72);
+                  backdrop-filter: blur(26px) saturate(180%);
+                  -webkit-backdrop-filter: blur(26px) saturate(180%);
+                  border: 1px solid rgba(255, 255, 255, 0.75);
+                  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+                  padding: 30px;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                  min-height: 252px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 19px;
+                    font-weight: 600;
+                    letter-spacing: -0.3px;
+                  "
+                >
+                  One tap from the watch face
+                </div>
+                <p
+                  style="
+                    margin: 8px 0 18px;
+                    font-size: 14.5px;
+                    line-height: 1.45;
+                    color: rgba(60, 60, 67, 0.6);
+                  "
+                >
+                  Add the Ralli complication and start a match before the first
+                  serve.
+                </p>
+                <div
+                  style="
+                    border-radius: 22px;
+                    background: #0a0a0a;
+                    overflow: hidden;
+                    display: grid;
+                    place-items: center;
+                    padding: 14px;
+                    flex: 1;
+                  "
+                >
+                  <img
+                    src="https://yjlogs.com/ralli/watch-complication-global.png"
+                    alt="Ralli complication on the Apple Watch face"
+                    style="
+                      max-width: 100%;
+                      max-height: 150px;
+                      object-fit: contain;
+                    "
+                  />
+                </div>
+              </div>
+              <div
+                data-reveal
+                style="
+                  border-radius: 34px;
+                  background: rgba(250, 250, 250, 0.72);
+                  backdrop-filter: blur(26px) saturate(180%);
+                  -webkit-backdrop-filter: blur(26px) saturate(180%);
+                  border: 1px solid rgba(255, 255, 255, 0.75);
+                  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+                  padding: 30px;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                  min-height: 252px;
+                "
+              >
+                <div
+                  style="
+                    font-size: 19px;
+                    font-weight: 600;
+                    letter-spacing: -0.3px;
+                  "
+                >
+                  Live on the Lock Screen
+                </div>
+                <p
+                  style="
+                    margin: 8px 0 18px;
+                    font-size: 14.5px;
+                    line-height: 1.45;
+                    color: rgba(60, 60, 67, 0.6);
+                  "
+                >
+                  The running score sits in the Dynamic Island and Live
+                  Activities.
+                </p>
+                <div
+                  style="
+                    border-radius: 22px;
+                    background: #0a0a0a;
+                    overflow: hidden;
+                    display: grid;
+                    place-items: center;
+                    padding: 14px;
+                    flex: 1;
+                  "
+                >
+                  <img
+                    src="https://yjlogs.com/ralli/ios-live-global.png"
+                    alt="Ralli Live Activity on the iPhone Lock Screen"
+                    style="
+                      max-width: 100%;
+                      max-height: 150px;
+                      object-fit: contain;
+                    "
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-          <div data-a="step1" style="padding:16px 18px;border-radius:20px;border:1px solid rgba(60,60,67,0.12)">
-            <div style="font-size:16.5px;font-weight:600;letter-spacing:-0.2px;margin-bottom:3px">Calories, heart rate, court time</div>
-            <div style="font-size:14.5px;line-height:1.45;color:rgba(60,60,67,0.6)">Tracked live and attached to the match you just played.</div>
+        </section>
+
+        <section
+          id="health"
+          data-a="pin"
+          data-m="pin-h"
+          style="position: relative; z-index: 1; height: 280vh"
+        >
+          <div
+            data-m="pingrid"
+            style="
+              position: sticky;
+              top: 0;
+              height: 100vh;
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              align-items: center;
+              gap: 48px;
+              padding: 0 max(6vw, 28px);
+              box-sizing: border-box;
+              max-width: 1300px;
+              margin: 0 auto;
+            "
+          >
+            <div>
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  letter-spacing: 0.18em;
+                  color: #ff3b30;
+                  margin-bottom: 12px;
+                "
+              >
+                HEALTH
+              </div>
+              <h2
+                style="
+                  margin: 0 0 20px;
+                  font-size: clamp(28px, 3.8vw, 48px);
+                  font-weight: 700;
+                  letter-spacing: -0.04em;
+                  line-height: 1.04;
+                  text-wrap: pretty;
+                "
+              >
+                A match is a workout — logged automatically.
+              </h2>
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
+                  max-width: 460px;
+                "
+              >
+                <div
+                  data-a="step0"
+                  style="
+                    padding: 16px 18px;
+                    border-radius: 20px;
+                    border: 1px solid rgba(60, 60, 67, 0.12);
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 16.5px;
+                      font-weight: 600;
+                      letter-spacing: -0.2px;
+                      margin-bottom: 3px;
+                    "
+                  >
+                    Tied to a HealthKit session
+                  </div>
+                  <div
+                    style="
+                      font-size: 14.5px;
+                      line-height: 1.45;
+                      color: rgba(60, 60, 67, 0.6);
+                    "
+                  >
+                    Start a match, start a workout. Nothing extra to remember.
+                  </div>
+                </div>
+                <div
+                  data-a="step1"
+                  style="
+                    padding: 16px 18px;
+                    border-radius: 20px;
+                    border: 1px solid rgba(60, 60, 67, 0.12);
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 16.5px;
+                      font-weight: 600;
+                      letter-spacing: -0.2px;
+                      margin-bottom: 3px;
+                    "
+                  >
+                    Calories, heart rate, court time
+                  </div>
+                  <div
+                    style="
+                      font-size: 14.5px;
+                      line-height: 1.45;
+                      color: rgba(60, 60, 67, 0.6);
+                    "
+                  >
+                    Tracked live and attached to the match you just played.
+                  </div>
+                </div>
+                <div
+                  data-a="step2"
+                  style="
+                    padding: 16px 18px;
+                    border-radius: 20px;
+                    border: 1px solid rgba(60, 60, 67, 0.12);
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 16.5px;
+                      font-weight: 600;
+                      letter-spacing: -0.2px;
+                      margin-bottom: 3px;
+                    "
+                  >
+                    Straight into Apple Fitness
+                  </div>
+                  <div
+                    style="
+                      font-size: 14.5px;
+                      line-height: 1.45;
+                      color: rgba(60, 60, 67, 0.6);
+                    "
+                  >
+                    Your rings close while you play. No double logging.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              data-m="pinpanel"
+              style="
+                position: relative;
+                height: 74vh;
+                border-radius: 40px;
+                background: #0a0a0a;
+                display: grid;
+                place-items: center;
+                overflow: hidden;
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+              "
+            >
+              <img
+                data-a="pin0"
+                src="https://yjlogs.com/ralli/watch-workout-global.png"
+                alt="Ralli workout metrics on Apple Watch"
+                style="
+                  position: absolute;
+                  max-height: 70%;
+                  max-width: 78%;
+                  object-fit: contain;
+                "
+              />
+              <img
+                data-a="pin1"
+                src="https://yjlogs.com/ralli/ios-workout-global.png"
+                alt="Ralli workout metrics on iPhone"
+                style="
+                  position: absolute;
+                  max-height: 78%;
+                  max-width: 78%;
+                  object-fit: contain;
+                "
+              />
+              <img
+                data-a="pin2"
+                src="https://yjlogs.com/ralli/ios-summary-global.png"
+                alt="Ralli match summary stats on iPhone"
+                style="
+                  position: absolute;
+                  max-height: 78%;
+                  max-width: 78%;
+                  object-fit: contain;
+                "
+              />
+            </div>
           </div>
-          <div data-a="step2" style="padding:16px 18px;border-radius:20px;border:1px solid rgba(60,60,67,0.12)">
-            <div style="font-size:16.5px;font-weight:600;letter-spacing:-0.2px;margin-bottom:3px">Straight into Apple Fitness</div>
-            <div style="font-size:14.5px;line-height:1.45;color:rgba(60,60,67,0.6)">Your rings close while you play. No double logging.</div>
+        </section>
+
+        <section
+          id="iphone"
+          data-m="sec"
+          style="
+            position: relative;
+            z-index: 1;
+            padding: 20px max(6vw, 28px) 110px;
+          "
+        >
+          <div style="max-width: 1120px; margin: 0 auto">
+            <div data-reveal style="max-width: 600px; margin-bottom: 40px">
+              <div
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  letter-spacing: 0.18em;
+                  color: #007aff;
+                  margin-bottom: 12px;
+                "
+              >
+                REPLAY
+              </div>
+              <h2
+                style="
+                  margin: 0 0 12px;
+                  font-size: clamp(28px, 3.8vw, 48px);
+                  font-weight: 700;
+                  letter-spacing: -0.04em;
+                  line-height: 1.04;
+                  text-wrap: pretty;
+                "
+              >
+                Every match, waiting on your iPhone.
+              </h2>
+              <p
+                style="
+                  margin: 0;
+                  font-size: 17px;
+                  line-height: 1.5;
+                  color: rgba(60, 60, 67, 0.6);
+                "
+              >
+                Set-by-set detail, a calendar that fills itself, and stats for
+                the season.
+              </p>
+            </div>
+            <div
+              data-m="grid1"
+              style="
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+              "
+            >
+              <div
+                data-reveal
+                style="
+                  border-radius: 34px;
+                  background: #0a0a0a;
+                  padding: 28px;
+                  display: grid;
+                  place-items: center;
+                  min-height: 420px;
+                  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.16);
+                "
+              >
+                <img
+                  src="https://yjlogs.com/ralli/ios-summary-global.png"
+                  alt="Ralli match summary stats on iPhone"
+                  style="
+                    max-width: 100%;
+                    max-height: 340px;
+                    object-fit: contain;
+                  "
+                />
+              </div>
+              <div
+                data-reveal
+                style="
+                  border-radius: 34px;
+                  background: #0a0a0a;
+                  padding: 28px;
+                  display: grid;
+                  place-items: center;
+                  min-height: 420px;
+                  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.16);
+                "
+              >
+                <img
+                  src="https://yjlogs.com/ralli/ios-match-global.png"
+                  alt="Ralli match score on iPhone"
+                  style="
+                    max-width: 100%;
+                    max-height: 340px;
+                    object-fit: contain;
+                  "
+                />
+              </div>
+              <div
+                data-reveal
+                style="
+                  border-radius: 34px;
+                  background: #0a0a0a;
+                  padding: 28px;
+                  display: grid;
+                  place-items: center;
+                  min-height: 420px;
+                  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.16);
+                "
+              >
+                <img
+                  src="https://yjlogs.com/ralli/connectivity-global.png"
+                  alt="Ralli on iPhone and Apple Watch together"
+                  style="
+                    max-width: 100%;
+                    max-height: 340px;
+                    object-fit: contain;
+                  "
+                />
+              </div>
+            </div>
+            <div
+              data-reveal
+              style="
+                margin-top: 16px;
+                border-radius: 34px;
+                background: rgba(250, 250, 250, 0.72);
+                backdrop-filter: blur(26px) saturate(180%);
+                -webkit-backdrop-filter: blur(26px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.75);
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+                padding: 36px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+                align-items: center;
+              "
+              data-m="grid1"
+            >
+              <div>
+                <h3
+                  style="
+                    margin: 0 0 10px;
+                    font-size: clamp(22px, 2.6vw, 32px);
+                    font-weight: 700;
+                    letter-spacing: -0.03em;
+                    line-height: 1.1;
+                  "
+                >
+                  Play by your own rules.
+                </h3>
+                <p
+                  style="
+                    margin: 0 0 20px;
+                    font-size: 15.5px;
+                    line-height: 1.5;
+                    color: rgba(60, 60, 67, 0.6);
+                    max-width: 380px;
+                  "
+                >
+                  Set length, no-ad, no-tie, tiebreak — start with the format
+                  your club actually plays.
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                  <span
+                    style="
+                      padding: 8px 15px;
+                      border-radius: 999px;
+                      background: #007aff;
+                      color: #fff;
+                      font-size: 13px;
+                      font-weight: 600;
+                    "
+                    >6 games</span
+                  >
+                  <span
+                    style="
+                      padding: 8px 15px;
+                      border-radius: 999px;
+                      background: rgba(120, 120, 128, 0.14);
+                      font-size: 13px;
+                      font-weight: 600;
+                    "
+                    >5 games</span
+                  >
+                  <span
+                    style="
+                      padding: 8px 15px;
+                      border-radius: 999px;
+                      background: rgba(120, 120, 128, 0.14);
+                      font-size: 13px;
+                      font-weight: 600;
+                    "
+                    >4 games</span
+                  >
+                  <span
+                    style="
+                      padding: 8px 15px;
+                      border-radius: 999px;
+                      background: rgba(120, 120, 128, 0.14);
+                      font-size: 13px;
+                      font-weight: 600;
+                    "
+                    >No-ad</span
+                  >
+                  <span
+                    style="
+                      padding: 8px 15px;
+                      border-radius: 999px;
+                      background: rgba(120, 120, 128, 0.14);
+                      font-size: 13px;
+                      font-weight: 600;
+                    "
+                    >Tiebreak</span
+                  >
+                </div>
+              </div>
+              <div
+                style="
+                  border-radius: 26px;
+                  background: #0a0a0a;
+                  padding: 22px;
+                  display: flex;
+                  gap: 16px;
+                  justify-content: center;
+                  align-items: center;
+                  min-height: 280px;
+                "
+              >
+                <img
+                  src="https://yjlogs.com/ralli/watch-mode-global.png"
+                  alt="Ralli match format on Apple Watch"
+                  style="max-height: 200px; width: auto; object-fit: contain"
+                />
+                <img
+                  src="https://yjlogs.com/ralli/ios-mode-global.png"
+                  alt="Ralli match format selection on iPhone"
+                  style="max-height: 240px; width: auto; object-fit: contain"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div data-m="pinpanel" style="position:relative;height:74vh;border-radius:40px;background:#0A0A0A;display:grid;place-items:center;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,0.22)">
-        <img data-a="pin0" src="https://yjlogs.com/ralli/watch-workout-global.png" alt="Ralli workout metrics on Apple Watch" style="position:absolute;max-height:70%;max-width:78%;object-fit:contain">
-        <img data-a="pin1" src="https://yjlogs.com/ralli/ios-workout-global.png" alt="Ralli workout metrics on iPhone" style="position:absolute;max-height:78%;max-width:78%;object-fit:contain">
-        <img data-a="pin2" src="https://yjlogs.com/ralli/ios-summary-global.png" alt="Ralli match summary stats on iPhone" style="position:absolute;max-height:78%;max-width:78%;object-fit:contain">
-      </div>
-    </div>
-  </section>
+        </section>
 
-  <section id="iphone" data-m="sec" style="position:relative;z-index:1;padding:20px max(6vw,28px) 110px">
-    <div style="max-width:1120px;margin:0 auto">
-      <div data-reveal style="max-width:600px;margin-bottom:40px">
-        <div style="font-size:12px;font-weight:700;letter-spacing:0.18em;color:#007AFF;margin-bottom:12px">REPLAY</div>
-        <h2 style="margin:0 0 12px;font-size:clamp(28px,3.8vw,48px);font-weight:700;letter-spacing:-0.04em;line-height:1.04;text-wrap:pretty">Every match, waiting on your iPhone.</h2>
-        <p style="margin:0;font-size:17px;line-height:1.5;color:rgba(60,60,67,0.6)">Set-by-set detail, a calendar that fills itself, and stats for the season.</p>
-      </div>
-      <div data-m="grid1" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-        <div data-reveal style="border-radius:34px;background:#0A0A0A;padding:28px;display:grid;place-items:center;min-height:420px;box-shadow:0 20px 60px rgba(0,0,0,0.16)">
-          <img src="https://yjlogs.com/ralli/ios-summary-global.png" alt="Ralli match summary stats on iPhone" style="max-width:100%;max-height:340px;object-fit:contain">
-        </div>
-        <div data-reveal style="border-radius:34px;background:#0A0A0A;padding:28px;display:grid;place-items:center;min-height:420px;box-shadow:0 20px 60px rgba(0,0,0,0.16)">
-          <img src="https://yjlogs.com/ralli/ios-match-global.png" alt="Ralli match score on iPhone" style="max-width:100%;max-height:340px;object-fit:contain">
-        </div>
-        <div data-reveal style="border-radius:34px;background:#0A0A0A;padding:28px;display:grid;place-items:center;min-height:420px;box-shadow:0 20px 60px rgba(0,0,0,0.16)">
-          <img src="https://yjlogs.com/ralli/connectivity-global.png" alt="Ralli on iPhone and Apple Watch together" style="max-width:100%;max-height:340px;object-fit:contain">
-        </div>
-      </div>
-      <div data-reveal style="margin-top:16px;border-radius:34px;background:rgba(250,250,250,0.72);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid rgba(255,255,255,0.75);box-shadow:0 8px 40px rgba(0,0,0,0.10);padding:36px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center" data-m="grid1">
-        <div>
-          <h3 style="margin:0 0 10px;font-size:clamp(22px,2.6vw,32px);font-weight:700;letter-spacing:-0.03em;line-height:1.1">Play by your own rules.</h3>
-          <p style="margin:0 0 20px;font-size:15.5px;line-height:1.5;color:rgba(60,60,67,0.6);max-width:380px">Set length, no-ad, no-tie, tiebreak — start with the format your club actually plays.</p>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <span style="padding:8px 15px;border-radius:999px;background:#007AFF;color:#fff;font-size:13px;font-weight:600">6 games</span>
-            <span style="padding:8px 15px;border-radius:999px;background:rgba(120,120,128,0.14);font-size:13px;font-weight:600">5 games</span>
-            <span style="padding:8px 15px;border-radius:999px;background:rgba(120,120,128,0.14);font-size:13px;font-weight:600">4 games</span>
-            <span style="padding:8px 15px;border-radius:999px;background:rgba(120,120,128,0.14);font-size:13px;font-weight:600">No-ad</span>
-            <span style="padding:8px 15px;border-radius:999px;background:rgba(120,120,128,0.14);font-size:13px;font-weight:600">Tiebreak</span>
+        <footer
+          style="position: relative; z-index: 1; padding: 0 max(6vw, 28px) 56px"
+        >
+          <div
+            data-reveal
+            style="
+              max-width: 1120px;
+              margin: 0 auto;
+              border-radius: 40px;
+              background: rgba(250, 250, 250, 0.75);
+              backdrop-filter: blur(30px) saturate(180%);
+              -webkit-backdrop-filter: blur(30px) saturate(180%);
+              border: 1px solid rgba(255, 255, 255, 0.8);
+              box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+              padding: 64px 32px;
+              text-align: center;
+            "
+          >
+            <img
+              src="https://yjlogs.com/ralli/icon1.png"
+              alt="Ralli app icon"
+              style="
+                width: 84px;
+                height: 84px;
+                border-radius: 21px;
+                margin-bottom: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+              "
+            />
+            <h2
+              style="
+                margin: 0 0 12px;
+                font-size: clamp(28px, 4vw, 52px);
+                font-weight: 700;
+                letter-spacing: -0.045em;
+                line-height: 1;
+              "
+            >
+              Ready for the next match?
+            </h2>
+            <p
+              style="
+                margin: 0 0 26px;
+                font-size: 16.5px;
+                color: rgba(60, 60, 67, 0.6);
+              "
+            >
+              Free on the App Store for Apple Watch and iPhone.
+            </p>
+            <a
+              href="https://apps.apple.com/us/app/ralli/id6449350578"
+              style="
+                display: inline-flex;
+                padding: 16px 30px;
+                border-radius: 999px;
+                background: #007aff;
+                color: #fff;
+                font-size: 16px;
+                font-weight: 600;
+                box-shadow: 0 14px 40px rgba(0, 122, 255, 0.3);
+              "
+              >Download on the App Store</a
+            >
+            <div
+              style="
+                margin-top: 40px;
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                font-size: 13.5px;
+                color: rgba(60, 60, 67, 0.5);
+              "
+            >
+              <a
+                href="https://yjlogs.com/apps/ralli/privacy"
+                style="color: inherit"
+                >Privacy Policy</a
+              >
+              <a href="mailto:qlrogo91lp@gmail.com" style="color: inherit"
+                >Support</a
+              >
+              <span>© 2026 YJlogs</span>
+            </div>
           </div>
-        </div>
-        <div style="border-radius:26px;background:#0A0A0A;padding:22px;display:flex;gap:16px;justify-content:center;align-items:center;min-height:280px">
-          <img src="https://yjlogs.com/ralli/watch-mode-global.png" alt="Ralli match format on Apple Watch" style="max-height:200px;width:auto;object-fit:contain">
-          <img src="https://yjlogs.com/ralli/ios-mode-global.png" alt="Ralli match format selection on iPhone" style="max-height:240px;width:auto;object-fit:contain">
-        </div>
+        </footer>
       </div>
-    </div>
-  </section>
-
-  <footer style="position:relative;z-index:1;padding:0 max(6vw,28px) 56px">
-    <div data-reveal style="max-width:1120px;margin:0 auto;border-radius:40px;background:rgba(250,250,250,0.75);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border:1px solid rgba(255,255,255,0.8);box-shadow:0 8px 40px rgba(0,0,0,0.12);padding:64px 32px;text-align:center">
-      <img src="https://yjlogs.com/ralli/icon1.png" alt="Ralli app icon" style="width:84px;height:84px;border-radius:21px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.18)">
-      <h2 style="margin:0 0 12px;font-size:clamp(28px,4vw,52px);font-weight:700;letter-spacing:-0.045em;line-height:1">Ready for the next match?</h2>
-      <p style="margin:0 0 26px;font-size:16.5px;color:rgba(60,60,67,0.6)">Free on the App Store for Apple Watch and iPhone.</p>
-      <a href="https://apps.apple.com/us/app/ralli/id6449350578" style="display:inline-flex;padding:16px 30px;border-radius:999px;background:#007AFF;color:#fff;font-size:16px;font-weight:600;box-shadow:0 14px 40px rgba(0,122,255,0.3)">Download on the App Store</a>
-      <div style="margin-top:40px;display:flex;justify-content:center;gap:20px;font-size:13.5px;color:rgba(60,60,67,0.5)">
-        <a href="https://yjlogs.com/apps/ralli/privacy" style="color:inherit">Privacy Policy</a>
-        <a href="mailto:qlrogo91lp@gmail.com" style="color:inherit">Support</a>
-        <span>© 2026 YJlogs</span>
-      </div>
-    </div>
-  </footer>
-</div>
-</x-dc>
-<script type="text/x-dc" data-dc-script>
-class Component extends DCLogic {
-  componentDidMount() {
-    this.injectMedia();
-    ['stage','hwatch','head','cta','chip0','chip1','chip2','chip3'].forEach(n => {
-      const el = this.one(n);
-      if (el) el.style.willChange = 'transform, opacity';
-    });
-    this.loop = this.loop.bind(this);
-    this.raf = requestAnimationFrame(this.loop);
-  }
-  injectMedia() {
-    if (document.getElementById('ralli-b-media')) return;
-    const st = document.createElement('style');
-    st.id = 'ralli-b-media';
-    st.textContent = [
-      '@media (max-width:768px){',
-      '[data-m="navlinks"]{display:none!important}',
-      '[data-m="hero-h"]{height:210vh!important}',
-      '[data-m="chip"]{padding:10px 13px!important;border-radius:16px!important}',
-      '[data-m="chip"] div:first-child{font-size:9.5px!important}',
-      '[data-m="chip"] div:last-child{font-size:20px!important}',
-      '[data-a="chip0"]{left:12px!important;top:27vh!important}',
-      '[data-a="chip1"]{right:12px!important;top:23vh!important}',
-      '[data-a="chip2"]{right:12px!important;bottom:27vh!important}',
-      '[data-a="chip3"]{left:12px!important;bottom:30vh!important}',
-      '[data-m="cta"]{bottom:5vh!important;flex-direction:column!important;gap:8px!important}',
-      '[data-m="sec"]{padding-left:20px!important;padding-right:20px!important;padding-top:64px!important;padding-bottom:64px!important}',
-      '[data-m="grid1"]{grid-template-columns:1fr!important;gap:12px!important;padding:24px!important}',
-      '[data-m="tallcard"]{grid-row:auto!important;min-height:400px!important}',
-      '[data-m="pin-h"]{height:170vh!important}',
-      '[data-m="pingrid"]{grid-template-columns:1fr!important;gap:20px!important;align-content:center!important;padding:64px 20px 24px!important}',
-      '[data-m="pinpanel"]{height:38vh!important;border-radius:28px!important}',
-      '}'
-    ].join('');
-    document.head.appendChild(st);
-  }
-  componentWillUnmount() { cancelAnimationFrame(this.raf); }
-  one(n) { return document.querySelector('[data-a="' + n + '"]'); }
-  prog(el) {
-    if (!el) return 0;
-    const r = el.getBoundingClientRect();
-    const total = (r.height - window.innerHeight) || 1;
-    return Math.max(0, Math.min(1, -r.top / total));
-  }
-  loop() {
-    const vh = window.innerHeight;
-    const ease = t => 1 - Math.pow(1 - t, 3);
-    const cl = (v, a, b) => Math.max(a, Math.min(b, v));
-
-    const mob = window.innerWidth < 768;
-    const eio = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    const hero = this.one('hero');
-    if (hero) {
-      const raw = this.prog(hero);
-      if (this.sp === undefined) this.sp = raw;
-      this.sp += (raw - this.sp) * 0.11;
-      const p = Math.abs(raw - this.sp) < 0.0005 ? raw : this.sp;
-      const e = eio(cl(p / 0.75, 0, 1));
-      const stage = this.one('stage');
-      if (stage) {
-        stage.style.width = (mob ? 86 + e * 10 : 50 + e * 44) + 'vw';
-        stage.style.height = (mob ? 32 + e * 26 : 44 + e * 42) + 'vh';
-        stage.style.borderRadius = (40 - e * 12) + 'px';
-        const base = mob ? 19 : 16;
-        stage.style.transform = 'translate3d(0,' + (base - e * base) + 'vh,0)';
-      }
-      const hw = this.one('hwatch');
-      if (hw && stage) {
-        hw.style.height = (stage.getBoundingClientRect().height * 0.84) + 'px';
-        hw.style.transform = 'translate3d(0,' + (-e * 1.5) + 'vh,0)';
-      }
-      const lab = this.one('stagelabel');
-      if (lab) lab.style.opacity = String(cl((p - 0.45) / 0.2, 0, 1));
-      const head = this.one('head');
-      if (head) {
-        const ho = cl(1 - Math.max(0, p - 0.16) * 2.6, 0, 1);
-        head.style.opacity = String(ho);
-        head.style.transform = 'translate3d(0,' + (-e * 9) + 'vh,0) scale(' + (1 - e * 0.03) + ')';
-        head.style.filter = ho < 0.98 ? 'blur(' + ((1 - ho) * 3).toFixed(2) + 'px)' : 'none';
-      }
-      const cta = this.one('cta');
-      if (cta) {
-        cta.style.opacity = String(cl(1 - Math.max(0, p - 0.12) * 3, 0, 1));
-        cta.style.transform = 'translate3d(0,' + (e * 6) + 'vh,0)';
-      }
-      const chips = mob ? [[-2, -11], [2, -13], [2, 13], [-2, 12]] : [[-16, -6], [16, -10], [14, 12], [-14, 10]];
-      chips.forEach((d, i) => {
-        const c = this.one('chip' + i);
-        if (!c) return;
-        const t = cl((p - 0.04 - i * 0.045) / 0.46, 0, 1);
-        const et = eio(t);
-        c.style.transform = 'translate3d(' + (d[0] * et) + 'vw,' + (d[1] * et) + 'vh,0) scale(' + (1 - et * 0.1) + ') rotate(' + ((i % 2 ? 1 : -1) * et * 2.5) + 'deg)';
-        c.style.opacity = String(cl(1 - Math.max(0, p - 0.66) * 3.4, 0, 1));
-      });
-    }
-
-    const pin = this.one('pin');
-    if (pin) {
-      const p = this.prog(pin);
-      const idx = Math.min(2, Math.floor(p * 3.02));
-      for (let i = 0; i < 3; i++) {
-        const img = this.one('pin' + i), step = this.one('step' + i);
-        const on = i === idx;
-        if (img) {
-          img.style.transition = 'opacity .4s ease, transform .5s cubic-bezier(.2,.9,.3,1)';
-          img.style.opacity = on ? '1' : '0';
-          img.style.transform = on ? 'translateY(0) scale(1)' : 'translateY(18px) scale(0.96)';
+    </x-dc>
+    <script type="text/x-dc" data-dc-script>
+      class Component extends DCLogic {
+        componentDidMount() {
+          this.injectMedia();
+          ['stage','hwatch','head','cta','chip0','chip1','chip2','chip3'].forEach(n => {
+            const el = this.one(n);
+            if (el) el.style.willChange = 'transform, opacity';
+          });
+          this.loop = this.loop.bind(this);
+          this.raf = requestAnimationFrame(this.loop);
         }
-        if (step) {
-          step.style.transition = 'all .35s ease';
-          step.style.background = on ? 'rgba(255,255,255,0.75)' : 'transparent';
-          step.style.borderColor = on ? 'rgba(255,255,255,0.9)' : 'rgba(60,60,67,0.12)';
-          step.style.boxShadow = on ? '0 8px 40px rgba(0,0,0,0.10)' : 'none';
-          step.style.opacity = on ? '1' : '0.45';
+        injectMedia() {
+          if (document.getElementById('ralli-b-media')) return;
+          const st = document.createElement('style');
+          st.id = 'ralli-b-media';
+          st.textContent = [
+            '@media (max-width:768px){',
+            '[data-m="navlinks"]{display:none!important}',
+            '[data-m="hero-h"]{height:210vh!important}',
+            '[data-m="chip"]{padding:10px 13px!important;border-radius:16px!important}',
+            '[data-m="chip"] div:first-child{font-size:9.5px!important}',
+            '[data-m="chip"] div:last-child{font-size:20px!important}',
+            '[data-a="chip0"]{left:12px!important;top:27vh!important}',
+            '[data-a="chip1"]{right:12px!important;top:23vh!important}',
+            '[data-a="chip2"]{right:12px!important;bottom:27vh!important}',
+            '[data-a="chip3"]{left:12px!important;bottom:30vh!important}',
+            '[data-m="cta"]{bottom:5vh!important;flex-direction:column!important;gap:8px!important}',
+            '[data-m="sec"]{padding-left:20px!important;padding-right:20px!important;padding-top:64px!important;padding-bottom:64px!important}',
+            '[data-m="grid1"]{grid-template-columns:1fr!important;gap:12px!important;padding:24px!important}',
+            '[data-m="tallcard"]{grid-row:auto!important;min-height:400px!important}',
+            '[data-m="pin-h"]{height:170vh!important}',
+            '[data-m="pingrid"]{grid-template-columns:1fr!important;gap:20px!important;align-content:center!important;padding:64px 20px 24px!important}',
+            '[data-m="pinpanel"]{height:38vh!important;border-radius:28px!important}',
+            '}'
+          ].join('');
+          document.head.appendChild(st);
         }
+        componentWillUnmount() { cancelAnimationFrame(this.raf); }
+        one(n) { return document.querySelector('[data-a="' + n + '"]'); }
+        prog(el) {
+          if (!el) return 0;
+          const r = el.getBoundingClientRect();
+          const total = (r.height - window.innerHeight) || 1;
+          return Math.max(0, Math.min(1, -r.top / total));
+        }
+        loop() {
+          const vh = window.innerHeight;
+          const ease = t => 1 - Math.pow(1 - t, 3);
+          const cl = (v, a, b) => Math.max(a, Math.min(b, v));
+
+          const mob = window.innerWidth < 768;
+          const eio = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          const hero = this.one('hero');
+          if (hero) {
+            const raw = this.prog(hero);
+            if (this.sp === undefined) this.sp = raw;
+            this.sp += (raw - this.sp) * 0.11;
+            const p = Math.abs(raw - this.sp) < 0.0005 ? raw : this.sp;
+            const e = eio(cl(p / 0.75, 0, 1));
+            const stage = this.one('stage');
+            if (stage) {
+              stage.style.width = (mob ? 86 + e * 10 : 50 + e * 44) + 'vw';
+              stage.style.height = (mob ? 32 + e * 26 : 44 + e * 42) + 'vh';
+              stage.style.borderRadius = (40 - e * 12) + 'px';
+              const base = mob ? 19 : 16;
+              stage.style.transform = 'translate3d(0,' + (base - e * base) + 'vh,0)';
+            }
+            const hw = this.one('hwatch');
+            if (hw && stage) {
+              hw.style.height = (stage.getBoundingClientRect().height * 0.84) + 'px';
+              hw.style.transform = 'translate3d(0,' + (-e * 1.5) + 'vh,0)';
+            }
+            const lab = this.one('stagelabel');
+            if (lab) lab.style.opacity = String(cl((p - 0.45) / 0.2, 0, 1));
+            const head = this.one('head');
+            if (head) {
+              const ho = cl(1 - Math.max(0, p - 0.16) * 2.6, 0, 1);
+              head.style.opacity = String(ho);
+              head.style.transform = 'translate3d(0,' + (-e * 9) + 'vh,0) scale(' + (1 - e * 0.03) + ')';
+              head.style.filter = ho < 0.98 ? 'blur(' + ((1 - ho) * 3).toFixed(2) + 'px)' : 'none';
+            }
+            const cta = this.one('cta');
+            if (cta) {
+              cta.style.opacity = String(cl(1 - Math.max(0, p - 0.12) * 3, 0, 1));
+              cta.style.transform = 'translate3d(0,' + (e * 6) + 'vh,0)';
+            }
+            const chips = mob ? [[-2, -11], [2, -13], [2, 13], [-2, 12]] : [[-16, -6], [16, -10], [14, 12], [-14, 10]];
+            chips.forEach((d, i) => {
+              const c = this.one('chip' + i);
+              if (!c) return;
+              const t = cl((p - 0.04 - i * 0.045) / 0.46, 0, 1);
+              const et = eio(t);
+              c.style.transform = 'translate3d(' + (d[0] * et) + 'vw,' + (d[1] * et) + 'vh,0) scale(' + (1 - et * 0.1) + ') rotate(' + ((i % 2 ? 1 : -1) * et * 2.5) + 'deg)';
+              c.style.opacity = String(cl(1 - Math.max(0, p - 0.66) * 3.4, 0, 1));
+            });
+          }
+
+          const pin = this.one('pin');
+          if (pin) {
+            const p = this.prog(pin);
+            const idx = Math.min(2, Math.floor(p * 3.02));
+            for (let i = 0; i < 3; i++) {
+              const img = this.one('pin' + i), step = this.one('step' + i);
+              const on = i === idx;
+              if (img) {
+                img.style.transition = 'opacity .4s ease, transform .5s cubic-bezier(.2,.9,.3,1)';
+                img.style.opacity = on ? '1' : '0';
+                img.style.transform = on ? 'translateY(0) scale(1)' : 'translateY(18px) scale(0.96)';
+              }
+              if (step) {
+                step.style.transition = 'all .35s ease';
+                step.style.background = on ? 'rgba(255,255,255,0.75)' : 'transparent';
+                step.style.borderColor = on ? 'rgba(255,255,255,0.9)' : 'rgba(60,60,67,0.12)';
+                step.style.boxShadow = on ? '0 8px 40px rgba(0,0,0,0.10)' : 'none';
+                step.style.opacity = on ? '1' : '0.45';
+              }
+            }
+          }
+
+          const mesh = this.one('mesh');
+          if (mesh) mesh.style.transform = 'translate3d(0,' + (-window.scrollY * 0.04) + 'px,0)';
+
+          document.querySelectorAll('[data-reveal]').forEach(el => {
+            const r = el.getBoundingClientRect();
+            const t = cl((vh - r.top - 70) / (vh * 0.4), 0, 1);
+            const e = ease(t);
+            el.style.opacity = String(0.04 + e * 0.96);
+            el.style.transform = 'translate3d(0,' + ((1 - e) * 40) + 'px,0) scale(' + (0.985 + e * 0.015) + ')';
+          });
+
+          this.raf = requestAnimationFrame(this.loop);
+        }
+        renderVals() { return {}; }
       }
-    }
-
-    const mesh = this.one('mesh');
-    if (mesh) mesh.style.transform = 'translate3d(0,' + (-window.scrollY * 0.04) + 'px,0)';
-
-    document.querySelectorAll('[data-reveal]').forEach(el => {
-      const r = el.getBoundingClientRect();
-      const t = cl((vh - r.top - 70) / (vh * 0.4), 0, 1);
-      const e = ease(t);
-      el.style.opacity = String(0.04 + e * 0.96);
-      el.style.transform = 'translate3d(0,' + ((1 - e) * 40) + 'px,0) scale(' + (0.985 + e * 0.015) + ')';
-    });
-
-    this.raf = requestAnimationFrame(this.loop);
-  }
-  renderVals() { return {}; }
-}
-</script>
-</body>
+    </script>
+  </body>
 </html>

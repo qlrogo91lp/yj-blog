@@ -16,7 +16,11 @@ export function CommentList({ comments, postSlug }: Props) {
   return (
     <div className="space-y-6">
       {comments.map((comment) => (
-        <CommentItemAction key={comment.id} comment={comment} postSlug={postSlug} />
+        <CommentItemAction
+          key={comment.id}
+          comment={comment}
+          postSlug={postSlug}
+        />
       ))}
     </div>
   );

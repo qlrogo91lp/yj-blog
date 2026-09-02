@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import { Editor } from '@tiptap/core';
 import { StarterKit } from '@tiptap/starter-kit';
+import { describe, expect, it } from 'vitest';
 import { ImageBlock } from './image-extension';
 
 function createEditor(content: string) {
@@ -13,7 +13,7 @@ function createEditor(content: string) {
 describe('ImageBlock extension', () => {
   it('data-size, data-align 속성이 있는 이미지를 파싱한다', () => {
     const editor = createEditor(
-      '<p><img src="a.png" data-size="small" data-align="left" /></p>',
+      '<p><img src="a.png" data-size="small" data-align="left" /></p>'
     );
     const html = editor.getHTML();
     expect(html).toContain('data-size="small"');
@@ -36,7 +36,7 @@ describe('ImageBlock extension', () => {
 
   it('data-caption 속성이 있는 이미지를 파싱하고 직렬화한다', () => {
     const editor = createEditor(
-      '<p><img src="a.png" data-size="default" data-align="center" data-caption="강남역 저녁" /></p>',
+      '<p><img src="a.png" data-size="default" data-align="center" data-caption="강남역 저녁" /></p>'
     );
     const html = editor.getHTML();
     expect(html).toContain('data-caption="강남역 저녁"');
@@ -49,7 +49,9 @@ describe('ImageBlock extension', () => {
   });
 
   it('알 수 없는 data-size 값은 default로 폴백된다', () => {
-    const editor = createEditor('<p><img src="a.png" data-size="medium" /></p>');
+    const editor = createEditor(
+      '<p><img src="a.png" data-size="medium" /></p>'
+    );
     const html = editor.getHTML();
     expect(html).toContain('data-size="default"');
   });

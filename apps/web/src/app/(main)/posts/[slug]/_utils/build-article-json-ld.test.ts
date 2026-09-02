@@ -66,7 +66,10 @@ describe('buildArticleJsonLd', () => {
     expect(json.publisher).toEqual({
       '@type': 'Organization',
       name: 'YJlogs',
-      logo: { '@type': 'ImageObject', url: 'https://yjlogs.com/og-default.png' },
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://yjlogs.com/og-default.png',
+      },
     });
   });
 });

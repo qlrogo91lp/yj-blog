@@ -35,7 +35,7 @@ beforeAll(() => {
         addEventListener: () => {},
         removeEventListener: () => {},
         dispatchEvent: () => false,
-      }) as MediaQueryList,
+      }) as MediaQueryList
   );
 });
 
@@ -50,8 +50,14 @@ describe('HealthArea — prefers-reduced-motion (정적 출력)', () => {
   it('스텝 2개를 모두 활성 상태로 렌더한다', () => {
     render(<HealthArea />);
 
-    expect(screen.getByTestId('golf-step-session')).toHaveAttribute('data-active', 'true');
-    expect(screen.getByTestId('golf-step-sync')).toHaveAttribute('data-active', 'true');
+    expect(screen.getByTestId('golf-step-session')).toHaveAttribute(
+      'data-active',
+      'true'
+    );
+    expect(screen.getByTestId('golf-step-sync')).toHaveAttribute(
+      'data-active',
+      'true'
+    );
   });
 });
 
@@ -98,7 +104,7 @@ describe('HealthArea — hydration 시퀀스 (회귀)', () => {
     // 첫 렌더(mounted=false)에서 opacity:0/transform으로 찍힌 두 번째 스텝 이미지의
     // 인라인 스타일이 hydration 이후에도 그대로 남는다.
     const syncImage = within(container).getByAltText(
-      'GolfCounter on iPhone and Apple Watch together',
+      'GolfCounter on iPhone and Apple Watch together'
     );
     const syncWrapper = syncImage.closest('div');
     expect(syncWrapper?.style.opacity ?? '').not.toBe('0');
@@ -106,7 +112,7 @@ describe('HealthArea — hydration 시퀀스 (회귀)', () => {
 
     // 활성 스텝(session) 이미지도 같은 이유로 opacity:0에 갇히지 않아야 한다.
     const sessionImage = within(container).getByAltText(
-      'GolfCounter workout metrics on Apple Watch',
+      'GolfCounter workout metrics on Apple Watch'
     );
     const sessionWrapper = sessionImage.closest('div');
     expect(sessionWrapper?.style.opacity ?? '').not.toBe('0');

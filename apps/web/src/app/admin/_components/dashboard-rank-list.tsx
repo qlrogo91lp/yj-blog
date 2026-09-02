@@ -47,11 +47,16 @@ export function DashboardRankList({
                     {index + 1}
                   </span>
                   {item.href ? (
-                    <Link href={item.href} className="min-w-0 flex-1 truncate hover:underline">
+                    <Link
+                      href={item.href}
+                      className="min-w-0 flex-1 truncate hover:underline"
+                    >
                       {item.label}
                     </Link>
                   ) : (
-                    <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                    <span className="min-w-0 flex-1 truncate">
+                      {item.label}
+                    </span>
                   )}
                   <span className="text-muted-foreground shrink-0 text-xs">
                     {item.value.toLocaleString()}
@@ -65,7 +70,10 @@ export function DashboardRankList({
                       {item.value}%
                     </span>
                   </div>
-                  <div data-slot="rank-bar" className="bg-muted h-1.5 rounded-full">
+                  <div
+                    data-slot="rank-bar"
+                    className="bg-muted h-1.5 rounded-full"
+                  >
                     <div
                       className="bg-foreground h-full rounded-full"
                       style={{ width: `${Math.min(item.value, 100)}%` }}

@@ -12,7 +12,10 @@ export function StatCard({ label, value, change }: Props) {
       <span className="text-muted-foreground text-xs">{label}</span>
       <span className="text-2xl font-bold">{value.toLocaleString()}</span>
       {change && (
-        <PeriodChangeBadge current={change.current} previous={change.previous} />
+        <PeriodChangeBadge
+          current={change.current}
+          previous={change.previous}
+        />
       )}
     </div>
   );

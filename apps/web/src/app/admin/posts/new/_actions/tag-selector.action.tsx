@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import type { TagSummary } from '@/types';
-import { useNewPostStore } from '../_store';
 import { addTag } from '../_services/add-tag';
+import { useNewPostStore } from '../_store';
 
 type Props = {
   allTags: TagSummary[];

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { CharacterCounter } from './character-counter';
 
 describe('CharacterCounter', () => {
@@ -10,21 +10,25 @@ describe('CharacterCounter', () => {
 
   it('권장 범위 내일 때 muted 색상 클래스를 가진다', () => {
     const { container } = render(
-      <CharacterCounter value="짧음" recommendedMax={60} />,
+      <CharacterCounter value="짧음" recommendedMax={60} />
     );
     expect(container.firstChild).toHaveClass('text-muted-foreground');
   });
 
   it('권장 초과 시 yellow 색상 클래스를 가진다', () => {
     const { container } = render(
-      <CharacterCounter value={'가'.repeat(61)} recommendedMax={60} />,
+      <CharacterCounter value={'가'.repeat(61)} recommendedMax={60} />
     );
     expect(container.firstChild).toHaveClass('text-yellow-600');
   });
 
   it('hardMax 초과 시 destructive 색상 클래스를 가진다', () => {
     const { container } = render(
-      <CharacterCounter value={'가'.repeat(101)} recommendedMax={60} hardMax={100} />,
+      <CharacterCounter
+        value={'가'.repeat(101)}
+        recommendedMax={60}
+        hardMax={100}
+      />
     );
     expect(container.firstChild).toHaveClass('text-destructive');
   });

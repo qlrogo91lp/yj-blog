@@ -8,7 +8,7 @@ type Replacement = {
 export function replaceUploadingNode(
   editor: Editor,
   id: string,
-  replacement: Replacement | null,
+  replacement: Replacement | null
 ): void {
   let foundPos: number | null = null;
   let foundSize = 0;

@@ -4,15 +4,28 @@ import { describe, expect, it, vi } from 'vitest';
 import { ImageNodeView } from './image-node-view';
 
 vi.mock('@tiptap/react', () => ({
-  NodeViewWrapper: ({ children, as: _as, ...rest }: { children: React.ReactNode; as?: string }) => (
-    <figure {...rest}>{children}</figure>
-  ),
+  NodeViewWrapper: ({
+    children,
+    as: _as,
+    ...rest
+  }: {
+    children: React.ReactNode;
+    as?: string;
+  }) => <figure {...rest}>{children}</figure>,
 }));
 
 function setup(overrides: Partial<NodeViewProps> = {}) {
   const updateAttributes = vi.fn();
   const props = {
-    node: { attrs: { src: 'https://cdn/a.png', alt: '', size: 'default', align: 'center', caption: '' } },
+    node: {
+      attrs: {
+        src: 'https://cdn/a.png',
+        alt: '',
+        size: 'default',
+        align: 'center',
+        caption: '',
+      },
+    },
     updateAttributes,
     deleteNode: vi.fn(),
     selected: false,
@@ -32,7 +45,9 @@ describe('ImageNodeView', () => {
 
   it('선택되지 않았고 캡션이 없으면 캡션 input을 렌더하지 않는다', () => {
     setup();
-    expect(screen.queryByPlaceholderText('캡션 추가...')).not.toBeInTheDocument();
+    expect(
+      screen.queryByPlaceholderText('캡션 추가...')
+    ).not.toBeInTheDocument();
   });
 
   it('선택되면 캡션 input을 렌더하고 입력 시 updateAttributes({ caption })', () => {
@@ -44,6 +59,8 @@ describe('ImageNodeView', () => {
 
   it('NodeView 안에 툴바(정렬·삭제 버튼)를 렌더하지 않는다 — BubbleMenu로 이전', () => {
     setup({ selected: true });
-    expect(screen.queryByRole('button', { name: '이미지 삭제' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '이미지 삭제' })
+    ).not.toBeInTheDocument();
   });
 });

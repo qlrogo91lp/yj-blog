@@ -33,7 +33,9 @@ export function PostArchiveRow({ post }: Props) {
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
           {post.category && <span>{post.category.name}</span>}
-          {post.category && publishedAt && <span className="text-muted-foreground/40">·</span>}
+          {post.category && publishedAt && (
+            <span className="text-muted-foreground/40">·</span>
+          )}
           {publishedAt && <time>{publishedAt}</time>}
         </div>
         <h2 className="text-base font-bold leading-snug tracking-tight">

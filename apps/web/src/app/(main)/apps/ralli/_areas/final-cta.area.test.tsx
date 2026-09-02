@@ -19,28 +19,31 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('FinalCtaArea', () => {
   it('최종 CTA 카피와 App Store 버튼을 렌더한다', () => {
     render(<FinalCtaArea />);
-    expect(screen.getByRole('heading', { name: 'Go win the next one.' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Go win the next one.' })
+    ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /App Store/i })).toHaveAttribute(
       'href',
-      'https://apps.apple.com/us/app/ralli/id6449350578',
+      'https://apps.apple.com/us/app/ralli/id6449350578'
     );
   });
 
   it('Privacy와 Support 링크를 렌더한다', () => {
     render(<FinalCtaArea />);
-    expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute(
-      'href',
-      '/apps/ralli/privacy',
-    );
+    expect(
+      screen.getByRole('link', { name: 'Privacy Policy' })
+    ).toHaveAttribute('href', '/apps/ralli/privacy');
     expect(screen.getByRole('link', { name: 'Support' })).toHaveAttribute(
       'href',
-      'mailto:qlrogo91lp@gmail.com',
+      'mailto:qlrogo91lp@gmail.com'
     );
   });
 

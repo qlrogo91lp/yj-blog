@@ -1,7 +1,7 @@
 import { DraftAction } from '../_actions/draft.action';
+import { PreviewButtonAction } from '../_actions/preview-button.action';
 import { PublishAction } from '../_actions/publish.action';
 import { SaveStatusAction } from '../_actions/save-status.action';
-import { PreviewButtonAction } from '../_actions/preview-button.action';
 
 export function BottomBar() {
   return (

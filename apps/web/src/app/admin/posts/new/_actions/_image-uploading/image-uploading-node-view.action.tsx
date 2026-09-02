@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
+import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import { Loader2 } from 'lucide-react';
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 
 export function ImageUploadingNodeViewAction({ node }: NodeViewProps) {
   const previewUrl = (node.attrs.previewUrl as string) ?? '';

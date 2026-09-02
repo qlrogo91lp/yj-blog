@@ -1,12 +1,12 @@
 'use client';
 
-import { useRef, type RefObject } from 'react';
+import { type RefObject, useRef } from 'react';
 import {
+  type MotionValue,
+  type UseScrollOptions,
   useReducedMotion,
   useScroll,
   useSpring,
-  type MotionValue,
-  type UseScrollOptions,
 } from 'framer-motion';
 import { useMounted } from './useMounted';
 
@@ -22,7 +22,7 @@ type SectionProgress = {
  */
 export function useSectionProgress(
   offset: UseScrollOptions['offset'] = ['start start', 'end end'],
-  smooth = true,
+  smooth = true
 ): SectionProgress {
   const ref = useRef<HTMLDivElement>(null);
   const mounted = useMounted();

@@ -1,5 +1,5 @@
-import { SITE_NAME } from '@/lib/constants';
 import { ContentContainer } from '@/components/layout/content-container';
+import { SITE_NAME } from '@/lib/constants';
 
 export function Footer() {
   return (

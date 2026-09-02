@@ -7,7 +7,7 @@ import { blogSettings } from '@/db/schema';
 export const getBlogSettings = unstable_cache(
   async () => db.query.blogSettings.findFirst(),
   [CACHE_TAGS.settings],
-  { tags: [CACHE_TAGS.settings] },
+  { tags: [CACHE_TAGS.settings] }
 );
 
 export type BlogSettings = typeof blogSettings.$inferSelect;
@@ -25,7 +25,7 @@ type UpdateBlogSettingsInput = {
  * 블로그 설정 upsert (단일 row, id=1)
  */
 export async function updateBlogSettings(
-  data: UpdateBlogSettingsInput,
+  data: UpdateBlogSettingsInput
 ): Promise<void> {
   await db
     .insert(blogSettings)
@@ -40,7 +40,9 @@ export async function updateBlogSettings(
  * 유입경로 "항상 제외" 규칙만 갱신한다. blog_settings row(id=1)가
  * 이미 존재한다고 가정한다 — 최초 블로그 설정은 항상 SettingsFormAction으로 먼저 만들어진다.
  */
-export async function updateReferrerExcludes(excludes: string[]): Promise<void> {
+export async function updateReferrerExcludes(
+  excludes: string[]
+): Promise<void> {
   await db
     .update(blogSettings)
     .set({ referrerExcludes: excludes, updatedAt: new Date() })

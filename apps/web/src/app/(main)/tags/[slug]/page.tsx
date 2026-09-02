@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getTagBySlug, getPostsByTag } from '@/db/queries/tags';
+import { ContentContainer } from '@/components/layout/content-container';
+import { getPostsByTag, getTagBySlug } from '@/db/queries/tags';
 import { ViewToggleAction } from '../../_actions/view-toggle.action';
 import { PostListViewHandler } from '../../_handlers/post-list-view.handler';
-import { ContentContainer } from '@/components/layout/content-container';
 
 type Props = {
   params: Promise<{ slug: string }>;

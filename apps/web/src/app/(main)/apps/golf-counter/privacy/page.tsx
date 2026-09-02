@@ -27,43 +27,43 @@ export default function GolfCounterPrivacyPage() {
           <strong>Effective date:</strong> August 18, 2026
         </p>
         <p>
-          GolfCounter (&ldquo;the app&rdquo;) respects your privacy. This
-          policy explains what data the app handles and how.
+          GolfCounter (&ldquo;the app&rdquo;) respects your privacy. This policy
+          explains what data the app handles and how.
         </p>
 
         <h2>Data stored on your device and iCloud</h2>
         <p>
-          Your round records (strokes, putts, course, and dates) are stored
-          on your device using SwiftData and synced to your personal,
-          private iCloud account through Apple CloudKit so they stay in sync
-          across your own devices. This data is managed by Apple, and the
-          developer cannot access it.
+          Your round records (strokes, putts, course, and dates) are stored on
+          your device using SwiftData and synced to your personal, private
+          iCloud account through Apple CloudKit so they stay in sync across your
+          own devices. This data is managed by Apple, and the developer cannot
+          access it.
         </p>
 
         <h2>HealthKit</h2>
         <p>
-          With your permission, GolfCounter reads and writes workout
-          sessions, heart rate, and active energy (calories) through Apple
-          HealthKit, solely to record your golf rounds as workouts.
-          HealthKit data is never used for advertising or marketing, and is
-          never shared with third parties.
+          With your permission, GolfCounter reads and writes workout sessions,
+          heart rate, and active energy (calories) through Apple HealthKit,
+          solely to record your golf rounds as workouts. HealthKit data is never
+          used for advertising or marketing, and is never shared with third
+          parties.
         </p>
 
         <h2>Watch and iPhone syncing</h2>
         <p>
           GolfCounter uses Apple Watch as the primary input during a round.
-          Round data is transferred from your Apple Watch to your iPhone
-          using Apple&rsquo;s WatchConnectivity framework and a shared App
-          Group container. This transfer happens directly between your own
-          devices and never leaves them.
+          Round data is transferred from your Apple Watch to your iPhone using
+          Apple&rsquo;s WatchConnectivity framework and a shared App Group
+          container. This transfer happens directly between your own devices and
+          never leaves them.
         </p>
 
         <h2>Data we do not collect</h2>
         <p>
-          GolfCounter does not send any data to developer-operated servers.
-          The app does not collect your location. There are no analytics
-          SDKs, no third-party tracking, no advertising, and no account
-          sign-up. The app uses only your Apple ID-based iCloud.
+          GolfCounter does not send any data to developer-operated servers. The
+          app does not collect your location. There are no analytics SDKs, no
+          third-party tracking, no advertising, and no account sign-up. The app
+          uses only your Apple ID-based iCloud.
         </p>
 
         <h2>Children</h2>
@@ -74,8 +74,8 @@ export default function GolfCounterPrivacyPage() {
 
         <h2>Changes to this policy</h2>
         <p>
-          We may update this policy from time to time. The effective date
-          above will change accordingly.
+          We may update this policy from time to time. The effective date above
+          will change accordingly.
         </p>
 
         <h2>Contact</h2>

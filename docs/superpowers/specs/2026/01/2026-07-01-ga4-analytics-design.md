@@ -8,15 +8,15 @@
 
 ## 결정 요약
 
-| 주제 | 결정 |
-|------|------|
-| 기존 자체 통계 | 그대로 유지 (`dailyStats`, `referrers`, admin 대시보드 요약용) |
-| GA4 역할 | 상세 분석 전용. admin에는 콘솔로 나가는 링크만 제공 |
-| 스크립트 삽입 방식 | `@next/third-parties`의 `<GoogleAnalytics>` 컴포넌트 |
-| 측정 ID 관리 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` env 변수. 미설정 시 스크립트 미렌더링 (에러 없이 통과) |
-| GA4 측정 ID 발급 | 사용자가 GA4 속성을 만들고 직접 발급받아 `.env.local`에 채움 (이 작업은 코드 밖의 일이라 이번 구현 범위 아님) |
-| admin 링크 위치 | `/admin/statistics`, `/admin/statistics/referrers` 페이지 상단 헤더 |
-| 링크 대상 URL | `https://analytics.google.com/` 고정 (로그인 상태면 속성 목록/최근 속성으로 자동 이동) |
+| 주제               | 결정                                                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------------------- |
+| 기존 자체 통계     | 그대로 유지 (`dailyStats`, `referrers`, admin 대시보드 요약용)                                                |
+| GA4 역할           | 상세 분석 전용. admin에는 콘솔로 나가는 링크만 제공                                                           |
+| 스크립트 삽입 방식 | `@next/third-parties`의 `<GoogleAnalytics>` 컴포넌트                                                          |
+| 측정 ID 관리       | `NEXT_PUBLIC_GA_MEASUREMENT_ID` env 변수. 미설정 시 스크립트 미렌더링 (에러 없이 통과)                        |
+| GA4 측정 ID 발급   | 사용자가 GA4 속성을 만들고 직접 발급받아 `.env.local`에 채움 (이 작업은 코드 밖의 일이라 이번 구현 범위 아님) |
+| admin 링크 위치    | `/admin/statistics`, `/admin/statistics/referrers` 페이지 상단 헤더                                           |
+| 링크 대상 URL      | `https://analytics.google.com/` 고정 (로그인 상태면 속성 목록/최근 속성으로 자동 이동)                        |
 
 ## 현재 상태
 
@@ -35,9 +35,11 @@
   - `import { GoogleAnalytics } from '@next/third-parties/google'`
   - `<body>` 내부, 기존 `<PageTracker />` 인근에 조건부 렌더링 추가:
     ```tsx
-    {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-    )}
+    {
+      process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+      );
+    }
     ```
   - 측정 ID 미설정(로컬/프리뷰 등) 환경에서는 아무것도 렌더링하지 않아 에러 없이 동작
 

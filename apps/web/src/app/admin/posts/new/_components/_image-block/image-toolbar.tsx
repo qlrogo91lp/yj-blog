@@ -1,11 +1,23 @@
 'use client';
 
-import { AlignCenter, AlignLeft, AlignRight, ChevronsLeftRight, LucideIcon, Settings, Trash2 } from 'lucide-react';
-import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
-import { cn } from '@/lib/utils';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  ChevronsLeftRight,
+  LucideIcon,
+  Settings,
+  Trash2,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
 
 type Props = {
   size: ImageSize;
@@ -18,7 +30,7 @@ type Props = {
 };
 
 // prose.css 에 figure 참조
-const sizeOptions: { value: ImageSize; label: string, icon?: LucideIcon }[] = [
+const sizeOptions: { value: ImageSize; label: string; icon?: LucideIcon }[] = [
   { value: 'small', label: '40%' },
   { value: 'default', label: '기본' },
   { value: 'full', label: '전체 폭', icon: ChevronsLeftRight },
@@ -29,10 +41,10 @@ const alignOptions: {
   label: string;
   icon: LucideIcon;
 }[] = [
-    { value: 'left', label: '왼쪽 정렬', icon: AlignLeft },
-    { value: 'center', label: '가운데 정렬', icon: AlignCenter },
-    { value: 'right', label: '오른쪽 정렬', icon: AlignRight },
-  ];
+  { value: 'left', label: '왼쪽 정렬', icon: AlignLeft },
+  { value: 'center', label: '가운데 정렬', icon: AlignCenter },
+  { value: 'right', label: '오른쪽 정렬', icon: AlignRight },
+];
 
 export function ImageToolbar({
   size,
@@ -57,12 +69,16 @@ export function ImageToolbar({
           aria-label={label}
           aria-pressed={align === value}
           disabled={alignDisabled}
-          title={alignDisabled ? '40% 크기에서만 정렬할 수 있습니다' : undefined}
+          title={
+            alignDisabled ? '40% 크기에서만 정렬할 수 있습니다' : undefined
+          }
           onClick={() => onAlignChange(value)}
           className={cn(
             'rounded p-1.5 hover:bg-accent disabled:opacity-40 disabled:hover:bg-transparent cursor-pointer',
-            align === value && !alignDisabled && 'bg-primary text-primary-foreground hover:bg-primary/90',
-            alignDisabled && 'cursor-not-allowed',
+            align === value &&
+              !alignDisabled &&
+              'bg-primary text-primary-foreground hover:bg-primary/90',
+            alignDisabled && 'cursor-not-allowed'
           )}
         >
           <Icon size={16} />
@@ -80,7 +96,8 @@ export function ImageToolbar({
           onClick={() => onSizeChange(value)}
           className={cn(
             'rounded px-2 py-1 text-xs hover:bg-accent cursor-pointer',
-            size === value && 'bg-primary text-primary-foreground hover:bg-primary/90'
+            size === value &&
+              'bg-primary text-primary-foreground hover:bg-primary/90'
           )}
         >
           {Icon ? <Icon size={16} /> : label}

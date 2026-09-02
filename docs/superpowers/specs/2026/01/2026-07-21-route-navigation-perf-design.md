@@ -27,9 +27,9 @@
 
 한 번에 한 변수만 제거하고 빌드를 재실행했다.
 
-| 실험 | 결과 | 판정 |
-|------|------|------|
-| 루트 레이아웃에서 `ClerkProvider` 제거 | 전 라우트 `ƒ` 유지 | 무관 |
+| 실험                                           | 결과                                                                                                                                 | 판정          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| 루트 레이아웃에서 `ClerkProvider` 제거         | 전 라우트 `ƒ` 유지                                                                                                                   | 무관          |
 | `Header`에서 `<SignedIn>` / `<SignedOut>` 제거 | `/`, `/apps`, `/apps/ralli`, `/apps/ralli/privacy`, `/playground`, `/series`, `/tags` → **`○ Static`**, `/apps/[slug]` → **`● SSG`** | **원인 확정** |
 
 ### 2.3 근본 원인
@@ -46,11 +46,11 @@
 
 `/posts`, `/posts/[slug]`, `/categories/[slug]`, `/series/[slug]`, `/tags/[slug]`는 원인 제거 후에도 `ƒ`로 남는다. 이들은 다음 이유로 요청마다 비용을 치른다.
 
-| 항목 | 현황 |
-|------|------|
-| `selectPosts` / `selectPostBySlug` / `selectCommentsByPostId` / `selectTagsByPostIds` | `unstable_cache` 미적용 — 요청마다 Neon 왕복 (네트워크 지연 누적) |
-| `/posts/[slug]` | `generateStaticParams` 없음 — 요청마다 서버 렌더 |
-| 글 본문 변환 | `markdownToHtmlWithToc` / `htmlToHtmlWithToc`(highlight.js)가 요청마다 실행 — CPU 작업 반복 |
+| 항목                                                                                  | 현황                                                                                        |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `selectPosts` / `selectPostBySlug` / `selectCommentsByPostId` / `selectTagsByPostIds` | `unstable_cache` 미적용 — 요청마다 Neon 왕복 (네트워크 지연 누적)                           |
+| `/posts/[slug]`                                                                       | `generateStaticParams` 없음 — 요청마다 서버 렌더                                            |
+| 글 본문 변환                                                                          | `markdownToHtmlWithToc` / `htmlToHtmlWithToc`(highlight.js)가 요청마다 실행 — CPU 작업 반복 |
 
 `/posts`는 `searchParams`(category·view·search·tag)를 읽으므로 **정적화 대상이 아니다**. 여기는 캐시 + `loading.tsx`로 대응한다.
 
@@ -66,9 +66,9 @@
 
 기존 `Header`의 인증 UI는 `ThemeToggle`·`MobileMenu`를 사이에 두고 두 군데로 나뉘어 있으므로, 시각적 순서를 유지하기 위해 한 파일에서 두 컴포넌트를 export한다.
 
-| export | 대체 대상 | 위치 |
-|--------|-----------|------|
-| `HeaderAdminLink` | `<SignedIn>` + `/admin` 대시보드 버튼 | `NavLinks` 직후 |
+| export              | 대체 대상                                             | 위치              |
+| ------------------- | ----------------------------------------------------- | ----------------- |
+| `HeaderAdminLink`   | `<SignedIn>` + `/admin` 대시보드 버튼                 | `NavLinks` 직후   |
 | `HeaderAuthButtons` | `<SignedOut>` 로그인 버튼 + `<SignedIn>` `UserButton` | `MobileMenu` 직후 |
 
 `src/components/nav/`의 기존 클라이언트 컴포넌트(`nav-links.tsx`, `mobile-menu.tsx`)가 접미사 없는 kebab-case이므로 동일 관례를 따른다 (`_actions/*.action.tsx`는 라우트 폴더 전용 규칙이라 해당 없음).
@@ -101,13 +101,13 @@
 
 ### 3.3 [3단계] 읽기 쿼리 캐싱 + 정적 파라미터 생성
 
-| 대상 | 조치 |
-|------|------|
-| `selectPostBySlug` | `unstable_cache` 래핑, 태그 `CACHE_TAGS.posts` |
-| `selectCommentsByPostId` | `unstable_cache` 래핑, 태그 `CACHE_TAGS.comments` |
-| `selectPosts` | `unstable_cache` 래핑, 태그 `CACHE_TAGS.posts` (인자별 키 분리 필요) |
-| `selectTagsByPostIds` | `unstable_cache` 래핑, 태그 `CACHE_TAGS.tags` |
-| `/posts/[slug]` | `generateStaticParams`로 발행 글 slug 프리렌더 → 본문 변환 비용도 빌드 타임으로 이동 |
+| 대상                     | 조치                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| `selectPostBySlug`       | `unstable_cache` 래핑, 태그 `CACHE_TAGS.posts`                                       |
+| `selectCommentsByPostId` | `unstable_cache` 래핑, 태그 `CACHE_TAGS.comments`                                    |
+| `selectPosts`            | `unstable_cache` 래핑, 태그 `CACHE_TAGS.posts` (인자별 키 분리 필요)                 |
+| `selectTagsByPostIds`    | `unstable_cache` 래핑, 태그 `CACHE_TAGS.tags`                                        |
+| `/posts/[slug]`          | `generateStaticParams`로 발행 글 slug 프리렌더 → 본문 변환 비용도 빌드 타임으로 이동 |
 
 무효화는 기존 관례(`revalidateTag(CACHE_TAGS.xxx, 'max')`)를 그대로 사용한다. 이미 `save-post.ts`·`remove-post.ts`·`remove-comment.ts` 등에서 해당 태그를 무효화하고 있으므로 **추가 호출 없이 기존 경로로 커버된다**.
 
@@ -126,11 +126,11 @@
 
 1단계 적용 직후 측정값(2026-07-21): 정적 2~5ms vs 동적 314~452ms.
 
-| 단계 | 성공 기준 |
-|------|-----------|
+| 단계  | 성공 기준                                                                                                         |
+| ----- | ----------------------------------------------------------------------------------------------------------------- |
 | 1단계 | `/`, `/apps`, `/apps/ralli`, `/apps/ralli/privacy`, `/playground`, `/series`, `/tags`가 `○`, `/apps/[slug]`가 `●` |
-| 2단계 | 남은 `ƒ` 라우트 진입 시 로딩 스켈레톤이 즉시 표시 |
-| 3단계 | `/posts/[slug]`가 `●`로 전환 |
+| 2단계 | 남은 `ƒ` 라우트 진입 시 로딩 스켈레톤이 즉시 표시                                                                 |
+| 3단계 | `/posts/[slug]`가 `●`로 전환                                                                                      |
 
 회귀 방지: 기존 단위 테스트(`npm run test:run`)와 E2E(`npm run test:e2e`) 전량 통과, `npm run lint` 0 errors.
 

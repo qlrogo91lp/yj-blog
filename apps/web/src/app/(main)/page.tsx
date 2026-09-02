@@ -1,8 +1,8 @@
-import { getBlogSettings } from '@/db/queries/settings';
+import { ContentContainer } from '@/components/layout/content-container';
 import { selectPosts } from '@/db/queries/posts';
+import { getBlogSettings } from '@/db/queries/settings';
 import { HeroSection } from './_components/hero-section';
 import { RecentPostsSection } from './_components/recent-posts-section';
-import { ContentContainer } from '@/components/layout/content-container';
 
 export default async function Home() {
   const settings = await getBlogSettings();

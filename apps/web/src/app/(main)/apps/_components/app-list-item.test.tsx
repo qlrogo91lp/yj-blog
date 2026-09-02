@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
-import { AppListItem } from './app-list-item';
 import type { App } from '../_utils/apps-data';
+import { AppListItem } from './app-list-item';
 
 vi.mock('next/link', () => ({
   default: ({
@@ -20,7 +20,9 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockApp: App = {
@@ -38,7 +40,9 @@ describe('AppListItem', () => {
   it('앱 이름과 설명을 렌더한다', () => {
     render(<AppListItem app={mockApp} />);
     expect(screen.getByRole('heading', { name: 'Ralli' })).toBeInTheDocument();
-    expect(screen.getByText('테니스 경기 중 점수 카운터 앱')).toBeInTheDocument();
+    expect(
+      screen.getByText('테니스 경기 중 점수 카운터 앱')
+    ).toBeInTheDocument();
   });
 
   it('상세 페이지로 링크한다', () => {

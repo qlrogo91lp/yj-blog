@@ -14,8 +14,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useNewPostStore } from '../../_store';
 import { uploadImage } from '../../_services/upload-image';
+import { useNewPostStore } from '../../_store';
 import { compressImage } from '../../_utils/compress-image';
 
 type Props = {
@@ -66,7 +66,9 @@ export function ImageUploadDialogAction({ editor, open, onOpenChange }: Props) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>이미지 삽입</DialogTitle>
-          <DialogDescription className="sr-only">파일을 업로드하거나 URL을 입력해 이미지를 삽입합니다</DialogDescription>
+          <DialogDescription className="sr-only">
+            파일을 업로드하거나 URL을 입력해 이미지를 삽입합니다
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">

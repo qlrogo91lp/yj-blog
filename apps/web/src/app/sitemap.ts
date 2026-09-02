@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
+import { apps } from '@/app/(main)/apps/_utils/apps-data';
 import { selectPosts } from '@/db/queries/posts';
 import { selectSeriesList } from '@/db/queries/series';
-import { apps } from '@/app/(main)/apps/_utils/apps-data';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com';
 

@@ -1,5 +1,5 @@
+import type { Paragraph, Root, Text } from 'mdast';
 import type { Plugin } from 'unified';
-import type { Root, Paragraph, Text } from 'mdast';
 import { visit } from 'unist-util-visit';
 
 // ::youtube[VIDEO_ID] 형식을 HTML raw node로 변환

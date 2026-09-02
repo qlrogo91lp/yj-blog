@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { apps, getApp } from '../_utils/apps-data';
 import { ContentContainer } from '@/components/layout/content-container';
-import { AppPlatformChips } from '../_components/app-platform-chips';
 import { SITE_NAME } from '@/lib/constants';
+import { AppPlatformChips } from '../_components/app-platform-chips';
+import { apps, getApp } from '../_utils/apps-data';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -73,7 +73,9 @@ export default async function AppDetailPage({ params }: Props) {
       </div>
 
       <div className="mt-8">
-        <p className="text-muted-foreground leading-relaxed">{app.longDescription}</p>
+        <p className="text-muted-foreground leading-relaxed">
+          {app.longDescription}
+        </p>
       </div>
 
       {app.links.length > 0 && (
@@ -94,7 +96,9 @@ export default async function AppDetailPage({ params }: Props) {
       )}
 
       {app.links.length === 0 && (
-        <p className="mt-8 text-sm text-muted-foreground">출시 준비 중입니다.</p>
+        <p className="mt-8 text-sm text-muted-foreground">
+          출시 준비 중입니다.
+        </p>
       )}
     </ContentContainer>
   );

@@ -15,7 +15,6 @@ import {
   ImageIcon,
   Images,
   Italic,
-  Youtube,
   Link as LinkIcon,
   List,
   ListOrdered,
@@ -27,6 +26,7 @@ import {
   Type,
   Underline as UnderlineIcon,
   Undo2,
+  Youtube,
 } from 'lucide-react';
 import {
   Select,
@@ -36,13 +36,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { ImageUploadDialogAction } from './_image-upload/image-upload.action';
-import { YoutubeEmbedDialogAction } from './_youtube/youtube.action';
-import { LinkDialogAction } from './_link/link.action';
 import { ColorPicker } from '../_components/color-picker';
-import { TableInsertAction } from './table-insert.action';
 import { ToolbarButton } from '../_components/toolbar-button';
 import { useEditorContext } from '../_providers/editor.provider';
+import { ImageUploadDialogAction } from './_image-upload/image-upload.action';
+import { LinkDialogAction } from './_link/link.action';
+import { YoutubeEmbedDialogAction } from './_youtube/youtube.action';
+import { TableInsertAction } from './table-insert.action';
 
 function useForceUpdate() {
   const [, setState] = useState(0);

@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import { SITE_NAME } from '@/lib/constants';
-import { ralliMarqueeItems, ralliMeta } from './_utils/ralli-content';
-import { RalliJsonLd } from './_components/ralli-json-ld';
-import { RalliMarquee } from './_components/ralli-marquee';
+import { FinalCtaArea } from './_areas/final-cta.area';
 import { HeroArea } from './_areas/hero.area';
-import { WatchArea } from './_areas/watch.area';
-import { WorkoutArea } from './_areas/workout.area';
 import { ReplayArea } from './_areas/replay.area';
 import { RulesArea } from './_areas/rules.area';
-import { FinalCtaArea } from './_areas/final-cta.area';
+import { WatchArea } from './_areas/watch.area';
+import { WorkoutArea } from './_areas/workout.area';
+import { RalliJsonLd } from './_components/ralli-json-ld';
+import { RalliMarquee } from './_components/ralli-marquee';
+import { ralliMarqueeItems, ralliMeta } from './_utils/ralli-content';
 
 export const metadata: Metadata = {
   title: `${ralliMeta.name} — Tennis Score | ${SITE_NAME}`,
@@ -22,7 +22,12 @@ export const metadata: Metadata = {
     url: '/apps/ralli',
     type: 'website',
     images: [
-      { url: ralliMeta.iconSrc, width: 1024, height: 1024, alt: `${ralliMeta.name} app icon` },
+      {
+        url: ralliMeta.iconSrc,
+        width: 1024,
+        height: 1024,
+        alt: `${ralliMeta.name} app icon`,
+      },
     ],
   },
   twitter: {

@@ -54,13 +54,17 @@ type Action = {
     status: 'draft' | 'published';
     publishedAt: Date | null;
   }) => void;
-  submitPost: (status: 'draft' | 'published') => Promise<
+  submitPost: (
+    status: 'draft' | 'published'
+  ) => Promise<
     { success: true; slug: string } | { success: false; error: string }
   >;
 };
 
-export const selectIsDirty = (s: { changeCount: number; savedChangeCount: number }) =>
-  s.changeCount !== s.savedChangeCount;
+export const selectIsDirty = (s: {
+  changeCount: number;
+  savedChangeCount: number;
+}) => s.changeCount !== s.savedChangeCount;
 
 export const useNewPostStore = create<State & Action>((set, get) => ({
   postId: null,
@@ -84,15 +88,20 @@ export const useNewPostStore = create<State & Action>((set, get) => ({
 
   setPostId: (postId) => set({ postId }),
   setTitle: (title) => set((s) => ({ title, changeCount: s.changeCount + 1 })),
-  setContent: (content) => set((s) => ({ content, changeCount: s.changeCount + 1 })),
-  setCategoryId: (categoryId) => set((s) => ({ categoryId, changeCount: s.changeCount + 1 })),
-  setSeriesId: (seriesId) => set((s) => ({ seriesId, changeCount: s.changeCount + 1 })),
-  setTagIds: (tagIds) => set((s) => ({ tagIds, changeCount: s.changeCount + 1 })),
+  setContent: (content) =>
+    set((s) => ({ content, changeCount: s.changeCount + 1 })),
+  setCategoryId: (categoryId) =>
+    set((s) => ({ categoryId, changeCount: s.changeCount + 1 })),
+  setSeriesId: (seriesId) =>
+    set((s) => ({ seriesId, changeCount: s.changeCount + 1 })),
+  setTagIds: (tagIds) =>
+    set((s) => ({ tagIds, changeCount: s.changeCount + 1 })),
   setSlug: (slug) => set((s) => ({ slug, changeCount: s.changeCount + 1 })),
-  setExcerpt: (excerpt) => set((s) => ({ excerpt, changeCount: s.changeCount + 1 })),
-  setMetaTitle: (metaTitle) => set((s) => ({ metaTitle, changeCount: s.changeCount + 1 })),
-  setIsGeneratingExcerpt: (isGeneratingExcerpt) =>
-    set({ isGeneratingExcerpt }),
+  setExcerpt: (excerpt) =>
+    set((s) => ({ excerpt, changeCount: s.changeCount + 1 })),
+  setMetaTitle: (metaTitle) =>
+    set((s) => ({ metaTitle, changeCount: s.changeCount + 1 })),
+  setIsGeneratingExcerpt: (isGeneratingExcerpt) => set({ isGeneratingExcerpt }),
   setThumbnailUrl: (thumbnailUrl) =>
     set((s) => ({ thumbnailUrl, changeCount: s.changeCount + 1 })),
   setStatus: (status) => set({ status }),

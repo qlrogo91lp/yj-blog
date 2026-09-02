@@ -3,14 +3,20 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  getPendingReplyCount,
+  selectPendingComments,
+} from '@/db/queries/comments';
 import { selectDashboardOverview } from '@/db/queries/daily-stats';
 import { selectDraftCount, selectDraftQueue } from '@/db/queries/posts';
-import { getPendingReplyCount, selectPendingComments } from '@/db/queries/comments';
-import { selectPopularPosts, selectTopReferrers } from '@/db/queries/statistics';
 import { getBlogSettings } from '@/db/queries/settings';
+import {
+  selectPopularPosts,
+  selectTopReferrers,
+} from '@/db/queries/statistics';
 import { AdminPageHeader } from './_components/admin-page-header';
-import { DashboardStatPanel } from './_components/dashboard-stat-panel';
 import { DashboardRankList } from './_components/dashboard-rank-list';
+import { DashboardStatPanel } from './_components/dashboard-stat-panel';
 import { DraftQueueWidget } from './_components/draft-queue-widget';
 import { PendingCommentsWidget } from './_components/pending-comments-widget';
 import { PeriodFilterAction } from './statistics/_actions/period-filter.action';
@@ -43,7 +49,12 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
   ] = await Promise.all([
     selectDashboardOverview(days),
     selectPopularPosts(3),
-    selectTopReferrers(3, days, settings?.referrerExcludes ?? [], settings?.siteUrl),
+    selectTopReferrers(
+      3,
+      days,
+      settings?.referrerExcludes ?? [],
+      settings?.siteUrl
+    ),
     selectDraftQueue(3),
     selectDraftCount(),
     selectPendingComments(3),

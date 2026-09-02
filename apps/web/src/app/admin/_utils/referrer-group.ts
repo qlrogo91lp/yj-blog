@@ -14,7 +14,13 @@ export function extractHostname(referrer: string): string {
   }
 }
 
-const DEV_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]']);
+const DEV_HOSTS = new Set([
+  'localhost',
+  '127.0.0.1',
+  '0.0.0.0',
+  '::1',
+  '[::1]',
+]);
 const PRIVATE_IP =
   /^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})$/;
 
@@ -27,17 +33,46 @@ export function isDevTraffic(hostname: string): boolean {
 }
 
 /** 하위 호스트를 하나로 묶을 알려진 서비스들 */
-const KNOWN_SERVICES: { match: RegExp; key: string; label: string; letter: string }[] =
-  [
-    { match: /(^|\.)naver\.com$/, key: 'naver', label: '네이버 검색', letter: 'N' },
-    { match: /(^|\.)google\.[a-z.]+$/, key: 'google', label: '구글 검색', letter: 'G' },
-    { match: /(^|\.)daum\.net$/, key: 'daum', label: '다음 검색', letter: 'D' },
-    { match: /(^|\.)bing\.com$/, key: 'bing', label: 'Bing 검색', letter: 'B' },
-    { match: /(^|\.)(x|twitter)\.com$|^t\.co$/, key: 'x', label: 'X (Twitter)', letter: 'X' },
-    { match: /(^|\.)facebook\.com$/, key: 'facebook', label: 'Facebook', letter: 'F' },
-    { match: /(^|\.)github\.com$/, key: 'github', label: 'GitHub', letter: 'G' },
-    { match: /(^|\.)news\.ycombinator\.com$/, key: 'hn', label: 'Hacker News', letter: 'H' },
-  ];
+const KNOWN_SERVICES: {
+  match: RegExp;
+  key: string;
+  label: string;
+  letter: string;
+}[] = [
+  {
+    match: /(^|\.)naver\.com$/,
+    key: 'naver',
+    label: '네이버 검색',
+    letter: 'N',
+  },
+  {
+    match: /(^|\.)google\.[a-z.]+$/,
+    key: 'google',
+    label: '구글 검색',
+    letter: 'G',
+  },
+  { match: /(^|\.)daum\.net$/, key: 'daum', label: '다음 검색', letter: 'D' },
+  { match: /(^|\.)bing\.com$/, key: 'bing', label: 'Bing 검색', letter: 'B' },
+  {
+    match: /(^|\.)(x|twitter)\.com$|^t\.co$/,
+    key: 'x',
+    label: 'X (Twitter)',
+    letter: 'X',
+  },
+  {
+    match: /(^|\.)facebook\.com$/,
+    key: 'facebook',
+    label: 'Facebook',
+    letter: 'F',
+  },
+  { match: /(^|\.)github\.com$/, key: 'github', label: 'GitHub', letter: 'G' },
+  {
+    match: /(^|\.)news\.ycombinator\.com$/,
+    key: 'hn',
+    label: 'Hacker News',
+    letter: 'H',
+  },
+];
 
 /**
  * 호스트네임을 표시용 그룹으로 정규화한다.

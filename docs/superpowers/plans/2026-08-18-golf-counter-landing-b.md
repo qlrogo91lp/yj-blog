@@ -58,6 +58,7 @@ Expected: PASS (실패가 있으면 이 작업과 무관한 기존 문제이므�
 ralli 전용이던 훅·래퍼·순수 함수를 `apps/` 층으로 올려 golf-counter가 재사용할 수 있게 한다. **이 태스크는 동작을 바꾸지 않는다** — 기존 ralli 테스트 전량이 회귀 검증 역할을 한다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/_hooks/useMounted.ts`
 - Create: `src/app/(main)/apps/_hooks/useSectionProgress.ts`
 - Create: `src/app/(main)/apps/_hooks/useIsMobile.ts`
@@ -71,6 +72,7 @@ ralli 전용이던 훅·래퍼·순수 함수를 `apps/` 층으로 올려 golf-c
 - Modify: `src/app/(main)/apps/ralli/_areas/{hero,watch,replay,workout,rules,final-cta}.area.tsx` (import 9줄)
 
 **Interfaces:**
+
 - Produces: `useMounted(): boolean` · `useSectionProgress(offset?, smooth?): { ref, progress, isStatic }` · `useIsMobile(query?): boolean` · `Reveal({ children, className?, delay? })` · `clamp(v,min,max)` · `mapRange(v,inMin,inMax,outMin,outMax)` · `stepIndexAt(progress, stepCount?)`
 
 - [x] **Step 1: `landing-motion.test.ts`를 먼저 작성한다 (실패 예정)**
@@ -158,7 +160,7 @@ export function mapRange(
   inMin: number,
   inMax: number,
   outMin: number,
-  outMax: number,
+  outMax: number
 ): number {
   if (inMax === inMin) return outMin;
   const t = clamp((value - inMin) / (inMax - inMin), 0, 1);
@@ -250,7 +252,7 @@ export function useMounted(): boolean {
   return useSyncExternalStore(
     subscribe,
     () => true,
-    () => false,
+    () => false
   );
 }
 ```
@@ -262,13 +264,13 @@ export function useMounted(): boolean {
 ```typescript
 'use client';
 
-import { useRef, type RefObject } from 'react';
+import { type RefObject, useRef } from 'react';
 import {
+  type MotionValue,
+  type UseScrollOptions,
   useReducedMotion,
   useScroll,
   useSpring,
-  type MotionValue,
-  type UseScrollOptions,
 } from 'framer-motion';
 import { useMounted } from './useMounted';
 
@@ -284,7 +286,7 @@ type SectionProgress = {
  */
 export function useSectionProgress(
   offset: UseScrollOptions['offset'] = ['start start', 'end end'],
-  smooth = true,
+  smooth = true
 ): SectionProgress {
   const ref = useRef<HTMLDivElement>(null);
   const mounted = useMounted();
@@ -399,17 +401,17 @@ git rm "src/app/(main)/apps/ralli/_actions/reveal.action.tsx"
 
 파일별로 아래와 같이 바꾼다. `scoreAt`은 그대로 둔다.
 
-| 파일 | 변경 전 | 변경 후 |
-|---|---|---|
-| `_areas/hero.area.tsx` | `from '../_hooks/useSectionProgress'` | `from '../../_hooks/useSectionProgress'` |
-| `_areas/watch.area.tsx` | `from '../_hooks/useSectionProgress'` | `from '../../_hooks/useSectionProgress'` |
-| `_areas/watch.area.tsx` | `import { stepIndexAt } from '../_utils/ralli-motion'` | `import { stepIndexAt } from '../../_utils/landing-motion'` |
-| `_areas/replay.area.tsx` | `from '../_hooks/useSectionProgress'` | `from '../../_hooks/useSectionProgress'` |
-| `_areas/replay.area.tsx` | `from '../_hooks/useIsMobile'` | `from '../../_hooks/useIsMobile'` |
-| `_areas/replay.area.tsx` | `from '../_actions/reveal.action'` | `from '../../_actions/reveal.action'` |
-| `_areas/workout.area.tsx` | `from '../_actions/reveal.action'` | `from '../../_actions/reveal.action'` |
-| `_areas/rules.area.tsx` | `from '../_actions/reveal.action'` | `from '../../_actions/reveal.action'` |
-| `_areas/final-cta.area.tsx` | `from '../_actions/reveal.action'` | `from '../../_actions/reveal.action'` |
+| 파일                        | 변경 전                                                | 변경 후                                                     |
+| --------------------------- | ------------------------------------------------------ | ----------------------------------------------------------- |
+| `_areas/hero.area.tsx`      | `from '../_hooks/useSectionProgress'`                  | `from '../../_hooks/useSectionProgress'`                    |
+| `_areas/watch.area.tsx`     | `from '../_hooks/useSectionProgress'`                  | `from '../../_hooks/useSectionProgress'`                    |
+| `_areas/watch.area.tsx`     | `import { stepIndexAt } from '../_utils/ralli-motion'` | `import { stepIndexAt } from '../../_utils/landing-motion'` |
+| `_areas/replay.area.tsx`    | `from '../_hooks/useSectionProgress'`                  | `from '../../_hooks/useSectionProgress'`                    |
+| `_areas/replay.area.tsx`    | `from '../_hooks/useIsMobile'`                         | `from '../../_hooks/useIsMobile'`                           |
+| `_areas/replay.area.tsx`    | `from '../_actions/reveal.action'`                     | `from '../../_actions/reveal.action'`                       |
+| `_areas/workout.area.tsx`   | `from '../_actions/reveal.action'`                     | `from '../../_actions/reveal.action'`                       |
+| `_areas/rules.area.tsx`     | `from '../_actions/reveal.action'`                     | `from '../../_actions/reveal.action'`                       |
+| `_areas/final-cta.area.tsx` | `from '../_actions/reveal.action'`                     | `from '../../_actions/reveal.action'`                       |
 
 - [x] **Step 13: 빈 폴더 정리**
 
@@ -451,12 +453,14 @@ useMounted 하나로 합쳤다. scoreAt은 테니스 전용이라 ralli에 남�
 랜딩의 모든 카피·이미지·색을 데이터로 먼저 확정한다. 이후 area 태스크들은 이 파일만 참조하므로 문구가 코드에 흩어지지 않는다.
 
 **Files:**
+
 - Modify: `src/app/globals.css` (토큰 4개 추가)
 - Modify: `src/app/(main)/apps/golf-counter/_utils/golf-counter-content.ts` (3줄 → 전체 콘텐츠)
 - Modify: `src/app/(main)/apps/_utils/apps-data.ts` (`golf-counter.links`)
 - Test: `src/app/(main)/apps/golf-counter/_utils/golf-counter-content.test.ts`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces: `golfCounterMeta` · `golfHeroSection` · `golfCourseSection` · `golfHealthSection` · `golfAfterSection` · `golfHolesSection` · `golfFinalCta` · 타입 `GolfImage`·`GolfChip`·`GolfCard`·`GolfStep`
 
@@ -465,10 +469,10 @@ useMounted 하나로 합쳤다. scoreAt은 테니스 전용이라 ralli에 남�
 `src/app/globals.css`의 `@theme` 블록에서 `--color-ralli-green: #34c759;` 바로 아래에 추가한다:
 
 ```css
-  --color-golf-bg: #050a06;
-  --color-golf-fg: #f1f5f1;
-  --color-golf-green: #34c759;
-  --color-golf-orange: #ff9f0a;
+--color-golf-bg: #050a06;
+--color-golf-fg: #f1f5f1;
+--color-golf-green: #34c759;
+--color-golf-orange: #ff9f0a;
 ```
 
 - [x] **Step 2: 콘텐츠 테스트를 먼저 작성한다 (실패 예정)**
@@ -478,16 +482,16 @@ useMounted 하나로 합쳤다. scoreAt은 테니스 전용이라 ralli에 남�
 ```typescript
 import {
   golfAfterSection,
+  golfCounterMeta,
   golfCourseSection,
   golfHealthSection,
   golfHolesSection,
-  golfCounterMeta,
 } from './golf-counter-content';
 
 describe('golfCounterMeta', () => {
   it('App Store URL은 us 스토어프론트를 가리킨다', () => {
     expect(golfCounterMeta.appStoreUrl).toBe(
-      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
+      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372'
     );
   });
 
@@ -575,7 +579,8 @@ export const golfCounterMeta = {
   name: 'GolfCounter',
   iconSrc: '/golf-counter/golf-counter.png',
   supportEmail: 'qlrogo91lp@gmail.com',
-  appStoreUrl: 'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
+  appStoreUrl:
+    'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
   platformNote: 'Free · watchOS 9.0+',
   minimumOs: 'iOS 16.4, watchOS 9.0',
 } as const;
@@ -594,7 +599,7 @@ export const golfHeroSection = {
   body: 'GolfCounter counts strokes, putts, and calories from your wrist — then hands the whole round back to your iPhone.',
   shot: watchImage(
     '/golf-counter/watch-match-en.png',
-    'GolfCounter hole score dial on Apple Watch',
+    'GolfCounter hole score dial on Apple Watch'
   ),
   stageLabel: 'Hole 2 · Par 4 · +3',
   // 값은 전부 스크린샷에 실제로 찍힌 숫자다 (설계 문서 4.4)
@@ -625,7 +630,7 @@ export const golfCourseSection = {
       body: 'Pick 9 or 18 holes, tap once per stroke, and undo a miscount instantly.',
       image: iosImage(
         '/golf-counter/ios-watch-match-en.png',
-        'GolfCounter stroke counter on Apple Watch',
+        'GolfCounter stroke counter on Apple Watch'
       ),
     },
     {
@@ -634,7 +639,7 @@ export const golfCourseSection = {
       body: 'Add the complication and start a round before the first tee.',
       image: watchImage(
         '/golf-counter/watch-complication-en.png',
-        'GolfCounter complication on the Apple Watch face',
+        'GolfCounter complication on the Apple Watch face'
       ),
     },
     {
@@ -643,7 +648,7 @@ export const golfCourseSection = {
       body: 'Total strokes, over-par, and every hole — without reaching for your phone.',
       image: watchImage(
         '/golf-counter/watch-score-en.png',
-        'GolfCounter scorecard on Apple Watch',
+        'GolfCounter scorecard on Apple Watch'
       ),
     },
   ] satisfies GolfCard[],
@@ -667,7 +672,7 @@ export const golfHealthSection = {
       body: 'Start a round, start a workout. Nothing extra to remember.',
       image: watchImage(
         '/golf-counter/watch-workout-en.png',
-        'GolfCounter workout metrics on Apple Watch',
+        'GolfCounter workout metrics on Apple Watch'
       ),
     },
     {
@@ -676,7 +681,7 @@ export const golfHealthSection = {
       body: 'Tracked live on your wrist, then synced to your iPhone.',
       image: iosImage(
         '/golf-counter/connectivity-en.png',
-        'GolfCounter on iPhone and Apple Watch together',
+        'GolfCounter on iPhone and Apple Watch together'
       ),
     },
   ] satisfies GolfStep[],
@@ -688,10 +693,13 @@ export const golfAfterSection = {
   heading: 'Every round adds up.',
   body: 'Over-par trend, putts per hole, and score distribution — built from the rounds you already played.',
   gallery: [
-    iosImage('/golf-counter/ios-stat-en.png', 'GolfCounter round statistics on iPhone'),
+    iosImage(
+      '/golf-counter/ios-stat-en.png',
+      'GolfCounter round statistics on iPhone'
+    ),
     iosImage(
       '/golf-counter/ios-watch-score-en.png',
-      'GolfCounter full scorecard on Apple Watch',
+      'GolfCounter full scorecard on Apple Watch'
     ),
   ],
 };
@@ -710,7 +718,7 @@ export const golfHolesSection = {
   ] satisfies GolfChip[],
   image: watchImage(
     '/golf-counter/watch-home-en.png',
-    'GolfCounter hole count selection on Apple Watch',
+    'GolfCounter hole count selection on Apple Watch'
   ),
 };
 
@@ -769,10 +777,12 @@ hero 칩 값은 전부 스크린샷에 실제로 찍힌 숫자를 쓴다."
 시안 rAF 로직 중 `useTransform`으로 흡수되지 않는 계산만 순수 함수로 남긴다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/golf-counter/_utils/golf-motion.ts`
 - Test: `src/app/(main)/apps/golf-counter/_utils/golf-motion.test.ts`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces: `chipRangeAt(index): [number, number]` · `CHIP_OFFSETS: { desktop, mobile }` · `stageRangeOf(isMobile): StageRange`
 
@@ -940,6 +950,7 @@ useTransform이 흡수하지 못하는 부분만 순수 함수로 남긴다."
 이후 area 태스크들이 붙을 자리를 만든다. 이 태스크가 끝나면 `/apps/golf-counter`가 빈 다크 페이지로 렌더된다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/golf-counter/_components/golf-shot.tsx`
 - Create: `src/app/(main)/apps/golf-counter/_components/golf-stat-chip.tsx`
 - Create: `src/app/(main)/apps/golf-counter/_components/golf-json-ld.tsx`
@@ -947,6 +958,7 @@ useTransform이 흡수하지 못하는 부분만 순수 함수로 남긴다."
 - Test: `src/app/(main)/apps/golf-counter/_components/golf-stat-chip.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `GolfImage`·`GolfStatChip`·`golfCounterMeta` (Task 2)
 - Produces: `<GolfShot image className? sizes? priority? />` · `<GolfStatChip chip />` · `<GolfJsonLd />`
 
@@ -996,7 +1008,11 @@ import { GolfStatChip } from './golf-stat-chip';
 
 describe('GolfStatChip', () => {
   it('라벨과 값을 렌더한다', () => {
-    render(<GolfStatChip chip={{ id: 'total', label: 'TOTAL', value: '46', tone: 'green' }} />);
+    render(
+      <GolfStatChip
+        chip={{ id: 'total', label: 'TOTAL', value: '46', tone: 'green' }}
+      />
+    );
     expect(screen.getByText('TOTAL')).toBeInTheDocument();
     expect(screen.getByText('46')).toBeInTheDocument();
   });
@@ -1004,15 +1020,23 @@ describe('GolfStatChip', () => {
   it('suffix가 있으면 값 옆에 함께 렌더한다', () => {
     render(
       <GolfStatChip
-        chip={{ id: 'putts', label: 'PUTTS', value: '1.8', suffix: '/hole', tone: 'fg' }}
-      />,
+        chip={{
+          id: 'putts',
+          label: 'PUTTS',
+          value: '1.8',
+          suffix: '/hole',
+          tone: 'fg',
+        }}
+      />
     );
     expect(screen.getByText('/hole')).toBeInTheDocument();
   });
 
   it('suffix가 없으면 렌더하지 않는다', () => {
     const { container } = render(
-      <GolfStatChip chip={{ id: 'holes', label: 'HOLES', value: '18', tone: 'fg' }} />,
+      <GolfStatChip
+        chip={{ id: 'holes', label: 'HOLES', value: '18', tone: 'fg' }}
+      />
     );
     expect(container.querySelectorAll('[data-chip-suffix]')).toHaveLength(0);
   });
@@ -1045,12 +1069,14 @@ const toneClass = {
 export function GolfStatChip({ chip }: Props) {
   return (
     <div className="rounded-[22px] border border-white/10 bg-white/6 px-4.5 py-3.5 backdrop-blur-2xl">
-      <div className="text-[11px] font-bold tracking-[0.14em] text-white/45">{chip.label}</div>
+      <div className="text-[11px] font-bold tracking-[0.14em] text-white/45">
+        {chip.label}
+      </div>
       <div className="flex items-baseline gap-1.5">
         <span
           className={cn(
             'text-[30px] leading-[1.1] font-bold tracking-[-0.04em]',
-            toneClass[chip.tone],
+            toneClass[chip.tone]
           )}
         >
           {chip.value}
@@ -1129,7 +1155,9 @@ export default function GolfCounterPage() {
         <div className="absolute -top-1/4 left-1/4 size-[60vw] rounded-full bg-golf-green/12 blur-[120px]" />
         <div className="absolute top-1/2 -right-[16%] size-[50vw] rounded-full bg-golf-orange/8 blur-[140px]" />
       </div>
-      <div className="relative z-[1]">{/* area가 여기에 순서대로 들어간다 */}</div>
+      <div className="relative z-[1]">
+        {/* area가 여기에 순서대로 들어간다 */}
+      </div>
     </div>
   );
 }
@@ -1157,11 +1185,13 @@ GolfShot(마스크 없는 next/image 래퍼)·GolfStatChip·GolfJsonLd와
 가장 복잡한 area다. sticky pin 안에서 stage가 확대되고, 칩 4개가 시차를 두고 흩어지며, 헤드와 CTA가 페이드아웃한다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/golf-counter/_areas/hero.area.tsx`
 - Test: `src/app/(main)/apps/golf-counter/_areas/hero.area.test.tsx`
 - Modify: `src/app/(main)/apps/golf-counter/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useSectionProgress`·`useIsMobile` (Task 1), `golfHeroSection`·`golfCounterMeta` (Task 2), `chipRangeAt`·`CHIP_OFFSETS`·`stageRangeOf` (Task 3), `GolfShot`·`GolfStatChip` (Task 4)
 - Produces: `<HeroArea />`
 
@@ -1174,15 +1204,19 @@ import { render, screen } from '@testing-library/react';
 import { HeroArea } from './hero.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('HeroArea', () => {
   it('배지와 두 줄 헤드라인을 렌더한다', () => {
     render(<HeroArea />);
-    expect(screen.getByText('Live on Apple Watch & iPhone')).toBeInTheDocument();
+    expect(
+      screen.getByText('Live on Apple Watch & iPhone')
+    ).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Play the round.Not your phone.',
+      'Play the round.Not your phone.'
     );
   });
 
@@ -1197,7 +1231,7 @@ describe('HeroArea', () => {
     render(<HeroArea />);
     expect(screen.getByRole('link', { name: /App Store/i })).toHaveAttribute(
       'href',
-      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
+      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372'
     );
   });
 
@@ -1214,7 +1248,7 @@ describe('HeroArea', () => {
   it('hero 워치 이미지를 alt와 함께 렌더한다', () => {
     render(<HeroArea />);
     expect(
-      screen.getByAltText('GolfCounter hole score dial on Apple Watch'),
+      screen.getByAltText('GolfCounter hole score dial on Apple Watch')
     ).toBeInTheDocument();
   });
 });
@@ -1232,15 +1266,15 @@ Expected: FAIL — 모듈 없음
 ```tsx
 'use client';
 
-import { motion, useTransform, type MotionValue } from 'framer-motion';
-import { useSectionProgress } from '../../_hooks/useSectionProgress';
+import { type MotionValue, motion, useTransform } from 'framer-motion';
 import { useIsMobile } from '../../_hooks/useIsMobile';
+import { useSectionProgress } from '../../_hooks/useSectionProgress';
 import { GolfShot } from '../_components/golf-shot';
 import { GolfStatChip } from '../_components/golf-stat-chip';
 import {
+  type GolfStatChip as GolfStatChipData,
   golfCounterMeta,
   golfHeroSection,
-  type GolfStatChip as GolfStatChipData,
 } from '../_utils/golf-counter-content';
 import { CHIP_OFFSETS, chipRangeAt, stageRangeOf } from '../_utils/golf-motion';
 
@@ -1267,7 +1301,11 @@ function HeroChip({ chip, index, progress, isMobile, isStatic }: ChipProps) {
   const x = useTransform(progress, [start, end], ['0vw', `${dx}vw`]);
   const y = useTransform(progress, [start, end], ['0vh', `${dy}vh`]);
   const scale = useTransform(progress, [start, end], [1, 0.9]);
-  const rotate = useTransform(progress, [start, end], [0, (index % 2 ? 1 : -1) * 2.5]);
+  const rotate = useTransform(
+    progress,
+    [start, end],
+    [0, (index % 2 ? 1 : -1) * 2.5]
+  );
   // 시안 원본: opacity = clamp(1 - max(0, p - 0.66) * 3.4, 0, 1)
   const opacity = useTransform(progress, [0.66, 0.9541], [1, 0]);
 
@@ -1314,7 +1352,9 @@ export function HeroArea() {
   return (
     <div
       ref={ref}
-      className={isStatic ? 'relative h-auto' : 'relative h-[210vh] md:h-[300vh]'}
+      className={
+        isStatic ? 'relative h-auto' : 'relative h-[210vh] md:h-[300vh]'
+      }
     >
       <div
         className={
@@ -1324,8 +1364,16 @@ export function HeroArea() {
         }
       >
         <motion.div
-          className={isStatic ? 'text-center' : 'absolute top-[6vh] right-0 left-0 z-[4] px-6 text-center'}
-          style={isStatic ? undefined : { opacity: headOpacity, y: headY, scale: headScale }}
+          className={
+            isStatic
+              ? 'text-center'
+              : 'absolute top-[6vh] right-0 left-0 z-[4] px-6 text-center'
+          }
+          style={
+            isStatic
+              ? undefined
+              : { opacity: headOpacity, y: headY, scale: headScale }
+          }
         >
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/6 px-3.5 py-1.5 text-xs font-semibold text-white/70 backdrop-blur-xl">
             <span className="size-1.75 rounded-full bg-golf-green" />
@@ -1396,7 +1444,9 @@ export function HeroArea() {
           >
             Download on the App Store
           </a>
-          <span className="text-[13.5px] text-white/55">{golfCounterMeta.platformNote}</span>
+          <span className="text-[13.5px] text-white/55">
+            {golfCounterMeta.platformNote}
+          </span>
         </motion.div>
       </div>
     </div>
@@ -1418,9 +1468,9 @@ import { HeroArea } from './_areas/hero.area';
 ```
 
 ```tsx
-      <div className="relative z-[1]">
-        <HeroArea />
-      </div>
+<div className="relative z-[1]">
+  <HeroArea />
+</div>
 ```
 
 - [x] **Step 6: 브라우저에서 확인한다**
@@ -1449,11 +1499,13 @@ sticky pin 안에서 stage가 확대되고 칩 4개가 시차를 두고 흩어�
 ## Task 6: On the course area (베이토 그리드)
 
 **Files:**
+
 - Create: `src/app/(main)/apps/golf-counter/_areas/course.area.tsx`
 - Test: `src/app/(main)/apps/golf-counter/_areas/course.area.test.tsx`
 - Modify: `src/app/(main)/apps/golf-counter/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `Reveal` (Task 1), `golfCourseSection` (Task 2), `GolfShot` (Task 4)
 - Produces: `<CourseArea />`
 
@@ -1464,7 +1516,9 @@ import { render, screen } from '@testing-library/react';
 import { CourseArea } from './course.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('CourseArea', () => {
@@ -1472,7 +1526,7 @@ describe('CourseArea', () => {
     render(<CourseArea />);
     expect(screen.getByText('ON THE COURSE')).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Everything happens on your wrist.' }),
+      screen.getByRole('heading', { name: 'Everything happens on your wrist.' })
     ).toBeInTheDocument();
   });
 
@@ -1480,7 +1534,9 @@ describe('CourseArea', () => {
     render(<CourseArea />);
     expect(screen.getByText('Tap to count')).toBeInTheDocument();
     expect(screen.getByText('One tap from the watch face')).toBeInTheDocument();
-    expect(screen.getByText('The whole card on your wrist')).toBeInTheDocument();
+    expect(
+      screen.getByText('The whole card on your wrist')
+    ).toBeInTheDocument();
   });
 
   it('카드 이미지 3장을 alt와 함께 렌더한다', () => {
@@ -1513,7 +1569,10 @@ export function CourseArea() {
   const [tall, ...rest] = golfCourseSection.cards;
 
   return (
-    <section id={golfCourseSection.id} className="px-5 py-16 md:px-[max(6vw,28px)] md:py-28">
+    <section
+      id={golfCourseSection.id}
+      className="px-5 py-16 md:px-[max(6vw,28px)] md:py-28"
+    >
       <div className="mx-auto max-w-280">
         <Reveal className="mb-11 max-w-150">
           <div className="mb-3 text-xs font-bold tracking-[0.18em] text-golf-green">
@@ -1522,7 +1581,9 @@ export function CourseArea() {
           <h2 className="mb-3 text-[clamp(28px,3.8vw,48px)] leading-[1.04] font-bold tracking-[-0.04em] text-pretty">
             {golfCourseSection.heading}
           </h2>
-          <p className="text-[17px] leading-[1.5] text-white/55">{golfCourseSection.body}</p>
+          <p className="text-[17px] leading-[1.5] text-white/55">
+            {golfCourseSection.body}
+          </p>
         </Reveal>
 
         <div className="grid gap-3 md:grid-cols-[1.25fr_1fr] md:gap-4">
@@ -1537,7 +1598,9 @@ export function CourseArea() {
                 <div className="mb-1 text-[19px] font-semibold tracking-[-0.3px]">
                   {tall.title}
                 </div>
-                <div className="max-w-70 text-[14.5px] text-white/55">{tall.body}</div>
+                <div className="max-w-70 text-[14.5px] text-white/55">
+                  {tall.body}
+                </div>
               </div>
             </div>
           </Reveal>
@@ -1545,7 +1608,9 @@ export function CourseArea() {
           {rest.map((card, index) => (
             <Reveal key={card.id} delay={(index + 1) * 0.08}>
               <div className="flex min-h-63 flex-col justify-between rounded-[34px] border border-white/10 bg-white/6 p-7.5 backdrop-blur-2xl">
-                <div className="text-[19px] font-semibold tracking-[-0.3px]">{card.title}</div>
+                <div className="text-[19px] font-semibold tracking-[-0.3px]">
+                  {card.title}
+                </div>
                 <p className="mt-2 mb-4.5 text-[14.5px] leading-[1.45] text-white/55">
                   {card.body}
                 </p>
@@ -1591,11 +1656,13 @@ git commit -m "✨ feat: GolfCounter 랜딩 On the course 베이토 그리드 �
 ## Task 7: Health area (pin 2-step)
 
 **Files:**
+
 - Create: `src/app/(main)/apps/golf-counter/_areas/health.area.tsx`
 - Test: `src/app/(main)/apps/golf-counter/_areas/health.area.test.tsx`
 - Modify: `src/app/(main)/apps/golf-counter/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `useSectionProgress` (Task 1), `stepIndexAt` (Task 1), `golfHealthSection` (Task 2), `GolfShot` (Task 4)
 - Produces: `<HealthArea />`
 
@@ -1606,7 +1673,9 @@ import { render, screen } from '@testing-library/react';
 import { HealthArea } from './health.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('HealthArea', () => {
@@ -1614,20 +1683,30 @@ describe('HealthArea', () => {
     render(<HealthArea />);
     expect(screen.getByText('HEALTH')).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'A round is a workout — logged automatically.' }),
+      screen.getByRole('heading', {
+        name: 'A round is a workout — logged automatically.',
+      })
     ).toBeInTheDocument();
   });
 
   it('스텝 2개를 모두 렌더한다', () => {
     render(<HealthArea />);
     expect(screen.getByText('Tied to a HealthKit session')).toBeInTheDocument();
-    expect(screen.getByText('Calories, heart rate, round time')).toBeInTheDocument();
+    expect(
+      screen.getByText('Calories, heart rate, round time')
+    ).toBeInTheDocument();
   });
 
   it('초기 활성 스텝은 첫 번째다', () => {
     render(<HealthArea />);
-    expect(screen.getByTestId('golf-step-session')).toHaveAttribute('data-active', 'true');
-    expect(screen.getByTestId('golf-step-sync')).toHaveAttribute('data-active', 'false');
+    expect(screen.getByTestId('golf-step-session')).toHaveAttribute(
+      'data-active',
+      'true'
+    );
+    expect(screen.getByTestId('golf-step-sync')).toHaveAttribute(
+      'data-active',
+      'false'
+    );
   });
 
   it('비활성 이미지는 스크린 리더에서 숨긴다', () => {
@@ -1677,7 +1756,9 @@ export function HealthArea() {
     <div
       ref={ref}
       id={golfHealthSection.id}
-      className={isStatic ? 'relative h-auto' : 'relative h-[170vh] md:h-[280vh]'}
+      className={
+        isStatic ? 'relative h-auto' : 'relative h-[170vh] md:h-[280vh]'
+      }
     >
       <div
         className={
@@ -1710,7 +1791,9 @@ export function HealthArea() {
                   <div className="mb-1 text-[16.5px] font-semibold tracking-[-0.2px]">
                     {step.title}
                   </div>
-                  <div className="text-[14.5px] leading-[1.45] text-white/55">{step.body}</div>
+                  <div className="text-[14.5px] leading-[1.45] text-white/55">
+                    {step.body}
+                  </div>
                 </div>
               );
             })}
@@ -1734,14 +1817,22 @@ export function HealthArea() {
                 animate={
                   isStatic
                     ? undefined
-                    : { opacity: isActive ? 1 : 0, y: isActive ? 0 : 18, scale: isActive ? 1 : 0.96 }
+                    : {
+                        opacity: isActive ? 1 : 0,
+                        y: isActive ? 0 : 18,
+                        scale: isActive ? 1 : 0.96,
+                      }
                 }
                 transition={{ duration: 0.4, ease: [0.2, 0.9, 0.3, 1] }}
               >
                 <GolfShot
                   image={step.image}
                   sizes="(max-width: 768px) 50vw, 30vw"
-                  className={step.image.kind === 'watch' ? 'max-h-[44vh]' : 'max-h-[70vh]'}
+                  className={
+                    step.image.kind === 'watch'
+                      ? 'max-h-[44vh]'
+                      : 'max-h-[70vh]'
+                  }
                 />
               </motion.div>
             );
@@ -1779,6 +1870,7 @@ stepIndexAt(value, 2)로 2단 크로스페이드를 만든다.
 ## Task 8: After the round + Holes area
 
 **Files:**
+
 - Create: `src/app/(main)/apps/golf-counter/_areas/after-round.area.tsx`
 - Create: `src/app/(main)/apps/golf-counter/_areas/holes.area.tsx`
 - Test: `src/app/(main)/apps/golf-counter/_areas/after-round.area.test.tsx`
@@ -1786,6 +1878,7 @@ stepIndexAt(value, 2)로 2단 크로스페이드를 만든다.
 - Modify: `src/app/(main)/apps/golf-counter/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `Reveal` (Task 1), `golfAfterSection`·`golfHolesSection` (Task 2), `GolfShot` (Task 4)
 - Produces: `<AfterRoundArea />` · `<HolesArea />`
 
@@ -1798,14 +1891,18 @@ import { render, screen } from '@testing-library/react';
 import { AfterRoundArea } from './after-round.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('AfterRoundArea', () => {
   it('섹션 라벨과 제목을 렌더한다', () => {
     render(<AfterRoundArea />);
     expect(screen.getByText('AFTER THE ROUND')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Every round adds up.' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Every round adds up.' })
+    ).toBeInTheDocument();
   });
 
   it('갤러리 이미지 2장을 렌더한다', () => {
@@ -1827,14 +1924,16 @@ import { render, screen } from '@testing-library/react';
 import { HolesArea } from './holes.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('HolesArea', () => {
   it('제목과 설명을 렌더한다', () => {
     render(<HolesArea />);
     expect(
-      screen.getByRole('heading', { name: 'Nine or eighteen. Your call.' }),
+      screen.getByRole('heading', { name: 'Nine or eighteen. Your call.' })
     ).toBeInTheDocument();
   });
 
@@ -1866,7 +1965,10 @@ import { golfAfterSection } from '../_utils/golf-counter-content';
 
 export function AfterRoundArea() {
   return (
-    <section id={golfAfterSection.id} className="px-5 py-16 md:px-[max(6vw,28px)] md:pb-28">
+    <section
+      id={golfAfterSection.id}
+      className="px-5 py-16 md:px-[max(6vw,28px)] md:pb-28"
+    >
       <div className="mx-auto max-w-280">
         <Reveal className="mb-10 max-w-150">
           <div className="mb-3 text-xs font-bold tracking-[0.18em] text-golf-green">
@@ -1875,7 +1977,9 @@ export function AfterRoundArea() {
           <h2 className="mb-3 text-[clamp(28px,3.8vw,48px)] leading-[1.04] font-bold tracking-[-0.04em] text-pretty">
             {golfAfterSection.heading}
           </h2>
-          <p className="text-[17px] leading-[1.5] text-white/55">{golfAfterSection.body}</p>
+          <p className="text-[17px] leading-[1.5] text-white/55">
+            {golfAfterSection.body}
+          </p>
         </Reveal>
 
         <div className="grid gap-3 md:grid-cols-2 md:gap-4">
@@ -1923,7 +2027,9 @@ export function HolesArea() {
                     key={chip.label}
                     data-active={chip.isActive}
                     className={`rounded-full px-3.75 py-2 text-[13px] font-semibold ${
-                      chip.isActive ? 'bg-golf-green text-black' : 'bg-white/10 text-white/70'
+                      chip.isActive
+                        ? 'bg-golf-green text-black'
+                        : 'bg-white/10 text-white/70'
                     }`}
                   >
                     {chip.label}
@@ -1965,11 +2071,13 @@ git commit -m "✨ feat: GolfCounter 랜딩 After the round·Holes 영역 추가
 ## Task 9: Final CTA area + 페이지 완성
 
 **Files:**
+
 - Create: `src/app/(main)/apps/golf-counter/_areas/final-cta.area.tsx`
 - Test: `src/app/(main)/apps/golf-counter/_areas/final-cta.area.test.tsx`
 - Modify: `src/app/(main)/apps/golf-counter/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `Reveal` (Task 1), `golfFinalCta`·`golfCounterMeta` (Task 2), `GolfShot` 미사용 — 아이콘은 `next/image` 직접 사용
 - Produces: `<FinalCtaArea />`
 
@@ -1980,21 +2088,29 @@ import { render, screen } from '@testing-library/react';
 import { FinalCtaArea } from './final-cta.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 describe('FinalCtaArea', () => {
   it('최종 CTA 제목과 설명을 렌더한다', () => {
     render(<FinalCtaArea />);
-    expect(screen.getByRole('heading', { name: 'Ready for the first tee?' })).toBeInTheDocument();
     expect(
-      screen.getByText('Free on the App Store for Apple Watch and iPhone.'),
+      screen.getByRole('heading', { name: 'Ready for the first tee?' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Free on the App Store for Apple Watch and iPhone.')
     ).toBeInTheDocument();
   });
 
@@ -2002,19 +2118,18 @@ describe('FinalCtaArea', () => {
     render(<FinalCtaArea />);
     expect(screen.getByRole('link', { name: /App Store/i })).toHaveAttribute(
       'href',
-      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
+      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372'
     );
   });
 
   it('privacy와 support 링크를 노출한다', () => {
     render(<FinalCtaArea />);
-    expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute(
-      'href',
-      '/apps/golf-counter/privacy',
-    );
+    expect(
+      screen.getByRole('link', { name: 'Privacy Policy' })
+    ).toHaveAttribute('href', '/apps/golf-counter/privacy');
     expect(screen.getByRole('link', { name: 'Support' })).toHaveAttribute(
       'href',
-      'mailto:qlrogo91lp@gmail.com',
+      'mailto:qlrogo91lp@gmail.com'
     );
   });
 
@@ -2055,7 +2170,9 @@ export function FinalCtaArea() {
           <h2 className="mb-3 text-[clamp(28px,4vw,52px)] leading-none font-bold tracking-[-0.045em]">
             {golfFinalCta.heading}
           </h2>
-          <p className="mb-6.5 text-[16.5px] text-white/55">{golfFinalCta.body}</p>
+          <p className="mb-6.5 text-[16.5px] text-white/55">
+            {golfFinalCta.body}
+          </p>
           <a
             href={golfCounterMeta.appStoreUrl}
             className="inline-flex rounded-full bg-golf-green px-7.5 py-4 text-base font-semibold text-black shadow-[0_14px_40px_rgba(52,199,89,0.3)]"
@@ -2103,7 +2220,10 @@ export default function GolfCounterPage() {
   return (
     <div className="dark relative bg-golf-bg text-golf-fg">
       <GolfJsonLd />
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      >
         <div className="absolute -top-1/4 left-1/4 size-[60vw] rounded-full bg-golf-green/12 blur-[120px]" />
         <div className="absolute top-1/2 -right-[16%] size-[50vw] rounded-full bg-golf-orange/8 blur-[140px]" />
       </div>
@@ -2146,9 +2266,11 @@ area 6개를 page.tsx에 순서대로 나열해 랜딩을 완성한다.
 ## Task 10: E2E 테스트 + 최종 점검
 
 **Files:**
+
 - Create: `e2e/golf-counter.spec.ts`
 
 **Interfaces:**
+
 - Consumes: 완성된 `/apps/golf-counter` 페이지
 
 - [x] **Step 1: 포트 충돌을 먼저 확인한다**
@@ -2166,19 +2288,23 @@ lsof -i :3000
 `e2e/golf-counter.spec.ts`:
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('GolfCounter 랜딩', () => {
   test('히어로가 렌더되고 App Store CTA가 동작한다', async ({ page }) => {
     await page.goto('/apps/golf-counter');
 
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Play the round.');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(
+      'Play the round.'
+    );
     await expect(page.getByText('Live on Apple Watch & iPhone')).toBeVisible();
 
-    const cta = page.getByRole('link', { name: /Download on the App Store/i }).first();
+    const cta = page
+      .getByRole('link', { name: /Download on the App Store/i })
+      .first();
     await expect(cta).toHaveAttribute(
       'href',
-      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
+      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372'
     );
   });
 
@@ -2186,17 +2312,21 @@ test.describe('GolfCounter 랜딩', () => {
     await page.goto('/apps/golf-counter');
 
     await expect(
-      page.getByRole('heading', { name: 'Everything happens on your wrist.' }),
+      page.getByRole('heading', { name: 'Everything happens on your wrist.' })
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'A round is a workout — logged automatically.' }),
-    ).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Every round adds up.' })).toBeVisible();
-    await expect(
-      page.getByRole('heading', { name: 'Nine or eighteen. Your call.' }),
+      page.getByRole('heading', {
+        name: 'A round is a workout — logged automatically.',
+      })
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Ready for the first tee?' }),
+      page.getByRole('heading', { name: 'Every round adds up.' })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Nine or eighteen. Your call.' })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Ready for the first tee?' })
     ).toBeVisible();
   });
 
@@ -2206,7 +2336,9 @@ test.describe('GolfCounter 랜딩', () => {
     await expect(page).toHaveURL('/apps/golf-counter/privacy');
   });
 
-  test('reduced-motion에서 pin 섹션이 접혀 페이지가 짧아진다', async ({ page }) => {
+  test('reduced-motion에서 pin 섹션이 접혀 페이지가 짧아진다', async ({
+    page,
+  }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/apps/golf-counter');
 

@@ -24,10 +24,12 @@
 ### Task 1: 원형 로고 컴포넌트
 
 **Files:**
+
 - Create: `src/components/nav/logo.tsx`
 - Test: `src/components/nav/logo.test.tsx`
 
 **Interfaces:**
+
 - Produces: `LogoMark({ className }: { className?: string })` — `currentColor`로 채워지는 인라인 SVG. `Logo({ className }: { className?: string })` — 원형 배경 + LogoMark를 합친 마크.
 
 - [ ] **Step 1: 실패하는 테스트 작성**
@@ -119,10 +121,12 @@ git commit -m "feat: 원형 배경 로고 컴포넌트 추가"
 ### Task 2: NavLinks pill 스타일 + 링크 갱신
 
 **Files:**
+
 - Modify: `src/components/nav/nav-links.tsx`
 - Test: `src/components/nav/nav-links.test.tsx`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces: `NavLinks({ className?, onLinkClick?, variant? }: Props)` — `variant`는 `'pill' | 'plain'`(기본 `'pill'`). 링크 목록: `블로그`(/posts), `Tags`(/tags), `Apps`(/apps).
 
@@ -159,15 +163,28 @@ vi.mock('next/navigation', () => ({
 describe('NavLinks', () => {
   it('블로그·Tags·Apps 링크를 렌더하고 플레이그라운드는 없다', () => {
     render(<NavLinks />);
-    expect(screen.getByRole('link', { name: '블로그' })).toHaveAttribute('href', '/posts');
-    expect(screen.getByRole('link', { name: 'Tags' })).toHaveAttribute('href', '/tags');
-    expect(screen.getByRole('link', { name: 'Apps' })).toHaveAttribute('href', '/apps');
-    expect(screen.queryByRole('link', { name: '플레이그라운드' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '블로그' })).toHaveAttribute(
+      'href',
+      '/posts'
+    );
+    expect(screen.getByRole('link', { name: 'Tags' })).toHaveAttribute(
+      'href',
+      '/tags'
+    );
+    expect(screen.getByRole('link', { name: 'Apps' })).toHaveAttribute(
+      'href',
+      '/apps'
+    );
+    expect(
+      screen.queryByRole('link', { name: '플레이그라운드' })
+    ).not.toBeInTheDocument();
   });
 
   it('현재 경로(/posts) 링크가 활성 스타일을 가진다', () => {
     render(<NavLinks />);
-    expect(screen.getByRole('link', { name: '블로그' })).toHaveClass('bg-background');
+    expect(screen.getByRole('link', { name: '블로그' })).toHaveClass(
+      'bg-background'
+    );
   });
 });
 ```
@@ -206,7 +223,8 @@ export function NavLinks({ className, onLinkClick, variant = 'pill' }: Props) {
   return (
     <nav
       className={cn(
-        variant === 'pill' && 'flex items-center gap-1 rounded-full bg-muted p-1',
+        variant === 'pill' &&
+          'flex items-center gap-1 rounded-full bg-muted p-1',
         className
       )}
     >
@@ -251,10 +269,12 @@ git commit -m "feat: nav를 pill 스타일로 변경하고 Tags 추가·플레�
 ### Task 3: Header 조립 (로고 + pill nav)
 
 **Files:**
+
 - Modify: `src/components/nav/header.tsx`
 - Modify: `src/components/nav/mobile-menu.tsx` (NavLinks에 `variant="plain"` 전달)
 
 **Interfaces:**
+
 - Consumes: `Logo` (Task 1), `NavLinks` (Task 2)
 - Produces: 없음 (페이지 조립)
 
@@ -265,11 +285,11 @@ git commit -m "feat: nav를 pill 스타일로 변경하고 Tags 추가·플레�
 ```tsx
 import Link from 'next/link';
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/nav/logo';
-import { NavLinks } from '@/components/nav/nav-links';
 import { MobileMenu } from '@/components/nav/mobile-menu';
+import { NavLinks } from '@/components/nav/nav-links';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Button } from '@/components/ui/button';
 import { SITE_NAME } from '@/lib/constants';
 
 export function Header() {
@@ -315,11 +335,11 @@ export function Header() {
 `src/components/nav/mobile-menu.tsx`의 `NavLinks` 사용부에 `variant="plain"`을 추가한다 (드롭다운은 세로 텍스트 목록 유지):
 
 ```tsx
-          <NavLinks
-            variant="plain"
-            className="flex flex-col gap-3"
-            onLinkClick={() => setIsOpen(false)}
-          />
+<NavLinks
+  variant="plain"
+  className="flex flex-col gap-3"
+  onLinkClick={() => setIsOpen(false)}
+/>
 ```
 
 - [ ] **Step 3: lint + 빌드 검증**
@@ -330,6 +350,7 @@ Expected: 에러 없이 완료
 - [ ] **Step 4: 수동 확인**
 
 `npm run dev` 후 `http://localhost:3000`에서 확인:
+
 - light/dark 모두 로고 원형 배경·대비 정상
 - pill nav 활성 탭 칩 표시, 플레이그라운드 없음
 - 모바일 폭에서 햄버거 메뉴 정상
@@ -346,10 +367,12 @@ git commit -m "feat: 헤더에 원형 로고와 pill nav 적용"
 ### Task 4: PostHeader 히어로 컴포넌트
 
 **Files:**
+
 - Create: `src/app/(main)/posts/[slug]/_components/post-header.tsx`
 - Test: `src/app/(main)/posts/[slug]/_components/post-header.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `PostWithCategoryAndTags` from `@/types`
 - Produces: `PostHeader({ post }: { post: PostWithCategoryAndTags })`
 
@@ -412,7 +435,9 @@ const mockPost: PostWithCategoryAndTags = {
 describe('PostHeader', () => {
   it('제목·카테고리·태그·조회수를 렌더한다', () => {
     render(<PostHeader post={mockPost} />);
-    expect(screen.getByRole('heading', { name: /AI가 기획/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /AI가 기획/ })
+    ).toBeInTheDocument();
     expect(screen.getByText('essay')).toBeInTheDocument();
     expect(screen.getByText('#ai')).toBeInTheDocument();
     expect(screen.getByText(/1,234/)).toBeInTheDocument();
@@ -420,7 +445,9 @@ describe('PostHeader', () => {
 
   it('목록으로 돌아가는 링크를 렌더한다', () => {
     render(<PostHeader post={mockPost} />);
-    expect(screen.getByRole('link', { name: /back to index/i })).toHaveAttribute('href', '/posts');
+    expect(
+      screen.getByRole('link', { name: /back to index/i })
+    ).toHaveAttribute('href', '/posts');
   });
 
   it('작성자명을 표시하지 않는다', () => {
@@ -441,9 +468,9 @@ Expected: FAIL ("Cannot find module './post-header'")
 
 ```tsx
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { ChevronLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { PostWithCategoryAndTags } from '@/types';
 
@@ -518,10 +545,12 @@ git commit -m "feat: 포스트 상세 히어로(PostHeader) 컴포넌트 추가"
 ### Task 5: PostContent 본문 래퍼 + 이미지 확대
 
 **Files:**
+
 - Create: `src/app/(main)/posts/[slug]/_components/post-content.tsx`
 - Test: `src/app/(main)/posts/[slug]/_components/post-content.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `Dialog`, `DialogContent`, `DialogTitle` from `@/components/ui/dialog`
 - Produces: `PostContent({ html }: { html: string })` — 본문 HTML을 렌더하고 `<img>` 클릭 시 모달 확대.
 
@@ -530,13 +559,13 @@ git commit -m "feat: 포스트 상세 히어로(PostHeader) 컴포넌트 추가"
 `src/app/(main)/posts/[slug]/_components/post-content.test.tsx`:
 
 ```tsx
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { PostContent } from './post-content';
 
 describe('PostContent', () => {
   it('전달된 HTML을 렌더한다', () => {
-    render(<PostContent html='<p>본문 단락</p>' />);
+    render(<PostContent html="<p>본문 단락</p>" />);
     expect(screen.getByText('본문 단락')).toBeInTheDocument();
   });
 
@@ -549,7 +578,9 @@ describe('PostContent', () => {
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     // 다이얼로그 내부에도 동일 alt 이미지가 존재(본문 + 확대본 = 2개)
-    expect(screen.getAllByAltText('테스트 이미지').length).toBeGreaterThanOrEqual(2);
+    expect(
+      screen.getAllByAltText('테스트 이미지').length
+    ).toBeGreaterThanOrEqual(2);
   });
 });
 ```
@@ -629,13 +660,20 @@ Run: `npm run test:run -- src/app/\(main\)/posts/\[slug\]/_components/post-conte
 Expected: PASS
 
 > 참고: jsdom에서 radix Dialog가 `matchMedia`/`ResizeObserver`를 요구해 실패하면 `src/test.setup.ts`에 폴리필을 추가한다:
+>
 > ```ts
 > import { vi } from 'vitest';
+>
 > if (!window.matchMedia) {
 >   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
->     matches: false, media: query, onchange: null,
->     addEventListener: vi.fn(), removeEventListener: vi.fn(), dispatchEvent: vi.fn(),
->     addListener: vi.fn(), removeListener: vi.fn(),
+>     matches: false,
+>     media: query,
+>     onchange: null,
+>     addEventListener: vi.fn(),
+>     removeEventListener: vi.fn(),
+>     dispatchEvent: vi.fn(),
+>     addListener: vi.fn(),
+>     removeListener: vi.fn(),
 >   }));
 > }
 > ```
@@ -652,9 +690,11 @@ git commit -m "feat: 본문 이미지 클릭 시 모달 확대(PostContent) 추�
 ### Task 6: page.tsx 통합 (히어로·본문 래퍼·너비 3xl·TOC 재배치)
 
 **Files:**
+
 - Modify: `src/app/(main)/posts/[slug]/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `PostHeader` (Task 4), `PostContent` (Task 5), 기존 `PostToc`, `CommentSection`
 
 - [ ] **Step 1: page.tsx 본문 부분 교체**
@@ -662,24 +702,24 @@ git commit -m "feat: 본문 이미지 클릭 시 모달 확대(PostContent) 추�
 `src/app/(main)/posts/[slug]/page.tsx`의 `return (...)` 블록을 교체한다. 기존 `header`/`prose div`/하단 `footer 태그`를 제거하고 `PostHeader` + `PostContent`로 대체하며, 컨테이너 폭을 `max-w-3xl`로, TOC는 컨테이너 우측 바깥(xl 이상)에 배치한다:
 
 ```tsx
-  return (
-    <>
-      <div className="relative mx-auto max-w-3xl px-4 py-8">
-        <article>
-          <PostHeader post={post} />
-          <PostContent html={contentHtml} />
-        </article>
+return (
+  <>
+    <div className="relative mx-auto max-w-3xl px-4 py-8">
+      <article>
+        <PostHeader post={post} />
+        <PostContent html={contentHtml} />
+      </article>
 
-        {toc.length > 0 && (
-          <div className="absolute left-[calc(100%+2rem)] top-8 hidden w-[220px] xl:block">
-            <PostToc toc={toc} />
-          </div>
-        )}
-      </div>
+      {toc.length > 0 && (
+        <div className="absolute left-[calc(100%+2rem)] top-8 hidden w-[220px] xl:block">
+          <PostToc toc={toc} />
+        </div>
+      )}
+    </div>
 
-      <CommentSection postId={post.id} postSlug={post.slug} />
-    </>
-  );
+    <CommentSection postId={post.id} postSlug={post.slug} />
+  </>
+);
 ```
 
 import 정리: 더 이상 쓰지 않는 `Link`, `Badge`, `cn`을 제거하고 `PostHeader`, `PostContent`를 추가한다. `markdownToHtmlWithToc`/`htmlToHtmlWithToc`, `format`/`ko`(generateMetadata에서 미사용 시 제거) 사용 여부를 확인해 미사용 import를 모두 제거한다. (히어로의 `publishedAt` 포맷은 PostHeader 내부로 이동했으므로 page.tsx의 `publishedAt` 계산도 삭제한다.)
@@ -690,11 +730,11 @@ import 정리: 더 이상 쓰지 않는 `Link`, `Badge`, `cn`을 제거하고 `P
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPostBySlug } from '@/db/queries/posts';
-import { markdownToHtmlWithToc, htmlToHtmlWithToc } from '@/lib/markdown';
+import { htmlToHtmlWithToc, markdownToHtmlWithToc } from '@/lib/markdown';
 import { CommentSection } from './_components/comment-section';
-import { PostToc } from './_components/post-toc';
-import { PostHeader } from './_components/post-header';
 import { PostContent } from './_components/post-content';
+import { PostHeader } from './_components/post-header';
+import { PostToc } from './_components/post-toc';
 ```
 
 - [ ] **Step 2: lint + 빌드 검증**
@@ -705,6 +745,7 @@ Expected: 에러 없이 완료 (미사용 import 경고 없음)
 - [ ] **Step 3: 수동 확인**
 
 `npm run dev` 후 발행된 글 상세 페이지에서:
+
 - 히어로(Back to index/카테고리/제목/날짜·조회수/태그) 표시, 하단 footer 태그 사라짐
 - 본문과 댓글의 좌우 경계가 동일(둘 다 max-w-3xl)
 - TOC 있는 글: xl 폭에서 우측에 목차 표시, 좁은 폭에서 숨김
@@ -722,11 +763,13 @@ git commit -m "feat: 포스트 상세에 히어로·본문 래퍼 적용, 폭 3x
 ### Task 7: 댓글 섹션 UI 개선
 
 **Files:**
+
 - Modify: `src/app/(main)/posts/[slug]/_components/comment-section.tsx`
 - Modify: `src/app/(main)/posts/[slug]/_components/comment-form.tsx`
 - Modify: `src/app/(main)/posts/[slug]/_components/comment-item.tsx`
 
 **Interfaces:**
+
 - Consumes: 기존 `CommentForm`, `CommentList`, `getCommentsByPostId`
 - Produces: 없음 (UI만 변경, props/액션 불변)
 
@@ -769,7 +812,7 @@ export async function CommentSection({ postId, postSlug }: Props) {
 `src/app/(main)/posts/[slug]/_components/comment-item.tsx`에서 대댓글 래퍼 클래스를 보더 라인이 있는 들여쓰기로 바꾼다. `isReply ? 'ml-8 mt-4'` 두 곳(삭제된 댓글 분기, 일반 분기)을 모두 다음으로 교체:
 
 ```tsx
-isReply ? 'mt-4 ml-4 border-l border-border pl-4' : ''
+isReply ? 'mt-4 ml-4 border-l border-border pl-4' : '';
 ```
 
 (파일 내 `className={isReply ? 'ml-8 mt-4' : ''}` 패턴 2곳 모두 변경.)
@@ -779,11 +822,11 @@ isReply ? 'mt-4 ml-4 border-l border-border pl-4' : ''
 `src/app/(main)/posts/[slug]/_components/comment-form.tsx`의 제출 버튼을 카드 폭에 맞게 우측 정렬로 변경한다. 마지막 `<Button>`을 감싸는 래퍼를 추가:
 
 ```tsx
-      <div className="flex justify-end">
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? '등록 중...' : '댓글 등록'}
-        </Button>
-      </div>
+<div className="flex justify-end">
+  <Button type="submit" disabled={form.formState.isSubmitting}>
+    {form.formState.isSubmitting ? '등록 중...' : '댓글 등록'}
+  </Button>
+</div>
 ```
 
 (기존 `<Button type="submit" ...>...</Button>`을 위 블록으로 교체. 필드/검증/액션은 그대로 둔다.)
@@ -796,6 +839,7 @@ Expected: 에러 없이 완료
 - [ ] **Step 5: 수동 확인**
 
 `npm run dev` 후 글 상세 하단에서:
+
 - "댓글 N개" 헤더, 작성 폼이 카드 안에 표시
 - 댓글 작성·대댓글 작성·삭제 동작 정상
 - 대댓글이 좌측 보더 라인으로 들여쓰기 표시
@@ -814,6 +858,7 @@ git commit -m "feat: 댓글 섹션 카드 입력창·대댓글 보더 스타일 
 **Files:** 없음 (Task 1~7 변경분 전체 대상)
 
 **Interfaces:**
+
 - Consumes: Task 1~7의 모든 변경분
 
 - [ ] **Step 1: 전체 검증 선행**
@@ -857,6 +902,7 @@ Expected: 모두 통과
 ## Self-Review 결과
 
 **Spec 커버리지**
+
 - spec §1 Header → Task 1·2·3 ✅
 - spec §2 포스트 상단 → Task 4 (BACK TO INDEX/카테고리 라벨/제목/메타/태그 상단 이동, 작성자·통계블록 제외) ✅
 - spec §3 댓글 → Task 7 (댓글 N개 헤더, 카드 입력창, 대댓글 보더, 리액션/좋아요 제외) ✅

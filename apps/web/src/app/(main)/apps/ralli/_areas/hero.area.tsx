@@ -1,14 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion';
+import {
+  type MotionValue,
+  motion,
+  useMotionValueEvent,
+  useTransform,
+} from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useSectionProgress } from '../../_hooks/useSectionProgress';
-import { scoreAt, type RalliScore } from '../_utils/ralli-motion';
-import { ralliHeroLetters, ralliHeroShot, ralliMeta } from '../_utils/ralli-content';
 import { RalliCourtSvg } from '../_components/ralli-court-svg';
-import { RalliShot } from '../_components/ralli-shot';
 import { RalliCtaButton } from '../_components/ralli-cta-button';
+import { RalliShot } from '../_components/ralli-shot';
+import {
+  ralliHeroLetters,
+  ralliHeroShot,
+  ralliMeta,
+} from '../_utils/ralli-content';
+import { type RalliScore, scoreAt } from '../_utils/ralli-motion';
 
 const LETTER_DIRECTIONS = [-1.7, -0.85, 0, 0.85, 1.7];
 const LETTER_SPREAD_VW = 58;
@@ -24,14 +33,31 @@ type HeroLetterProps = {
   isStatic: boolean;
 };
 
-function HeroLetter({ char, direction, progress, isAccent, isStatic }: HeroLetterProps) {
-  const x = useTransform(progress, [0, 0.84], ['0vw', `${direction * LETTER_SPREAD_VW}vw`]);
+function HeroLetter({
+  char,
+  direction,
+  progress,
+  isAccent,
+  isStatic,
+}: HeroLetterProps) {
+  const x = useTransform(
+    progress,
+    [0, 0.84],
+    ['0vw', `${direction * LETTER_SPREAD_VW}vw`]
+  );
   const y = useTransform(progress, [0, 0.84], ['0vh', '-6vh']);
   const scale = useTransform(progress, [0, 0.84], [1, 1.26]);
   const opacity = useTransform(progress, [0, 0.56], [1, 0]);
-  const filter = useTransform(progress, [0, 0.84], ['blur(0px)', 'blur(3.5px)']);
+  const filter = useTransform(
+    progress,
+    [0, 0.84],
+    ['blur(0px)', 'blur(3.5px)']
+  );
 
-  const className = cn(letterClassName, isAccent ? 'text-ralli-lime' : 'text-ralli-fg');
+  const className = cn(
+    letterClassName,
+    isAccent ? 'text-ralli-lime' : 'text-ralli-fg'
+  );
 
   if (isStatic) {
     return <span className={className}>{char}</span>;
@@ -66,12 +92,14 @@ function HeroWatchShot() {
 function HeroScore({ score }: { score: RalliScore }) {
   return (
     <>
-      <p className="mb-1.5 text-xs font-bold tracking-[0.22em] text-ralli-fg/45">GAME POINT</p>
+      <p className="mb-1.5 text-xs font-bold tracking-[0.22em] text-ralli-fg/45">
+        GAME POINT
+      </p>
       <p
         data-testid="ralli-hero-score"
         className={cn(
           'font-extrabold leading-[0.85] tracking-[-0.05em] text-ralli-lime tabular-nums',
-          score === 'GAME' ? 'text-[min(7vw,84px)]' : 'text-[min(11vw,132px)]',
+          score === 'GAME' ? 'text-[min(7vw,84px)]' : 'text-[min(11vw,132px)]'
         )}
       >
         {score}
@@ -95,14 +123,19 @@ function HeroCopy() {
       </p>
       <div className="flex flex-wrap items-center gap-3">
         <RalliCtaButton appStoreUrl={ralliMeta.appStoreUrl} />
-        <span className="text-[13px] text-ralli-fg/40">{ralliMeta.platforms}</span>
+        <span className="text-[13px] text-ralli-fg/40">
+          {ralliMeta.platforms}
+        </span>
       </div>
     </>
   );
 }
 
 export function HeroArea() {
-  const { ref, progress, isStatic } = useSectionProgress(['start start', 'end end']);
+  const { ref, progress, isStatic } = useSectionProgress([
+    'start start',
+    'end end',
+  ]);
   const [score, setScore] = useState<RalliScore>('0');
 
   useMotionValueEvent(progress, 'change', (value) => {
@@ -121,10 +154,18 @@ export function HeroArea() {
 
   const glowScale = useTransform(progress, [0, 0.84], [0.7, 1.6]);
 
-  const copyOpacity = useTransform(progress, [0.14, 0.36, 0.86, 1], [0, 1, 1, 0]);
+  const copyOpacity = useTransform(
+    progress,
+    [0.14, 0.36, 0.86, 1],
+    [0, 1, 1, 0]
+  );
   const copyY = useTransform(progress, [0.14, 0.36], [40, 0]);
 
-  const scoreOpacity = useTransform(progress, [0.2, 0.4, 0.86, 1], [0, 1, 1, 0]);
+  const scoreOpacity = useTransform(
+    progress,
+    [0.2, 0.4, 0.86, 1],
+    [0, 1, 1, 0]
+  );
   const hintOpacity = useTransform(progress, [0, 0.17], [1, 0]);
 
   return (
@@ -135,13 +176,19 @@ export function HeroArea() {
       <div
         className={cn(
           'grid place-items-center overflow-hidden',
-          isStatic ? 'relative min-h-[80vh] py-24' : 'sticky top-14 h-[calc(100vh-3.5rem)]',
+          isStatic
+            ? 'relative min-h-[80vh] py-24'
+            : 'sticky top-14 h-[calc(100vh-3.5rem)]'
         )}
       >
         {isStatic ? (
           <div aria-hidden="true" className={GLOW_CLASS} />
         ) : (
-          <motion.div aria-hidden="true" style={{ scale: glowScale }} className={GLOW_CLASS} />
+          <motion.div
+            aria-hidden="true"
+            style={{ scale: glowScale }}
+            className={GLOW_CLASS}
+          />
         )}
 
         <motion.div
@@ -187,7 +234,12 @@ export function HeroArea() {
           </div>
         ) : (
           <motion.div
-            style={{ scale: watchScale, rotate: watchRotate, y: watchY, opacity: watchOpacity }}
+            style={{
+              scale: watchScale,
+              rotate: watchRotate,
+              y: watchY,
+              opacity: watchOpacity,
+            }}
             className={WATCH_CLASS}
           >
             <HeroWatchShot />
@@ -209,7 +261,10 @@ export function HeroArea() {
             <HeroCopy />
           </div>
         ) : (
-          <motion.div style={{ opacity: copyOpacity, y: copyY }} className={COPY_CLASS}>
+          <motion.div
+            style={{ opacity: copyOpacity, y: copyY }}
+            className={COPY_CLASS}
+          >
             <HeroCopy />
           </motion.div>
         )}

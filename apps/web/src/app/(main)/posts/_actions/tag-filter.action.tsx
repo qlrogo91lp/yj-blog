@@ -47,7 +47,7 @@ export function TagFilterAction({ tags, currentSlug }: Props) {
               'px-3 py-1 rounded-full text-sm font-medium transition-colors cursor-pointer border',
               isActive
                 ? 'bg-foreground text-background border-foreground'
-                : 'bg-transparent text-muted-foreground border-border hover:border-foreground/40 hover:text-foreground',
+                : 'bg-transparent text-muted-foreground border-border hover:border-foreground/40 hover:text-foreground'
             )}
           >
             #{tag.name}

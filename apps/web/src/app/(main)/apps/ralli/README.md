@@ -38,7 +38,7 @@ _utils/ralli-content           카피·이미지 데이터 (애니메이션과 �
 
 핵심 설계는 **진행도를 만드는 곳(hook)과 쓰는 곳(area)을 분리**한 것이다. area는 "지금 몇 % 스크롤됐는지"만 받아서 자기 요소에 어떻게 반영할지 결정한다.
 
-그리고 **계산 로직은 순수 함수로 빼서 테스트**한다 — `scoreAt`은 로컬 [_utils/ralli-motion.ts](_utils/ralli-motion.ts)에 3개, `clamp`·`mapRange`·`stepIndexAt`은 apps 공용 [../_utils/landing-motion.ts](../_utils/landing-motion.ts)에 10개 테스트가 있다. DOM도 스크롤도 필요 없는 순수 함수라 jsdom에서 경계값을 촘촘히 검증할 수 있다. 명령형 rAF 루프였다면 불가능했던 부분이다.
+그리고 **계산 로직은 순수 함수로 빼서 테스트**한다 — `scoreAt`은 로컬 [\_utils/ralli-motion.ts](_utils/ralli-motion.ts)에 3개, `clamp`·`mapRange`·`stepIndexAt`은 apps 공용 [../\_utils/landing-motion.ts](../_utils/landing-motion.ts)에 10개 테스트가 있다. DOM도 스크롤도 필요 없는 순수 함수라 jsdom에서 경계값을 촘촘히 검증할 수 있다. 명령형 rAF 루프였다면 불가능했던 부분이다.
 
 ---
 
@@ -72,11 +72,11 @@ const watchScale = useTransform(progress, [0, 0.84], [0.62, 1.2]);
 
 ```tsx
 // 단위가 붙어도 된다 — 숫자 부분만 보간하고 단위는 유지한다
-const y = useTransform(progress, [0, 0.84], ['0vh', '-6vh']);            // hero.area.tsx:29
-const filter = useTransform(progress, [0, 0.84], ['blur(0px)', 'blur(3.5px)']);  // :32
+const y = useTransform(progress, [0, 0.84], ['0vh', '-6vh']); // hero.area.tsx:29
+const filter = useTransform(progress, [0, 0.84], ['blur(0px)', 'blur(3.5px)']); // :32
 
 // 구간을 여러 개 주면 "나타났다 사라지는" 곡선을 만들 수 있다
-const copyOpacity = useTransform(progress, [0.14, 0.36, 0.86, 1], [0, 1, 1, 0]);  // :67
+const copyOpacity = useTransform(progress, [0.14, 0.36, 0.86, 1], [0, 1, 1, 0]); // :67
 //                                          ↑페이드인   ↑유지  ↑페이드아웃
 ```
 
@@ -129,7 +129,7 @@ watch 섹션도 완전히 같은 구조다 (`h-[240vh] md:h-[300vh]`, [watch.are
 진행도 0과 1이 각각 언제인지를 정하는 문법인데, 처음 보면 제일 헷갈린다.
 
 ```tsx
-useScroll({ target: ref, offset: ['start start', 'end end'] })
+useScroll({ target: ref, offset: ['start start', 'end end'] });
 //                                 ─┬─── ─┬───
 //                    대상(target)의 어디  ┆  뷰포트의 어디
 //                                        └ 이 둘이 만나는 순간이 기준점
@@ -137,9 +137,9 @@ useScroll({ target: ref, offset: ['start start', 'end end'] })
 
 이 프로젝트에서 쓰는 두 가지:
 
-| offset | 진행도 0 | 진행도 1 | 쓰는 곳 |
-|---|---|---|---|
-| `['start start', 'end end']` | 대상 **위쪽**이 화면 **위쪽**에 닿을 때 | 대상 **아래쪽**이 화면 **아래쪽**에 닿을 때 | hero, watch (pin) |
+| offset                       | 진행도 0                                          | 진행도 1                                              | 쓰는 곳           |
+| ---------------------------- | ------------------------------------------------- | ----------------------------------------------------- | ----------------- |
+| `['start start', 'end end']` | 대상 **위쪽**이 화면 **위쪽**에 닿을 때           | 대상 **아래쪽**이 화면 **아래쪽**에 닿을 때           | hero, watch (pin) |
 | `['start end', 'end start']` | 대상 위쪽이 화면 **아래쪽**에 닿을 때 (= 막 등장) | 대상 아래쪽이 화면 **위쪽**에 닿을 때 (= 완전히 퇴장) | replay (드리프트) |
 
 두 번째가 왜 다른 값인지가 포인트다. pin 섹션은 "고정된 동안"만 진행도가 흐르면 되지만, replay 갤러리는 **화면에 보이는 내내** 조금씩 옆으로 흘러야 자연스럽다. 그래서 등장~퇴장 전 구간을 0~1로 잡는다.
@@ -152,7 +152,7 @@ const driftX = useTransform(progress, [0, 1], ['0vw', '-55vw']);
 
 ### 스프링을 거는 이유와, 여기만 끄는 이유
 
-[../_hooks/useSectionProgress.ts:31-35](../_hooks/useSectionProgress.ts)
+[../\_hooks/useSectionProgress.ts:31-35](../_hooks/useSectionProgress.ts)
 
 ```ts
 const smoothed = useSpring(scrollYProgress, {
@@ -201,7 +201,7 @@ const courtRotateX = useTransform(progress, [0, 0.84], [56, 36]);
 // _areas/hero.area.tsx:49-53
 const [score, setScore] = useState<RalliScore>('0');
 useMotionValueEvent(progress, 'change', (value) => {
-  setScore(scoreAt(value));   // ← 순수 함수가 진행도를 스코어로 변환
+  setScore(scoreAt(value)); // ← 순수 함수가 진행도를 스코어로 변환
 });
 ```
 
@@ -249,7 +249,7 @@ useEffect(() => {
     duration: prefersReducedMotion ? 0 : 1.1,
     onUpdate: (value) => setDisplayed(Math.round(value)),
   });
-  return () => controls.stop();   // ← 언마운트 시 정리 (필수)
+  return () => controls.stop(); // ← 언마운트 시 정리 (필수)
 }, [isInView, prefersReducedMotion, stat.value]);
 ```
 
@@ -262,10 +262,16 @@ useEffect(() => {
 ```css
 /* src/styles/ralli.css:6-13, 25-27 */
 @keyframes ralli-marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
-.ralli-marquee-track { animation: ralli-marquee 26s linear infinite; }
+.ralli-marquee-track {
+  animation: ralli-marquee 26s linear infinite;
+}
 ```
 
 무한 루프의 트릭은 **같은 내용을 두 벌 렌더**하는 것이다:
@@ -274,7 +280,7 @@ useEffect(() => {
 // _components/ralli-marquee.tsx:24-27
 <div className="ralli-marquee-track flex w-max whitespace-nowrap">
   {track}
-  {track}   {/* ← 사본. -50% 이동 = 정확히 한 벌 폭 → 이음매가 안 보인다 */}
+  {track} {/* ← 사본. -50% 이동 = 정확히 한 벌 폭 → 이음매가 안 보인다 */}
 </div>
 ```
 
@@ -319,13 +325,15 @@ framer-motion의 `useReducedMotion()`은 **서버에서 `null`**(→ 애니메�
 
 ```ts
 // ../_hooks/useMounted.ts (apps 공용)
-function subscribe() { return () => {}; }   // 알림 없음 — 스냅샷만 쓴다
+function subscribe() {
+  return () => {};
+} // 알림 없음 — 스냅샷만 쓴다
 
 export function useMounted(): boolean {
   return useSyncExternalStore(
     subscribe,
-    () => true,    // getSnapshot — 클라이언트(hydration 이후)
-    () => false,   // getServerSnapshot — 서버 + hydration 중
+    () => true, // getSnapshot — 클라이언트(hydration 이후)
+    () => false // getServerSnapshot — 서버 + hydration 중
   );
 }
 ```
@@ -334,7 +342,7 @@ export function useMounted(): boolean {
 // ../_hooks/useSectionProgress.ts:28, 40
 const mounted = useMounted();
 // ...
-isStatic: Boolean(prefersReducedMotion) && mounted
+isStatic: Boolean(prefersReducedMotion) && mounted;
 ```
 
 서버와 hydration 시점에는 `mounted === false` → `isStatic === false` → 양쪽 렌더 결과가 일치한다. hydration이 끝나면 React가 스냅샷 차이를 감지해 한 번 리렌더하고, 그때부터 진짜 `prefersReducedMotion`이 반영된다.
@@ -351,7 +359,11 @@ replay 갤러리는 데스크톱에서 세로 스크롤에 연동해 가로로 �
 // _areas/replay.area.tsx:38, 53-66
 const useNativeScroll = isMobile || isStatic;
 
-<div className={cn(useNativeScroll && 'snap-x snap-mandatory overflow-x-auto pb-4')}>
+<div
+  className={cn(
+    useNativeScroll && 'snap-x snap-mandatory overflow-x-auto pb-4'
+  )}
+>
   {useNativeScroll ? (
     <div className={GALLERY_CLASS}>
       <ReplayGalleryShots />
@@ -361,7 +373,7 @@ const useNativeScroll = isMobile || isStatic;
       <ReplayGalleryShots />
     </motion.div>
   )}
-</div>
+</div>;
 ```
 
 모바일이면 CSS 네이티브 가로 스크롤 + `scroll-snap`, 데스크톱이면 스크롤 연동 드리프트. **둘을 동시에 켜면 안 되므로** 바깥 `<div>`의 클래스와 안쪽 갤러리 래퍼는 배타적으로 적용된다.
@@ -387,12 +399,12 @@ return () => controls.stop();   // ← 이게 없으면 누수
 
 접근성 대응이 단순히 "애니메이션 끄기"가 아니라는 게 드러나는 부분이다.
 
-| 레이어 | 처리 방식 |
-|---|---|
-| CSS 애니메이션 (마퀴·bob) | `@media (prefers-reduced-motion: reduce) { animation: none }` ([ralli.css:33-38](../../../../styles/ralli.css)) |
-| 스크롤 연동 (hero·watch·replay) | `isStatic`으로 **레이아웃 자체를 바꾼다** — pin 해제, 높이 `h-auto` |
-| 등장 애니메이션 (Reveal) | `motion.div` 대신 평범한 `div` 반환 |
-| 카운트업 | `duration: 0` — 값은 즉시 최종값 |
+| 레이어                          | 처리 방식                                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| CSS 애니메이션 (마퀴·bob)       | `@media (prefers-reduced-motion: reduce) { animation: none }` ([ralli.css:33-38](../../../../styles/ralli.css)) |
+| 스크롤 연동 (hero·watch·replay) | `isStatic`으로 **레이아웃 자체를 바꾼다** — pin 해제, 높이 `h-auto`                                             |
+| 등장 애니메이션 (Reveal)        | `motion.div` 대신 평범한 `div` 반환                                                                             |
+| 카운트업                        | `duration: 0` — 값은 즉시 최종값                                                                                |
 
 **pin 섹션은 모션만 꺼서는 안 된다.** 진행도가 흐르지 않는데 껍데기가 280vh로 남아있으면 빈 화면을 한참 스크롤하게 된다. 그래서 `h-auto`로 접고 sticky도 해제한다.
 
@@ -424,35 +436,38 @@ return () => controls.stop();   // ← 이게 없으면 누수
 ```tsx
 // ✅ 엘리먼트 타입을 바꾼다 — React가 노드를 교체해 stale 스타일이 따라오지 않는다
 if (isStatic) return <div className={CLASS}>{children}</div>;
-return <motion.div style={{ opacity }} className={CLASS}>{children}</motion.div>;
+return (
+  <motion.div style={{ opacity }} className={CLASS}>
+    {children}
+  </motion.div>
+);
 
 // ✅ 구체적인 값을 넘긴다 — framer-motion이 소유권을 유지하며 값을 갱신한다
-<motion.div animate={{ opacity: isShown ? 1 : 0 }} />
+<motion.div animate={{ opacity: isShown ? 1 : 0 }} />;
 ```
 
 이 결함은 2026-08-18에 실제로 발견되어 수정됐다. 당시 히어로의 h1·부제·App Store CTA·스코어가 reduced-motion 사용자에게 보이지 않았다. 회귀 테스트는 [`_areas/hero.area.reduced-motion.test.tsx`](_areas/hero.area.reduced-motion.test.tsx)에 있다 — RTL의 `render()`(`createRoot`)로는 이 시퀀스를 재현할 수 없어 `renderToString` + `hydrateRoot`를 쓴다.
 
 같은 결함이 `replay.area.tsx`의 `useNativeScroll ? undefined : { x: driftX }`에도 있었다 — `isStatic ?` 리터럴만 찾는 정규식 조사(§2)로는 `useNativeScroll = isMobile || isStatic` 같은 별칭을 못 잡아서 최초 조사에서 누락됐다가, 최종 통합 리뷰에서 다시 발견되어 함정 3의 예시와 함께 수정됐다. 회귀 테스트는 [`_areas/replay.area.reduced-motion.test.tsx`](_areas/replay.area.reduced-motion.test.tsx).
 
-
 ---
 
 ## 8. 파일 맵
 
-| 파일 | 역할 | 라인 |
-|---|---|---|
-| [_utils/ralli-motion.ts](_utils/ralli-motion.ts) | `scoreAt` 순수 함수 | 11 |
-| [../_utils/landing-motion.ts](../_utils/landing-motion.ts) | `clamp`·`mapRange`·`stepIndexAt` 순수 함수 (apps 공용) | 21 |
-| [../_hooks/useSectionProgress.ts](../_hooks/useSectionProgress.ts) | `useScroll` + `useSpring` + reduced-motion 판정 (apps 공용) | 42 |
-| [../_hooks/useIsMobile.ts](../_hooks/useIsMobile.ts) | `matchMedia` 기반 뷰포트 분기 (apps 공용) | 23 |
-| [../_actions/reveal.action.tsx](../_actions/reveal.action.tsx) | `whileInView` 등장 래퍼 (apps 공용) | 35 |
-| [_areas/hero.area.tsx](_areas/hero.area.tsx) | 패턴 A+B 총집합. 가장 복잡 | 232 |
-| [_areas/watch.area.tsx](_areas/watch.area.tsx) | pin 3-step 크로스페이드 | 84 |
-| [_areas/workout.area.tsx](_areas/workout.area.tsx) | 카운트업 스탯 | 95 |
-| [_areas/replay.area.tsx](_areas/replay.area.tsx) | 가로 드리프트 / 모바일 분기 (§7.1과 동일한 엘리먼트 타입 교체) | 79 |
-| [_areas/rules.area.tsx](_areas/rules.area.tsx) | `Reveal`만 사용 (스크롤 연동 없음) | 50 |
-| [_areas/final-cta.area.tsx](_areas/final-cta.area.tsx) | `Reveal`만 사용 | 39 |
-| [src/styles/ralli.css](../../../../styles/ralli.css) | 마스크 · 마퀴/bob keyframes | 38 |
+| 파일                                                                | 역할                                                           | 라인 |
+| ------------------------------------------------------------------- | -------------------------------------------------------------- | ---- |
+| [\_utils/ralli-motion.ts](_utils/ralli-motion.ts)                   | `scoreAt` 순수 함수                                            | 11   |
+| [../\_utils/landing-motion.ts](../_utils/landing-motion.ts)         | `clamp`·`mapRange`·`stepIndexAt` 순수 함수 (apps 공용)         | 21   |
+| [../\_hooks/useSectionProgress.ts](../_hooks/useSectionProgress.ts) | `useScroll` + `useSpring` + reduced-motion 판정 (apps 공용)    | 42   |
+| [../\_hooks/useIsMobile.ts](../_hooks/useIsMobile.ts)               | `matchMedia` 기반 뷰포트 분기 (apps 공용)                      | 23   |
+| [../\_actions/reveal.action.tsx](../_actions/reveal.action.tsx)     | `whileInView` 등장 래퍼 (apps 공용)                            | 35   |
+| [\_areas/hero.area.tsx](_areas/hero.area.tsx)                       | 패턴 A+B 총집합. 가장 복잡                                     | 232  |
+| [\_areas/watch.area.tsx](_areas/watch.area.tsx)                     | pin 3-step 크로스페이드                                        | 84   |
+| [\_areas/workout.area.tsx](_areas/workout.area.tsx)                 | 카운트업 스탯                                                  | 95   |
+| [\_areas/replay.area.tsx](_areas/replay.area.tsx)                   | 가로 드리프트 / 모바일 분기 (§7.1과 동일한 엘리먼트 타입 교체) | 79   |
+| [\_areas/rules.area.tsx](_areas/rules.area.tsx)                     | `Reveal`만 사용 (스크롤 연동 없음)                             | 50   |
+| [\_areas/final-cta.area.tsx](_areas/final-cta.area.tsx)             | `Reveal`만 사용                                                | 39   |
+| [src/styles/ralli.css](../../../../styles/ralli.css)                | 마스크 · 마퀴/bob keyframes                                    | 38   |
 
 읽는 순서 추천: **`ralli-motion.ts` → `useSectionProgress.ts` → `watch.area.tsx`(가장 단순한 pin) → `hero.area.tsx`(종합)**
 

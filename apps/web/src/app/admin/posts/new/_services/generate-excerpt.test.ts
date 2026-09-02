@@ -1,9 +1,11 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { auth } from '@clerk/nextjs/server';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { generateExcerpt } from './generate-excerpt';
 
 const mockCreate = vi.fn();
 
 vi.mock('@anthropic-ai/sdk', () => ({
-  default: vi.fn(function() {
+  default: vi.fn(function () {
     return {
       messages: { create: mockCreate },
     };
@@ -13,9 +15,6 @@ vi.mock('@anthropic-ai/sdk', () => ({
 vi.mock('@clerk/nextjs/server', () => ({
   auth: vi.fn(),
 }));
-
-import { generateExcerpt } from './generate-excerpt';
-import { auth } from '@clerk/nextjs/server';
 
 describe('generateExcerpt', () => {
   beforeEach(() => {
@@ -40,14 +39,14 @@ describe('generateExcerpt', () => {
 
   it('본문 텍스트가 비어 있으면 에러를 던진다', async () => {
     await expect(generateExcerpt('<p></p><img src="x" />')).rejects.toThrow(
-      '본문',
+      '본문'
     );
   });
 
   it('API 키가 없으면 에러를 던진다', async () => {
     delete process.env.ANTHROPIC_API_KEY;
     await expect(generateExcerpt('<p>본문</p>')).rejects.toThrow(
-      'ANTHROPIC_API_KEY',
+      'ANTHROPIC_API_KEY'
     );
   });
 });

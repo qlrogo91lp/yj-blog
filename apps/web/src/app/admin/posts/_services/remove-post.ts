@@ -5,8 +5,8 @@ import { auth } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { CACHE_TAGS } from '@/db/cache-tags';
-import { postImages } from '@/db/schema';
 import { deletePostById } from '@/db/queries/posts';
+import { postImages } from '@/db/schema';
 import { deleteR2Objects } from '@/lib/r2';
 
 type Result = { success: true } | { success: false; error: string };

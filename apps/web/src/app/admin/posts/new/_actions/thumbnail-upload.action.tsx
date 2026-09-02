@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { useRef, useState } from 'react';
-import { useShallow } from 'zustand/react/shallow';
+import Image from 'next/image';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useShallow } from 'zustand/react/shallow';
 import { Button } from '@/components/ui/button';
 import { uploadImage } from '../_services/upload-image';
 import { useNewPostStore } from '../_store';
@@ -65,7 +65,13 @@ export function ThumbnailUploadAction() {
       />
       {thumbnailUrl ? (
         <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-lg border">
-          <Image src={thumbnailUrl} alt="썸네일" fill sizes="(max-width: 640px) calc(100vw - 2rem), 384px" className="object-cover" />
+          <Image
+            src={thumbnailUrl}
+            alt="썸네일"
+            fill
+            sizes="(max-width: 640px) calc(100vw - 2rem), 384px"
+            className="object-cover"
+          />
           <Button
             type="button"
             variant="secondary"

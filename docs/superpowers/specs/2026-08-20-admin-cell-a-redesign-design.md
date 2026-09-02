@@ -22,14 +22,14 @@
 
 ### UI 교체만으로 되는 것
 
-| 시안 | 근거 |
-|---|---|
-| 3a 차콜 사이드바 + 흰 본문 | shadcn `Sidebar` 이미 사용 중 (`admin/_actions/admin-sidebar.action.tsx`). `--sidebar` 계열 토큰 교체로 해결 |
-| 3c 기간 세그먼트 | `ui/toggle-group.tsx` 존재. 유입경로에 이미 유사 필터(`referrer-period-filter.action.tsx`) |
-| 1b 글 관리 썸네일 행 | `thumbnailUrl`·`views`·`status`·`publishedAt`·`updatedAt` 모두 `posts`에 존재 |
-| 1d 태그 칩 보드 | `getAllTags`가 이미 `postCount`를 반환 → 사용 중/미사용 분리 즉시 가능 |
-| 2c 대시보드 라인차트 | `recharts` 설치됨 |
-| 3f 설정 하단 플로팅 저장 바 | `react-hook-form` 사용 중 → `formState.isDirty`로 구현 |
+| 시안                        | 근거                                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 3a 차콜 사이드바 + 흰 본문  | shadcn `Sidebar` 이미 사용 중 (`admin/_actions/admin-sidebar.action.tsx`). `--sidebar` 계열 토큰 교체로 해결 |
+| 3c 기간 세그먼트            | `ui/toggle-group.tsx` 존재. 유입경로에 이미 유사 필터(`referrer-period-filter.action.tsx`)                   |
+| 1b 글 관리 썸네일 행        | `thumbnailUrl`·`views`·`status`·`publishedAt`·`updatedAt` 모두 `posts`에 존재                                |
+| 1d 태그 칩 보드             | `getAllTags`가 이미 `postCount`를 반환 → 사용 중/미사용 분리 즉시 가능                                       |
+| 2c 대시보드 라인차트        | `recharts` 설치됨                                                                                            |
+| 3f 설정 하단 플로팅 저장 바 | `react-hook-form` 사용 중 → `formState.isDirty`로 구현                                                       |
 
 ### 새로 만들어야 하는 것
 
@@ -54,7 +54,7 @@
 
 시안은 시리즈 회차를 드래그로 정렬하게 했으나 **정렬 기능은 넣지 않는다.**
 
-`db/schema.ts:73`에 *"시리즈 (연재). 순서는 publishedAt ASC로 결정"* 이 명시돼 있고, 독자 페이지(`series/[slug]`, `series-prev-next`)가 전부 이 규칙에 의존한다. 드래그를 넣으려면 `posts.seriesOrder` 컬럼 추가 + `@dnd-kit` 신규 의존성 + 독자 페이지 정렬 로직 변경까지 번져서, 개인 블로그의 시리즈 규모 대비 비용이 맞지 않는다.
+`db/schema.ts:73`에 _"시리즈 (연재). 순서는 publishedAt ASC로 결정"_ 이 명시돼 있고, 독자 페이지(`series/[slug]`, `series-prev-next`)가 전부 이 규칙에 의존한다. 드래그를 넣으려면 `posts.seriesOrder` 컬럼 추가 + `@dnd-kit` 신규 의존성 + 독자 페이지 정렬 로직 변경까지 번져서, 개인 블로그의 시리즈 규모 대비 비용이 맞지 않는다.
 
 **시안에서 가져오는 것:** 접힘/펼침 스택 레이아웃, 회차 번호 뱃지, 진행 상태 표시.
 **빼는 것:** 드래그 핸들(⠿) 아이콘, 순서 변경 인터랙션. 순서는 `publishedAt ASC` 유지.
@@ -63,11 +63,11 @@
 
 시안의 아래 3개 지표는 **데이터가 존재하지 않는다.** `src/app/api/track/route.ts` 조사 결과다.
 
-| 지표 | 불가능한 이유 |
-|---|---|
-| 평균 체류 시간 (2:41) | 체류 시간을 측정·전송하지 않는다. `/api/track`은 진입 시 단발 POST만 한다 |
-| 재방문율 (18%) | `_blog_vid` 쿠키 값이 **날짜 문자열**이라 매일 리셋된다. 재방문자를 판별할 수 없다 |
-| 기기 비율 (모바일/데스크톱/태블릿) | User-Agent를 저장하지 않는다 |
+| 지표                               | 불가능한 이유                                                                      |
+| ---------------------------------- | ---------------------------------------------------------------------------------- |
+| 평균 체류 시간 (2:41)              | 체류 시간을 측정·전송하지 않는다. `/api/track`은 진입 시 단발 POST만 한다          |
+| 재방문율 (18%)                     | `_blog_vid` 쿠키 값이 **날짜 문자열**이라 매일 리셋된다. 재방문자를 판별할 수 없다 |
+| 기기 비율 (모바일/데스크톱/태블릿) | User-Agent를 저장하지 않는다                                                       |
 
 세 지표 모두 트래킹 스키마 확장이 선행돼야 하고 개인정보 취급 범위도 넓어진다. 이미 `AnalyticsLinkButton`으로 GA를 연결해 두었으므로 **이 3개는 GA에 위임**하고, 시안의 지표 자리를 아래로 교체한다.
 
@@ -78,10 +78,10 @@
 
 시안 3f의 "외형" 섹션에 있던 아래 3개는 **만들지 않는다.**
 
-| 시안 항목 | 대상 코드 |
-|---|---|
-| 다크 모드 토글 노출 | `components/nav/header.tsx:23` — `ThemeToggle` 무조건 렌더 |
-| 홈 히어로 섹션 | `app/(main)/page.tsx:13` — `HeroSection` 무조건 렌더 |
+| 시안 항목                  | 대상 코드                                                      |
+| -------------------------- | -------------------------------------------------------------- |
+| 다크 모드 토글 노출        | `components/nav/header.tsx:23` — `ThemeToggle` 무조건 렌더     |
+| 홈 히어로 섹션             | `app/(main)/page.tsx:13` — `HeroSection` 무조건 렌더           |
 | 최근 글 노출 개수 (3/5/10) | `app/(main)/page.tsx:9` — `selectPosts({ limit: 5 })` 하드코딩 |
 
 개인 블로그에서 이 값들을 어드민으로 바꿀 일이 드물고, 각각 컬럼 추가 + 조건부 렌더 연결 + (개수의 경우) `RecentPostsSection`의 Hero/2up 레이아웃이 3·5·10에서 각각 어떻게 무너지는지 검증까지 붙는다. 비용 대비 실익이 없다.
@@ -107,11 +107,11 @@
 
 전부 컬럼 추가라 `npx drizzle-kit push` 한 번으로 반영된다. 데이터 손실 위험이 있는 변경(컬럼 삭제·타입 변경)은 없다.
 
-| 테이블 | 컬럼 | 용도 |
-|---|---|---|
-| `series` | `status` | 시안 3d "연재 중 / 완결" 뱃지. 자동 판정 수단이 없어 컬럼이 필요하다 |
-| `comments` | `isAuthor` | 시안 3b 관리자 답글 구분 + 답변 완료 판정 |
-| `blog_settings` | `referrerExcludes` (jsonb) | 시안 3e 유입경로 "항상 제외" 규칙 저장 |
+| 테이블          | 컬럼                       | 용도                                                                 |
+| --------------- | -------------------------- | -------------------------------------------------------------------- |
+| `series`        | `status`                   | 시안 3d "연재 중 / 완결" 뱃지. 자동 판정 수단이 없어 컬럼이 필요하다 |
+| `comments`      | `isAuthor`                 | 시안 3b 관리자 답글 구분 + 답변 완료 판정                            |
+| `blog_settings` | `referrerExcludes` (jsonb) | 시안 3e 유입경로 "항상 제외" 규칙 저장                               |
 
 ## 디자인 토큰
 
@@ -119,15 +119,15 @@
 
 기존 토큰은 `oklch` 표기를 쓰고 있으므로 신규 토큰도 `oklch`로 맞춘다. 아래 값은 시안에서 눈으로 읽은 근사치이며, **구현 시 시안과 나란히 놓고 미세 조정한다.**
 
-| 토큰 | 라이트 | 다크 | 용도 |
-|---|---|---|---|
-| `--sidebar` | `oklch(0.22 0.004 100)` | `oklch(0.12 0.004 100)` | 차콜 사이드바. 다크에서도 사이드바가 가장 어둡도록 본문 배경(`0.145`)보다 낮게 잡는다 |
-| `--sidebar-foreground` | `oklch(0.985 0 0)` | `oklch(0.985 0 0)` | 사이드바 텍스트 |
-| `--sidebar-accent` | `oklch(1 0 0)` | `oklch(0.30 0.004 100)` | 활성 항목 pill 배경 (라이트는 흰 pill) |
-| `--sidebar-accent-foreground` | `oklch(0.22 0.004 100)` | `oklch(0.985 0 0)` | 활성 항목 텍스트 |
-| `--status-published` | `oklch(0.72 0.19 145)` | `oklch(0.76 0.17 145)` | 발행 스위치 ON |
-| `--status-draft` | `oklch(0.80 0.15 75)` | `oklch(0.78 0.14 75)` | 임시저장 뱃지 |
-| `--status-danger` | `oklch(0.62 0.23 27)` | `oklch(0.70 0.19 22)` | 삭제·미사용 정리 |
+| 토큰                          | 라이트                  | 다크                    | 용도                                                                                  |
+| ----------------------------- | ----------------------- | ----------------------- | ------------------------------------------------------------------------------------- |
+| `--sidebar`                   | `oklch(0.22 0.004 100)` | `oklch(0.12 0.004 100)` | 차콜 사이드바. 다크에서도 사이드바가 가장 어둡도록 본문 배경(`0.145`)보다 낮게 잡는다 |
+| `--sidebar-foreground`        | `oklch(0.985 0 0)`      | `oklch(0.985 0 0)`      | 사이드바 텍스트                                                                       |
+| `--sidebar-accent`            | `oklch(1 0 0)`          | `oklch(0.30 0.004 100)` | 활성 항목 pill 배경 (라이트는 흰 pill)                                                |
+| `--sidebar-accent-foreground` | `oklch(0.22 0.004 100)` | `oklch(0.985 0 0)`      | 활성 항목 텍스트                                                                      |
+| `--status-published`          | `oklch(0.72 0.19 145)`  | `oklch(0.76 0.17 145)`  | 발행 스위치 ON                                                                        |
+| `--status-draft`              | `oklch(0.80 0.15 75)`   | `oklch(0.78 0.14 75)`   | 임시저장 뱃지                                                                         |
+| `--status-danger`             | `oklch(0.62 0.23 27)`   | `oklch(0.70 0.19 22)`   | 삭제·미사용 정리                                                                      |
 
 > `Sidebar` 컴포넌트는 어드민 전용이다(`grep` 확인: `admin/layout.tsx`, `admin/posts/[id]/edit/layout.tsx`, `admin/_actions/*`, `sidebar-collapse.handler.tsx`). `--sidebar` 계열을 차콜로 바꿔도 블로그 화면에는 영향이 없다.
 
@@ -169,12 +169,12 @@
 
 4개 PR로 나눈다. 각 PR은 별도 plan 문서를 갖고, 단독으로 동작하는 상태로 끝난다.
 
-| 순서 | 브랜치 | 요지 |
-|---|---|---|
-| 1 | `refactor/admin-shell-cell-a` | 디자인 토큰 + 다크모드 + 셀 A 셸(사이드바·헤더·레이아웃) + `Switch` 프리미티브 |
-| 2 | `refactor/admin-content-screens` | 글 관리(1b)·카테고리(3a)·태그(1d)·시리즈(3d) + `series.status` + 발행 토글·미사용 태그 정리 액션 + `@tanstack/react-table` 제거 |
-| 3 | `feature/admin-comment-reply` | 댓글 관리(3b) + `comments.isAuthor` + 관리자 답글 액션 |
-| 4 | `refactor/admin-stats-settings` | 대시보드(2c)·방문 통계(3c)·유입경로(3e)·블로그 설정(3f) + `blog_settings.referrerExcludes` |
+| 순서 | 브랜치                           | 요지                                                                                                                            |
+| ---- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | `refactor/admin-shell-cell-a`    | 디자인 토큰 + 다크모드 + 셀 A 셸(사이드바·헤더·레이아웃) + `Switch` 프리미티브                                                  |
+| 2    | `refactor/admin-content-screens` | 글 관리(1b)·카테고리(3a)·태그(1d)·시리즈(3d) + `series.status` + 발행 토글·미사용 태그 정리 액션 + `@tanstack/react-table` 제거 |
+| 3    | `feature/admin-comment-reply`    | 댓글 관리(3b) + `comments.isAuthor` + 관리자 답글 액션                                                                          |
+| 4    | `refactor/admin-stats-settings`  | 대시보드(2c)·방문 통계(3c)·유입경로(3e)·블로그 설정(3f) + `blog_settings.referrerExcludes`                                      |
 
 PR 1이 나머지 전부의 기반이므로 반드시 먼저 간다. PR 2가 가장 크다.
 

@@ -1,15 +1,15 @@
 import {
   golfAfterSection,
+  golfCounterMeta,
   golfCourseSection,
   golfHealthSection,
   golfHolesSection,
-  golfCounterMeta,
 } from './golf-counter-content';
 
 describe('golfCounterMeta', () => {
   it('App Store URL은 us 스토어프론트를 가리킨다', () => {
     expect(golfCounterMeta.appStoreUrl).toBe(
-      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372',
+      'https://apps.apple.com/us/app/golfcounter-with-watch/id6448967372'
     );
   });
 

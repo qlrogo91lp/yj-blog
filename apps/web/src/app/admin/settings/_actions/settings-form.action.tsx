@@ -1,15 +1,15 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { editSettings } from '../_services/edit-settings';
+import { Textarea } from '@/components/ui/textarea';
 import type { BlogSettings } from '@/db/queries/settings';
+import { editSettings } from '../_services/edit-settings';
 
 const blogSettingsSchema = z.object({
   blogName: z.string().min(1, '블로그 이름은 필수입니다').max(100),
@@ -22,7 +22,11 @@ const blogSettingsSchema = z.object({
     .optional()
     .or(z.literal('')),
   defaultMetaDescription: z.string().max(300).optional(),
-  github: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
+  github: z
+    .string()
+    .url('유효한 URL을 입력하세요')
+    .optional()
+    .or(z.literal('')),
   twitter: z
     .string()
     .url('유효한 URL을 입력하세요')
@@ -82,7 +86,9 @@ export function SettingsFormAction({ defaultValues }: Props) {
           <Label htmlFor="blogName">블로그 이름 *</Label>
           <Input id="blogName" {...register('blogName')} />
           {errors.blogName && (
-            <p className="text-destructive text-sm">{errors.blogName.message}</p>
+            <p className="text-destructive text-sm">
+              {errors.blogName.message}
+            </p>
           )}
         </div>
 
@@ -172,7 +178,9 @@ export function SettingsFormAction({ defaultValues }: Props) {
             {...register('linkedin')}
           />
           {errors.linkedin && (
-            <p className="text-destructive text-sm">{errors.linkedin.message}</p>
+            <p className="text-destructive text-sm">
+              {errors.linkedin.message}
+            </p>
           )}
         </div>
       </section>

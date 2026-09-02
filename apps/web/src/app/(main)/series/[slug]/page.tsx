@@ -45,7 +45,9 @@ export default async function SeriesDetailPage({ params }: Props) {
         <p className="text-sm text-muted-foreground">시리즈</p>
         <h1 className="mt-1 text-2xl font-bold">{seriesDetail.name}</h1>
         {seriesDetail.description && (
-          <p className="mt-2 text-muted-foreground">{seriesDetail.description}</p>
+          <p className="mt-2 text-muted-foreground">
+            {seriesDetail.description}
+          </p>
         )}
         <p className="mt-2 text-sm text-muted-foreground">
           총 {seriesDetail.posts.length}개의 글

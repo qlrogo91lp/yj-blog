@@ -7,7 +7,9 @@ import { updateReferrerExcludes } from '@/db/queries/settings';
 
 type Result = { success: true } | { success: false; error: string };
 
-export async function editReferrerExcludes(excludes: string[]): Promise<Result> {
+export async function editReferrerExcludes(
+  excludes: string[]
+): Promise<Result> {
   const { userId } = await auth();
   if (!userId) {
     return { success: false, error: '인증이 필요합니다' };

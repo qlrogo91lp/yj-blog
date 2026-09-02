@@ -18,7 +18,9 @@ export function FinalCtaArea() {
           <h2 className="mb-3 text-[clamp(28px,4vw,52px)] leading-none font-bold tracking-[-0.045em]">
             {golfFinalCta.heading}
           </h2>
-          <p className="mb-6.5 text-[16.5px] text-white/55">{golfFinalCta.body}</p>
+          <p className="mb-6.5 text-[16.5px] text-white/55">
+            {golfFinalCta.body}
+          </p>
           <a
             href={golfCounterMeta.appStoreUrl}
             className="inline-flex rounded-full bg-golf-green px-7.5 py-4 text-base font-semibold text-black shadow-[0_14px_40px_rgba(52,199,89,0.3)]"

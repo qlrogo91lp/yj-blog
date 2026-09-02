@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { AdminSeriesItem } from '@/types';

@@ -18,7 +18,10 @@ export default function GolfCounterPage() {
   return (
     <div className="dark relative bg-golf-bg text-golf-fg">
       <GolfJsonLd />
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      >
         <div className="absolute -top-1/4 left-1/4 size-[60vw] rounded-full bg-golf-green/12 blur-[120px]" />
         <div className="absolute top-1/2 -right-[16%] size-[50vw] rounded-full bg-golf-orange/8 blur-[140px]" />
       </div>

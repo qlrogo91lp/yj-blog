@@ -5,12 +5,15 @@ import { motion, useMotionValueEvent } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useSectionProgress } from '../../_hooks/useSectionProgress';
 import { stepIndexAt } from '../../_utils/landing-motion';
-import { ralliWatchSection } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
+import { ralliWatchSection } from '../_utils/ralli-content';
 
 export function WatchArea() {
-  const { ref, progress, isStatic } = useSectionProgress(['start start', 'end end']);
+  const { ref, progress, isStatic } = useSectionProgress([
+    'start start',
+    'end end',
+  ]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useMotionValueEvent(progress, 'change', (value) => {
@@ -21,14 +24,17 @@ export function WatchArea() {
     <section
       id={ralliWatchSection.id}
       ref={ref}
-      className={cn('relative bg-ralli-bg', isStatic ? 'h-auto py-24' : 'h-[240vh] md:h-[300vh]')}
+      className={cn(
+        'relative bg-ralli-bg',
+        isStatic ? 'h-auto py-24' : 'h-[240vh] md:h-[300vh]'
+      )}
     >
       <div
         className={cn(
           'grid items-center gap-10 px-[max(6vw,32px)]',
           isStatic
             ? 'relative grid-cols-1 md:grid-cols-2'
-            : 'sticky top-14 h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-2',
+            : 'sticky top-14 h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-2'
         )}
       >
         <div className="max-w-120">
@@ -48,11 +54,15 @@ export function WatchArea() {
                     'rounded-2xl border px-4.5 py-4 transition-all duration-350',
                     isActive
                       ? 'border-ralli-lime/35 bg-ralli-lime/10 opacity-100'
-                      : 'border-ralli-fg/8 bg-transparent opacity-40',
+                      : 'border-ralli-fg/8 bg-transparent opacity-40'
                   )}
                 >
-                  <p className="mb-1 text-[17px] font-semibold tracking-[-0.2px]">{step.title}</p>
-                  <p className="text-[14.5px] leading-[1.45] text-ralli-fg/55">{step.body}</p>
+                  <p className="mb-1 text-[17px] font-semibold tracking-[-0.2px]">
+                    {step.title}
+                  </p>
+                  <p className="text-[14.5px] leading-[1.45] text-ralli-fg/55">
+                    {step.body}
+                  </p>
                 </li>
               );
             })}
@@ -72,7 +82,10 @@ export function WatchArea() {
               <motion.div
                 key={step.id}
                 className="absolute"
-                animate={{ opacity: isShown ? 1 : 0, scale: isShown ? 1 : 0.94 }}
+                animate={{
+                  opacity: isShown ? 1 : 0,
+                  scale: isShown ? 1 : 0.94,
+                }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}
               >
                 <RalliShot

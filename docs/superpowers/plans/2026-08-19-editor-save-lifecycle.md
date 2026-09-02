@@ -34,26 +34,26 @@ Step 5(`develop`으로 PR 생성)는 공유 브랜치에 영향을 주는 작업
 
 2026-08-19 글쓰기 기능 리뷰 결과를 4개 PR로 나눈다. 순서대로 진행하며, 각 PR은 별도 plan 문서를 갖는다.
 
-| 순서 | 브랜치 | plan 문서 | 요지 |
-|---|---|---|---|
-| 1 | `fix/editor-save-lifecycle` | 이 문서 | 발행 글 덮어쓰기·draft 회귀·자동저장 오동작 등 데이터 손실 방지 |
-| 2 | `refactor/editor-remove-markdown-mode` | [2026-08-19-editor-remove-markdown-mode.md](./2026-08-19-editor-remove-markdown-mode.md) | 마크다운 모드 제거(사용자 결정), 기존 마크다운 글은 편집 진입 시 HTML 변환 |
-| 3 | `fix/editor-image-handling` | [2026-08-19-editor-image-handling.md](./2026-08-19-editor-image-handling.md) | 이미지 드래그 이동, 툴바 BubbleMenu 이전, R2 정리 저장 시점으로 이전, 클라이언트 압축, 빈 draft 표시 |
-| 4 | `feature/editor-polish` | [2026-08-19-editor-polish.md](./2026-08-19-editor-polish.md) | slug 편집, 코드블록 하이라이트, 카테고리 해제·태그 폭·아이콘 규칙, `metaDescription` 제거, 레이아웃 통일 |
+| 순서 | 브랜치                                 | plan 문서                                                                                | 요지                                                                                                     |
+| ---- | -------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 1    | `fix/editor-save-lifecycle`            | 이 문서                                                                                  | 발행 글 덮어쓰기·draft 회귀·자동저장 오동작 등 데이터 손실 방지                                          |
+| 2    | `refactor/editor-remove-markdown-mode` | [2026-08-19-editor-remove-markdown-mode.md](./2026-08-19-editor-remove-markdown-mode.md) | 마크다운 모드 제거(사용자 결정), 기존 마크다운 글은 편집 진입 시 HTML 변환                               |
+| 3    | `fix/editor-image-handling`            | [2026-08-19-editor-image-handling.md](./2026-08-19-editor-image-handling.md)             | 이미지 드래그 이동, 툴바 BubbleMenu 이전, R2 정리 저장 시점으로 이전, 클라이언트 압축, 빈 draft 표시     |
+| 4    | `feature/editor-polish`                | [2026-08-19-editor-polish.md](./2026-08-19-editor-polish.md)                             | slug 편집, 코드블록 하이라이트, 카테고리 해제·태그 폭·아이콘 규칙, `metaDescription` 제거, 레이아웃 통일 |
 
 > 원래 순서는 "이미지 → 마크다운 제거"였으나, 마크다운 제거가 툴바·스토어를 단순화해 이미지 PR의 수정 범위를 줄이므로 2·3을 바꿨다.
 
 ## 배경 — 리뷰에서 확인된 문제 (이 PR 범위)
 
-| # | 문제 | 원인 파일 |
-|---|---|---|
-| 1 | 발행 후 `/admin/posts/new`로 가면 방금 발행한 글의 `postId`·내용이 스토어에 그대로 남아 있고, 스토어 `status`는 여전히 `'draft'`라 30초 뒤 자동저장이 `submitPost('draft')`를 호출 → **발행 글이 임시저장으로 회귀** | `new/page.tsx`(reset 없음), `publish.action.tsx`, `_store.ts`(`submitPost`가 status를 갱신하지 않음) |
-| 2 | 발행 글에서 "임시저장" 클릭 = 발행 취소(`publishedAt = null`). 이후 재발행 시 스토어의 옛 `publishedAt`이 서버로 전달돼 `if (status==='published' && !input.publishedAt)` 조건이 거짓 → **`publishedAt`이 null인 채 published** | `draft.action.tsx`, `save-post.ts` |
-| 3 | 수정 페이지 진입만 해도 `PostInitHandler`의 `initializePost` → `title/content` 변경 → 30초 뒤 저장. 발행 글의 `updatedAt`이 매번 갱신되고 `revalidateTag`도 불필요하게 돔 | `auto-save.provider.tsx` |
-| 4 | 제목만 입력한 상태에서 자동저장 → Zod `content.min(1)` 실패 → "저장 실패" 표시 | `auto-save.provider.tsx` |
-| 5 | 카테고리·시리즈·태그·썸네일·SEO 변경은 자동저장을 트리거하지 않음 | `auto-save.provider.tsx` |
-| 6 | 미저장 상태로 탭을 닫아도 경고가 없음 | — |
-| 7 | `save-post.ts`의 `updateData: Record<string, unknown>` — 타입 안전성 없음 | `save-post.ts` |
+| #   | 문제                                                                                                                                                                                                                            | 원인 파일                                                                                            |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 1   | 발행 후 `/admin/posts/new`로 가면 방금 발행한 글의 `postId`·내용이 스토어에 그대로 남아 있고, 스토어 `status`는 여전히 `'draft'`라 30초 뒤 자동저장이 `submitPost('draft')`를 호출 → **발행 글이 임시저장으로 회귀**            | `new/page.tsx`(reset 없음), `publish.action.tsx`, `_store.ts`(`submitPost`가 status를 갱신하지 않음) |
+| 2   | 발행 글에서 "임시저장" 클릭 = 발행 취소(`publishedAt = null`). 이후 재발행 시 스토어의 옛 `publishedAt`이 서버로 전달돼 `if (status==='published' && !input.publishedAt)` 조건이 거짓 → **`publishedAt`이 null인 채 published** | `draft.action.tsx`, `save-post.ts`                                                                   |
+| 3   | 수정 페이지 진입만 해도 `PostInitHandler`의 `initializePost` → `title/content` 변경 → 30초 뒤 저장. 발행 글의 `updatedAt`이 매번 갱신되고 `revalidateTag`도 불필요하게 돔                                                       | `auto-save.provider.tsx`                                                                             |
+| 4   | 제목만 입력한 상태에서 자동저장 → Zod `content.min(1)` 실패 → "저장 실패" 표시                                                                                                                                                  | `auto-save.provider.tsx`                                                                             |
+| 5   | 카테고리·시리즈·태그·썸네일·SEO 변경은 자동저장을 트리거하지 않음                                                                                                                                                               | `auto-save.provider.tsx`                                                                             |
+| 6   | 미저장 상태로 탭을 닫아도 경고가 없음                                                                                                                                                                                           | —                                                                                                    |
+| 7   | `save-post.ts`의 `updateData: Record<string, unknown>` — 타입 안전성 없음                                                                                                                                                       | `save-post.ts`                                                                                       |
 
 **이 PR에서 제외(다른 PR):** 마크다운 모드 제거(PR 2), 이미지 드래그·툴바 UI·R2 삭제 지연·압축(PR 3), slug 편집·코드블록·잔손질(PR 4).
 
@@ -73,20 +73,20 @@ Step 5(`develop`으로 PR 생성)는 공유 브랜치에 영향을 주는 작업
 
 ## 파일 구조
 
-| 파일 | 역할 | 변경 |
-|---|---|---|
-| `src/app/admin/posts/new/_store.ts` | 에디터 전역 상태. `changeCount`/`savedChangeCount` 추가, 사용자 편집 setter가 카운터 증가, `submitPost` 성공 시 서버 응답으로 `status`·`publishedAt` 동기화 | 수정 |
-| `src/app/admin/posts/new/_store.test.ts` | 스토어 dirty 추적·submitPost 동기화 테스트 | 신규 |
-| `src/app/admin/posts/new/_services/save-post.ts` | `publishedAt`을 서버가 결정, 결과에 `status`·`publishedAt` 포함, `updateData` 타입 안전화 | 수정 |
-| `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx` | 외부 content 동기화 시 `emitUpdate: false` → 초기화가 dirty를 오염시키지 않도록 | 수정 |
-| `src/app/admin/posts/new/_providers/auto-save.provider.tsx` | dirty + 필수값 충족 시에만 자동저장, `beforeunload` 경고 | 수정 |
-| `src/app/admin/posts/new/_providers/auto-save.provider.test.tsx` | 자동저장 조건·beforeunload 테스트 | 신규 |
-| `src/app/admin/posts/new/_actions/draft.action.tsx` | 발행 글이면 "저장"(status 유지), 아니면 "임시저장" | 수정 |
-| `src/app/admin/posts/new/_actions/draft.action.test.tsx` | 라벨·호출 status 테스트 | 신규 |
-| `src/app/admin/posts/new/_actions/save-status.action.tsx` | "자동 저장 완료" → "저장됨" (수동/자동 공통) | 수정 |
-| `src/app/admin/posts/new/_handlers/new-post-reset.handler.tsx` | `/new` 페이지 언마운트 시 스토어 reset | 신규 |
-| `src/app/admin/posts/new/_handlers/new-post-reset.handler.test.tsx` | 언마운트 reset 테스트 | 신규 |
-| `src/app/admin/posts/new/page.tsx` | `NewPostResetHandler` 배치 | 수정 |
+| 파일                                                                | 역할                                                                                                                                                        | 변경 |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
+| `src/app/admin/posts/new/_store.ts`                                 | 에디터 전역 상태. `changeCount`/`savedChangeCount` 추가, 사용자 편집 setter가 카운터 증가, `submitPost` 성공 시 서버 응답으로 `status`·`publishedAt` 동기화 | 수정 |
+| `src/app/admin/posts/new/_store.test.ts`                            | 스토어 dirty 추적·submitPost 동기화 테스트                                                                                                                  | 신규 |
+| `src/app/admin/posts/new/_services/save-post.ts`                    | `publishedAt`을 서버가 결정, 결과에 `status`·`publishedAt` 포함, `updateData` 타입 안전화                                                                   | 수정 |
+| `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx`        | 외부 content 동기화 시 `emitUpdate: false` → 초기화가 dirty를 오염시키지 않도록                                                                             | 수정 |
+| `src/app/admin/posts/new/_providers/auto-save.provider.tsx`         | dirty + 필수값 충족 시에만 자동저장, `beforeunload` 경고                                                                                                    | 수정 |
+| `src/app/admin/posts/new/_providers/auto-save.provider.test.tsx`    | 자동저장 조건·beforeunload 테스트                                                                                                                           | 신규 |
+| `src/app/admin/posts/new/_actions/draft.action.tsx`                 | 발행 글이면 "저장"(status 유지), 아니면 "임시저장"                                                                                                          | 수정 |
+| `src/app/admin/posts/new/_actions/draft.action.test.tsx`            | 라벨·호출 status 테스트                                                                                                                                     | 신규 |
+| `src/app/admin/posts/new/_actions/save-status.action.tsx`           | "자동 저장 완료" → "저장됨" (수동/자동 공통)                                                                                                                | 수정 |
+| `src/app/admin/posts/new/_handlers/new-post-reset.handler.tsx`      | `/new` 페이지 언마운트 시 스토어 reset                                                                                                                      | 신규 |
+| `src/app/admin/posts/new/_handlers/new-post-reset.handler.test.tsx` | 언마운트 reset 테스트                                                                                                                                       | 신규 |
+| `src/app/admin/posts/new/page.tsx`                                  | `NewPostResetHandler` 배치                                                                                                                                  | 수정 |
 
 ---
 
@@ -110,10 +110,12 @@ Expected: 모두 PASS (2026-08-19 기준 12 files / 59 tests)
 ### Task 1: 스토어 dirty 추적 (`changeCount` / `savedChangeCount`)
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_store.ts`
 - Test: `src/app/admin/posts/new/_store.test.ts` (신규)
 
 **Interfaces:**
+
 - Produces:
   - `State.changeCount: number` — 사용자 편집 setter가 호출될 때마다 +1
   - `State.savedChangeCount: number` — 마지막 저장 성공 시점의 `changeCount`
@@ -128,12 +130,11 @@ Expected: 모두 PASS (2026-08-19 기준 12 files / 59 tests)
 
 ```ts
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { selectIsDirty, useNewPostStore } from './_store';
 
 vi.mock('./_services/save-post', () => ({
   savePost: vi.fn(),
 }));
-
-import { selectIsDirty, useNewPostStore } from './_store';
 
 describe('useNewPostStore dirty 추적', () => {
   beforeEach(() => {
@@ -151,14 +152,40 @@ describe('useNewPostStore dirty 추적', () => {
   });
 
   it.each([
-    ['setContent', (s: ReturnType<typeof useNewPostStore.getState>) => s.setContent('<p>a</p>')],
-    ['setCategoryId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setCategoryId(1)],
-    ['setSeriesId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSeriesId(1)],
-    ['setTagIds', (s: ReturnType<typeof useNewPostStore.getState>) => s.setTagIds([1])],
-    ['setSlug', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSlug('x')],
-    ['setExcerpt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setExcerpt('x')],
-    ['setMetaTitle', (s: ReturnType<typeof useNewPostStore.getState>) => s.setMetaTitle('x')],
-    ['setThumbnailUrl', (s: ReturnType<typeof useNewPostStore.getState>) => s.setThumbnailUrl('u')],
+    [
+      'setContent',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setContent('<p>a</p>'),
+    ],
+    [
+      'setCategoryId',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setCategoryId(1),
+    ],
+    [
+      'setSeriesId',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setSeriesId(1),
+    ],
+    [
+      'setTagIds',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setTagIds([1]),
+    ],
+    [
+      'setSlug',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setSlug('x'),
+    ],
+    [
+      'setExcerpt',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setExcerpt('x'),
+    ],
+    [
+      'setMetaTitle',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setMetaTitle('x'),
+    ],
+    [
+      'setThumbnailUrl',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setThumbnailUrl('u'),
+    ],
   ])('%s 호출은 changeCount를 1 올린다', (_name, call) => {
     const before = useNewPostStore.getState().changeCount;
     call(useNewPostStore.getState());
@@ -166,12 +193,34 @@ describe('useNewPostStore dirty 추적', () => {
   });
 
   it.each([
-    ['setPostId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setPostId(1)],
-    ['setStatus', (s: ReturnType<typeof useNewPostStore.getState>) => s.setStatus('published')],
-    ['setMode', (s: ReturnType<typeof useNewPostStore.getState>) => s.setMode('markdown')],
-    ['setSaveStatus', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSaveStatus('saving')],
-    ['setLastSavedAt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setLastSavedAt(new Date())],
-    ['setIsGeneratingExcerpt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setIsGeneratingExcerpt(true)],
+    [
+      'setPostId',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setPostId(1),
+    ],
+    [
+      'setStatus',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setStatus('published'),
+    ],
+    [
+      'setMode',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setMode('markdown'),
+    ],
+    [
+      'setSaveStatus',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setSaveStatus('saving'),
+    ],
+    [
+      'setLastSavedAt',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setLastSavedAt(new Date()),
+    ],
+    [
+      'setIsGeneratingExcerpt',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setIsGeneratingExcerpt(true),
+    ],
   ])('%s 호출은 changeCount를 올리지 않는다', (_name, call) => {
     const before = useNewPostStore.getState().changeCount;
     call(useNewPostStore.getState());
@@ -218,15 +267,17 @@ Expected: FAIL — `selectIsDirty`가 export되지 않음 / `changeCount`가 und
 `State` 타입에 추가:
 
 ```ts
-  changeCount: number;
-  savedChangeCount: number;
+changeCount: number;
+savedChangeCount: number;
 ```
 
 `export const useNewPostStore` 위에 selector 추가:
 
 ```ts
-export const selectIsDirty = (s: { changeCount: number; savedChangeCount: number }) =>
-  s.changeCount !== s.savedChangeCount;
+export const selectIsDirty = (s: {
+  changeCount: number;
+  savedChangeCount: number;
+}) => s.changeCount !== s.savedChangeCount;
 ```
 
 초기값(`create` 첫 부분)과 `reset()`의 set 객체 양쪽에 `changeCount: 0, savedChangeCount: 0` 추가. `initializePost`의 set 객체에도 `changeCount: 0, savedChangeCount: 0` 추가.
@@ -272,11 +323,13 @@ git commit -m "✨ feat: 에디터 스토어에 changeCount 기반 dirty 추적 
 ### Task 2: `savePost`가 `publishedAt`을 서버에서 결정하고 결과에 `status`·`publishedAt`을 반환
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_services/save-post.ts`
 - Modify: `src/app/admin/posts/new/_store.ts` (`submitPost`)
 - Test: `src/app/admin/posts/new/_store.test.ts` (describe 추가)
 
 **Interfaces:**
+
 - Consumes: Task 1의 `changeCount`/`savedChangeCount`
 - Produces:
   - `SavePostInput`에서 `publishedAt` 제거
@@ -319,9 +372,14 @@ describe('useNewPostStore.submitPost', () => {
   });
 
   it('저장 중에 추가 편집이 있었으면 저장 성공 후에도 dirty가 유지된다', async () => {
-    let resolveSave: (v: Awaited<ReturnType<typeof savePost>>) => void = () => {};
+    let resolveSave: (
+      v: Awaited<ReturnType<typeof savePost>>
+    ) => void = () => {};
     vi.mocked(savePost).mockImplementation(
-      () => new Promise((resolve) => { resolveSave = resolve; }),
+      () =>
+        new Promise((resolve) => {
+          resolveSave = resolve;
+        })
     );
     const s = useNewPostStore.getState();
     s.setTitle('제목');
@@ -329,7 +387,12 @@ describe('useNewPostStore.submitPost', () => {
 
     const pending = useNewPostStore.getState().submitPost('draft');
     useNewPostStore.getState().setTitle('저장 중 수정');
-    resolveSave({ success: true, postId: 1, status: 'draft', publishedAt: null });
+    resolveSave({
+      success: true,
+      postId: 1,
+      status: 'draft',
+      publishedAt: null,
+    });
     await pending;
 
     expect(selectIsDirty(useNewPostStore.getState())).toBe(true);
@@ -337,7 +400,10 @@ describe('useNewPostStore.submitPost', () => {
 
   it('publishedAt을 서버로 보내지 않는다', async () => {
     vi.mocked(savePost).mockResolvedValue({
-      success: true, postId: 1, status: 'draft', publishedAt: null,
+      success: true,
+      postId: 1,
+      status: 'draft',
+      publishedAt: null,
     });
     useNewPostStore.getState().setTitle('제목');
     useNewPostStore.getState().setContent('<p>본문</p>');
@@ -347,7 +413,10 @@ describe('useNewPostStore.submitPost', () => {
   });
 
   it('실패 시 saveStatus가 error가 되고 dirty는 유지된다', async () => {
-    vi.mocked(savePost).mockResolvedValue({ success: false, error: '저장에 실패했습니다' });
+    vi.mocked(savePost).mockResolvedValue({
+      success: false,
+      error: '저장에 실패했습니다',
+    });
     useNewPostStore.getState().setTitle('제목');
     useNewPostStore.getState().setContent('<p>본문</p>');
     const result = await useNewPostStore.getState().submitPost('draft');
@@ -396,50 +465,50 @@ type SavePostResult =
 `try` 블록의 UPDATE 분기를 아래로 교체한다(기존 `updateData: Record<string, unknown>` 및 `if (status === 'published' && !input.publishedAt)` 블록 제거):
 
 ```ts
-    if (input.postId) {
-      // publishedAt은 클라이언트 입력을 신뢰하지 않고 DB 현재값 기준으로 결정한다.
-      // - published: 이미 있으면 유지, 없으면(첫 발행) 지금
-      // - draft: null
-      const [current] = await db
-        .select({ publishedAt: posts.publishedAt })
-        .from(posts)
-        .where(eq(posts.id, input.postId))
-        .limit(1);
-      if (!current) {
-        return { success: false, error: '글을 찾을 수 없습니다' };
-      }
-      const publishedAt =
-        status === 'published' ? (current.publishedAt ?? new Date()) : null;
+if (input.postId) {
+  // publishedAt은 클라이언트 입력을 신뢰하지 않고 DB 현재값 기준으로 결정한다.
+  // - published: 이미 있으면 유지, 없으면(첫 발행) 지금
+  // - draft: null
+  const [current] = await db
+    .select({ publishedAt: posts.publishedAt })
+    .from(posts)
+    .where(eq(posts.id, input.postId))
+    .limit(1);
+  if (!current) {
+    return { success: false, error: '글을 찾을 수 없습니다' };
+  }
+  const publishedAt =
+    status === 'published' ? (current.publishedAt ?? new Date()) : null;
 
-      const updateData: Partial<typeof posts.$inferInsert> = {
-        title,
-        slug,
-        content,
-        contentFormat,
-        excerpt: excerpt && excerpt.length > 0 ? excerpt : null,
-        metaTitle: metaTitle && metaTitle.length > 0 ? metaTitle : null,
-        thumbnailUrl: input.thumbnailUrl ?? null,
-        categoryId,
-        seriesId,
-        status,
-        publishedAt,
-        updatedAt: new Date(),
-      };
+  const updateData: Partial<typeof posts.$inferInsert> = {
+    title,
+    slug,
+    content,
+    contentFormat,
+    excerpt: excerpt && excerpt.length > 0 ? excerpt : null,
+    metaTitle: metaTitle && metaTitle.length > 0 ? metaTitle : null,
+    thumbnailUrl: input.thumbnailUrl ?? null,
+    categoryId,
+    seriesId,
+    status,
+    publishedAt,
+    updatedAt: new Date(),
+  };
 
-      await db.update(posts).set(updateData).where(eq(posts.id, input.postId));
-      await syncPostTags(input.postId, tagIds);
+  await db.update(posts).set(updateData).where(eq(posts.id, input.postId));
+  await syncPostTags(input.postId, tagIds);
 
-      revalidateTag(CACHE_TAGS.posts, 'max');
-      revalidateTag(CACHE_TAGS.series, 'max');
-      revalidatePath('/admin/posts');
-      return { success: true, postId: input.postId, status, publishedAt };
-    }
+  revalidateTag(CACHE_TAGS.posts, 'max');
+  revalidateTag(CACHE_TAGS.series, 'max');
+  revalidatePath('/admin/posts');
+  return { success: true, postId: input.postId, status, publishedAt };
+}
 ```
 
 INSERT 분기의 마지막 return을 아래로 교체:
 
 ```ts
-      return { success: true, postId: newPost.id, status, publishedAt };
+return { success: true, postId: newPost.id, status, publishedAt };
 ```
 
 (INSERT 분기의 `const publishedAt = status === 'published' ? new Date() : null;`은 그대로 사용한다.)
@@ -512,9 +581,11 @@ git commit -m "🐛 fix: savePost가 publishedAt을 서버에서 결정하고 st
 ### Task 3: WYSIWYG 에디터 외부 동기화가 dirty를 오염시키지 않도록
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx:245-254` (content 동기화 `useEffect`)
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces: 없음 (동작 변경만)
 
@@ -525,33 +596,33 @@ git commit -m "🐛 fix: savePost가 publishedAt을 서버에서 결정하고 st
 기존:
 
 ```tsx
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content || '');
-    }
-  }, [content, editor]);
+useEffect(() => {
+  if (isInitialMount.current) {
+    isInitialMount.current = false;
+    return;
+  }
+  if (editor && content !== editor.getHTML()) {
+    editor.commands.setContent(content || '');
+  }
+}, [content, editor]);
 ```
 
 변경:
 
 ```tsx
-  // content가 외부에서 변경되었을 때 (수정 페이지 초기화, 모드 전환 등) 에디터 내용 동기화.
-  // emitUpdate: false — onUpdate를 타지 않게 해서 초기화가 dirty(changeCount)를 올리지 않도록 한다.
-  // onUpdate가 하던 이미지 src 추적 초기화는 여기서 직접 수행한다.
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content || '', { emitUpdate: false });
-      prevImageSrcs.current = collectImageSrcs(editor.state.doc);
-    }
-  }, [content, editor]);
+// content가 외부에서 변경되었을 때 (수정 페이지 초기화, 모드 전환 등) 에디터 내용 동기화.
+// emitUpdate: false — onUpdate를 타지 않게 해서 초기화가 dirty(changeCount)를 올리지 않도록 한다.
+// onUpdate가 하던 이미지 src 추적 초기화는 여기서 직접 수행한다.
+useEffect(() => {
+  if (isInitialMount.current) {
+    isInitialMount.current = false;
+    return;
+  }
+  if (editor && content !== editor.getHTML()) {
+    editor.commands.setContent(content || '', { emitUpdate: false });
+    prevImageSrcs.current = collectImageSrcs(editor.state.doc);
+  }
+}, [content, editor]);
 ```
 
 - [x] **Step 2: 타입·린트 확인**
@@ -576,14 +647,17 @@ git commit -m "🐛 fix: 에디터 외부 동기화 시 update 이벤트를 내�
 ### Task 4: 자동저장 — dirty·필수값 조건 + `beforeunload` 경고
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_providers/auto-save.provider.tsx`
 - Test: `src/app/admin/posts/new/_providers/auto-save.provider.test.tsx` (신규)
 
 **Interfaces:**
+
 - Consumes: Task 1의 `selectIsDirty`, `changeCount`; Task 2의 `submitPost`
 - Produces: 없음
 
 동작 규칙:
+
 1. dirty가 아니면 아무것도 하지 않는다 (수정 페이지 진입만으로 저장되지 않음).
 2. `title.trim()`이 비었거나 `content`가 비면 타이머를 걸지 않는다 (Zod 실패로 "저장 실패"가 뜨는 것 방지).
 3. 조건을 만족하면 마지막 변경(`changeCount`)으로부터 30초 뒤 `submitPost(현재 status)`.
@@ -596,14 +670,13 @@ git commit -m "🐛 fix: 에디터 외부 동기화 시 update 이벤트를 내�
 ```tsx
 import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { savePost } from '../_services/save-post';
+import { useNewPostStore } from '../_store';
+import { AutoSaveProvider } from './auto-save.provider';
 
 vi.mock('../_services/save-post', () => ({
   savePost: vi.fn(),
 }));
-
-import { savePost } from '../_services/save-post';
-import { useNewPostStore } from '../_store';
-import { AutoSaveProvider } from './auto-save.provider';
 
 const intervalMs = 30000;
 
@@ -765,7 +838,7 @@ export function AutoSaveProvider() {
   const isDirty = useNewPostStore(selectIsDirty);
   const changeCount = useNewPostStore((s) => s.changeCount);
   const hasRequiredFields = useNewPostStore(
-    (s) => s.title.trim().length > 0 && s.content.length > 0,
+    (s) => s.title.trim().length > 0 && s.content.length > 0
   );
   const status = useNewPostStore((s) => s.status);
   const submitPost = useNewPostStore((s) => s.submitPost);
@@ -814,11 +887,13 @@ git commit -m "🐛 fix: 자동저장을 dirty·필수값 충족 시에만 실�
 ### Task 5: 발행 글의 "임시저장" 버튼을 status 유지 "저장"으로, 저장 상태 문구 정리
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_actions/draft.action.tsx`
 - Modify: `src/app/admin/posts/new/_actions/save-status.action.tsx`
 - Test: `src/app/admin/posts/new/_actions/draft.action.test.tsx` (신규)
 
 **Interfaces:**
+
 - Consumes: Task 2의 `submitPost`
 - Produces: 없음
 
@@ -829,14 +904,13 @@ git commit -m "🐛 fix: 자동저장을 dirty·필수값 충족 시에만 실�
 ```tsx
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { savePost } from '../_services/save-post';
+import { useNewPostStore } from '../_store';
+import { DraftAction } from './draft.action';
 
 vi.mock('../_services/save-post', () => ({
   savePost: vi.fn(),
 }));
-
-import { savePost } from '../_services/save-post';
-import { useNewPostStore } from '../_store';
-import { DraftAction } from './draft.action';
 
 describe('DraftAction', () => {
   beforeEach(() => {
@@ -868,7 +942,9 @@ describe('DraftAction', () => {
     });
     useNewPostStore.getState().setStatus('published');
     render(<DraftAction />);
-    expect(screen.queryByRole('button', { name: /임시저장/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /임시저장/ })
+    ).not.toBeInTheDocument();
     const button = screen.getByRole('button', { name: /^저장$/ });
     await act(async () => {
       fireEvent.click(button);
@@ -928,9 +1004,11 @@ export function DraftAction() {
 `{saveStatus === 'saved' && lastSavedAt && (<>자동 저장 완료 {format(...)}</>)}` 를 아래로 교체:
 
 ```tsx
-      {saveStatus === 'saved' && lastSavedAt && (
-        <>저장됨 {format(lastSavedAt, 'HH:mm:ss', { locale: ko })}</>
-      )}
+{
+  saveStatus === 'saved' && lastSavedAt && (
+    <>저장됨 {format(lastSavedAt, 'HH:mm:ss', { locale: ko })}</>
+  );
+}
 ```
 
 - [x] **Step 5: 통과 확인**
@@ -950,11 +1028,13 @@ git commit -m "🐛 fix: 발행 글의 임시저장 버튼이 발행을 취소�
 ### Task 6: `/admin/posts/new` 이탈 시 스토어 reset (발행 글 덮어쓰기 방지)
 
 **Files:**
+
 - Create: `src/app/admin/posts/new/_handlers/new-post-reset.handler.tsx`
 - Test: `src/app/admin/posts/new/_handlers/new-post-reset.handler.test.tsx` (신규)
 - Modify: `src/app/admin/posts/new/page.tsx`
 
 **Interfaces:**
+
 - Consumes: 스토어 `reset()`
 - Produces: `export function NewPostResetHandler(): null`
 
@@ -967,13 +1047,12 @@ git commit -m "🐛 fix: 발행 글의 임시저장 버튼이 발행을 취소�
 ```tsx
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useNewPostStore } from '../_store';
+import { NewPostResetHandler } from './new-post-reset.handler';
 
 vi.mock('../_services/save-post', () => ({
   savePost: vi.fn(),
 }));
-
-import { useNewPostStore } from '../_store';
-import { NewPostResetHandler } from './new-post-reset.handler';
 
 describe('NewPostResetHandler', () => {
   beforeEach(() => {
@@ -1064,6 +1143,7 @@ git commit -m "🐛 fix: 신규 글 페이지 이탈 시 스토어를 reset해 �
 ### Task 7: 최종 검증 및 문서 갱신
 
 **Files:**
+
 - Modify: `docs/superpowers/plans/2026-08-19-editor-save-lifecycle.md` (완료 기록)
 
 - [x] **Step 1: 전체 단위 테스트**

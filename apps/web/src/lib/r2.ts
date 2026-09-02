@@ -22,6 +22,6 @@ export async function deleteR2Objects(keys: string[]): Promise<void> {
     new DeleteObjectsCommand({
       Bucket: r2Bucket,
       Delete: { Objects: keys.map((Key) => ({ Key })) },
-    }),
+    })
   );
 }

@@ -26,11 +26,13 @@
 ### Task 1: 디자인 토큰 + ContentContainer
 
 **Files:**
+
 - Modify: `src/app/globals.css` (`:root` 블록, `@theme inline` 블록)
 - Create: `src/components/layout/content-container.tsx`
 - Test: `src/components/layout/content-container.test.tsx`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces:
   - CSS 변수 `--content-width: 980px`, `--article-width: 653px`, `--radius-card: 2rem`(→ `rounded-card` 유틸)
@@ -39,13 +41,16 @@
 - [x] **Step 1: 토큰 추가** — `src/app/globals.css`
 
 `:root { ... }` 블록 안, `--radius: 0.625rem;` 바로 아래에 추가:
+
 ```css
-  --content-width: 980px;
-  --article-width: 653px;
+--content-width: 980px;
+--article-width: 653px;
 ```
+
 `@theme inline { ... }` 블록 안, `--radius-4xl: ...;` 아래에 추가:
+
 ```css
-  --radius-card: 2rem;
+--radius-card: 2rem;
 ```
 
 - [x] **Step 2: 실패 테스트 작성** — `src/components/layout/content-container.test.tsx`
@@ -64,11 +69,15 @@ describe('ContentContainer', () => {
 
   it('content-width max-width 클래스를 적용한다', () => {
     const { container } = render(<ContentContainer>x</ContentContainer>);
-    expect(container.firstElementChild?.className).toContain('max-w-[var(--content-width)]');
+    expect(container.firstElementChild?.className).toContain(
+      'max-w-[var(--content-width)]'
+    );
   });
 
   it('전달한 className을 병합한다', () => {
-    const { container } = render(<ContentContainer className="py-6">x</ContentContainer>);
+    const { container } = render(
+      <ContentContainer className="py-6">x</ContentContainer>
+    );
     expect(container.firstElementChild?.className).toContain('py-6');
   });
 });
@@ -91,7 +100,12 @@ type Props = {
 
 export function ContentContainer({ className, children }: Props) {
   return (
-    <div className={cn('mx-auto w-full max-w-[var(--content-width)] px-4', className)}>
+    <div
+      className={cn(
+        'mx-auto w-full max-w-[var(--content-width)] px-4',
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -115,11 +129,13 @@ git commit -m "🎨 콘텐츠 폭·radius 토큰 및 ContentContainer 추가"
 ### Task 2: PostTileVertical 베이스 + PostTile2up
 
 **Files:**
+
 - Create: `src/components/post/post-tile-vertical.tsx`
 - Create: `src/components/post/post-tile-2up.tsx`
 - Test: `src/components/post/post-tile-2up.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `rounded-card` (Task 1)
 - Produces:
   - `PostTileVertical({ post: PostWithCategory; tags?: TagSummary[]; priority?: boolean; size: 'md' | 'sm' })` — 내부 공용 세로형 타일
@@ -142,7 +158,12 @@ type Props = {
   size: 'md' | 'sm';
 };
 
-export function PostTileVertical({ post, tags, priority = false, size }: Props) {
+export function PostTileVertical({
+  post,
+  tags,
+  priority = false,
+  size,
+}: Props) {
   const publishedAt = post.publishedAt
     ? format(new Date(post.publishedAt), 'dd MMM yyyy', { locale: enUS })
     : null;
@@ -226,13 +247,25 @@ import type { PostWithCategory } from '@/types';
 import { PostTile2up } from './post-tile-2up';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockPost = {
@@ -264,7 +297,10 @@ describe('PostTile2up', () => {
 
   it('카테고리를 렌더링한다', () => {
     render(<PostTile2up post={mockPost} />);
-    expect(screen.getByRole('link', { name: '개발' })).toHaveAttribute('href', '/categories/dev');
+    expect(screen.getByRole('link', { name: '개발' })).toHaveAttribute(
+      'href',
+      '/categories/dev'
+    );
   });
 
   it('썸네일 alt에 제목을 사용한다', () => {
@@ -282,8 +318,8 @@ Expected: FAIL — `Cannot find module './post-tile-2up'`
 - [x] **Step 4: 구현** — `src/components/post/post-tile-2up.tsx`
 
 ```tsx
-import { PostTileVertical } from './post-tile-vertical';
 import type { PostWithCategory, TagSummary } from '@/types';
+import { PostTileVertical } from './post-tile-vertical';
 
 type Props = {
   post: PostWithCategory;
@@ -313,10 +349,12 @@ git commit -m "✨ 세로형 타일 베이스 및 PostTile2up 추가"
 ### Task 3: PostTile3up
 
 **Files:**
+
 - Create: `src/components/post/post-tile-3up.tsx`
 - Test: `src/components/post/post-tile-3up.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `PostTileVertical` (Task 2)
 - Produces: `PostTile3up({ post: PostWithCategory; tags?: TagSummary[]; priority?: boolean })`
 
@@ -330,13 +368,25 @@ import type { PostWithCategory } from '@/types';
 import { PostTile3up } from './post-tile-3up';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockPost = {
@@ -362,7 +412,10 @@ const mockPost = {
 describe('PostTile3up', () => {
   it('제목을 글 상세 링크로 렌더링한다', () => {
     render(<PostTile3up post={mockPost} />);
-    expect(screen.getByRole('link', { name: '세 번째 카드' })).toHaveAttribute('href', '/posts/third-card');
+    expect(screen.getByRole('link', { name: '세 번째 카드' })).toHaveAttribute(
+      'href',
+      '/posts/third-card'
+    );
   });
 });
 ```
@@ -375,8 +428,8 @@ Expected: FAIL — `Cannot find module './post-tile-3up'`
 - [x] **Step 3: 구현** — `src/components/post/post-tile-3up.tsx`
 
 ```tsx
-import { PostTileVertical } from './post-tile-vertical';
 import type { PostWithCategory, TagSummary } from '@/types';
+import { PostTileVertical } from './post-tile-vertical';
 
 type Props = {
   post: PostWithCategory;
@@ -406,10 +459,12 @@ git commit -m "✨ PostTile3up(3-col 축소 타일) 추가"
 ### Task 4: PostTileHero
 
 **Files:**
+
 - Create: `src/components/post/post-tile-hero.tsx`
 - Test: `src/components/post/post-tile-hero.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `rounded-card` (Task 1)
 - Produces: `PostTileHero({ post: PostWithCategory; tags?: TagSummary[]; priority?: boolean })`
 
@@ -423,13 +478,25 @@ import type { PostWithCategory } from '@/types';
 import { PostTileHero } from './post-tile-hero';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockPost = {
@@ -455,7 +522,10 @@ const mockPost = {
 describe('PostTileHero', () => {
   it('제목을 글 상세 링크로 렌더링한다', () => {
     render(<PostTileHero post={mockPost} />);
-    expect(screen.getByRole('link', { name: '히어로 글' })).toHaveAttribute('href', '/posts/hero-post');
+    expect(screen.getByRole('link', { name: '히어로 글' })).toHaveAttribute(
+      'href',
+      '/posts/hero-post'
+    );
   });
 
   it('카테고리명을 표시한다', () => {
@@ -517,7 +587,9 @@ export function PostTileHero({ post, priority = false }: Props) {
       <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
         <div className="mb-2 flex items-center gap-2 text-[11px] font-bold tracking-widest text-white/80 uppercase">
           {post.category && <span>{post.category.name}</span>}
-          {post.category && publishedAt && <span className="text-white/40">·</span>}
+          {post.category && publishedAt && (
+            <span className="text-white/40">·</span>
+          )}
           {publishedAt && <time>{publishedAt}</time>}
         </div>
         <h2 className="line-clamp-2 max-w-2xl text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl">
@@ -551,10 +623,12 @@ git commit -m "✨ PostTileHero(가로 대형 타일) 추가"
 ### Task 5: PostArchiveRow
 
 **Files:**
+
 - Create: `src/components/post/post-archive-row.tsx`
 - Test: `src/components/post/post-archive-row.test.tsx`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces: `PostArchiveRow({ post: PostWithCategory; tags?: TagSummary[] })`
 
@@ -568,13 +642,25 @@ import type { PostWithCategory } from '@/types';
 import { PostArchiveRow } from './post-archive-row';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockPost = {
@@ -600,7 +686,10 @@ const mockPost = {
 describe('PostArchiveRow', () => {
   it('제목을 글 상세 링크로 렌더링한다', () => {
     render(<PostArchiveRow post={mockPost} />);
-    expect(screen.getByRole('link', { name: '아카이브 항목' })).toHaveAttribute('href', '/posts/archive-item');
+    expect(screen.getByRole('link', { name: '아카이브 항목' })).toHaveAttribute(
+      'href',
+      '/posts/archive-item'
+    );
   });
 
   it('카테고리명을 표시한다', () => {
@@ -653,7 +742,9 @@ export function PostArchiveRow({ post }: Props) {
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
           {post.category && <span>{post.category.name}</span>}
-          {post.category && publishedAt && <span className="text-muted-foreground/40">·</span>}
+          {post.category && publishedAt && (
+            <span className="text-muted-foreground/40">·</span>
+          )}
           {publishedAt && <time>{publishedAt}</time>}
         </div>
         <h2 className="line-clamp-2 text-base font-bold leading-snug tracking-tight">
@@ -687,11 +778,13 @@ git commit -m "✨ PostArchiveRow(아카이브 행) 추가"
 ### Task 6: 홈 그리드 재구성
 
 **Files:**
+
 - Modify: `src/app/(main)/_components/recent-posts-section.tsx`
 - Modify: `src/app/(main)/page.tsx`
 - Test: `src/app/(main)/_components/recent-posts-section.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `PostTileHero` (Task 4), `PostTile2up` (Task 2), `ContentContainer` (Task 1)
 - Produces: 없음 (페이지 조합)
 
@@ -705,13 +798,25 @@ import type { PostWithCategory } from '@/types';
 import { RecentPostsSection } from './recent-posts-section';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const base = {
@@ -731,8 +836,20 @@ const base = {
 };
 
 const posts = [
-  { ...base, id: 1, title: '히어로 글', slug: 'hero', publishedAt: new Date('2024-03-01') },
-  { ...base, id: 2, title: '두 번째 글', slug: 'second', publishedAt: new Date('2024-02-01') },
+  {
+    ...base,
+    id: 1,
+    title: '히어로 글',
+    slug: 'hero',
+    publishedAt: new Date('2024-03-01'),
+  },
+  {
+    ...base,
+    id: 2,
+    title: '두 번째 글',
+    slug: 'second',
+    publishedAt: new Date('2024-02-01'),
+  },
 ] as unknown as PostWithCategory[];
 
 describe('RecentPostsSection', () => {
@@ -744,7 +861,9 @@ describe('RecentPostsSection', () => {
   it('첫 글(히어로)과 나머지 글 제목이 모두 보인다', () => {
     render(<RecentPostsSection posts={posts} />);
     expect(screen.getByRole('link', { name: '히어로 글' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '두 번째 글' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '두 번째 글' })
+    ).toBeInTheDocument();
   });
 });
 ```
@@ -760,8 +879,8 @@ Expected: FAIL — 현재 구현은 `sm:grid-cols-2`에 `PostCard`만 사용하�
 
 ```tsx
 import Link from 'next/link';
-import { PostTileHero } from '@/components/post/post-tile-hero';
 import { PostTile2up } from '@/components/post/post-tile-2up';
+import { PostTileHero } from '@/components/post/post-tile-hero';
 import type { PostWithCategory } from '@/types';
 
 type Props = {
@@ -783,7 +902,9 @@ export function RecentPostsSection({ posts }: Props) {
         </Link>
       </div>
       {posts.length === 0 ? (
-        <p className="py-12 text-center text-muted-foreground">아직 작성된 글이 없습니다.</p>
+        <p className="py-12 text-center text-muted-foreground">
+          아직 작성된 글이 없습니다.
+        </p>
       ) : (
         <div className="flex flex-col gap-9">
           <PostTileHero post={hero} priority />
@@ -804,19 +925,22 @@ export function RecentPostsSection({ posts }: Props) {
 - [x] **Step 4: 홈 컨테이너 교체** — `src/app/(main)/page.tsx`
 
 `import { RecentPostsSection } ...` 아래에 추가:
+
 ```tsx
 import { ContentContainer } from '@/components/layout/content-container';
 ```
+
 `return (...)`의 `<div className="mx-auto max-w-4xl px-4">...</div>`를 다음으로 교체:
+
 ```tsx
-    <ContentContainer>
-      <HeroSection
-        blogName={settings?.blogName}
-        tagline={settings?.tagline}
-        authorBio={settings?.authorBio}
-      />
-      <RecentPostsSection posts={posts} />
-    </ContentContainer>
+<ContentContainer>
+  <HeroSection
+    blogName={settings?.blogName}
+    tagline={settings?.tagline}
+    authorBio={settings?.authorBio}
+  />
+  <RecentPostsSection posts={posts} />
+</ContentContainer>
 ```
 
 - [x] **Step 5: 테스트 통과 확인**
@@ -836,19 +960,21 @@ git commit -m "💄 홈 최근 글을 히어로+2up 그리드로 재구성"
 ### Task 7: 글 목록 뷰 전환 (2up 카드 / 아카이브 행)
 
 **Files:**
+
 - Modify: `src/app/(main)/_handlers/post-list-view.handler.tsx`
 - Modify: `src/app/(main)/posts/page.tsx`
 - Test: `src/app/(main)/_handlers/post-list-view.handler.test.tsx` (기존 테스트 유지 확인)
 
 **Interfaces:**
+
 - Consumes: `PostTile2up` (Task 2), `PostArchiveRow` (Task 5), `ContentContainer` (Task 1)
 - Produces: 없음
 
 - [x] **Step 1: 핸들러 구현 교체** — `src/app/(main)/_handlers/post-list-view.handler.tsx`
 
 ```tsx
-import { PostTile2up } from '@/components/post/post-tile-2up';
 import { PostArchiveRow } from '@/components/post/post-archive-row';
+import { PostTile2up } from '@/components/post/post-tile-2up';
 import type { PostWithCategory, TagSummary } from '@/types';
 
 type Props = {
@@ -887,9 +1013,11 @@ export function PostListViewHandler({ posts, viewType, tagsMap = {} }: Props) {
 - [x] **Step 2: 목록 페이지 컨테이너 교체** — `src/app/(main)/posts/page.tsx`
 
 import 목록에 추가:
+
 ```tsx
 import { ContentContainer } from '@/components/layout/content-container';
 ```
+
 `return (`의 최상위 `<div className="mx-auto max-w-3xl px-4 py-8"> ... </div>`에서 여는 태그를 `<ContentContainer className="py-8">`로, 닫는 태그를 `</ContentContainer>`로 교체 (내부 내용은 그대로).
 
 - [x] **Step 3: 테스트 실행** — 핸들러 회귀 확인
@@ -909,11 +1037,13 @@ git commit -m "💄 글 목록 카드뷰 2up·리스트뷰 아카이브 행으�
 ### Task 8: 기존 PostCard/PostListItem 제거
 
 **Files:**
+
 - Delete: `src/components/post/post-card.tsx`
 - Delete: `src/components/post/post-card.test.tsx`
 - Delete: `src/components/post/post-list-item.tsx`
 
 **Interfaces:**
+
 - Consumes: 없음
 - Produces: 없음
 
@@ -947,11 +1077,13 @@ git commit -m "🔥 신규 타일로 대체된 PostCard·PostListItem 제거"
 ### Task 9: 헤더 다크 서페이스 + 푸터 폭 통일
 
 **Files:**
+
 - Modify: `src/components/nav/header.tsx`
 - Modify: `src/components/layout/footer.tsx`
 - Modify: `src/components/nav/nav-links.tsx` (pill active 대비 조정)
 
 **Interfaces:**
+
 - Consumes: `ContentContainer` (Task 1)
 - Produces: 없음
 
@@ -994,18 +1126,18 @@ export function Header() {
 `variant === 'pill'`의 active 배경 `bg-background`(다크 스코프에서 어두워 대비 약함)을 밝은 반투명으로 교체. 아래 라인의 `bg-background`를 `bg-white/15`로 변경:
 
 ```tsx
-              <motion.span
-                layoutId="nav-pill"
-                className="absolute inset-0 rounded-full bg-white/15 shadow-sm"
-                transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-              />
+<motion.span
+  layoutId="nav-pill"
+  className="absolute inset-0 rounded-full bg-white/15 shadow-sm"
+  transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+/>
 ```
 
 - [x] **Step 4: 푸터 폭 통일** — `src/components/layout/footer.tsx`
 
 ```tsx
-import { SITE_NAME } from '@/lib/constants';
 import { ContentContainer } from '@/components/layout/content-container';
+import { SITE_NAME } from '@/lib/constants';
 
 export function Footer() {
   return (
@@ -1036,34 +1168,41 @@ git commit -m "💄 헤더 다크 서페이스 적용 및 푸터 폭 980px 통�
 ### Task 10: 글 상세 본문 653px + 이미지 bleed
 
 **Files:**
+
 - Modify: `src/app/(main)/posts/[slug]/page.tsx`
 - Modify: `src/styles/prose.css`
 
 **Interfaces:**
+
 - Consumes: `--article-width`, `--content-width` (Task 1)
 - Produces: 없음
 
 - [x] **Step 1: 본문 컨테이너 폭 변경** — `src/app/(main)/posts/[slug]/page.tsx`
 
 본문 래퍼의 `max-w-3xl`을 본문 폭 토큰으로 교체. 아래 라인을 변경:
+
 ```tsx
       <div className="relative mx-auto max-w-[var(--article-width)] px-4 py-8">
 ```
+
 (기존: `<div className="relative mx-auto max-w-3xl px-4 py-8">`)
 
 - [x] **Step 2: 이미지 bleed 규칙 추가** — `src/styles/prose.css`
 
 `figure[data-size="full"]` / `img[data-size="full"]`가 653 본문을 넘어 콘텐츠 폭(980)까지 확장되도록 교체. 기존 블록:
+
 ```css
-.prose figure[data-size="full"],
-.prose img[data-size="full"] {
+.prose figure[data-size='full'],
+.prose img[data-size='full'] {
   width: 100%;
 }
 ```
+
 을 다음으로 교체:
+
 ```css
-.prose figure[data-size="full"],
-.prose img[data-size="full"] {
+.prose figure[data-size='full'],
+.prose img[data-size='full'] {
   width: var(--content-width);
   max-width: calc(100vw - 2rem);
   margin-left: 50%;
@@ -1072,6 +1211,7 @@ git commit -m "💄 헤더 다크 서페이스 적용 및 푸터 폭 980px 통�
 ```
 
 그리고 파일 하단 모바일 미디어쿼리에서 bleed 리셋을 추가. 기존:
+
 ```css
 @media (max-width: 640px) {
   .prose figure[data-size],
@@ -1080,15 +1220,17 @@ git commit -m "💄 헤더 다크 서페이스 적용 및 푸터 폭 980px 통�
   }
 }
 ```
+
 을 다음으로 교체:
+
 ```css
 @media (max-width: 640px) {
   .prose figure[data-size],
   .prose img[data-size] {
     width: 100%;
   }
-  .prose figure[data-size="full"],
-  .prose img[data-size="full"] {
+  .prose figure[data-size='full'],
+  .prose img[data-size='full'] {
     margin-left: 0;
     transform: none;
   }
@@ -1113,6 +1255,7 @@ git commit -m "💄 글 상세 본문 653px 및 full 이미지 콘텐츠 폭 ble
 ## Self-Review (작성자 확인 완료)
 
 **Spec coverage**
+
 - §1 토큰 → Task 1 ✅ / §2 컨테이너 → Task 1 + 각 페이지 교체(6·7·9) ✅
 - §3 카드 3종 → Task 2·3·4 ✅ / §6 아카이브 행 → Task 5·7 ✅
 - §4 홈 재구성 → Task 6 ✅ / §5 목록 → Task 7 ✅

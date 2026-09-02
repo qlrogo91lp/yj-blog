@@ -18,7 +18,8 @@ export async function addTag(name: string): Promise<CreateTagResult> {
 
   const trimmed = name.trim();
   if (!trimmed) return { success: false, error: '태그명을 입력해주세요' };
-  if (trimmed.length > 50) return { success: false, error: '태그명은 50자 이하여야 합니다' };
+  if (trimmed.length > 50)
+    return { success: false, error: '태그명은 50자 이하여야 합니다' };
 
   const slug = generateSlug(trimmed);
 

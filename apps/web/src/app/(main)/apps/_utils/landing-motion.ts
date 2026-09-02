@@ -7,7 +7,7 @@ export function mapRange(
   inMin: number,
   inMax: number,
   outMin: number,
-  outMax: number,
+  outMax: number
 ): number {
   if (inMax === inMin) return outMin;
   const t = clamp((value - inMin) / (inMax - inMin), 0, 1);

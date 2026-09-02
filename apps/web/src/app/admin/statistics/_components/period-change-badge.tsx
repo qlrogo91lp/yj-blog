@@ -13,7 +13,8 @@ export function PeriodChangeBadge({ current, previous }: Props) {
     );
   }
 
-  const changePercent = Math.round(((current - previous) / previous) * 1000) / 10;
+  const changePercent =
+    Math.round(((current - previous) / previous) * 1000) / 10;
 
   if (changePercent === 0) {
     return <span className="text-muted-foreground text-xs">변동 없음</span>;

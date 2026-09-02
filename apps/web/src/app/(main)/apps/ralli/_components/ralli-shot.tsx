@@ -10,14 +10,25 @@ type Props = {
   ariaHidden?: boolean;
 };
 
-export function RalliShot({ image, className, sizes, priority = false, ariaHidden }: Props) {
+export function RalliShot({
+  image,
+  className,
+  sizes,
+  priority = false,
+  ariaHidden,
+}: Props) {
   return (
     <Image
       src={image.src}
       alt={image.alt}
       width={image.width}
       height={image.height}
-      sizes={sizes ?? (image.kind === 'watch' ? '(max-width: 768px) 40vw, 26vw' : '(max-width: 768px) 60vw, 30vw')}
+      sizes={
+        sizes ??
+        (image.kind === 'watch'
+          ? '(max-width: 768px) 40vw, 26vw'
+          : '(max-width: 768px) 60vw, 30vw')
+      }
       priority={priority}
       aria-hidden={ariaHidden}
       className={cn('ralli-shot-mask w-auto object-contain', className)}

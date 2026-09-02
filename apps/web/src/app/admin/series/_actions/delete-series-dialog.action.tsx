@@ -19,7 +19,11 @@ type Props = {
   series: Series;
 };
 
-export function DeleteSeriesDialogAction({ open, onOpenChange, series }: Props) {
+export function DeleteSeriesDialogAction({
+  open,
+  onOpenChange,
+  series,
+}: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,9 +48,9 @@ export function DeleteSeriesDialogAction({ open, onOpenChange, series }: Props) 
         <DialogHeader>
           <DialogTitle>시리즈 삭제</DialogTitle>
           <DialogDescription>
-            &ldquo;{series.name}&rdquo; 시리즈를 삭제하시겠습니까? 시리즈에
-            속한 글이 있다면 시리즈 지정이 해제됩니다 (글은 삭제되지
-            않습니다). 이 작업은 되돌릴 수 없습니다.
+            &ldquo;{series.name}&rdquo; 시리즈를 삭제하시겠습니까? 시리즈에 속한
+            글이 있다면 시리즈 지정이 해제됩니다 (글은 삭제되지 않습니다). 이
+            작업은 되돌릴 수 없습니다.
           </DialogDescription>
         </DialogHeader>
         {error && <p className="text-sm text-destructive">{error}</p>}

@@ -31,7 +31,9 @@ vi.mock('@/db/queries/posts', () => ({
   selectPostById: (...args: unknown[]) => selectPostById(...args),
 }));
 
-const markdownToHtml = vi.fn(async (markdown: string) => `<p>변환됨: ${markdown}</p>`);
+const markdownToHtml = vi.fn(
+  async (markdown: string) => `<p>변환됨: ${markdown}</p>`
+);
 vi.mock('@/lib/markdown', () => ({
   markdownToHtml: (...args: [string]) => markdownToHtml(...args),
 }));
@@ -109,7 +111,10 @@ describe('EditPostPage — contentFormat에 따른 마크다운→HTML 변환 �
   });
 
   it('contentFormat이 markdown이면 markdownToHtml로 변환한 결과를 PostInitHandler에 전달한다', async () => {
-    const post = buildPost({ contentFormat: 'markdown', content: '# 마크다운 본문' });
+    const post = buildPost({
+      contentFormat: 'markdown',
+      content: '# 마크다운 본문',
+    });
     selectPostById.mockResolvedValue(post);
 
     const ui = await EditPostPage({ params: Promise.resolve({ id: '1' }) });
@@ -123,7 +128,10 @@ describe('EditPostPage — contentFormat에 따른 마크다운→HTML 변환 �
   });
 
   it('contentFormat이 html이면 markdownToHtml을 호출하지 않고 content를 그대로 전달한다', async () => {
-    const post = buildPost({ contentFormat: 'html', content: '<p>HTML 본문</p>' });
+    const post = buildPost({
+      contentFormat: 'html',
+      content: '<p>HTML 본문</p>',
+    });
     selectPostById.mockResolvedValue(post);
 
     const ui = await EditPostPage({ params: Promise.resolve({ id: '1' }) });

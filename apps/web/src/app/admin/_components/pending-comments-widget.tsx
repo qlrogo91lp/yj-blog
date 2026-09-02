@@ -18,9 +18,7 @@ export function PendingCommentsWidget({ comments, totalCount }: Props) {
     <div className="rounded-2xl border p-4">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold">새 댓글</h2>
-        <span className="bg-muted rounded-full px-2 text-xs">
-          {totalCount}
-        </span>
+        <span className="bg-muted rounded-full px-2 text-xs">{totalCount}</span>
       </div>
 
       {comments.length === 0 ? (

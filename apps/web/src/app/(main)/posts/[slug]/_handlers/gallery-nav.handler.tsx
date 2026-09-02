@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, type RefObject } from 'react';
+import { type RefObject, useEffect } from 'react';
 
 type Props = {
   containerRef: RefObject<HTMLElement | null>;
@@ -27,7 +27,10 @@ export function GalleryNavHandler({ containerRef }: Props) {
       const makeButton = (direction: 'prev' | 'next') => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.setAttribute('aria-label', direction === 'prev' ? '이전 사진' : '다음 사진');
+        button.setAttribute(
+          'aria-label',
+          direction === 'prev' ? '이전 사진' : '다음 사진'
+        );
         button.className = [
           'absolute top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center',
           'rounded-full border bg-background/80 backdrop-blur-sm transition-opacity',
@@ -40,7 +43,10 @@ export function GalleryNavHandler({ containerRef }: Props) {
             : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
         button.addEventListener('click', () => {
           gallery.scrollBy({
-            left: direction === 'prev' ? -gallery.clientWidth * 0.8 : gallery.clientWidth * 0.8,
+            left:
+              direction === 'prev'
+                ? -gallery.clientWidth * 0.8
+                : gallery.clientWidth * 0.8,
             behavior: 'smooth',
           });
         });

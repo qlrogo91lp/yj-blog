@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { PostTileHero } from '@/components/post/post-tile-hero';
 import { PostTile2up } from '@/components/post/post-tile-2up';
+import { PostTileHero } from '@/components/post/post-tile-hero';
 import type { PostWithCategory } from '@/types';
 
 type Props = {
@@ -22,7 +22,9 @@ export function RecentPostsSection({ posts }: Props) {
         </Link>
       </div>
       {posts.length === 0 ? (
-        <p className="py-12 text-center text-muted-foreground">아직 작성된 글이 없습니다.</p>
+        <p className="py-12 text-center text-muted-foreground">
+          아직 작성된 글이 없습니다.
+        </p>
       ) : (
         <div className="flex flex-col gap-9">
           <PostTileHero post={hero} priority />

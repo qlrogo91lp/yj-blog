@@ -5,13 +5,25 @@ import type { PostWithCategory } from '@/types';
 import { PostTileHero } from './post-tile-hero';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockPost = {
@@ -36,7 +48,10 @@ const mockPost = {
 describe('PostTileHero', () => {
   it('제목을 글 상세 링크로 렌더링한다', () => {
     render(<PostTileHero post={mockPost} />);
-    expect(screen.getByRole('link', { name: '히어로 글' })).toHaveAttribute('href', '/posts/hero-post');
+    expect(screen.getByRole('link', { name: '히어로 글' })).toHaveAttribute(
+      'href',
+      '/posts/hero-post'
+    );
   });
 
   it('카테고리명을 표시한다', () => {

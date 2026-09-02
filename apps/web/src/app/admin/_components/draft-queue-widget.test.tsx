@@ -3,14 +3,26 @@ import { describe, expect, it, vi } from 'vitest';
 import { DraftQueueWidget } from './draft-queue-widget';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 const drafts = [
-  { id: 1, title: '키보드 배열 바꾸고 3개월', updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
-  { id: 2, title: '', updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
+  {
+    id: 1,
+    title: '키보드 배열 바꾸고 3개월',
+    updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+  },
+  {
+    id: 2,
+    title: '',
+    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+  },
 ];
 
 describe('DraftQueueWidget', () => {
@@ -42,7 +54,9 @@ describe('DraftQueueWidget', () => {
 
   it('제목이 비면 (제목 없음)으로 표시한다', () => {
     render(<DraftQueueWidget drafts={drafts} totalCount={2} />);
-    expect(screen.getByRole('link', { name: /\(제목 없음\)/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /\(제목 없음\)/ })
+    ).toBeInTheDocument();
   });
 
   it('임시저장 글이 없으면 빈 상태를 보여준다', () => {

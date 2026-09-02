@@ -7,6 +7,7 @@
 ## 규칙 근거
 
 `.claude/rules/coding-conventions.md` (CRUD 동사 컨벤션):
+
 - DB 쿼리(`src/db/queries`)는 **SQL 동사** `insert/select/update/delete`를 쓴다.
 
 ## 작업
@@ -15,31 +16,31 @@
 
 `src/db/queries/` 내 모든 `get`-prefix 읽기 함수.
 
-| 현재 | 변경 |
-|---|---|
-| `getPosts` | `selectPosts` |
-| `getPostBySlug` | `selectPostBySlug` |
-| `getPostById` | `selectPostById` |
-| `getCategoryBySlug` | `selectCategoryBySlug` |
-| `getCommentsByPostId` | `selectCommentsByPostId` |
-| `getCommentById` | `selectCommentById` |
-| `getTagsByPostId` | `selectTagsByPostId` |
-| `getTagsByPostIds` | `selectTagsByPostIds` |
-| `getPopularPosts` | `selectPopularPosts` |
-| `getStatsSummary` | `selectStatsSummary` |
-| `getTopReferrers` | `selectTopReferrers` |
-| `getReferrersByPost` | `selectReferrersByPost` |
+| 현재                    | 변경                       |
+| ----------------------- | -------------------------- |
+| `getPosts`              | `selectPosts`              |
+| `getPostBySlug`         | `selectPostBySlug`         |
+| `getPostById`           | `selectPostById`           |
+| `getCategoryBySlug`     | `selectCategoryBySlug`     |
+| `getCommentsByPostId`   | `selectCommentsByPostId`   |
+| `getCommentById`        | `selectCommentById`        |
+| `getTagsByPostId`       | `selectTagsByPostId`       |
+| `getTagsByPostIds`      | `selectTagsByPostIds`      |
+| `getPopularPosts`       | `selectPopularPosts`       |
+| `getStatsSummary`       | `selectStatsSummary`       |
+| `getTopReferrers`       | `selectTopReferrers`       |
+| `getReferrersByPost`    | `selectReferrersByPost`    |
 | `getDailyStatsForRange` | `selectDailyStatsForRange` |
-| `getPostDailyViews` | `selectPostDailyViews` |
+| `getPostDailyViews`     | `selectPostDailyViews`     |
 
 > 위 목록은 `grep -rhoE "export (async )?function get[A-Za-z]+" src/db/queries` 로 최종 재확인 후 진행.
 
 ### `create*` → `insert*`
 
-| 현재 | 변경 |
-|---|---|
+| 현재             | 변경             |
+| ---------------- | ---------------- |
 | `createCategory` | `insertCategory` |
-| `createComment` | `insertComment` |
+| `createComment`  | `insertComment`  |
 
 ### 이미 규칙에 맞음 (유지)
 

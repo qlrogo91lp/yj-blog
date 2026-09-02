@@ -30,7 +30,9 @@ describe('ImageUploadingNodeViewAction', () => {
   });
 
   it('unmount 시 URL.revokeObjectURL을 호출한다', () => {
-    const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
+    const revoke = vi
+      .spyOn(URL, 'revokeObjectURL')
+      .mockImplementation(() => {});
     const { unmount } = render(<ImageUploadingNodeViewAction {...baseProps} />);
     unmount();
     expect(revoke).toHaveBeenCalledWith('blob:preview');

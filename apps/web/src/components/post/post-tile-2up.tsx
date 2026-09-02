@@ -1,5 +1,5 @@
-import { PostTileVertical } from './post-tile-vertical';
 import type { PostWithCategory, TagSummary } from '@/types';
+import { PostTileVertical } from './post-tile-vertical';
 
 type Props = {
   post: PostWithCategory;

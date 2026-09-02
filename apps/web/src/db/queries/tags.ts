@@ -50,7 +50,10 @@ export const getTagBySlug = unstable_cache(
  * 특정 태그가 붙은 발행 글 목록 (category join, 최신 발행 순)
  */
 export const getPostsByTag = unstable_cache(
-  async (tagId: number, { page = 1, limit = 10 }: { page?: number; limit?: number } = {}) => {
+  async (
+    tagId: number,
+    { page = 1, limit = 10 }: { page?: number; limit?: number } = {}
+  ) => {
     const offset = (page - 1) * limit;
 
     const [items, totalResult] = await Promise.all([
@@ -87,7 +90,9 @@ export const getPostsByTag = unstable_cache(
 /**
  * 특정 글에 연결된 태그 목록
  */
-export async function selectTagsByPostId(postId: number): Promise<TagSummary[]> {
+export async function selectTagsByPostId(
+  postId: number
+): Promise<TagSummary[]> {
   return db
     .select({ id: tags.id, name: tags.name, slug: tags.slug })
     .from(postTags)

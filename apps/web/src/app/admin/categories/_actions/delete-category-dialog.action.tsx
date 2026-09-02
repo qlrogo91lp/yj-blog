@@ -19,7 +19,11 @@ type Props = {
   category: Category;
 };
 
-export function DeleteCategoryDialogAction({ open, onOpenChange, category }: Props) {
+export function DeleteCategoryDialogAction({
+  open,
+  onOpenChange,
+  category,
+}: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

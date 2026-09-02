@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { flushSync } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import { useNProgress } from '@tanem/react-nprogress';
+import { flushSync } from 'react-dom';
 
 /**
  * 전환이 이 시간보다 빨리 끝나면 바를 아예 띄우지 않는다.
@@ -26,14 +26,15 @@ const maxDurationMs = 10000;
 export function shouldStartProgress(
   event: MouseEvent,
   anchor: HTMLAnchorElement | null,
-  currentPathname: string,
+  currentPathname: string
 ): boolean {
   if (!anchor) return false;
   if (event.defaultPrevented) return false;
 
   // 좌클릭 외에는 브라우저가 새 탭·컨텍스트 메뉴 등으로 처리한다.
   if (event.button !== 0) return false;
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+    return false;
 
   if (anchor.target && anchor.target !== '_self') return false;
   if (anchor.hasAttribute('download')) return false;
@@ -47,7 +48,8 @@ export function shouldStartProgress(
   if (url.hash && url.pathname === currentPathname) return false;
 
   // 같은 경로 재클릭은 전환이 일어나지 않아 완료 신호도 오지 않는다.
-  if (url.pathname === currentPathname && url.search === window.location.search) return false;
+  if (url.pathname === currentPathname && url.search === window.location.search)
+    return false;
 
   return true;
 }
@@ -95,7 +97,8 @@ export function NavigationProgress() {
     };
 
     document.addEventListener('click', handleClick, { capture: true });
-    return () => document.removeEventListener('click', handleClick, { capture: true });
+    return () =>
+      document.removeEventListener('click', handleClick, { capture: true });
   }, []);
 
   useEffect(() => {

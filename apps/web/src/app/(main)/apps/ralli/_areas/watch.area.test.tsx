@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { WatchArea } from './watch.area';
 import { ralliWatchSection } from '../_utils/ralli-content';
+import { WatchArea } from './watch.area';
 
 vi.mock('next/image', () => ({
   default: ({
@@ -17,14 +17,18 @@ vi.mock('next/image', () => ({
 describe('WatchArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
     render(<WatchArea />);
-    expect(screen.getByRole('heading', { name: 'All on your wrist.' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'All on your wrist.' })
+    ).toBeInTheDocument();
     expect(screen.getByText('01 — ON THE COURT')).toBeInTheDocument();
   });
 
   it('3개 스텝을 모두 렌더한다', () => {
     render(<WatchArea />);
     expect(screen.getByText('Score without your phone')).toBeInTheDocument();
-    expect(screen.getByText('One tap from your watch face')).toBeInTheDocument();
+    expect(
+      screen.getByText('One tap from your watch face')
+    ).toBeInTheDocument();
     expect(screen.getByText('Live on the Lock Screen')).toBeInTheDocument();
   });
 
@@ -35,8 +39,14 @@ describe('WatchArea', () => {
 
   it('초기 활성 스텝은 첫 번째다', () => {
     render(<WatchArea />);
-    expect(screen.getByTestId('ralli-step-score')).toHaveAttribute('data-active', 'true');
-    expect(screen.getByTestId('ralli-step-live')).toHaveAttribute('data-active', 'false');
+    expect(screen.getByTestId('ralli-step-score')).toHaveAttribute(
+      'data-active',
+      'true'
+    );
+    expect(screen.getByTestId('ralli-step-live')).toHaveAttribute(
+      'data-active',
+      'false'
+    );
   });
 
   it('비활성 이미지는 스크린 리더에서 숨긴다', () => {

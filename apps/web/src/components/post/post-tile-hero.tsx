@@ -35,7 +35,9 @@ export function PostTileHero({ post, priority = false }: Props) {
       <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8">
         <div className="mb-2 flex items-center gap-2 text-[11px] font-bold tracking-widest text-white/80 uppercase">
           {post.category && <span>{post.category.name}</span>}
-          {post.category && publishedAt && <span className="text-white/40">·</span>}
+          {post.category && publishedAt && (
+            <span className="text-white/40">·</span>
+          )}
           {publishedAt && <time>{publishedAt}</time>}
         </div>
         <h2 className="max-w-2xl text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl">

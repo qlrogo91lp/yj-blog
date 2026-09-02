@@ -1,4 +1,7 @@
-import { getAllCommentsForAdmin, getPendingReplyCount } from '@/db/queries/comments';
+import {
+  getAllCommentsForAdmin,
+  getPendingReplyCount,
+} from '@/db/queries/comments';
 import { AdminPageHeader } from '../_components/admin-page-header';
 import { CommentCardAction } from './_actions/comment-card.action';
 

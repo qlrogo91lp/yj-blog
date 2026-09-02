@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { NodeViewProps } from '@tiptap/core';
 import { describe, expect, it, vi } from 'vitest';
 import { GalleryNodeView } from './gallery-node-view';
@@ -37,7 +37,9 @@ describe('GalleryNodeView', () => {
 
   it('오른쪽 이동은 배열 순서를 바꾼다', () => {
     const { updateAttributes } = setup();
-    fireEvent.click(screen.getAllByRole('button', { name: '오른쪽으로 이동' })[0]);
+    fireEvent.click(
+      screen.getAllByRole('button', { name: '오른쪽으로 이동' })[0]
+    );
     expect(updateAttributes).toHaveBeenCalledWith({
       images: [images[1], images[0], images[2]],
     });
@@ -45,7 +47,9 @@ describe('GalleryNodeView', () => {
 
   it('삭제는 해당 항목만 제거한다', () => {
     const { updateAttributes } = setup();
-    fireEvent.click(screen.getAllByRole('button', { name: '슬라이드 삭제' })[1]);
+    fireEvent.click(
+      screen.getAllByRole('button', { name: '슬라이드 삭제' })[1]
+    );
     expect(updateAttributes).toHaveBeenCalledWith({
       images: [images[0], images[2]],
     });
@@ -62,13 +66,19 @@ describe('GalleryNodeView', () => {
 
   it('첫 슬라이드의 왼쪽 이동과 마지막 슬라이드의 오른쪽 이동은 비활성이다', () => {
     setup();
-    expect(screen.getAllByRole('button', { name: '왼쪽으로 이동' })[0]).toBeDisabled();
-    expect(screen.getAllByRole('button', { name: '오른쪽으로 이동' })[2]).toBeDisabled();
+    expect(
+      screen.getAllByRole('button', { name: '왼쪽으로 이동' })[0]
+    ).toBeDisabled();
+    expect(
+      screen.getAllByRole('button', { name: '오른쪽으로 이동' })[2]
+    ).toBeDisabled();
   });
 
   it('선택되지 않으면 조작 바를 렌더하지 않는다', () => {
     setup({ selected: false } as unknown as Partial<NodeViewProps>);
-    expect(screen.queryByRole('button', { name: '슬라이드 삭제' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '슬라이드 삭제' })
+    ).not.toBeInTheDocument();
   });
 
   it('갤러리 wrapper가 드래그 핸들이다 (data-drag-handle)', () => {
@@ -80,8 +90,10 @@ describe('GalleryNodeView', () => {
           deleteNode: vi.fn(),
           selected: false,
         } as unknown as NodeViewProps)}
-      />,
+      />
     );
-    expect(container.querySelector('[data-gallery]')).toHaveAttribute('data-drag-handle');
+    expect(container.querySelector('[data-gallery]')).toHaveAttribute(
+      'data-drag-handle'
+    );
   });
 });

@@ -68,6 +68,9 @@ describe('editPostStatus', () => {
 
     const result = await editPostStatus(7, 'published');
 
-    expect(result).toEqual({ success: false, error: '상태 변경에 실패했습니다' });
+    expect(result).toEqual({
+      success: false,
+      error: '상태 변경에 실패했습니다',
+    });
   });
 });

@@ -6,7 +6,7 @@ import { auth } from '@clerk/nextjs/server';
 const MAX_CONTENT_LENGTH = 4000;
 
 export async function generateExcerpt(
-  contentHtml: string,
+  contentHtml: string
 ): Promise<{ excerpt: string }> {
   const { userId } = await auth();
   if (!userId) throw new Error('인증이 필요합니다');

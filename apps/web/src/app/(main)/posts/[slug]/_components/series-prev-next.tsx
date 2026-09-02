@@ -11,7 +11,10 @@ export function SeriesPrevNext({ prev, next }: Props) {
   if (!prev && !next) return null;
 
   return (
-    <nav aria-label="시리즈 내 글 이동" className="mt-10 grid gap-3 sm:grid-cols-2">
+    <nav
+      aria-label="시리즈 내 글 이동"
+      className="mt-10 grid gap-3 sm:grid-cols-2"
+    >
       {prev ? (
         <Link
           href={`/posts/${prev.slug}`}

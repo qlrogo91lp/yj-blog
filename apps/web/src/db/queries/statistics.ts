@@ -105,7 +105,10 @@ export async function selectTopReferrers(
   // 그래야 대시보드(limit=3)와 유입경로 페이지(limit=20)가 같은 기간에 대해
   // 같은 비율을 보여준다. 그 대가로 그룹이 21개를 넘으면 유입경로 페이지의
   // 비율 합이 100%를 밑돌 수 있는데, 이는 의도된 정직한 결과다.
-  const population = [...groups.values()].reduce((acc, row) => acc + row.count, 0);
+  const population = [...groups.values()].reduce(
+    (acc, row) => acc + row.count,
+    0
+  );
 
   const sorted = [...groups.values()]
     .sort((a, b) => b.count - a.count)
@@ -164,8 +167,8 @@ export async function selectPostDailyViews(postId: number, days = 30) {
       and(
         isNotNull(referrers.postId),
         eq(referrers.postId, postId),
-        gte(referrers.visitedAt, since),
-      ),
+        gte(referrers.visitedAt, since)
+      )
     )
     .groupBy(sql`date_trunc('day', ${referrers.visitedAt})::date`)
     .orderBy(sql`date_trunc('day', ${referrers.visitedAt})::date`);

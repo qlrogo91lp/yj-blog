@@ -5,12 +5,17 @@ import { AdminPageHeader } from './admin-page-header';
 describe('AdminPageHeader', () => {
   it('타이틀을 h1으로 렌더한다', () => {
     render(<AdminPageHeader title="카테고리" />);
-    expect(screen.getByRole('heading', { level: 1, name: '카테고리' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: '카테고리' })
+    ).toBeInTheDocument();
   });
 
   it('설명을 함께 렌더한다', () => {
     render(
-      <AdminPageHeader title="카테고리" description="글 3개가 카테고리에 묶여 있습니다" />
+      <AdminPageHeader
+        title="카테고리"
+        description="글 3개가 카테고리에 묶여 있습니다"
+      />
     );
     expect(
       screen.getByText('글 3개가 카테고리에 묶여 있습니다')

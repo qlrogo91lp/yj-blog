@@ -62,21 +62,21 @@ Task 0~5 전체 완료, subagent-driven-development로 태스크별 fresh 서브
 
 ## 파일 구조
 
-| 파일 | 변경 |
-|---|---|
-| `src/app/admin/posts/new/_actions/markdown-editor.action.tsx` | **삭제** |
-| `src/app/admin/posts/new/_handlers/editor-view.handler.tsx` | **삭제** (모드 분기 불필요) |
-| `src/app/admin/posts/new/_store.ts` | `mode`·`setMode`·`EditorMode`·`contentFormat`·`setContentFormat` 제거, `initializePost` 시그니처에서 `contentFormat` 제거 |
-| `src/app/admin/posts/new/_store.test.ts` | `setMode`·`setContentFormat` 케이스 제거, `initializePost` 호출부에서 `contentFormat` 제거 |
-| `src/app/admin/posts/new/_providers/auto-save.provider.test.tsx` | `initializePost` 호출부에서 `contentFormat` 제거 |
-| `src/app/admin/posts/new/_actions/editor-toolbar.action.tsx` | 모드 `Select`·`handleModeChange`·`TurndownService`·`mode==='markdown'` 분기 제거 |
-| `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx` | `setContentFormat` 호출 제거 |
-| `src/app/admin/posts/new/_actions/_preview/preview.action.tsx` | `contentFormat` 분기·`escapeHtml` 제거, 항상 HTML 렌더 |
-| `src/app/admin/posts/new/_services/save-post.ts` | `SavePostInput.contentFormat` 제거, DB에는 `'html'` 고정 저장 |
-| `src/app/admin/posts/new/page.tsx` | `EditorViewHandler` → `WysiwygEditorAction` 직접 배치 |
-| `src/app/admin/posts/[id]/edit/page.tsx` | 마크다운 글이면 `markdownToHtml`로 변환한 `content`를 `PostInitHandler`에 전달 |
-| `src/app/admin/posts/[id]/edit/_handlers/post-init.handler.tsx` | props에 `content: string` 추가(변환된 HTML), `contentFormat` 전달 제거 |
-| `package.json` | `turndown`·`@types/turndown` 제거 |
+| 파일                                                             | 변경                                                                                                                      |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/admin/posts/new/_actions/markdown-editor.action.tsx`    | **삭제**                                                                                                                  |
+| `src/app/admin/posts/new/_handlers/editor-view.handler.tsx`      | **삭제** (모드 분기 불필요)                                                                                               |
+| `src/app/admin/posts/new/_store.ts`                              | `mode`·`setMode`·`EditorMode`·`contentFormat`·`setContentFormat` 제거, `initializePost` 시그니처에서 `contentFormat` 제거 |
+| `src/app/admin/posts/new/_store.test.ts`                         | `setMode`·`setContentFormat` 케이스 제거, `initializePost` 호출부에서 `contentFormat` 제거                                |
+| `src/app/admin/posts/new/_providers/auto-save.provider.test.tsx` | `initializePost` 호출부에서 `contentFormat` 제거                                                                          |
+| `src/app/admin/posts/new/_actions/editor-toolbar.action.tsx`     | 모드 `Select`·`handleModeChange`·`TurndownService`·`mode==='markdown'` 분기 제거                                          |
+| `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx`     | `setContentFormat` 호출 제거                                                                                              |
+| `src/app/admin/posts/new/_actions/_preview/preview.action.tsx`   | `contentFormat` 분기·`escapeHtml` 제거, 항상 HTML 렌더                                                                    |
+| `src/app/admin/posts/new/_services/save-post.ts`                 | `SavePostInput.contentFormat` 제거, DB에는 `'html'` 고정 저장                                                             |
+| `src/app/admin/posts/new/page.tsx`                               | `EditorViewHandler` → `WysiwygEditorAction` 직접 배치                                                                     |
+| `src/app/admin/posts/[id]/edit/page.tsx`                         | 마크다운 글이면 `markdownToHtml`로 변환한 `content`를 `PostInitHandler`에 전달                                            |
+| `src/app/admin/posts/[id]/edit/_handlers/post-init.handler.tsx`  | props에 `content: string` 추가(변환된 HTML), `contentFormat` 전달 제거                                                    |
+| `package.json`                                                   | `turndown`·`@types/turndown` 제거                                                                                         |
 
 ---
 
@@ -100,11 +100,13 @@ Expected: 전부 PASS
 ### Task 1: 스토어에서 `mode`·`contentFormat` 제거
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_store.ts`
 - Modify: `src/app/admin/posts/new/_store.test.ts`
 - Modify: `src/app/admin/posts/new/_providers/auto-save.provider.test.tsx`
 
 **Interfaces:**
+
 - Produces:
   - `State`에서 `mode`, `contentFormat` 삭제. `Action`에서 `setMode`, `setContentFormat` 삭제. `EditorMode` 타입 삭제.
   - `initializePost(data)`의 `data`에서 `contentFormat` 삭제.
@@ -113,19 +115,20 @@ Expected: 전부 PASS
 - [x] **Step 1: 테스트 먼저 수정 (실패 상태로 만들기)**
 
 `src/app/admin/posts/new/_store.test.ts`:
+
 - "changeCount를 1 올린다" `it.each` 목록에서 `setContentFormat` 행 삭제(있다면).
 - "changeCount를 올리지 않는다" `it.each` 목록에서 `['setMode', ...]` 행 삭제.
 - 모든 `initializePost({...})` 호출에서 `contentFormat: 'html',` 줄 삭제.
 - 아래 테스트 추가:
 
 ```ts
-  it('스토어에 mode·contentFormat 필드가 없다', () => {
-    const state = useNewPostStore.getState() as Record<string, unknown>;
-    expect('mode' in state).toBe(false);
-    expect('contentFormat' in state).toBe(false);
-    expect('setMode' in state).toBe(false);
-    expect('setContentFormat' in state).toBe(false);
-  });
+it('스토어에 mode·contentFormat 필드가 없다', () => {
+  const state = useNewPostStore.getState() as Record<string, unknown>;
+  expect('mode' in state).toBe(false);
+  expect('contentFormat' in state).toBe(false);
+  expect('setMode' in state).toBe(false);
+  expect('setContentFormat' in state).toBe(false);
+});
 ```
 
 `src/app/admin/posts/new/_providers/auto-save.provider.test.tsx`: 모든 `initializePost({...})` 호출에서 `contentFormat: 'html',` 줄 삭제.
@@ -138,6 +141,7 @@ Expected: FAIL — "mode·contentFormat 필드가 없다" 테스트 실패 (`'mo
 - [x] **Step 3: 스토어 수정**
 
 `src/app/admin/posts/new/_store.ts`에서:
+
 - `type EditorMode = 'wysiwyg' | 'markdown';` 삭제
 - `State`에서 `contentFormat: 'markdown' | 'html';`, `mode: EditorMode;` 삭제
 - `Action`에서 `setContentFormat`, `setMode` 삭제; `initializePost`의 data 타입에서 `contentFormat: 'markdown' | 'html';` 삭제
@@ -163,6 +167,7 @@ git commit -m "♻️ refactor: 에디터 스토어에서 mode·contentFormat �
 ### Task 2: 마크다운 에디터·모드 분기 컴포넌트 삭제, 툴바 정리
 
 **Files:**
+
 - Delete: `src/app/admin/posts/new/_actions/markdown-editor.action.tsx`
 - Delete: `src/app/admin/posts/new/_handlers/editor-view.handler.tsx`
 - Modify: `src/app/admin/posts/new/_actions/editor-toolbar.action.tsx`
@@ -179,6 +184,7 @@ git rm src/app/admin/posts/new/_actions/markdown-editor.action.tsx src/app/admin
 - [x] **Step 2: `editor-toolbar.action.tsx` 정리**
 
 다음을 제거한다:
+
 - `import TurndownService from 'turndown';`
 - `import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';` — **주의**: 제목 스타일(본문/제목1~3) Select는 남으므로 이 import는 유지한다. 모드 Select만 제거.
 - `const mode = useNewPostStore((s) => s.mode);`
@@ -199,6 +205,7 @@ git rm src/app/admin/posts/new/_actions/markdown-editor.action.tsx src/app/admin
 ```tsx
 'use client';
 
+import { ArticleContainer } from '@/components/layout/article-container';
 import {
   Dialog,
   DialogContent,
@@ -206,7 +213,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ArticleContainer } from '@/components/layout/article-container';
 import { useNewPostStore } from '../../_store';
 
 type Props = {
@@ -223,7 +229,9 @@ export function PreviewDialogAction({ open, onOpenChange }: Props) {
       <DialogContent className="max-w-[80vw] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>미리보기</DialogTitle>
-          <DialogDescription className="sr-only">작성 중인 글의 미리보기입니다</DialogDescription>
+          <DialogDescription className="sr-only">
+            작성 중인 글의 미리보기입니다
+          </DialogDescription>
         </DialogHeader>
         <ArticleContainer className="mt-4">
           <article>
@@ -264,11 +272,13 @@ git commit -m "🔥 remove: 마크다운 에디터·모드 전환 UI 제거, 미
 ### Task 3: 저장은 HTML 고정, 수정 페이지는 마크다운 글을 HTML로 변환해 주입
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_services/save-post.ts`
 - Modify: `src/app/admin/posts/[id]/edit/page.tsx`
 - Modify: `src/app/admin/posts/[id]/edit/_handlers/post-init.handler.tsx`
 
 **Interfaces:**
+
 - Consumes: `markdownToHtml(markdown: string): Promise<string>` (`src/lib/markdown.ts`, 기존)
 - Produces:
   - `SavePostInput`에서 `contentFormat` 제거. DB `contentFormat`은 항상 `'html'`.
@@ -280,7 +290,7 @@ git commit -m "🔥 remove: 마크다운 에디터·모드 전환 UI 제거, 미
 - `postFormSchema.safeParse(input)` 호출 전에 입력을 보강한다(스키마의 `contentFormat`은 필수 enum이므로):
 
 ```ts
-  const parsed = postFormSchema.safeParse({ ...input, contentFormat: 'html' });
+const parsed = postFormSchema.safeParse({ ...input, contentFormat: 'html' });
 ```
 
 - destructuring의 `contentFormat`은 그대로 두고 UPDATE/INSERT 양쪽에서 `contentFormat`(항상 `'html'`)을 계속 사용한다. → 마크다운 글도 한 번 저장하면 `'html'`로 전환된다.
@@ -334,12 +344,12 @@ export function PostInitHandler({ post, content, initialTagIds }: Props) {
 - `if (!post) notFound();` 다음에 추가:
 
 ```tsx
-  // 마크다운 포맷 글은 편집기(WYSIWYG 전용)에 넣기 위해 HTML로 변환한다.
-  // 사용자가 편집·저장하면 그 시점부터 contentFormat이 'html'로 전환된다.
-  const editorContent =
-    post.contentFormat === 'markdown'
-      ? await markdownToHtml(post.content)
-      : post.content;
+// 마크다운 포맷 글은 편집기(WYSIWYG 전용)에 넣기 위해 HTML로 변환한다.
+// 사용자가 편집·저장하면 그 시점부터 contentFormat이 'html'로 전환된다.
+const editorContent =
+  post.contentFormat === 'markdown'
+    ? await markdownToHtml(post.content)
+    : post.content;
 ```
 
 - `<PostInitHandler post={post} initialTagIds={...} />` → `<PostInitHandler post={post} content={editorContent} initialTagIds={postTagList.map((t) => t.id)} />`
@@ -362,6 +372,7 @@ git commit -m "♻️ refactor: 저장 포맷을 html로 고정하고 마크다�
 ### Task 4: `turndown` 의존성 제거
 
 **Files:**
+
 - Modify: `package.json`, `package-lock.json`
 
 - [x] **Step 1: 참조가 남아 있지 않은지 확인**

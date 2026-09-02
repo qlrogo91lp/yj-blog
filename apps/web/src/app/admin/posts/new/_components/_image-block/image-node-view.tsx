@@ -1,6 +1,6 @@
 'use client';
 
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
+import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
 
@@ -9,7 +9,11 @@ import type { ImageAlign, ImageSize } from '../../_utils/image-extension';
  * - 툴바는 여기 두지 않는다 — 에디터 레벨 ImageBubbleMenuAction이 담당(폭·overflow 문제 회피).
  * - <img>가 드래그 핸들: TipTap React NodeView는 [data-drag-handle]에서 시작한 드래그만 노드 이동으로 처리한다.
  */
-export function ImageNodeView({ node, updateAttributes, selected }: NodeViewProps) {
+export function ImageNodeView({
+  node,
+  updateAttributes,
+  selected,
+}: NodeViewProps) {
   const size = (node.attrs.size as ImageSize) ?? 'default';
   const align = (node.attrs.align as ImageAlign) ?? 'center';
   const src = node.attrs.src as string;
@@ -32,7 +36,7 @@ export function ImageNodeView({ node, updateAttributes, selected }: NodeViewProp
         data-drag-handle
         className={cn(
           'cursor-grab active:cursor-grabbing',
-          selected && 'ring-2 ring-primary ring-offset-2',
+          selected && 'ring-2 ring-primary ring-offset-2'
         )}
       />
       {(selected || caption) && (

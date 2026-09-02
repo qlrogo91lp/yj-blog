@@ -11,7 +11,7 @@ export function RalliSectionLabel({ children, className }: Props) {
     <p
       className={cn(
         'mb-3.5 text-[11px] font-bold tracking-[0.22em] text-ralli-lime',
-        className,
+        className
       )}
     >
       {children}

@@ -25,7 +25,9 @@ vi.mock('@clerk/nextjs', () => ({
   SignedOut: () => null,
   ClerkLoading: () => null,
   ClerkLoaded: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  SignInButton: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  SignInButton: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
   UserButton: () => <div data-testid="user-button" />,
 }));
 
@@ -43,6 +45,8 @@ describe('HeaderAuthButtons', () => {
   it('로그인 상태에서 UserButton을 렌더하고 로그인 버튼은 렌더하지 않는다', () => {
     render(<HeaderAuthButtons />);
     expect(screen.getByTestId('user-button')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: '로그인' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '로그인' })
+    ).not.toBeInTheDocument();
   });
 });

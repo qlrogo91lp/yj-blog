@@ -2,12 +2,12 @@
 
 import { motion, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useSectionProgress } from '../../_hooks/useSectionProgress';
+import { Reveal } from '../../_actions/reveal.action';
 import { useIsMobile } from '../../_hooks/useIsMobile';
-import { ralliReplaySection } from '../_utils/ralli-content';
+import { useSectionProgress } from '../../_hooks/useSectionProgress';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from '../../_actions/reveal.action';
+import { ralliReplaySection } from '../_utils/ralli-content';
 
 /** 데스크톱 드리프트 이동 거리. 갤러리 전체 폭에서 뷰포트를 뺀 만큼 왼쪽으로 민다. */
 const DRIFT_VW = -55;
@@ -31,7 +31,10 @@ function ReplayGalleryShots() {
 }
 
 export function ReplayArea() {
-  const { ref, progress, isStatic } = useSectionProgress(['start end', 'end start'], false);
+  const { ref, progress, isStatic } = useSectionProgress(
+    ['start end', 'end start'],
+    false
+  );
   const isMobile = useIsMobile();
   const driftX = useTransform(progress, [0, 1], ['0vw', `${DRIFT_VW}vw`]);
 
@@ -52,7 +55,7 @@ export function ReplayArea() {
 
       <div
         className={cn(
-          useNativeScroll && 'snap-x snap-mandatory overflow-x-auto pb-4',
+          useNativeScroll && 'snap-x snap-mandatory overflow-x-auto pb-4'
         )}
       >
         {useNativeScroll ? (
@@ -70,7 +73,9 @@ export function ReplayArea() {
         {ralliReplaySection.notes.map((note, index) => (
           <Reveal key={note.id} delay={index * 0.08}>
             <p className="mb-1.25 text-[16.5px] font-semibold">{note.title}</p>
-            <p className="text-[14.5px] leading-[1.45] text-ralli-fg/55">{note.body}</p>
+            <p className="text-[14.5px] leading-[1.45] text-ralli-fg/55">
+              {note.body}
+            </p>
           </Reveal>
         ))}
       </div>

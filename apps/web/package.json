@@ -1,5 +1,5 @@
 {
-  "name": "yj-blog",
+  "name": "web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
     "test": "vitest",
     "test:run": "vitest run",
     "test:e2e": "playwright test"
@@ -22,6 +20,7 @@
     "@neondatabase/serverless": "^1.0.2",
     "@next/third-parties": "^16.2.9",
     "@tanem/react-nprogress": "^7.1.2",
+    "@tiptap/core": "^3.30.6",
     "@tiptap/extension-code-block-lowlight": "^3.30.2",
     "@tiptap/extension-color": "^3.20.1",
     "@tiptap/extension-highlight": "^3.20.1",
@@ -74,7 +73,6 @@
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -84,7 +82,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "jsdom": "^28.1.0",
-    "prettier": "^3.8.1",
     "shadcn": "^3.8.5",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { ContentContainer } from '@/components/layout/content-container';
 import { selectCategoryBySlug } from '@/db/queries/categories';
 import { selectPosts } from '@/db/queries/posts';
 import { ViewToggleAction } from '../../_actions/view-toggle.action';
 import { PostListViewHandler } from '../../_handlers/post-list-view.handler';
-import { ContentContainer } from '@/components/layout/content-container';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -30,7 +30,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
   if (!category) notFound();
 
-  const { items: posts, total } = await selectPosts({ categoryId: category.id });
+  const { items: posts, total } = await selectPosts({
+    categoryId: category.id,
+  });
 
   return (
     <ContentContainer className="py-8">
@@ -45,7 +47,9 @@ export default async function CategoryPage({ params, searchParams }: Props) {
               </span>
             </h1>
             {category.description && (
-              <p className="mt-2 text-muted-foreground">{category.description}</p>
+              <p className="mt-2 text-muted-foreground">
+                {category.description}
+              </p>
             )}
           </div>
           <ViewToggleAction viewType={viewType} />

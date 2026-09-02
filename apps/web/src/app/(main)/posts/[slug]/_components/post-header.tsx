@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { ChevronLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { PostWithCategoryAndTags } from '@/types';
 

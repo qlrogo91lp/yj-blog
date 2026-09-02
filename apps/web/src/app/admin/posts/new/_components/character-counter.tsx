@@ -17,7 +17,7 @@ export function CharacterCounter({ value, recommendedMax, hardMax }: Props) {
         'text-xs',
         !overRecommended && !overHard && 'text-muted-foreground',
         overRecommended && 'text-yellow-600',
-        overHard && 'text-destructive',
+        overHard && 'text-destructive'
       )}
     >
       {length} / {recommendedMax}

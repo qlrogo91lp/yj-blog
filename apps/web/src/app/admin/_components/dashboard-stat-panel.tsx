@@ -23,7 +23,11 @@ export function DashboardStatPanel({
   daily,
 }: Props) {
   const metrics = [
-    { label: '방문', value: visitors, change: { current: visitors, previous: previousVisitors } },
+    {
+      label: '방문',
+      value: visitors,
+      change: { current: visitors, previous: previousVisitors },
+    },
     { label: '페이지뷰', value: views },
     { label: '외부 유입', value: externalCount },
   ];

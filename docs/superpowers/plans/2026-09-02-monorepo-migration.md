@@ -40,35 +40,37 @@ gh auth status                   # 로그인 상태
 
 ## File Structure
 
-| 경로 | 처리 | 책임 |
-|---|---|---|
-| `apps/web/**` | `git mv` | 기존 블로그 앱 전체. 내용 불변 |
-| `apps/web/package.json` | 수정 | name을 `web`으로, format 스크립트·prettier 제거 |
-| `apps/web/playwright.config.ts` | 수정 | webServer 명령 `pnpm dev` |
-| `apps/web/vercel.json` | 생성 | `ignoreCommand` |
-| `apps/web/README.md` | `git mv` 후 수정 | 세팅 절차를 루트로 안내 |
-| `package.json` (루트) | 생성 | workspace 루트, turbo 스크립트 |
-| `pnpm-workspace.yaml` | 생성 | `apps/*` |
-| `pnpm-lock.yaml` | 생성 | `pnpm install` 결과 |
-| `turbo.json` | 생성 | 태스크 파이프라인 |
-| `.nvmrc` | 생성 | `22` |
-| `.prettierrc` | 유지 | 공유 포맷 규칙 |
-| `.prettierignore` | 생성 | 생성물·락파일 제외 |
-| `.gitignore` | 수정 | 앱 하위 경로에 맞게 패턴 통합 |
-| `README.md` (루트) | 생성 | 구조·세팅·명령·Vercel 요약 |
-| `CLAUDE.md` | 수정 | 명령어·저장소 구조 절 |
-| `.claude/launch.json` | 수정 | pnpm filter 명령 |
+| 경로                            | 처리             | 책임                                            |
+| ------------------------------- | ---------------- | ----------------------------------------------- |
+| `apps/web/**`                   | `git mv`         | 기존 블로그 앱 전체. 내용 불변                  |
+| `apps/web/package.json`         | 수정             | name을 `web`으로, format 스크립트·prettier 제거 |
+| `apps/web/playwright.config.ts` | 수정             | webServer 명령 `pnpm dev`                       |
+| `apps/web/vercel.json`          | 생성             | `ignoreCommand`                                 |
+| `apps/web/README.md`            | `git mv` 후 수정 | 세팅 절차를 루트로 안내                         |
+| `package.json` (루트)           | 생성             | workspace 루트, turbo 스크립트                  |
+| `pnpm-workspace.yaml`           | 생성             | `apps/*`                                        |
+| `pnpm-lock.yaml`                | 생성             | `pnpm install` 결과                             |
+| `turbo.json`                    | 생성             | 태스크 파이프라인                               |
+| `.nvmrc`                        | 생성             | `22`                                            |
+| `.prettierrc`                   | 유지             | 공유 포맷 규칙                                  |
+| `.prettierignore`               | 생성             | 생성물·락파일 제외                              |
+| `.gitignore`                    | 수정             | 앱 하위 경로에 맞게 패턴 통합                   |
+| `README.md` (루트)              | 생성             | 구조·세팅·명령·Vercel 요약                      |
+| `CLAUDE.md`                     | 수정             | 명령어·저장소 구조 절                           |
+| `.claude/launch.json`           | 수정             | pnpm filter 명령                                |
 
 ---
 
 ### Task 1: `apps/web`으로 이사
 
 **Files:**
+
 - Move: `src`, `public`, `e2e`, `next.config.ts`, `next.config.test.ts`, `tsconfig.json`, `eslint.config.mjs`, `vitest.config.ts`, `playwright.config.ts`, `drizzle.config.ts`, `postcss.config.mjs`, `components.json`, `package.json`, `package-lock.json`, `.env.example`, `README.md` → `apps/web/`
 - Modify: `.gitignore`
 - Local only (git 밖): `.env.local`, `.clerk/` → `apps/web/`
 
 **Interfaces:**
+
 - Produces: `apps/web/` 디렉터리. 이후 모든 태스크는 앱을 이 경로로 참조한다.
 
 - [ ] **Step 1: 브랜치 생성**
@@ -228,12 +230,14 @@ git commit -m "♻️ refactor: 블로그 앱을 apps/web으로 이동
 ### Task 2: pnpm workspace 전환
 
 **Files:**
+
 - Create: `package.json` (루트), `pnpm-workspace.yaml`, `.nvmrc`, `.prettierignore`
 - Modify: `apps/web/package.json`, `apps/web/playwright.config.ts`
 - Delete: `apps/web/package-lock.json`, `apps/web/node_modules`
 - Generated: `pnpm-lock.yaml`
 
 **Interfaces:**
+
 - Produces: 워크스페이스 패키지 이름 `web`. 이후 `pnpm --filter web <script>`로 호출한다.
 
 - [ ] **Step 1: 루트 `package.json` 생성**
@@ -385,10 +389,12 @@ Playwright webServer 명령을 pnpm dev로 바꾼다."
 ### Task 3: Turborepo 도입
 
 **Files:**
+
 - Create: `turbo.json`
 - Modify: `package.json` (루트)
 
 **Interfaces:**
+
 - Produces: 루트 스크립트 `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm test:run`. 앱 선택은 `--filter web`.
 
 - [ ] **Step 1: turbo 설치**
@@ -483,10 +489,12 @@ dev는 persistent로 둔다. envMode는 loose."
 ### Task 4: Vercel 설정·문서·툴링
 
 **Files:**
+
 - Create: `apps/web/vercel.json`, `README.md` (루트)
 - Modify: `apps/web/README.md`, `CLAUDE.md`, `.claude/launch.json`
 
 **Interfaces:**
+
 - Consumes: Task 3의 루트 스크립트 이름(`dev`, `build`, `lint`, `test:run`)과 패키지 이름 `web`.
 
 - [ ] **Step 1: `apps/web/vercel.json` 생성**
@@ -504,10 +512,10 @@ dev는 persistent로 둔다. envMode는 loose."
 
 개인 블로그와 포트폴리오를 담는 pnpm workspace + Turborepo 모노레포.
 
-| 앱 | 경로 | 스택 | 배포 |
-|---|---|---|---|
-| 블로그 | `apps/web` | Next.js 16, Drizzle, Neon, Clerk | https://yjlogs.com |
-| 포트폴리오 | `apps/portfolio` | Vite, HTML 파티셜 | https://portfolio.yjlogs.com (예정) |
+| 앱         | 경로             | 스택                             | 배포                                |
+| ---------- | ---------------- | -------------------------------- | ----------------------------------- |
+| 블로그     | `apps/web`       | Next.js 16, Drizzle, Neon, Clerk | https://yjlogs.com                  |
+| 포트폴리오 | `apps/portfolio` | Vite, HTML 파티셜                | https://portfolio.yjlogs.com (예정) |
 
 앱별 상세는 각 폴더의 README를 본다. 규칙과 컨벤션은 `CLAUDE.md`와 `.claude/rules/`에 있다.
 
@@ -553,16 +561,16 @@ dev는 persistent로 둔다. envMode는 loose."
 
 루트에서 실행한다. `--filter <앱>`을 붙이면 그 앱만 실행하고, 생략하면 모든 앱에 실행한다.
 
-| 명령 | 설명 |
-|---|---|
-| `pnpm dev --filter web` | 블로그 개발 서버 (http://localhost:3000) |
-| `pnpm build` | 모든 앱 프로덕션 빌드 (Turborepo 캐시) |
-| `pnpm build --filter web` | 블로그만 빌드 |
-| `pnpm lint` | 모든 앱 ESLint |
-| `pnpm test:run` | 모든 앱 단위 테스트 1회 |
-| `pnpm format` / `pnpm format:check` | 저장소 전체 Prettier |
-| `pnpm --filter web test:e2e` | 블로그 Playwright E2E |
-| `pnpm --filter web exec drizzle-kit push` | 스키마 변경을 DB에 반영 |
+| 명령                                      | 설명                                     |
+| ----------------------------------------- | ---------------------------------------- |
+| `pnpm dev --filter web`                   | 블로그 개발 서버 (http://localhost:3000) |
+| `pnpm build`                              | 모든 앱 프로덕션 빌드 (Turborepo 캐시)   |
+| `pnpm build --filter web`                 | 블로그만 빌드                            |
+| `pnpm lint`                               | 모든 앱 ESLint                           |
+| `pnpm test:run`                           | 모든 앱 단위 테스트 1회                  |
+| `pnpm format` / `pnpm format:check`       | 저장소 전체 Prettier                     |
+| `pnpm --filter web test:e2e`              | 블로그 Playwright E2E                    |
+| `pnpm --filter web exec drizzle-kit push` | 스키마 변경을 DB에 반영                  |
 
 앱 폴더 안에서 `pnpm dev`, `pnpm build`처럼 직접 실행해도 된다.
 
@@ -571,9 +579,9 @@ dev는 persistent로 둔다. envMode는 loose."
 한 저장소에 프로젝트 두 개가 연결되어 있다. 프로젝트마다 Root Directory가 다르고, `apps/<앱>/vercel.json`의
 `ignoreCommand`(`npx turbo-ignore`)가 그 앱과 무관한 커밋의 빌드를 건너뛴다.
 
-| Vercel 프로젝트 | Root Directory | 도메인 |
-|---|---|---|
-| yjlogs | `apps/web` | yjlogs.com |
+| Vercel 프로젝트  | Root Directory   | 도메인               |
+| ---------------- | ---------------- | -------------------- |
+| yjlogs           | `apps/web`       | yjlogs.com           |
 | portfolio (예정) | `apps/portfolio` | portfolio.yjlogs.com |
 
 Production Branch는 둘 다 `main`. 브랜치 전략은 `CLAUDE.md`를 본다.

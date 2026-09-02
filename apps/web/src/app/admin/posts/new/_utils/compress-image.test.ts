@@ -6,12 +6,18 @@ function fileOf(type: string, size = 10) {
 }
 
 describe('isCompressible', () => {
-  it.each(['image/jpeg', 'image/png', 'image/webp'])('%s 는 압축 대상', (type) => {
-    expect(isCompressible(fileOf(type))).toBe(true);
-  });
-  it.each(['image/gif', 'image/svg+xml', 'image/avif', 'text/plain'])('%s 는 대상 아님', (type) => {
-    expect(isCompressible(fileOf(type))).toBe(false);
-  });
+  it.each(['image/jpeg', 'image/png', 'image/webp'])(
+    '%s 는 압축 대상',
+    (type) => {
+      expect(isCompressible(fileOf(type))).toBe(true);
+    }
+  );
+  it.each(['image/gif', 'image/svg+xml', 'image/avif', 'text/plain'])(
+    '%s 는 대상 아님',
+    (type) => {
+      expect(isCompressible(fileOf(type))).toBe(false);
+    }
+  );
 });
 
 describe('compressImage', () => {
@@ -29,10 +35,18 @@ describe('compressImage', () => {
     const png = fileOf('image/png', 4);
     const bitmap = { width: 10, height: 10, close: vi.fn() };
     vi.stubGlobal('createImageBitmap', vi.fn().mockResolvedValue(bitmap));
-    const toBlob = vi.fn((cb: (b: Blob | null) => void) => cb(new Blob([new Uint8Array(100)], { type: 'image/webp' })));
+    const toBlob = vi.fn((cb: (b: Blob | null) => void) =>
+      cb(new Blob([new Uint8Array(100)], { type: 'image/webp' }))
+    );
     const getContext = vi.fn(() => ({ drawImage: vi.fn() }));
     vi.spyOn(document, 'createElement').mockImplementation(
-      () => ({ width: 0, height: 0, getContext, toBlob }) as unknown as HTMLCanvasElement,
+      () =>
+        ({
+          width: 0,
+          height: 0,
+          getContext,
+          toBlob,
+        }) as unknown as HTMLCanvasElement
     );
     expect(await compressImage(png)).toBe(png);
     vi.restoreAllMocks();
@@ -52,7 +66,7 @@ describe('compressImage', () => {
         cb(new Blob([new Uint8Array(10)], { type: 'image/webp' })),
     };
     vi.spyOn(document, 'createElement').mockImplementation(
-      () => canvas as unknown as HTMLCanvasElement,
+      () => canvas as unknown as HTMLCanvasElement
     );
     const out = await compressImage(png);
     expect(out.type).toBe('image/webp');

@@ -1,15 +1,14 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { toast } from 'sonner';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { savePost } from '../_services/save-post';
+import { useNewPostStore } from '../_store';
+import { DraftAction } from './draft.action';
 
 vi.mock('../_services/save-post', () => ({
   savePost: vi.fn(),
 }));
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
-
-import { toast } from 'sonner';
-import { savePost } from '../_services/save-post';
-import { useNewPostStore } from '../_store';
-import { DraftAction } from './draft.action';
 
 describe('DraftAction', () => {
   beforeEach(() => {
@@ -41,7 +40,9 @@ describe('DraftAction', () => {
     });
     useNewPostStore.getState().setStatus('published');
     render(<DraftAction />);
-    expect(screen.queryByRole('button', { name: /임시저장/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /임시저장/ })
+    ).not.toBeInTheDocument();
     const button = screen.getByRole('button', { name: /^저장$/ });
     await act(async () => {
       fireEvent.click(button);
@@ -56,7 +57,10 @@ describe('DraftAction', () => {
   });
 
   it('저장 실패 시 toast.error로 사유를 보여준다', async () => {
-    vi.mocked(savePost).mockResolvedValue({ success: false, error: '이미 사용 중인 slug입니다' });
+    vi.mocked(savePost).mockResolvedValue({
+      success: false,
+      error: '이미 사용 중인 slug입니다',
+    });
     render(<DraftAction />);
     await act(async () => {
       fireEvent.click(screen.getByRole('button'));

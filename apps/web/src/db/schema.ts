@@ -142,7 +142,10 @@ export const blogSettings = pgTable('blog_settings', {
   siteUrl: varchar('site_url', { length: 255 }),
   socialLinks: jsonb('social_links').$type<Record<string, string>>(),
   defaultMetaDescription: varchar('default_meta_description', { length: 300 }),
-  referrerExcludes: jsonb('referrer_excludes').$type<string[]>().default([]).notNull(), // 유입경로 "항상 제외" 규칙 — 호스트네임 배열
+  referrerExcludes: jsonb('referrer_excludes')
+    .$type<string[]>()
+    .default([])
+    .notNull(), // 유입경로 "항상 제외" 규칙 — 호스트네임 배열
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 

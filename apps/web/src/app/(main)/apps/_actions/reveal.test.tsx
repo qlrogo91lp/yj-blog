@@ -6,7 +6,7 @@ describe('Reveal', () => {
     render(
       <Reveal>
         <p>등장 대상</p>
-      </Reveal>,
+      </Reveal>
     );
     expect(screen.getByText('등장 대상')).toBeInTheDocument();
   });
@@ -15,7 +15,7 @@ describe('Reveal', () => {
     render(
       <Reveal className="max-w-160">
         <p>본문</p>
-      </Reveal>,
+      </Reveal>
     );
     expect(screen.getByText('본문').parentElement).toHaveClass('max-w-160');
   });

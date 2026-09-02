@@ -25,9 +25,9 @@
 
 한 번에 한 변수만 제거하고 빌드를 반복했다.
 
-| 실험 | 결과 | 판정 |
-|------|------|------|
-| 루트 레이아웃에서 `ClerkProvider` 제거 | 전 라우트 `ƒ` 유지 | 무관 |
+| 실험                                         | 결과                                                     | 판정          |
+| -------------------------------------------- | -------------------------------------------------------- | ------------- |
+| 루트 레이아웃에서 `ClerkProvider` 제거       | 전 라우트 `ƒ` 유지                                       | 무관          |
 | `Header`에서 `<SignedIn>`/`<SignedOut>` 제거 | 7개 라우트가 `○ Static`, `/apps/[slug]`가 `● SSG`로 전환 | **원인 확정** |
 
 ### 2.3 근본 원인
@@ -58,10 +58,10 @@
 
 `loading.tsx`는 Suspense 경계를 만들어 응답을 스트리밍하게 한다. HTTP 상태(200)가 헤더 플러시 시점에 확정된 뒤 `notFound()`가 실행되므로, 존재하지 않는 페이지가 **본문만 404 UI이고 상태 코드는 200**이 된다.
 
-| 상태 | `/series/*` | `/categories/*` | `/tags/*` | `/posts/*` |
-|---|:---:|:---:|:---:|:---:|
-| `(main)/loading.tsx` 있음 | 200 ❌ | 200 ❌ | 200 ❌ | 200 ❌ |
-| 전부 제거 | **404** ✅ | **404** ✅ | **404** ✅ | **404** ✅ |
+| 상태                      | `/series/*` | `/categories/*` | `/tags/*`  | `/posts/*` |
+| ------------------------- | :---------: | :-------------: | :--------: | :--------: |
+| `(main)/loading.tsx` 있음 |   200 ❌    |     200 ❌      |   200 ❌   |   200 ❌   |
+| 전부 제거                 | **404** ✅  |   **404** ✅    | **404** ✅ | **404** ✅ |
 
 "404가 불가능한 목록 페이지에만 두자"는 절충도 시도했으나, **부모 세그먼트의 `loading.tsx`가 자식 라우트까지 덮어서** `posts/loading.tsx`만 둬도 `/posts/[slug]`가 soft 404가 됐다. `loading.tsx`와 올바른 404 상태는 양립 불가다.
 
@@ -71,13 +71,13 @@ Task 3의 캐싱으로 warm 렌더가 2~3ms가 되어 로딩 셸의 이득이 �
 
 `unstable_cache` + 기존 `CACHE_TAGS`를 적용했다.
 
-| 함수 | 태그 |
-|---|---|
-| `selectPostBySlug` | `posts` |
-| `selectPosts` (검색 시 우회) | `posts` |
-| `selectCommentsByPostId` | `comments` |
-| `selectTagsByPostIds` | `tags`, `posts` |
-| `selectCategoryBySlug` | `categories` |
+| 함수                         | 태그            |
+| ---------------------------- | --------------- |
+| `selectPostBySlug`           | `posts`         |
+| `selectPosts` (검색 시 우회) | `posts`         |
+| `selectCommentsByPostId`     | `comments`      |
+| `selectTagsByPostIds`        | `tags`, `posts` |
+| `selectCategoryBySlug`       | `categories`    |
 
 `/posts/[slug]`에 `generateStaticParams`를 추가해 마크다운 → HTML 변환(highlight.js) 비용을 빌드 타임으로 옮겼다.
 
@@ -110,24 +110,24 @@ Task 1의 검증 단계를 `npm run dev`로 잡아뒀는데, **dev 모드는 라
 
 Task 2 적용 후에도 `/posts/[slug]`만 prefetch가 187ms였다. 원인은 `generateMetadata`가 로딩 경계 **위**에서 실행되어 prefetch에도 포함되기 때문이었다. 같은 구조끼리 비교하니 명확했다.
 
-| 라우트 | `generateMetadata` | prefetch |
-|---|---|---:|
-| `/posts` | 없음 | 4 ms |
-| `/tags/[slug]` | `getTagBySlug` (캐시됨) | 3 ms |
-| `/posts/[slug]` | `selectPostBySlug` (미캐시) | 187 ms |
+| 라우트          | `generateMetadata`          | prefetch |
+| --------------- | --------------------------- | -------: |
+| `/posts`        | 없음                        |     4 ms |
+| `/tags/[slug]`  | `getTagBySlug` (캐시됨)     |     3 ms |
+| `/posts/[slug]` | `selectPostBySlug` (미캐시) |   187 ms |
 
 ## 5. 최종 결과
 
 프로덕션 빌드 + `next start`, warm 상태 측정.
 
-| 라우트 | 개선 전 | 최종 | 렌더링 |
-|---|---:|---:|:---:|
-| `/posts` | 342 ms | **3 ms** | ƒ (searchParams) |
-| `/posts/[slug]` | 422 ms | **2 ms** | ƒ → **● SSG** |
-| `/categories/[slug]` | 242 ms | **3 ms** | ƒ |
-| `/tags/[slug]` | 3 ms | 3 ms | ƒ |
-| `/`·`/series`·`/tags`·`/apps`·`/playground` | — | 2~5 ms | ƒ → **○ Static** |
-| `/apps/[slug]` | — | — | ƒ → **● SSG** |
+| 라우트                                      | 개선 전 |     최종 |      렌더링      |
+| ------------------------------------------- | ------: | -------: | :--------------: |
+| `/posts`                                    |  342 ms | **3 ms** | ƒ (searchParams) |
+| `/posts/[slug]`                             |  422 ms | **2 ms** |  ƒ → **● SSG**   |
+| `/categories/[slug]`                        |  242 ms | **3 ms** |        ƒ         |
+| `/tags/[slug]`                              |    3 ms |     3 ms |        ƒ         |
+| `/`·`/series`·`/tags`·`/apps`·`/playground` |       — |   2~5 ms | ƒ → **○ Static** |
+| `/apps/[slug]`                              |       — |        — |  ƒ → **● SSG**   |
 
 **검증**
 

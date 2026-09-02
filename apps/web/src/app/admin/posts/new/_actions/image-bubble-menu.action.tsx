@@ -1,6 +1,6 @@
 'use client';
 
-import { useEditorState, type Editor } from '@tiptap/react';
+import { type Editor, useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import { ImageToolbar } from '../_components/_image-block/image-toolbar';
 import type { ImageAlign, ImageSize } from '../_utils/image-extension';
@@ -48,7 +48,9 @@ export function ImageBubbleMenuAction({ editor }: Props) {
           onAlignChange={(align) =>
             editor.chain().focus().updateAttributes('image', { align }).run()
           }
-          onAltChange={(alt) => editor.commands.updateAttributes('image', { alt })}
+          onAltChange={(alt) =>
+            editor.commands.updateAttributes('image', { alt })
+          }
           onDelete={() => editor.chain().focus().deleteSelection().run()}
         />
       )}

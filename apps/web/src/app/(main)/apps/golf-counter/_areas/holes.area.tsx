@@ -23,7 +23,9 @@ export function HolesArea() {
                     data-active={chip.isActive}
                     className={cn(
                       'rounded-full px-3.75 py-2 text-[13px] font-semibold',
-                      chip.isActive ? 'bg-golf-green text-black' : 'bg-white/10 text-white/70',
+                      chip.isActive
+                        ? 'bg-golf-green text-black'
+                        : 'bg-white/10 text-white/70'
                     )}
                   >
                     {chip.label}

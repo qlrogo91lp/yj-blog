@@ -4,13 +4,19 @@ import { renderToString } from 'react-dom/server';
 import { HeroArea } from './hero.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 /**
@@ -30,7 +36,7 @@ beforeAll(() => {
         addEventListener: () => {},
         removeEventListener: () => {},
         dispatchEvent: () => false,
-      }) as MediaQueryList,
+      }) as MediaQueryList
   );
 });
 
@@ -102,7 +108,9 @@ describe('HeroArea — reduced-motion hydration 회귀', () => {
   it('App Store CTA와 태그라인이 DOM에 존재한다', async () => {
     const { container, cleanup } = await hydrateHero();
 
-    expect(container.querySelector('h1')?.textContent).toContain('right on your wrist.');
+    expect(container.querySelector('h1')?.textContent).toContain(
+      'right on your wrist.'
+    );
     expect(container.querySelector('a[href*="apps.apple.com"]')).toBeTruthy();
 
     await cleanup();

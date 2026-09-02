@@ -41,7 +41,10 @@ describe('getBreadcrumb', () => {
   });
 
   it('그룹에 속한 화면은 [그룹, 항목]을 반환한다', () => {
-    expect(getBreadcrumb('/admin/categories')).toEqual(['콘텐츠', '카테고리 관리']);
+    expect(getBreadcrumb('/admin/categories')).toEqual([
+      '콘텐츠',
+      '카테고리 관리',
+    ]);
   });
 
   it('더 긴 경로가 있으면 그쪽에 매칭한다', () => {

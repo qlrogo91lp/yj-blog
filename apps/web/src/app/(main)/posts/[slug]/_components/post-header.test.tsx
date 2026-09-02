@@ -52,7 +52,9 @@ const mockPost: PostWithCategoryAndTags = {
 describe('PostHeader', () => {
   it('제목·카테고리·태그·조회수를 렌더한다', () => {
     render(<PostHeader post={mockPost} />);
-    expect(screen.getByRole('heading', { name: /AI가 기획/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /AI가 기획/ })
+    ).toBeInTheDocument();
     expect(screen.getByText('essay')).toBeInTheDocument();
     expect(screen.getByText('#ai')).toBeInTheDocument();
     expect(screen.getByText(/1,234/)).toBeInTheDocument();
@@ -60,7 +62,10 @@ describe('PostHeader', () => {
 
   it('목록으로 돌아가는 링크를 렌더한다', () => {
     render(<PostHeader post={mockPost} />);
-    expect(screen.getByRole('link', { name: /목록으로/i })).toHaveAttribute('href', '/posts');
+    expect(screen.getByRole('link', { name: /목록으로/i })).toHaveAttribute(
+      'href',
+      '/posts'
+    );
   });
 
   it('작성자명을 표시하지 않는다', () => {

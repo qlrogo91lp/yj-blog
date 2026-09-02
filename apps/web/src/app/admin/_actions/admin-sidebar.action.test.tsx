@@ -72,7 +72,9 @@ describe('AdminSidebarAction', () => {
     renderSidebar();
 
     expect(
-      screen.getByRole('link', { name: /카테고리 관리/ }).closest('[data-active]')
+      screen
+        .getByRole('link', { name: /카테고리 관리/ })
+        .closest('[data-active]')
     ).toHaveAttribute('data-active', 'true');
     expect(
       screen.getByRole('link', { name: '글 관리' }).closest('[data-active]')

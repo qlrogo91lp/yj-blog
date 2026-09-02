@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getPosts, getPostsTags } from './get-posts';
 import type { PostWithCategory, TagSummary } from '@/types';
+import { getPosts, getPostsTags } from './get-posts';
 
 type TagsMap = Record<number, TagSummary[]>;
 

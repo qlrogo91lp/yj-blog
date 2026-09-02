@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ralliFinalCta, ralliMeta } from '../_utils/ralli-content';
-import { RalliCtaButton } from '../_components/ralli-cta-button';
 import { Reveal } from '../../_actions/reveal.action';
+import { RalliCtaButton } from '../_components/ralli-cta-button';
+import { ralliFinalCta, ralliMeta } from '../_utils/ralli-content';
 
 export function FinalCtaArea() {
   return (
@@ -20,10 +20,15 @@ export function FinalCtaArea() {
         <h2 className="mb-3.5 text-[clamp(30px,4.4vw,58px)] font-extrabold leading-none tracking-[-0.045em]">
           {ralliFinalCta.heading}
         </h2>
-        <p className="mb-7 text-[16.5px] text-ralli-fg/55">{ralliFinalCta.body}</p>
+        <p className="mb-7 text-[16.5px] text-ralli-fg/55">
+          {ralliFinalCta.body}
+        </p>
         <RalliCtaButton appStoreUrl={ralliMeta.appStoreUrl} />
         <div className="mt-11 flex justify-center gap-5.5 text-[13.5px] text-ralli-fg/42">
-          <Link href="/apps/ralli/privacy" className="transition-colors hover:text-ralli-fg">
+          <Link
+            href="/apps/ralli/privacy"
+            className="transition-colors hover:text-ralli-fg"
+          >
             Privacy Policy
           </Link>
           <a

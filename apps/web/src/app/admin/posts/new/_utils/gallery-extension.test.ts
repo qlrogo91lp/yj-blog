@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import { Editor } from '@tiptap/core';
 import { StarterKit } from '@tiptap/starter-kit';
+import { describe, expect, it } from 'vitest';
 import { Gallery } from './gallery-extension';
 
 function createEditor(content: string) {
@@ -38,13 +38,15 @@ describe('Gallery extension', () => {
 
   it('캡션이 비어 있으면 figcaption을 출력하지 않는다', () => {
     const html = createEditor(
-      '<div data-gallery><figure><img src="a.png" width="10" height="10"></figure></div>',
+      '<div data-gallery><figure><img src="a.png" width="10" height="10"></figure></div>'
     ).getHTML();
     expect(html).not.toContain('figcaption');
   });
 
   it('width/height가 없으면 0으로 폴백한다', () => {
-    const editor = createEditor('<div data-gallery><figure><img src="a.png"></figure></div>');
+    const editor = createEditor(
+      '<div data-gallery><figure><img src="a.png"></figure></div>'
+    );
     let images: { width: number; height: number }[] = [];
     editor.state.doc.descendants((node) => {
       if (node.type.name === 'gallery') images = node.attrs.images;

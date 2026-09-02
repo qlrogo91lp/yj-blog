@@ -3,9 +3,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { DashboardRankList } from './dashboard-rank-list';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 const items = [
@@ -15,7 +19,13 @@ const items = [
 
 describe('DashboardRankList', () => {
   it('제목과 항목을 순위와 함께 렌더한다', () => {
-    render(<DashboardRankList title="인기 글" items={items} moreHref="/admin/statistics" />);
+    render(
+      <DashboardRankList
+        title="인기 글"
+        items={items}
+        moreHref="/admin/statistics"
+      />
+    );
 
     expect(screen.getByText('인기 글')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();
@@ -24,7 +34,13 @@ describe('DashboardRankList', () => {
   });
 
   it('더보기 링크를 렌더한다', () => {
-    render(<DashboardRankList title="인기 글" items={items} moreHref="/admin/statistics" />);
+    render(
+      <DashboardRankList
+        title="인기 글"
+        items={items}
+        moreHref="/admin/statistics"
+      />
+    );
     expect(screen.getByRole('link', { name: /더보기/ })).toHaveAttribute(
       'href',
       '/admin/statistics'
@@ -42,11 +58,19 @@ describe('DashboardRankList', () => {
     );
 
     expect(screen.getByText('62%')).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="rank-bar"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="rank-bar"]')
+    ).toBeInTheDocument();
   });
 
   it('항목이 없으면 빈 상태를 보여준다', () => {
-    render(<DashboardRankList title="인기 글" items={[]} moreHref="/admin/statistics" />);
+    render(
+      <DashboardRankList
+        title="인기 글"
+        items={[]}
+        moreHref="/admin/statistics"
+      />
+    );
     expect(screen.getByText('아직 데이터가 없습니다.')).toBeInTheDocument();
   });
 });

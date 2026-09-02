@@ -15,6 +15,7 @@
 - 빠른 출시가 우선. 과한 인터랙션·애니메이션 없이 정적 페이지로 간결하게.
 
 URL:
+
 - 랜딩/지원: `https://<도메인>/apps/ralli`
 - 개인정보 처리방침: `https://<도메인>/apps/ralli/privacy`
 
@@ -29,6 +30,7 @@ URL:
 - 페이지 전용 데이터·상수는 `_utils`(또는 `_constants`)에 분리.
 
 ### 이미지 호스팅
+
 - 고정 자산이므로 R2가 아닌 `public/ralli/`에 둔다 (git 버전 관리, 빠름).
 - `next/image`로 표시.
 - 현재 보유 자산(`public/ralli/`):
@@ -38,10 +40,12 @@ URL:
   - Watch (422×514, 디바이스 목업): `watch-home-global.png`, `watch-match-global.png`, `watch-mode-global.png`, `watch-complication-global.png`, `watch-workout-global.png`
 
 ### App Store 링크
+
 - 아직 미출시. `appStoreUrl` 상수를 데이터에 두고, 값이 없으면 **"Coming soon"** 배지, 값이 채워지면 **App Store 다운로드 버튼**으로 전환.
 - 출시 후 상수 한 줄만 채우면 됨.
 
 ### 테마
+
 - 스크린샷이 모두 검은 배경 → 사이트 라이트/다크 테마와 무관하게 **페이지 자체를 다크 톤**으로 고정 (블랙/딥차콜 배경 + 라임그린 강조 + 오렌지 보조).
 - next-themes 토글의 영향을 받지 않도록 섹션 컨테이너에 다크 배경·텍스트 색을 명시.
 
@@ -61,11 +65,13 @@ URL:
 위에서 아래로 단일 컬럼, 모바일 우선. 카피는 리스팅 문서 영문안을 그대로/축약 사용.
 
 ### 4.1 Hero
+
 - 앱 아이콘(라운드), 앱 이름 **Ralli**, 태그라인 **"Tennis scores, right on your wrist."**
 - 한 줄 보조 설명: "A score-counting companion for tennis players."
 - CTA: `appStoreUrl` 있으면 App Store 다운로드 버튼, 없으면 "Coming soon to the App Store" 배지.
 
 ### 4.2 기능 섹션 4개 (리스팅 4대 가치 축)
+
 각 섹션은 헤드라인 + 불릿 2~3개 + 관련 스크린샷.
 
 1. **On the court, all on your wrist** (Apple Watch 중심)
@@ -89,15 +95,18 @@ URL:
    - 이미지: `watch-mode-global.png`, `ios-mode-global.png`
 
 ### 4.3 스크린샷 갤러리
+
 - iOS(완성 이미지) + Watch 스크린샷을 가로 스크롤 또는 반응형 그리드로 배치.
 - iOS는 세로 비율(1284×2778), Watch는 약 정사각(422×514). 비율별로 그룹화하여 표시.
 
 ### 4.4 지원(Support) 섹션
+
 - 제목: "Support" / "Need help?"
 - 문의 이메일 **qlrogo91lp@gmail.com** — `mailto:` 링크, 화면에도 텍스트로 노출.
 - 개인정보 처리방침 링크 → `/apps/ralli/privacy`.
 
 ### 4.5 푸터
+
 - 간단한 카피라이트, `/apps` 목록으로 돌아가는 링크.
 
 ---
@@ -107,6 +116,7 @@ URL:
 영문, 단순 텍스트. **데이터 저장 모델: SwiftData(기기 로컬) + CloudKit(사용자 본인의 비공개 iCloud 동기화).** 개발자 운영 서버로의 전송은 없다.
 
 섹션:
+
 1. **Intro** — 시행일(Effective date), 앱 이름.
 2. **Data we access** — HealthKit 운동 세션·심박수·칼로리 등은 운동 기록 목적에만 사용. 경기 점수·기록은 SwiftData로 기기에 저장.
 3. **iCloud sync (CloudKit)** — 경기 데이터는 CloudKit을 통해 사용자 **본인의 비공개 iCloud 계정**에만 동기화되어 사용자의 여러 기기에서 공유됨. 데이터는 Apple이 관리하며, 개발자는 접근하지 않음.

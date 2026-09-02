@@ -1,5 +1,5 @@
-import { PostTile2up } from '@/components/post/post-tile-2up';
 import { PostArchiveRow } from '@/components/post/post-archive-row';
+import { PostTile2up } from '@/components/post/post-tile-2up';
 import type { PostWithCategory, TagSummary } from '@/types';
 
 type Props = {

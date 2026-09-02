@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { uploadImage } from './upload-image';
 
 /** PutObjectCommand에 전달된 인자를 순서대로 수집한다. */
 const putObjectArgs: Record<string, unknown>[] = [];
@@ -41,11 +42,12 @@ vi.mock('@/db', () => ({
   },
 }));
 
-import { uploadImage } from './upload-image';
-
 function buildFormData(): FormData {
   const formData = new FormData();
-  formData.append('file', new File(['fake-bytes'], 'thumb.png', { type: 'image/png' }));
+  formData.append(
+    'file',
+    new File(['fake-bytes'], 'thumb.png', { type: 'image/png' })
+  );
   return formData;
 }
 
@@ -58,13 +60,17 @@ describe('uploadImage', () => {
     await uploadImage(buildFormData(), 42, 'thumbnail');
 
     expect(putObjectArgs).toHaveLength(1);
-    expect(putObjectArgs[0].CacheControl).toBe('public, max-age=31536000, immutable');
+    expect(putObjectArgs[0].CacheControl).toBe(
+      'public, max-age=31536000, immutable'
+    );
   });
 
   it('기존 Key·ContentType 동작을 유지한다', async () => {
     await uploadImage(buildFormData(), 42, 'thumbnail');
 
-    expect(putObjectArgs[0].Key).toMatch(/^images\/post-42\/thumbnail-\d+\.png$/);
+    expect(putObjectArgs[0].Key).toMatch(
+      /^images\/post-42\/thumbnail-\d+\.png$/
+    );
     expect(putObjectArgs[0].ContentType).toBe('image/png');
     expect(putObjectArgs[0].Bucket).toBe('test-bucket');
   });
@@ -74,7 +80,7 @@ describe('uploadImage', () => {
 
     expect(result.postId).toBe(42);
     expect(result.url).toMatch(
-      /^https:\/\/assets\.example\.com\/images\/post-42\/thumbnail-\d+\.png$/,
+      /^https:\/\/assets\.example\.com\/images\/post-42\/thumbnail-\d+\.png$/
     );
   });
 });

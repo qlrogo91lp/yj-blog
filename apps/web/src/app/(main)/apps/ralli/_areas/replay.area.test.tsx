@@ -2,7 +2,9 @@ import { render, screen } from '@testing-library/react';
 import { ReplayArea } from './replay.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 beforeAll(() => {
@@ -13,7 +15,7 @@ beforeAll(() => {
       media: query,
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
-    })),
+    }))
   );
 });
 
@@ -25,7 +27,7 @@ describe('ReplayArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
     render(<ReplayArea />);
     expect(
-      screen.getByRole('heading', { name: 'Every match, back on your iPhone.' }),
+      screen.getByRole('heading', { name: 'Every match, back on your iPhone.' })
     ).toBeInTheDocument();
     expect(screen.getByText('03 — REPLAY')).toBeInTheDocument();
   });
@@ -38,7 +40,9 @@ describe('ReplayArea', () => {
   it('설명 노트 3개를 렌더한다', () => {
     render(<ReplayArea />);
     expect(screen.getByText('Set-by-set detail')).toBeInTheDocument();
-    expect(screen.getByText('A calendar that fills itself')).toBeInTheDocument();
+    expect(
+      screen.getByText('A calendar that fills itself')
+    ).toBeInTheDocument();
     expect(screen.getByText('Monthly & lifetime stats')).toBeInTheDocument();
   });
 

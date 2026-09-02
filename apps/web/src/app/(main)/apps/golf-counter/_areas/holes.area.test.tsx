@@ -2,14 +2,16 @@ import { render, screen } from '@testing-library/react';
 import { HolesArea } from './holes.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('HolesArea', () => {
   it('제목과 설명을 렌더한다', () => {
     render(<HolesArea />);
     expect(
-      screen.getByRole('heading', { name: 'Nine or eighteen. Your call.' }),
+      screen.getByRole('heading', { name: 'Nine or eighteen. Your call.' })
     ).toBeInTheDocument();
   });
 

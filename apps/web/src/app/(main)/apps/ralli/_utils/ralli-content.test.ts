@@ -1,13 +1,13 @@
 import {
-  ralliMeta,
+  type RalliImage,
+  ralliFinalCta,
   ralliHeroLetters,
   ralliHeroShot,
-  ralliWatchSection,
-  ralliWorkoutSection,
+  ralliMeta,
   ralliReplaySection,
   ralliRulesSection,
-  ralliFinalCta,
-  type RalliImage,
+  ralliWatchSection,
+  ralliWorkoutSection,
 } from './ralli-content';
 
 const allImages: RalliImage[] = [
@@ -37,7 +37,9 @@ describe('ralli-content', () => {
     expect(ralliMeta.name).toBe('Ralli');
     expect(ralliMeta.iconSrc).toBe('/ralli/icon1.png');
     expect(ralliMeta.subtitle.length).toBeGreaterThan(0);
-    expect(ralliMeta.appStoreUrl).toBe('https://apps.apple.com/us/app/ralli/id6449350578');
+    expect(ralliMeta.appStoreUrl).toBe(
+      'https://apps.apple.com/us/app/ralli/id6449350578'
+    );
     expect(ralliMeta.supportEmail).toBe('qlrogo91lp@gmail.com');
   });
 

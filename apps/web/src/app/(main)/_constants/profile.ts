@@ -6,5 +6,4 @@ export const PROFILE = {
   ctaHref: '/posts',
 } as const;
 
-export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com';
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yjlogs.com';

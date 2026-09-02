@@ -50,7 +50,10 @@ const baseSeries: SeriesWithMeta = {
 describe('SeriesCard', () => {
   it('이름·설명·글 수·업데이트일을 렌더링하고 상세로 링크한다', () => {
     render(<SeriesCard series={baseSeries} />);
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/series/ralli-dev');
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      '/series/ralli-dev'
+    );
     expect(screen.getByText('Ralli 개발기')).toBeInTheDocument();
     expect(
       screen.getByText('Ralli 앱을 만들며 기록한 개발 일지')

@@ -1,7 +1,7 @@
 'use server';
 
-import { auth } from '@clerk/nextjs/server';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { auth } from '@clerk/nextjs/server';
 import { eq, max } from 'drizzle-orm';
 import { db } from '@/db';
 import { postImages, posts } from '@/db/schema';
@@ -39,7 +39,7 @@ type UploadResult =
 export async function uploadImage(
   formData: FormData,
   postId: number | null,
-  type: 'thumbnail' | 'content',
+  type: 'thumbnail' | 'content'
 ): Promise<UploadResult> {
   const { userId } = await auth();
   if (!userId) {
@@ -92,7 +92,7 @@ export async function uploadImage(
         // 이 헤더가 없으면 next/image는 minimumCacheTTL로 폴백하고,
         // 본문 raw <img>는 브라우저 캐시가 아예 걸리지 않는다.
         CacheControl: 'public, max-age=31536000, immutable',
-      }),
+      })
     );
 
     await db.insert(postImages).values({

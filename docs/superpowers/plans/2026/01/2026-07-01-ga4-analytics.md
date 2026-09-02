@@ -23,10 +23,12 @@
 ### Task 1: `@next/third-parties` 설치 + env 변수 등록
 
 **Files:**
+
 - Modify: `package.json` (패키지 설치로 자동 반영)
 - Modify: `.env.example`
 
 **Interfaces:**
+
 - Produces: `@next/third-parties/google`의 `GoogleAnalytics` export (Task 2에서 소비), env 변수 `NEXT_PUBLIC_GA_MEASUREMENT_ID` (Task 2에서 소비)
 
 - [x] **Step 1: 패키지 설치**
@@ -62,9 +64,11 @@ git commit -m "chore: @next/third-parties 설치 및 GA4 env 변수 등록"
 ### Task 2: 루트 레이아웃에 GA4 스크립트 조건부 삽입
 
 **Files:**
+
 - Modify: `src/app/layout.tsx`
 
 **Interfaces:**
+
 - Consumes: `GoogleAnalytics` from `@next/third-parties/google` (Task 1에서 설치), `process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID`
 - Produces: 없음 (leaf 변경, 이후 태스크가 의존하지 않음)
 
@@ -81,36 +85,44 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 기존:
 
 ```tsx
-        <body
-          className={cn(geistSans.variable, geistMono.variable, 'antialiased min-w-100')}
-        >
-          <ThemeProvider>
-            <TooltipProvider>
-              <PageTracker />
-              {children}
-              <Toaster />
-            </TooltipProvider>
-          </ThemeProvider>
-        </body>
+<body
+  className={cn(
+    geistSans.variable,
+    geistMono.variable,
+    'antialiased min-w-100'
+  )}
+>
+  <ThemeProvider>
+    <TooltipProvider>
+      <PageTracker />
+      {children}
+      <Toaster />
+    </TooltipProvider>
+  </ThemeProvider>
+</body>
 ```
 
 변경 후:
 
 ```tsx
-        <body
-          className={cn(geistSans.variable, geistMono.variable, 'antialiased min-w-100')}
-        >
-          <ThemeProvider>
-            <TooltipProvider>
-              <PageTracker />
-              {children}
-              <Toaster />
-            </TooltipProvider>
-          </ThemeProvider>
-          {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-          )}
-        </body>
+<body
+  className={cn(
+    geistSans.variable,
+    geistMono.variable,
+    'antialiased min-w-100'
+  )}
+>
+  <ThemeProvider>
+    <TooltipProvider>
+      <PageTracker />
+      {children}
+      <Toaster />
+    </TooltipProvider>
+  </ThemeProvider>
+  {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+    <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+  )}
+</body>
 ```
 
 - [x] **Step 3: 빌드 확인**
@@ -139,9 +151,11 @@ git commit -m "feat: 루트 레이아웃에 GA4 스크립트 조건부 삽입"
 ### Task 3: `AnalyticsLinkButton` 컴포넌트 작성
 
 **Files:**
+
 - Create: `src/app/admin/statistics/_components/analytics-link-button.tsx`
 
 **Interfaces:**
+
 - Produces: `AnalyticsLinkButton` — named export, props 없음, `src/app/admin/statistics/_components/analytics-link-button.tsx`에서 export (Task 4, Task 5에서 import)
 
 - [x] **Step 1: 컴포넌트 작성**
@@ -191,9 +205,11 @@ git commit -m "feat: GA4 콘솔 링크 버튼 컴포넌트 추가"
 ### Task 4: `/admin/statistics` 헤더에 버튼 배치
 
 **Files:**
+
 - Modify: `src/app/admin/statistics/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `AnalyticsLinkButton` from `src/app/admin/statistics/_components/analytics-link-button.tsx` (Task 3에서 생성)
 
 - [x] **Step 1: import 추가**
@@ -209,16 +225,16 @@ import { AnalyticsLinkButton } from './_components/analytics-link-button';
 기존:
 
 ```tsx
-      <h1 className="mb-6 text-2xl font-bold">방문 통계</h1>
+<h1 className="mb-6 text-2xl font-bold">방문 통계</h1>
 ```
 
 변경 후:
 
 ```tsx
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">방문 통계</h1>
-        <AnalyticsLinkButton />
-      </div>
+<div className="mb-6 flex items-center justify-between">
+  <h1 className="text-2xl font-bold">방문 통계</h1>
+  <AnalyticsLinkButton />
+</div>
 ```
 
 - [x] **Step 3: 수동 확인**
@@ -247,9 +263,11 @@ git commit -m "feat: 방문 통계 페이지에 GA4 링크 버튼 배치"
 ### Task 5: `/admin/statistics/referrers` 헤더에 버튼 배치
 
 **Files:**
+
 - Modify: `src/app/admin/statistics/referrers/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `AnalyticsLinkButton` from `src/app/admin/statistics/_components/analytics-link-button.tsx` (Task 3에서 생성)
 
 - [x] **Step 1: import 추가**
@@ -265,22 +283,22 @@ import { AnalyticsLinkButton } from '../_components/analytics-link-button';
 기존:
 
 ```tsx
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">유입 경로</h1>
-        <ReferrerPeriodFilter options={PERIOD_OPTIONS} current={currentPeriod} />
-      </div>
+<div className="mb-6 flex items-center justify-between">
+  <h1 className="text-2xl font-bold">유입 경로</h1>
+  <ReferrerPeriodFilter options={PERIOD_OPTIONS} current={currentPeriod} />
+</div>
 ```
 
 변경 후:
 
 ```tsx
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">유입 경로</h1>
-        <div className="flex items-center gap-2">
-          <AnalyticsLinkButton />
-          <ReferrerPeriodFilter options={PERIOD_OPTIONS} current={currentPeriod} />
-        </div>
-      </div>
+<div className="mb-6 flex items-center justify-between">
+  <h1 className="text-2xl font-bold">유입 경로</h1>
+  <div className="flex items-center gap-2">
+    <AnalyticsLinkButton />
+    <ReferrerPeriodFilter options={PERIOD_OPTIONS} current={currentPeriod} />
+  </div>
+</div>
 ```
 
 - [x] **Step 3: 수동 확인**
@@ -307,9 +325,11 @@ git commit -m "feat: 유입경로 페이지에 GA4 링크 버튼 배치"
 ### Task 6: 더미 측정 ID로 스크립트 삽입 확인 + 전체 회귀
 
 **Files:**
+
 - 없음 (검증 전용 태스크, 코드 변경 없음)
 
 **Interfaces:**
+
 - Consumes: Task 2의 `layout.tsx` 조건부 렌더링
 
 - [x] **Step 1: 로컬 `.env.local`에 더미 측정 ID 임시 추가**

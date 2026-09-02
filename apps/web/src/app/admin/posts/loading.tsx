@@ -9,7 +9,10 @@ export default function AdminPostsLoading() {
       </div>
       <div className="flex flex-col gap-3">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-4 rounded-2xl border p-4">
+          <div
+            key={i}
+            className="flex items-center gap-4 rounded-2xl border p-4"
+          >
             <Skeleton className="size-20 shrink-0 rounded-xl" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-5 w-64" />

@@ -1,8 +1,13 @@
 'use client';
 
-import { useState, useRef, MouseEvent, PointerEvent } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { MouseEvent, PointerEvent, useRef, useState } from 'react';
 import { ZoomIn, ZoomOut } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { GalleryNavHandler } from '../_handlers/gallery-nav.handler';
 
 const minScale = 1;
@@ -90,7 +95,10 @@ export function PostContentAction({ html }: Props) {
       return;
     }
     // 현재 보이는 영역 중심을 기준으로 재앵커
-    const reanchored = { x: position.x * next / scale, y: position.y * next / scale };
+    const reanchored = {
+      x: (position.x * next) / scale,
+      y: (position.y * next) / scale,
+    };
     setScale(next);
     setPosition(clampPosition(reanchored, next));
   };
@@ -120,13 +128,22 @@ export function PostContentAction({ html }: Props) {
           className="max-w-[95vw] border-0 bg-transparent p-0 shadow-none sm:max-w-[90vw]"
         >
           <DialogTitle className="sr-only">이미지 확대 보기</DialogTitle>
-          <DialogDescription className="sr-only">{zoomed?.alt ?? '이미지'}</DialogDescription>
+          <DialogDescription className="sr-only">
+            {zoomed?.alt ?? '이미지'}
+          </DialogDescription>
           {zoomed && (
             <div className="flex flex-col items-center gap-3">
               <div
                 ref={containerRef}
                 className="max-h-[80vh] overflow-hidden"
-                style={{ cursor: scale > minScale ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+                style={{
+                  cursor:
+                    scale > minScale
+                      ? isDragging
+                        ? 'grabbing'
+                        : 'grab'
+                      : 'default',
+                }}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={stopDrag}
@@ -146,16 +163,22 @@ export function PostContentAction({ html }: Props) {
               </div>
               <div className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-sm">
                 <button
-                  onClick={() => changeScale(Math.max(minScale, scale - scaleStep))}
+                  onClick={() =>
+                    changeScale(Math.max(minScale, scale - scaleStep))
+                  }
                   disabled={scale <= minScale}
                   className="text-white disabled:opacity-30"
                   aria-label="축소"
                 >
                   <ZoomOut size={20} />
                 </button>
-                <span className="w-10 text-center text-sm text-white">{Math.round(scale * 100)}%</span>
+                <span className="w-10 text-center text-sm text-white">
+                  {Math.round(scale * 100)}%
+                </span>
                 <button
-                  onClick={() => changeScale(Math.min(maxScale, scale + scaleStep))}
+                  onClick={() =>
+                    changeScale(Math.min(maxScale, scale + scaleStep))
+                  }
                   disabled={scale >= maxScale}
                   className="text-white disabled:opacity-30"
                   aria-label="확대"

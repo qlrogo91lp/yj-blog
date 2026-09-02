@@ -76,11 +76,13 @@ Expected: PASS — 이 시점의 파일 수와 테스트 수를 기록해 두고
 먼저 고친다. 갤러리가 같은 로직 위에 얹히므로 버그를 남겨두면 그대로 복제된다.
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx:36-44`
 - Create: `src/app/admin/posts/new/_utils/collect-image-srcs.ts`
 - Test: `src/app/admin/posts/new/_utils/collect-image-srcs.test.ts`
 
 **Interfaces:**
+
 - Produces: `collectImageSrcs(doc: ProseMirrorNode): Set<string>` — `@/app/admin/posts/new/_utils/collect-image-srcs`에서 named export. Task 5가 갤러리 src 수집을 이 함수에 추가로 얹는다.
 
 로직을 컴포넌트 밖 순수 함수로 꺼내야 테스트할 수 있다. 현재는 `wysiwyg-editor.action.tsx` 안 `useCallback`에 묶여 있어 에디터 전체를 띄우지 않으면 검증이 불가능하다.
@@ -90,14 +92,15 @@ Expected: PASS — 이 시점의 파일 수와 테스트 수를 기록해 두고
 `src/app/admin/posts/new/_utils/collect-image-srcs.test.ts` 신규 생성.
 
 ```ts
-import { describe, expect, it } from 'vitest';
 import { Editor } from '@tiptap/core';
 import { StarterKit } from '@tiptap/starter-kit';
-import { ImageBlock } from './image-extension';
+import { describe, expect, it } from 'vitest';
 import { collectImageSrcs } from './collect-image-srcs';
+import { ImageBlock } from './image-extension';
 
 function docOf(html: string) {
-  return new Editor({ extensions: [StarterKit, ImageBlock], content: html }).state.doc;
+  return new Editor({ extensions: [StarterKit, ImageBlock], content: html })
+    .state.doc;
 }
 
 describe('collectImageSrcs', () => {
@@ -107,9 +110,11 @@ describe('collectImageSrcs', () => {
   });
 
   it('이미지가 여러 개면 모두 수집한다', () => {
-    const doc = docOf('<p><img src="https://cdn/a.png" /></p><p><img src="https://cdn/b.png" /></p>');
+    const doc = docOf(
+      '<p><img src="https://cdn/a.png" /></p><p><img src="https://cdn/b.png" /></p>'
+    );
     expect(collectImageSrcs(doc)).toEqual(
-      new Set(['https://cdn/a.png', 'https://cdn/b.png']),
+      new Set(['https://cdn/a.png', 'https://cdn/b.png'])
     );
   });
 
@@ -181,10 +186,12 @@ git commit -m "🐛 이미지 정리 로직이 동작하지 않던 노드명 오
 ## Task 2: 갤러리 노드 확장
 
 **Files:**
+
 - Create: `src/app/admin/posts/new/_utils/gallery-extension.ts`
 - Test: `src/app/admin/posts/new/_utils/gallery-extension.test.ts`
 
 **Interfaces:**
+
 - Produces: `type GalleryImage = { src: string; alt: string; caption: string; width: number; height: number }`
 - Produces: `Gallery` — Tiptap Node. 노드명 `gallery`, 속성 `images: GalleryImage[]`. Task 3의 NodeView, Task 5의 삽입 로직, Task 6의 정리 로직이 이 이름과 속성에 의존한다.
 
@@ -193,9 +200,9 @@ git commit -m "🐛 이미지 정리 로직이 동작하지 않던 노드명 오
 `src/app/admin/posts/new/_utils/gallery-extension.test.ts` 신규 생성.
 
 ```ts
-import { describe, expect, it } from 'vitest';
 import { Editor } from '@tiptap/core';
 import { StarterKit } from '@tiptap/starter-kit';
+import { describe, expect, it } from 'vitest';
 import { Gallery } from './gallery-extension';
 
 function createEditor(content: string) {
@@ -233,13 +240,15 @@ describe('Gallery extension', () => {
 
   it('캡션이 비어 있으면 figcaption을 출력하지 않는다', () => {
     const html = createEditor(
-      '<div data-gallery><figure><img src="a.png" width="10" height="10"></figure></div>',
+      '<div data-gallery><figure><img src="a.png" width="10" height="10"></figure></div>'
     ).getHTML();
     expect(html).not.toContain('figcaption');
   });
 
   it('width/height가 없으면 0으로 폴백한다', () => {
-    const editor = createEditor('<div data-gallery><figure><img src="a.png"></figure></div>');
+    const editor = createEditor(
+      '<div data-gallery><figure><img src="a.png"></figure></div>'
+    );
     let images: { width: number; height: number }[] = [];
     editor.state.doc.descendants((node) => {
       if (node.type.name === 'gallery') images = node.attrs.images;
@@ -365,12 +374,14 @@ git commit -m "✨ 갤러리 Tiptap 노드 추가"
 ## Task 3: 갤러리 NodeView와 슬라이드 편집 UI
 
 **Files:**
+
 - Create: `src/app/admin/posts/new/_components/_gallery/gallery-slide-toolbar.tsx`
 - Create: `src/app/admin/posts/new/_components/_gallery/gallery-node-view.tsx`
 - Test: `src/app/admin/posts/new/_components/_gallery/gallery-node-view.test.tsx`
 - Modify: `src/app/admin/posts/new/_utils/gallery-extension.ts` (NodeView 연결)
 
 **Interfaces:**
+
 - Consumes: `GalleryImage`, `Gallery` (Task 2)
 - Produces: `GalleryNodeView` — `ReactNodeViewRenderer`에 넘길 컴포넌트
 - Produces: `GallerySlideToolbar({ index, total, caption, alt, onMove, onCaptionChange, onAltChange, onDelete })` — 슬라이드별 조작 바
@@ -383,9 +394,13 @@ git commit -m "✨ 갤러리 Tiptap 노드 추가"
 'use client';
 
 import { ArrowLeft, ArrowRight, Settings, Trash2 } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 type Props = {
   index: number;
@@ -443,7 +458,10 @@ export function GallerySlideToolbar({
           </button>
         </PopoverTrigger>
         <PopoverContent side="bottom" align="center" className="w-72">
-          <Label htmlFor={`gallery-caption-${index}`} className="mb-1 block text-xs">
+          <Label
+            htmlFor={`gallery-caption-${index}`}
+            className="mb-1 block text-xs"
+          >
             캡션
           </Label>
           <Input
@@ -452,7 +470,10 @@ export function GallerySlideToolbar({
             onChange={(e) => onCaptionChange(e.target.value)}
             placeholder="사진 아래에 붙는 설명"
           />
-          <Label htmlFor={`gallery-alt-${index}`} className="mt-3 mb-1 block text-xs">
+          <Label
+            htmlFor={`gallery-alt-${index}`}
+            className="mt-3 mb-1 block text-xs"
+          >
             대체 텍스트 (alt)
           </Label>
           <Input
@@ -482,7 +503,7 @@ export function GallerySlideToolbar({
 `src/app/admin/posts/new/_components/_gallery/gallery-node-view.test.tsx` 신규 생성.
 
 ```tsx
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { NodeViewProps } from '@tiptap/core';
 import { describe, expect, it, vi } from 'vitest';
 import { GalleryNodeView } from './gallery-node-view';
@@ -521,7 +542,9 @@ describe('GalleryNodeView', () => {
 
   it('오른쪽 이동은 배열 순서를 바꾼다', () => {
     const { updateAttributes } = setup();
-    fireEvent.click(screen.getAllByRole('button', { name: '오른쪽으로 이동' })[0]);
+    fireEvent.click(
+      screen.getAllByRole('button', { name: '오른쪽으로 이동' })[0]
+    );
     expect(updateAttributes).toHaveBeenCalledWith({
       images: [images[1], images[0], images[2]],
     });
@@ -529,7 +552,9 @@ describe('GalleryNodeView', () => {
 
   it('삭제는 해당 항목만 제거한다', () => {
     const { updateAttributes } = setup();
-    fireEvent.click(screen.getAllByRole('button', { name: '슬라이드 삭제' })[1]);
+    fireEvent.click(
+      screen.getAllByRole('button', { name: '슬라이드 삭제' })[1]
+    );
     expect(updateAttributes).toHaveBeenCalledWith({
       images: [images[0], images[2]],
     });
@@ -546,13 +571,19 @@ describe('GalleryNodeView', () => {
 
   it('첫 슬라이드의 왼쪽 이동과 마지막 슬라이드의 오른쪽 이동은 비활성이다', () => {
     setup();
-    expect(screen.getAllByRole('button', { name: '왼쪽으로 이동' })[0]).toBeDisabled();
-    expect(screen.getAllByRole('button', { name: '오른쪽으로 이동' })[2]).toBeDisabled();
+    expect(
+      screen.getAllByRole('button', { name: '왼쪽으로 이동' })[0]
+    ).toBeDisabled();
+    expect(
+      screen.getAllByRole('button', { name: '오른쪽으로 이동' })[2]
+    ).toBeDisabled();
   });
 
   it('선택되지 않으면 조작 바를 렌더하지 않는다', () => {
     setup({ selected: false } as unknown as Partial<NodeViewProps>);
-    expect(screen.queryByRole('button', { name: '슬라이드 삭제' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '슬라이드 삭제' })
+    ).not.toBeInTheDocument();
   });
 });
 ```
@@ -569,7 +600,7 @@ Expected: FAIL — `./gallery-node-view` 모듈이 없어 import 에러
 ```tsx
 'use client';
 
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
+import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import type { GalleryImage } from '../../_utils/gallery-extension';
 import { GallerySlideToolbar } from './gallery-slide-toolbar';
@@ -584,7 +615,9 @@ export function GalleryNodeView({
 
   const patch = (index: number, next: Partial<GalleryImage>) => {
     updateAttributes({
-      images: images.map((image, i) => (i === index ? { ...image, ...next } : image)),
+      images: images.map((image, i) =>
+        i === index ? { ...image, ...next } : image
+      ),
     });
   };
 
@@ -681,10 +714,12 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
 ## Task 4: 공개 페이지 CSS
 
 **Files:**
+
 - Modify: `src/app/globals.css` (`--gallery-height` 토큰 추가)
 - Modify: `src/styles/prose.css` (갤러리 규칙 + 단일 이미지 `max-height`)
 
 **Interfaces:**
+
 - Consumes: `--content-width`, `--radius-image` (선행 스펙에서 확정된 토큰)
 - Produces: `--gallery-height` CSS 변수, `[data-gallery]` / `[data-gallery-wrap]` 스타일 계약. Task 7의 화살표 핸들러가 `data-gallery-wrap`을 생성한다.
 
@@ -693,7 +728,7 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
 `src/app/globals.css`의 `:root` 블록에서 `--article-width: 720px;` 바로 아래 줄에 추가한다.
 
 ```css
-  --gallery-height: 460px;
+--gallery-height: 460px;
 ```
 
 - [x] **Step 2: 갤러리 스크롤 규칙 추가**
@@ -752,10 +787,10 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
 같은 파일, 방금 추가한 갤러리 블록 **앞**(단일 이미지 규칙들 아래)에 추가한다.
 
 ```css
-.prose img[data-size="default"],
-.prose img[data-size="small"],
-.prose figure[data-size="default"] img,
-.prose figure[data-size="small"] img {
+.prose img[data-size='default'],
+.prose img[data-size='small'],
+.prose figure[data-size='default'] img,
+.prose figure[data-size='small'] img {
   max-height: 80vh;
   width: auto;
 }
@@ -768,15 +803,15 @@ git commit -m "✨ 갤러리 NodeView와 슬라이드 편집 UI 추가"
 `@media (max-width: 640px)` 블록 **안쪽 끝**에 추가한다.
 
 ```css
-  .prose [data-gallery],
-  .prose [data-gallery-wrap] {
-    max-width: 100%;
-    margin-left: 0;
-    transform: none;
-  }
-  .prose [data-gallery] img {
-    height: 260px;
-  }
+.prose [data-gallery],
+.prose [data-gallery-wrap] {
+  max-width: 100%;
+  margin-left: 0;
+  transform: none;
+}
+.prose [data-gallery] img {
+  height: 260px;
+}
 ```
 
 - [x] **Step 5: 빌드 확인**
@@ -806,6 +841,7 @@ git commit -m "💄 갤러리 가로 스크롤 스타일과 단일 이미지 세
 ## Task 5: 다중 파일 업로드와 갤러리 삽입
 
 **Files:**
+
 - Create: `src/app/admin/posts/new/_utils/read-image-size.ts`
 - Modify: `src/app/admin/posts/new/_utils/image-uploading-extension.ts` (`total` 속성)
 - Modify: `src/app/admin/posts/new/_actions/_image-uploading/image-uploading-node-view.action.tsx` (N장 표시)
@@ -813,6 +849,7 @@ git commit -m "💄 갤러리 가로 스크롤 스타일과 단일 이미지 세
 - Modify: `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx` (다중 파일 처리)
 
 **Interfaces:**
+
 - Consumes: `Gallery`, `GalleryImage` (Task 2)
 - Produces: `readImageSize(file: File): Promise<{ width: number; height: number }>` — 측정 실패 시 `{ width: 0, height: 0 }`
 - Produces: `imageUploading` 노드의 `total` 속성 (기본값 `1`)
@@ -827,7 +864,9 @@ git commit -m "💄 갤러리 가로 스크롤 스타일과 단일 이미지 세
  * 갤러리 img의 width/height 속성에 넣어 브라우저가 종횡비를 미리 알게 한다.
  * 측정에 실패해도 갤러리는 동작해야 하므로 0으로 폴백한다.
  */
-export function readImageSize(file: File): Promise<{ width: number; height: number }> {
+export function readImageSize(
+  file: File
+): Promise<{ width: number; height: number }> {
   return new Promise((resolve) => {
     const url = URL.createObjectURL(file);
     const image = new Image();
@@ -865,13 +904,13 @@ export function readImageSize(file: File): Promise<{ width: number; height: numb
 `image-uploading-node-view.action.test.tsx`의 `describe` 블록 안에 추가한다.
 
 ```tsx
-  it('total이 2 이상이면 장수를 표시한다', () => {
-    const props = {
-      node: { attrs: { id: 'abc', previewUrl: 'blob:preview', total: 3 } },
-    } as unknown as NodeViewProps;
-    render(<ImageUploadingNodeViewAction {...props} />);
-    expect(screen.getByText('3장 업로드 중...')).toBeInTheDocument();
-  });
+it('total이 2 이상이면 장수를 표시한다', () => {
+  const props = {
+    node: { attrs: { id: 'abc', previewUrl: 'blob:preview', total: 3 } },
+  } as unknown as NodeViewProps;
+  render(<ImageUploadingNodeViewAction {...props} />);
+  expect(screen.getByText('3장 업로드 중...')).toBeInTheDocument();
+});
 ```
 
 - [x] **Step 4: 테스트를 돌려 실패를 확인**
@@ -884,16 +923,16 @@ Expected: FAIL — "3장 업로드 중..." 텍스트가 없다
 `image-uploading-node-view.action.tsx`에서 `total`을 읽어 문구를 분기한다.
 
 ```tsx
-  const previewUrl = (node.attrs.previewUrl as string) ?? '';
-  const total = (node.attrs.total as number) ?? 1;
+const previewUrl = (node.attrs.previewUrl as string) ?? '';
+const total = (node.attrs.total as number) ?? 1;
 ```
 
 `<span className="text-sm">업로드 중...</span>`을 아래로 바꾼다.
 
 ```tsx
-      <span className="text-sm">
-        {total > 1 ? `${total}장 업로드 중...` : '업로드 중...'}
-      </span>
+<span className="text-sm">
+  {total > 1 ? `${total}장 업로드 중...` : '업로드 중...'}
+</span>
 ```
 
 - [x] **Step 6: 테스트 통과 확인**
@@ -915,70 +954,70 @@ import { readImageSize } from '../_utils/read-image-size';
 기존 `uploadAndInsert` 아래에 새 함수를 추가한다.
 
 ```tsx
-  const uploadFiles = useCallback(
-    async (editorInstance: Editor, fileList: File[]) => {
-      const images = fileList.filter((f) => f.type.startsWith('image/'));
-      const withinLimit = images.filter((f) => f.size <= 10 * 1024 * 1024);
-      const rejected = images.length - withinLimit.length;
-      if (rejected > 0) {
-        toast.error(`${rejected}장이 10MB를 넘어 제외됐습니다`);
-      }
-      if (withinLimit.length === 0) return true;
-      if (withinLimit.length === 1) {
-        await uploadAndInsert(editorInstance, withinLimit[0]);
-        return true;
-      }
-
-      const id = crypto.randomUUID();
-      const previewUrl = URL.createObjectURL(withinLimit[0]);
-      editorInstance
-        .chain()
-        .focus()
-        .insertContent({
-          type: 'imageUploading',
-          attrs: { id, previewUrl, total: withinLimit.length },
-        })
-        .run();
-
-      const uploaded: GalleryImage[] = [];
-      let failed = 0;
-
-      // R2 키의 index를 서버가 순차 계산하므로 병렬 호출 시 충돌한다
-      for (const file of withinLimit) {
-        const size = await readImageSize(file);
-        const formData = new FormData();
-        formData.append('file', file);
-        const currentPostId = useNewPostStore.getState().postId;
-        const result = await uploadImage(formData, currentPostId, 'content');
-        if (result.url) {
-          uploaded.push({
-            src: result.url,
-            alt: '',
-            caption: '',
-            width: size.width,
-            height: size.height,
-          });
-          if (result.postId && !currentPostId) setPostId(result.postId);
-        } else {
-          failed += 1;
-        }
-      }
-
-      if (uploaded.length === 0) {
-        replaceUploadingNode(editorInstance, id, null);
-        toast.error('업로드에 모두 실패했습니다');
-        return true;
-      }
-
-      replaceUploadingNode(editorInstance, id, {
-        type: 'gallery',
-        attrs: { images: uploaded },
-      });
-      if (failed > 0) toast.error(`${failed}장 업로드에 실패했습니다`);
+const uploadFiles = useCallback(
+  async (editorInstance: Editor, fileList: File[]) => {
+    const images = fileList.filter((f) => f.type.startsWith('image/'));
+    const withinLimit = images.filter((f) => f.size <= 10 * 1024 * 1024);
+    const rejected = images.length - withinLimit.length;
+    if (rejected > 0) {
+      toast.error(`${rejected}장이 10MB를 넘어 제외됐습니다`);
+    }
+    if (withinLimit.length === 0) return true;
+    if (withinLimit.length === 1) {
+      await uploadAndInsert(editorInstance, withinLimit[0]);
       return true;
-    },
-    [uploadAndInsert, setPostId],
-  );
+    }
+
+    const id = crypto.randomUUID();
+    const previewUrl = URL.createObjectURL(withinLimit[0]);
+    editorInstance
+      .chain()
+      .focus()
+      .insertContent({
+        type: 'imageUploading',
+        attrs: { id, previewUrl, total: withinLimit.length },
+      })
+      .run();
+
+    const uploaded: GalleryImage[] = [];
+    let failed = 0;
+
+    // R2 키의 index를 서버가 순차 계산하므로 병렬 호출 시 충돌한다
+    for (const file of withinLimit) {
+      const size = await readImageSize(file);
+      const formData = new FormData();
+      formData.append('file', file);
+      const currentPostId = useNewPostStore.getState().postId;
+      const result = await uploadImage(formData, currentPostId, 'content');
+      if (result.url) {
+        uploaded.push({
+          src: result.url,
+          alt: '',
+          caption: '',
+          width: size.width,
+          height: size.height,
+        });
+        if (result.postId && !currentPostId) setPostId(result.postId);
+      } else {
+        failed += 1;
+      }
+    }
+
+    if (uploaded.length === 0) {
+      replaceUploadingNode(editorInstance, id, null);
+      toast.error('업로드에 모두 실패했습니다');
+      return true;
+    }
+
+    replaceUploadingNode(editorInstance, id, {
+      type: 'gallery',
+      attrs: { images: uploaded },
+    });
+    if (failed > 0) toast.error(`${failed}장 업로드에 실패했습니다`);
+    return true;
+  },
+  [uploadAndInsert, setPostId]
+);
 ```
 
 - [x] **Step 8: 드롭·붙여넣기 핸들러를 다중 파일로 확장**
@@ -1018,6 +1057,7 @@ Expected: 모두 PASS
 - [x] **Step 10: 에디터에서 동작 확인**
 
 `npm run dev` 후 `/admin/posts/new`에서 확인한다.
+
 - 사진 1장 드래그 → 기존처럼 단일 이미지로 삽입
 - 사진 3장 동시 드래그 → "3장 업로드 중..." 표시 후 갤러리로 교체, 가로로 스크롤됨
 - 갤러리 클릭 → 각 슬라이드에 조작 바 표시, 캡션 입력·순서 이동·삭제 동작
@@ -1034,12 +1074,14 @@ git commit -m "✨ 이미지 여러 장 드롭 시 갤러리로 삽입"
 ## Task 6: 툴바 갤러리 버튼과 정리 로직 확장
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_actions/editor-toolbar.action.tsx`
 - Modify: `src/app/admin/posts/new/_actions/wysiwyg-editor.action.tsx` (파일 선택 핸들러 노출)
 - Modify: `src/app/admin/posts/new/_utils/collect-image-srcs.ts`
 - Modify: `src/app/admin/posts/new/_utils/collect-image-srcs.test.ts`
 
 **Interfaces:**
+
 - Consumes: `collectImageSrcs` (Task 1), `uploadFiles` (Task 5), `GalleryImage` (Task 2)
 
 - [x] **Step 1: 갤러리 src 수집 테스트를 먼저 추가**
@@ -1054,34 +1096,37 @@ import { Gallery } from './gallery-extension';
 
 ```ts
 function docOf(html: string) {
-  return new Editor({ extensions: [StarterKit, ImageBlock, Gallery], content: html }).state.doc;
+  return new Editor({
+    extensions: [StarterKit, ImageBlock, Gallery],
+    content: html,
+  }).state.doc;
 }
 ```
 
 `describe` 블록 안에 테스트를 추가한다.
 
 ```ts
-  it('갤러리 안의 src도 모두 수집한다', () => {
-    const doc = docOf(
-      '<div data-gallery>' +
-        '<figure><img src="https://cdn/g1.png" width="10" height="10"></figure>' +
-        '<figure><img src="https://cdn/g2.png" width="10" height="10"></figure>' +
-        '</div>',
-    );
-    expect(collectImageSrcs(doc)).toEqual(
-      new Set(['https://cdn/g1.png', 'https://cdn/g2.png']),
-    );
-  });
+it('갤러리 안의 src도 모두 수집한다', () => {
+  const doc = docOf(
+    '<div data-gallery>' +
+      '<figure><img src="https://cdn/g1.png" width="10" height="10"></figure>' +
+      '<figure><img src="https://cdn/g2.png" width="10" height="10"></figure>' +
+      '</div>'
+  );
+  expect(collectImageSrcs(doc)).toEqual(
+    new Set(['https://cdn/g1.png', 'https://cdn/g2.png'])
+  );
+});
 
-  it('단일 이미지와 갤러리가 섞여 있어도 전부 수집한다', () => {
-    const doc = docOf(
-      '<p><img src="https://cdn/a.png" /></p>' +
-        '<div data-gallery><figure><img src="https://cdn/g1.png" width="10" height="10"></figure></div>',
-    );
-    expect(collectImageSrcs(doc)).toEqual(
-      new Set(['https://cdn/a.png', 'https://cdn/g1.png']),
-    );
-  });
+it('단일 이미지와 갤러리가 섞여 있어도 전부 수집한다', () => {
+  const doc = docOf(
+    '<p><img src="https://cdn/a.png" /></p>' +
+      '<div data-gallery><figure><img src="https://cdn/g1.png" width="10" height="10"></figure></div>'
+  );
+  expect(collectImageSrcs(doc)).toEqual(
+    new Set(['https://cdn/a.png', 'https://cdn/g1.png'])
+  );
+});
 ```
 
 - [x] **Step 2: 테스트를 돌려 실패를 확인**
@@ -1172,23 +1217,25 @@ export function useEditorContext() {
 `wysiwyg-editor.action.tsx`에서 context 값을 하나 더 받는다.
 
 ```tsx
-  const { setEditor, setUploadFiles } = useEditorContext();
+const { setEditor, setUploadFiles } = useEditorContext();
 ```
 
 editor를 context에 공유하는 기존 `useEffect`를 아래로 교체한다.
 
 ```tsx
-  useEffect(() => {
-    setEditor(editor);
-    setUploadFiles(editor ? (files: File[]) => void uploadFiles(editor, files) : null);
-    if (editor) {
-      prevImageSrcs.current = collectImageSrcs(editor.state.doc);
-    }
-    return () => {
-      setEditor(null);
-      setUploadFiles(null);
-    };
-  }, [editor, setEditor, setUploadFiles, uploadFiles]);
+useEffect(() => {
+  setEditor(editor);
+  setUploadFiles(
+    editor ? (files: File[]) => void uploadFiles(editor, files) : null
+  );
+  if (editor) {
+    prevImageSrcs.current = collectImageSrcs(editor.state.doc);
+  }
+  return () => {
+    setEditor(null);
+    setUploadFiles(null);
+  };
+}, [editor, setEditor, setUploadFiles, uploadFiles]);
 ```
 
 - [x] **Step 6: 툴바 버튼 추가**
@@ -1202,7 +1249,7 @@ const { editor, uploadFiles } = useEditorContext();
 숨김 input을 컴포넌트 안에 두고 참조한다.
 
 ```tsx
-  const galleryInputRef = useRef<HTMLInputElement>(null);
+const galleryInputRef = useRef<HTMLInputElement>(null);
 ```
 
 `ImageIcon` 버튼 바로 다음에 버튼과 input을 추가한다.
@@ -1250,11 +1297,13 @@ git commit -m "✨ 툴바 갤러리 버튼 추가하고 정리 로직에 갤러�
 ## Task 7: 공개 페이지 화살표와 확대 충돌 처리
 
 **Files:**
+
 - Create: `src/app/(main)/posts/[slug]/_handlers/gallery-nav.handler.tsx`
 - Modify: `src/app/(main)/posts/[slug]/_actions/post-content.action.tsx`
 - Test: `src/app/(main)/posts/[slug]/_actions/post-content.action.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `[data-gallery]` / `[data-gallery-wrap]` 스타일 계약 (Task 4)
 - Produces: `GalleryNavHandler({ containerRef }: { containerRef: RefObject<HTMLElement | null> })` — 렌더 결과 없이 DOM에 화살표를 붙이는 사이드이펙트 전용 컴포넌트
 
@@ -1265,7 +1314,7 @@ git commit -m "✨ 툴바 갤러리 버튼 추가하고 정리 로직에 갤러�
 ```tsx
 'use client';
 
-import { useEffect, type RefObject } from 'react';
+import { type RefObject, useEffect } from 'react';
 
 type Props = {
   containerRef: RefObject<HTMLElement | null>;
@@ -1292,7 +1341,10 @@ export function GalleryNavHandler({ containerRef }: Props) {
       const makeButton = (direction: 'prev' | 'next') => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.setAttribute('aria-label', direction === 'prev' ? '이전 사진' : '다음 사진');
+        button.setAttribute(
+          'aria-label',
+          direction === 'prev' ? '이전 사진' : '다음 사진'
+        );
         button.className = [
           'absolute top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center',
           'rounded-full border bg-background/80 backdrop-blur-sm transition-opacity',
@@ -1305,7 +1357,10 @@ export function GalleryNavHandler({ containerRef }: Props) {
             : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
         button.addEventListener('click', () => {
           gallery.scrollBy({
-            left: direction === 'prev' ? -gallery.clientWidth * 0.8 : gallery.clientWidth * 0.8,
+            left:
+              direction === 'prev'
+                ? -gallery.clientWidth * 0.8
+                : gallery.clientWidth * 0.8,
             behavior: 'smooth',
           });
         });
@@ -1350,21 +1405,25 @@ export function GalleryNavHandler({ containerRef }: Props) {
 `post-content.action.test.tsx`의 `describe` 블록 안에 추가한다.
 
 ```tsx
-  it('드래그한 뒤 뗀 클릭은 확대하지 않는다', () => {
-    render(<PostContentAction html='<img src="/test.jpg" alt="테스트 이미지" />' />);
-    const img = screen.getAllByAltText('테스트 이미지')[0];
-    fireEvent.pointerDown(img, { clientX: 0, clientY: 0 });
-    fireEvent.click(img, { clientX: 40, clientY: 0 });
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  });
+it('드래그한 뒤 뗀 클릭은 확대하지 않는다', () => {
+  render(
+    <PostContentAction html='<img src="/test.jpg" alt="테스트 이미지" />' />
+  );
+  const img = screen.getAllByAltText('테스트 이미지')[0];
+  fireEvent.pointerDown(img, { clientX: 0, clientY: 0 });
+  fireEvent.click(img, { clientX: 40, clientY: 0 });
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+});
 
-  it('제자리 클릭은 확대한다', () => {
-    render(<PostContentAction html='<img src="/test.jpg" alt="테스트 이미지" />' />);
-    const img = screen.getAllByAltText('테스트 이미지')[0];
-    fireEvent.pointerDown(img, { clientX: 10, clientY: 10 });
-    fireEvent.click(img, { clientX: 11, clientY: 11 });
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
-  });
+it('제자리 클릭은 확대한다', () => {
+  render(
+    <PostContentAction html='<img src="/test.jpg" alt="테스트 이미지" />' />
+  );
+  const img = screen.getAllByAltText('테스트 이미지')[0];
+  fireEvent.pointerDown(img, { clientX: 10, clientY: 10 });
+  fireEvent.click(img, { clientX: 11, clientY: 11 });
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+});
 ```
 
 기존 테스트가 이미 `fireEvent`를 import하고 `getAllByAltText`로 본문·확대본 두 이미지를 구분하고 있으므로 같은 방식을 따른다. 새 import는 필요 없다.
@@ -1387,16 +1446,16 @@ import { GalleryNavHandler } from '../_handlers/gallery-nav.handler';
 컴포넌트 안에 ref 두 개를 추가한다.
 
 ```tsx
-  const contentRef = useRef<HTMLDivElement>(null);
-  const clickOrigin = useRef({ x: 0, y: 0 });
+const contentRef = useRef<HTMLDivElement>(null);
+const clickOrigin = useRef({ x: 0, y: 0 });
 ```
 
 `handleClick` 위에 pointerdown 핸들러를 추가한다.
 
 ```tsx
-  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    clickOrigin.current = { x: event.clientX, y: event.clientY };
-  };
+const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+  clickOrigin.current = { x: event.clientX, y: event.clientY };
+};
 ```
 
 `handleClick` 시작부에 이동 거리 검사를 넣는다.
@@ -1448,9 +1507,11 @@ git commit -m "✨ 갤러리 화살표 버튼과 드래그·확대 충돌 처리
 ## Task 8: 마크다운 파이프라인 회귀 방지와 최종 검증
 
 **Files:**
+
 - Modify: `src/lib/markdown.test.ts`
 
 **Interfaces:**
+
 - Consumes: Task 2가 정의한 갤러리 HTML 구조
 
 - [x] **Step 1: 갤러리 HTML이 변형되지 않는지 테스트 추가**
@@ -1496,6 +1557,7 @@ Expected: 모두 PASS
 - [x] **Step 4: 발행 화면에서 갤러리 최종 확인**
 
 `npm run dev` 후 갤러리를 넣은 글을 발행해 상세 페이지에서 확인한다.
+
 - 갤러리가 본문(720px) 밖으로 980px까지 펼쳐진다
 - 가로·세로 사진이 섞여도 아랫줄이 맞고 잘리지 않는다
 - 트랙패드·터치로 스크롤되고, 화살표 버튼이 좌우 끝에서 사라진다
@@ -1505,6 +1567,7 @@ Expected: 모두 PASS
 - [x] **Step 5: 모바일 폭에서 확인하고 높이를 확정**
 
 브라우저 창을 375px로 줄여 확인한다.
+
 - 갤러리 bleed가 해제되고 컨테이너 폭에 맞는다
 - 슬라이드 높이 `260px`에서 세로 사진이 지나치게 작지 않은지 본다. 작다면 `prose.css`의 모바일 `height`를 `280px` 또는 `320px`로 조정하고 다시 확인한다.
 - 조정했다면 그 값으로 커밋한다.
@@ -1535,15 +1598,15 @@ git push -u origin feature/post-gallery
 
 ## 검증 요약
 
-| 항목 | 확인 방법 |
-|------|-----------|
-| 노드 직렬화 왕복 | `npx vitest run src/app/admin/posts/new/_utils/gallery-extension.test.ts` |
-| 슬라이드 편집 | `npx vitest run src/app/admin/posts/new/_components/_gallery/` |
-| 이미지 정리(단일+갤러리) | `npx vitest run src/app/admin/posts/new/_utils/collect-image-srcs.test.ts` |
-| 마크다운 파이프라인 무변형 | `npx vitest run src/lib/markdown.test.ts` |
-| 드래그·확대 충돌 | `npx vitest run "src/app/(main)/posts/[slug]/_actions/post-content.action.test.tsx"` |
-| 전체 | `npm run test:run && npm run lint && npm run build` |
-| 가로 스크롤 회귀 | `npm run test:e2e` |
+| 항목                       | 확인 방법                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------ |
+| 노드 직렬화 왕복           | `npx vitest run src/app/admin/posts/new/_utils/gallery-extension.test.ts`            |
+| 슬라이드 편집              | `npx vitest run src/app/admin/posts/new/_components/_gallery/`                       |
+| 이미지 정리(단일+갤러리)   | `npx vitest run src/app/admin/posts/new/_utils/collect-image-srcs.test.ts`           |
+| 마크다운 파이프라인 무변형 | `npx vitest run src/lib/markdown.test.ts`                                            |
+| 드래그·확대 충돌           | `npx vitest run "src/app/(main)/posts/[slug]/_actions/post-content.action.test.tsx"` |
+| 전체                       | `npm run test:run && npm run lint && npm run build`                                  |
+| 가로 스크롤 회귀           | `npm run test:e2e`                                                                   |
 
 ## 범위 밖 (이 계획에서 하지 않는 것)
 

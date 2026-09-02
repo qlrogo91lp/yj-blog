@@ -1,13 +1,17 @@
 import { Suspense } from 'react';
+import { ContentContainer } from '@/components/layout/content-container';
 import { getCategories, selectCategoryBySlug } from '@/db/queries/categories';
 import { selectPosts } from '@/db/queries/posts';
-import { getAllTags, getTagBySlug, selectTagsByPostIds } from '@/db/queries/tags';
+import {
+  getAllTags,
+  getTagBySlug,
+  selectTagsByPostIds,
+} from '@/db/queries/tags';
 import { ViewToggleAction } from '../_actions/view-toggle.action';
 import { CategoryFilterAction } from './_actions/category-filter.action';
+import { InfinitePostListAction } from './_actions/infinite-post-list.action';
 import { SearchAction } from './_actions/search.action';
 import { TagFilterAction } from './_actions/tag-filter.action';
-import { InfinitePostListAction } from './_actions/infinite-post-list.action';
-import { ContentContainer } from '@/components/layout/content-container';
 
 type Props = {
   searchParams: Promise<{
@@ -19,7 +23,12 @@ type Props = {
 };
 
 export default async function PostsPage({ searchParams }: Props) {
-  const { category: categorySlug, view, search, tag: tagSlug } = await searchParams;
+  const {
+    category: categorySlug,
+    view,
+    search,
+    tag: tagSlug,
+  } = await searchParams;
   const viewType = view === 'list' ? 'list' : 'card';
 
   const [categoriesData, categoryData, tagsData, tagData] = await Promise.all([

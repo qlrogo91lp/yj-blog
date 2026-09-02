@@ -28,11 +28,15 @@ function HealthStepCard({
         'rounded-[20px] border px-4.5 py-4 transition-all duration-350',
         isActive
           ? 'border-white/20 bg-white/8 opacity-100'
-          : 'border-white/10 bg-transparent opacity-45',
+          : 'border-white/10 bg-transparent opacity-45'
       )}
     >
-      <div className="mb-1 text-[16.5px] font-semibold tracking-[-0.2px]">{step.title}</div>
-      <div className="text-[14.5px] leading-[1.45] text-white/55">{step.body}</div>
+      <div className="mb-1 text-[16.5px] font-semibold tracking-[-0.2px]">
+        {step.title}
+      </div>
+      <div className="text-[14.5px] leading-[1.45] text-white/55">
+        {step.body}
+      </div>
     </div>
   );
 }
@@ -65,14 +69,25 @@ function HealthShot({
     // 두 이미지가 같은 자리에 absolute로 겹치므로, 비활성 쪽은 `hidden`으로
     // 실제 렌더에서 제외해야 화면에 두 장이 겹쳐 보이는 걸 막을 수 있다.
     return (
-      <div className={cn('absolute grid place-items-center', !isActive && 'hidden')}>{shot}</div>
+      <div
+        className={cn(
+          'absolute grid place-items-center',
+          !isActive && 'hidden'
+        )}
+      >
+        {shot}
+      </div>
     );
   }
 
   return (
     <motion.div
       className="absolute grid place-items-center"
-      animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 18, scale: isActive ? 1 : 0.96 }}
+      animate={{
+        opacity: isActive ? 1 : 0,
+        y: isActive ? 0 : 18,
+        scale: isActive ? 1 : 0.96,
+      }}
       transition={{ duration: 0.4, ease: [0.2, 0.9, 0.3, 1] }}
     >
       {shot}
@@ -122,7 +137,7 @@ export function HealthArea() {
         <div
           className={cn(
             'relative grid h-[38vh] place-items-center overflow-hidden rounded-[28px] border border-white/8 bg-black',
-            !isStatic && 'md:h-[74vh] md:rounded-[40px]',
+            !isStatic && 'md:h-[74vh] md:rounded-[40px]'
           )}
         >
           {golfHealthSection.steps.map((step, index) => (

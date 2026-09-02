@@ -14,14 +14,16 @@ function block(selector: string): string {
 
 /** `--name: oklch(L ...)` 에서 L 값을 뽑는다. */
 function lightness(source: string, token: string): number {
-  const matched = source.match(
-    new RegExp(`${token}:\\s*oklch\\(([\\d.]+)`)
-  );
+  const matched = source.match(new RegExp(`${token}:\\s*oklch\\(([\\d.]+)`));
   if (!matched) throw new Error(`${token} 의 oklch 값을 찾을 수 없습니다`);
   return Number(matched[1]);
 }
 
-const statusTokens = ['--status-published', '--status-draft', '--status-danger'];
+const statusTokens = [
+  '--status-published',
+  '--status-draft',
+  '--status-danger',
+];
 
 describe('globals.css 어드민 토큰', () => {
   it('상태 색 토큰이 :root와 .dark 양쪽에 정의된다', () => {

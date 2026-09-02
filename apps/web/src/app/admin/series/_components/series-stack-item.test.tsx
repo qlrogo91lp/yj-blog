@@ -4,9 +4,13 @@ import type { AdminSeriesItem } from '@/types';
 import { SeriesStackItem } from './series-stack-item';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 vi.mock('./series-actions-cell', () => ({
@@ -74,11 +78,11 @@ describe('SeriesStackItem', () => {
   });
 
   it('펼친 상태에서는 회차와 글 추가 링크를 렌더한다', () => {
-    render(
-      <SeriesStackItem series={series} isExpanded onToggle={vi.fn()} />
-    );
+    render(<SeriesStackItem series={series} isExpanded onToggle={vi.fn()} />);
 
-    expect(screen.getByText('Next.js 15 App Router 이전기')).toBeInTheDocument();
+    expect(
+      screen.getByText('Next.js 15 App Router 이전기')
+    ).toBeInTheDocument();
     expect(screen.getByText('임시저장')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /이 시리즈에 글 추가/ })
@@ -99,6 +103,8 @@ describe('SeriesStackItem', () => {
     const { container } = render(
       <SeriesStackItem series={series} isExpanded onToggle={vi.fn()} />
     );
-    expect(container.querySelector('[data-drag-handle]')).not.toBeInTheDocument();
+    expect(
+      container.querySelector('[data-drag-handle]')
+    ).not.toBeInTheDocument();
   });
 });

@@ -1,5 +1,6 @@
 'use client';
 
+import { ArticleContainer } from '@/components/layout/article-container';
 import {
   Dialog,
   DialogContent,
@@ -7,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ArticleContainer } from '@/components/layout/article-container';
 import { useNewPostStore } from '../../_store';
 
 type Props = {
@@ -24,7 +24,9 @@ export function PreviewDialogAction({ open, onOpenChange }: Props) {
       <DialogContent className="max-w-[80vw] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>미리보기</DialogTitle>
-          <DialogDescription className="sr-only">작성 중인 글의 미리보기입니다</DialogDescription>
+          <DialogDescription className="sr-only">
+            작성 중인 글의 미리보기입니다
+          </DialogDescription>
         </DialogHeader>
         <ArticleContainer className="mt-4">
           <article>

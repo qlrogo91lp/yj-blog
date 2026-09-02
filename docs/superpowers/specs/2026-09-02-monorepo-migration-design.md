@@ -89,12 +89,12 @@ yjlogs/
 
 `turbo.json`:
 
-| 태스크 | dependsOn | outputs | 비고 |
-|---|---|---|---|
-| `build` | `^build` | `.next/**` (`.next/cache/**` 제외), `dist/**` | 캐시 |
-| `dev` | — | — | `cache: false`, `persistent: true` |
-| `lint` | — | — | 캐시 |
-| `test:run` | — | — | 캐시 |
+| 태스크     | dependsOn | outputs                                       | 비고                               |
+| ---------- | --------- | --------------------------------------------- | ---------------------------------- |
+| `build`    | `^build`  | `.next/**` (`.next/cache/**` 제외), `dist/**` | 캐시                               |
+| `dev`      | —         | —                                             | `cache: false`, `persistent: true` |
+| `lint`     | —         | —                                             | 캐시                               |
+| `test:run` | —         | —                                             | 캐시                               |
 
 루트 `package.json` 스크립트:
 
@@ -200,14 +200,14 @@ Root Directory를 바꾸는 순간부터 옛 구조의 커밋은 Vercel에서 �
 
 ## 검증 기준
 
-| 항목 | 기준 |
-|---|---|
-| 루트 명령 | `pnpm build`, `pnpm lint`, `pnpm test:run`, `pnpm format:check` 모두 통과 |
-| 앱 단독 | `apps/web`에서 `pnpm dev`로 로컬 3000 포트 정상 |
-| E2E | `apps/web`에서 `pnpm test:e2e` 통과 (webServer 명령이 `pnpm dev`로 바뀌어야 함) |
-| Vercel preview | Root Directory 변경 후 PR preview 성공 |
-| 프로덕션 | `main` 머지 후 `yjlogs.com` 정상, Discord 알림 수신 |
-| 히스토리 | `git log --follow apps/web/src/app/layout.tsx`가 이사 전 커밋까지 이어짐 |
+| 항목           | 기준                                                                            |
+| -------------- | ------------------------------------------------------------------------------- |
+| 루트 명령      | `pnpm build`, `pnpm lint`, `pnpm test:run`, `pnpm format:check` 모두 통과       |
+| 앱 단독        | `apps/web`에서 `pnpm dev`로 로컬 3000 포트 정상                                 |
+| E2E            | `apps/web`에서 `pnpm test:e2e` 통과 (webServer 명령이 `pnpm dev`로 바뀌어야 함) |
+| Vercel preview | Root Directory 변경 후 PR preview 성공                                          |
+| 프로덕션       | `main` 머지 후 `yjlogs.com` 정상, Discord 알림 수신                             |
+| 히스토리       | `git log --follow apps/web/src/app/layout.tsx`가 이사 전 커밋까지 이어짐        |
 
 ## 리스크
 

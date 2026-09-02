@@ -13,7 +13,15 @@ const props = {
   views: 3104,
   externalCount: 179,
   previousVisitors: 1644,
-  daily: [{ date: '2026-08-15', views: 10, visitors: 5, previousViews: 8, previousVisitors: 4 }],
+  daily: [
+    {
+      date: '2026-08-15',
+      views: 10,
+      visitors: 5,
+      previousViews: 8,
+      previousVisitors: 4,
+    },
+  ],
 };
 
 describe('DashboardStatPanel', () => {

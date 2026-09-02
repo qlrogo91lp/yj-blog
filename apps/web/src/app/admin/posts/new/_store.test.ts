@@ -1,11 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { savePost } from './_services/save-post';
+import { selectIsDirty, useNewPostStore } from './_store';
 
 vi.mock('./_services/save-post', () => ({
   savePost: vi.fn(),
 }));
-
-import { savePost } from './_services/save-post';
-import { selectIsDirty, useNewPostStore } from './_store';
 
 describe('useNewPostStore dirty 추적', () => {
   beforeEach(() => {
@@ -23,14 +22,40 @@ describe('useNewPostStore dirty 추적', () => {
   });
 
   it.each([
-    ['setContent', (s: ReturnType<typeof useNewPostStore.getState>) => s.setContent('<p>a</p>')],
-    ['setCategoryId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setCategoryId(1)],
-    ['setSeriesId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSeriesId(1)],
-    ['setTagIds', (s: ReturnType<typeof useNewPostStore.getState>) => s.setTagIds([1])],
-    ['setSlug', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSlug('x')],
-    ['setExcerpt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setExcerpt('x')],
-    ['setMetaTitle', (s: ReturnType<typeof useNewPostStore.getState>) => s.setMetaTitle('x')],
-    ['setThumbnailUrl', (s: ReturnType<typeof useNewPostStore.getState>) => s.setThumbnailUrl('u')],
+    [
+      'setContent',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setContent('<p>a</p>'),
+    ],
+    [
+      'setCategoryId',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setCategoryId(1),
+    ],
+    [
+      'setSeriesId',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setSeriesId(1),
+    ],
+    [
+      'setTagIds',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setTagIds([1]),
+    ],
+    [
+      'setSlug',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setSlug('x'),
+    ],
+    [
+      'setExcerpt',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setExcerpt('x'),
+    ],
+    [
+      'setMetaTitle',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setMetaTitle('x'),
+    ],
+    [
+      'setThumbnailUrl',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setThumbnailUrl('u'),
+    ],
   ])('%s 호출은 changeCount를 1 올린다', (_name, call) => {
     const before = useNewPostStore.getState().changeCount;
     call(useNewPostStore.getState());
@@ -38,12 +63,35 @@ describe('useNewPostStore dirty 추적', () => {
   });
 
   it.each([
-    ['setPostId', (s: ReturnType<typeof useNewPostStore.getState>) => s.setPostId(1)],
-    ['setStatus', (s: ReturnType<typeof useNewPostStore.getState>) => s.setStatus('published')],
-    ['setPublishedAt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setPublishedAt(new Date())],
-    ['setSaveStatus', (s: ReturnType<typeof useNewPostStore.getState>) => s.setSaveStatus('saving')],
-    ['setLastSavedAt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setLastSavedAt(new Date())],
-    ['setIsGeneratingExcerpt', (s: ReturnType<typeof useNewPostStore.getState>) => s.setIsGeneratingExcerpt(true)],
+    [
+      'setPostId',
+      (s: ReturnType<typeof useNewPostStore.getState>) => s.setPostId(1),
+    ],
+    [
+      'setStatus',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setStatus('published'),
+    ],
+    [
+      'setPublishedAt',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setPublishedAt(new Date()),
+    ],
+    [
+      'setSaveStatus',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setSaveStatus('saving'),
+    ],
+    [
+      'setLastSavedAt',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setLastSavedAt(new Date()),
+    ],
+    [
+      'setIsGeneratingExcerpt',
+      (s: ReturnType<typeof useNewPostStore.getState>) =>
+        s.setIsGeneratingExcerpt(true),
+    ],
   ])('%s 호출은 changeCount를 올리지 않는다', (_name, call) => {
     const before = useNewPostStore.getState().changeCount;
     call(useNewPostStore.getState());
@@ -115,9 +163,14 @@ describe('useNewPostStore.submitPost', () => {
   });
 
   it('저장 중에 추가 편집이 있었으면 저장 성공 후에도 dirty가 유지된다', async () => {
-    let resolveSave: (v: Awaited<ReturnType<typeof savePost>>) => void = () => {};
+    let resolveSave: (
+      v: Awaited<ReturnType<typeof savePost>>
+    ) => void = () => {};
     vi.mocked(savePost).mockImplementation(
-      () => new Promise((resolve) => { resolveSave = resolve; }),
+      () =>
+        new Promise((resolve) => {
+          resolveSave = resolve;
+        })
     );
     const s = useNewPostStore.getState();
     s.setTitle('제목');
@@ -129,7 +182,12 @@ describe('useNewPostStore.submitPost', () => {
     // savePost가 실제로 호출된(=resolveSave가 교체된) 시점까지 기다린 뒤 중간 편집을 넣는다.
     await vi.waitFor(() => expect(savePost).toHaveBeenCalled());
     useNewPostStore.getState().setTitle('저장 중 수정');
-    resolveSave({ success: true, postId: 1, status: 'draft', publishedAt: null });
+    resolveSave({
+      success: true,
+      postId: 1,
+      status: 'draft',
+      publishedAt: null,
+    });
     await pending;
 
     expect(selectIsDirty(useNewPostStore.getState())).toBe(true);
@@ -137,7 +195,10 @@ describe('useNewPostStore.submitPost', () => {
 
   it('publishedAt을 서버로 보내지 않는다', async () => {
     vi.mocked(savePost).mockResolvedValue({
-      success: true, postId: 1, status: 'draft', publishedAt: null,
+      success: true,
+      postId: 1,
+      status: 'draft',
+      publishedAt: null,
     });
     useNewPostStore.getState().setTitle('제목');
     useNewPostStore.getState().setContent('<p>본문</p>');
@@ -147,7 +208,10 @@ describe('useNewPostStore.submitPost', () => {
   });
 
   it('실패 시 saveStatus가 error가 되고 dirty는 유지된다', async () => {
-    vi.mocked(savePost).mockResolvedValue({ success: false, error: '저장에 실패했습니다' });
+    vi.mocked(savePost).mockResolvedValue({
+      success: false,
+      error: '저장에 실패했습니다',
+    });
     useNewPostStore.getState().setTitle('제목');
     useNewPostStore.getState().setContent('<p>본문</p>');
     const result = await useNewPostStore.getState().submitPost('draft');
@@ -157,9 +221,14 @@ describe('useNewPostStore.submitPost', () => {
   });
 
   it('저장이 진행 중일 때 새로운 submitPost 호출은 서버로 나가지 않고 즉시 실패를 반환한다 (자동저장 vs 수동 발행 레이스 방지)', async () => {
-    let resolveSave: (v: Awaited<ReturnType<typeof savePost>>) => void = () => {};
+    let resolveSave: (
+      v: Awaited<ReturnType<typeof savePost>>
+    ) => void = () => {};
     vi.mocked(savePost).mockImplementation(
-      () => new Promise((resolve) => { resolveSave = resolve; }),
+      () =>
+        new Promise((resolve) => {
+          resolveSave = resolve;
+        })
     );
     const s = useNewPostStore.getState();
     s.setTitle('제목');
@@ -171,13 +240,23 @@ describe('useNewPostStore.submitPost', () => {
     expect(useNewPostStore.getState().saveStatus).toBe('saving');
 
     // 그 사이 사용자가 "완료(발행)" 버튼을 누른다.
-    const secondResult = await useNewPostStore.getState().submitPost('published');
+    const secondResult = await useNewPostStore
+      .getState()
+      .submitPost('published');
 
-    expect(secondResult).toEqual({ success: false, error: '이미 저장 중입니다' });
+    expect(secondResult).toEqual({
+      success: false,
+      error: '이미 저장 중입니다',
+    });
     // savePost는 첫 번째 호출 한 번만 나갔다 — 동시 INSERT/UPDATE 레이스가 없다.
     expect(savePost).toHaveBeenCalledTimes(1);
 
-    resolveSave({ success: true, postId: 1, status: 'draft', publishedAt: null });
+    resolveSave({
+      success: true,
+      postId: 1,
+      status: 'draft',
+      publishedAt: null,
+    });
     await firstCall;
     expect(useNewPostStore.getState().saveStatus).toBe('saved');
   });

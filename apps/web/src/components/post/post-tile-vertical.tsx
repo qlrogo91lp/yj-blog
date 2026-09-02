@@ -12,7 +12,12 @@ type Props = {
   size: 'md' | 'sm';
 };
 
-export function PostTileVertical({ post, tags, priority = false, size }: Props) {
+export function PostTileVertical({
+  post,
+  tags,
+  priority = false,
+  size,
+}: Props) {
   const publishedAt = post.publishedAt
     ? format(new Date(post.publishedAt), 'dd MMM yyyy', { locale: enUS })
     : null;

@@ -4,20 +4,21 @@
 >
 > **최종 성과 (프로덕션 빌드 + `next start`, warm)**
 >
-> | 라우트 | 개선 전 | 최종 | 렌더링 |
-> |---|---:|---:|:---:|
-> | `/` | 3 ms | 3 ms | ƒ → **○** |
-> | `/series`·`/tags`·`/apps`·`/playground` | 2~5 ms | 2~5 ms | ƒ → **○** |
-> | `/apps/[slug]` | — | — | ƒ → **● SSG** |
-> | `/posts` | 342 ms | **3 ms** | ƒ (searchParams) |
-> | `/posts/[slug]` | 422 ms | **2 ms** | ƒ → **● SSG** |
-> | `/categories/[slug]` | 242 ms | **3 ms** | ƒ |
+> | 라우트                                  | 개선 전 |     최종 |      렌더링      |
+> | --------------------------------------- | ------: | -------: | :--------------: |
+> | `/`                                     |    3 ms |     3 ms |    ƒ → **○**     |
+> | `/series`·`/tags`·`/apps`·`/playground` |  2~5 ms |   2~5 ms |    ƒ → **○**     |
+> | `/apps/[slug]`                          |       — |        — |  ƒ → **● SSG**   |
+> | `/posts`                                |  342 ms | **3 ms** | ƒ (searchParams) |
+> | `/posts/[slug]`                         |  422 ms | **2 ms** |  ƒ → **● SSG**   |
+> | `/categories/[slug]`                    |  242 ms | **3 ms** |        ƒ         |
 >
 > **근본 원인**: `Header`가 서버 컴포넌트로 `@clerk/nextjs`의 서버 버전 `<SignedIn>`/`<SignedOut>`을 렌더 → 내부 `auth()` 호출 → `(main)` 그룹 전체가 동적 렌더링으로 강제 → 프리렌더 페이로드가 없어 `<Link>` prefetch 무력화.
 >
 > **되돌린 항목**: Task 2(`loading.tsx`)는 soft 404를 유발해 제거했다. 상세는 Task 2 섹션 참조.
 >
 > **계획이 틀렸던 지점 2건** (모두 실측으로 발견)
+>
 > - Step 9 검증 절차가 dev 서버 기준이었다. dev는 정적 프리렌더를 하지 않아 이 개선을 관측할 수 없다 → 프로덕션 빌드 기준으로 정정 (`1bee6b4`)
 > - Task 3 Step 6을 "캐시 무효화 코드 변경 불필요"로 예상했으나, 공개 댓글 서비스 2건에 `revalidateTag`가 없어 **댓글 캐싱 시 새 댓글이 반영되지 않는 버그**가 있었다 → `revalidateTag(CACHE_TAGS.comments, 'max')` 추가
 >
@@ -53,11 +54,13 @@
 ### Task 1: Clerk 인증 UI를 클라이언트 경계로 분리 (1단계)
 
 **Files:**
+
 - Create: `src/components/nav/header-auth.tsx`
 - Create: `src/components/nav/header-auth.test.tsx`
 - Modify: `src/components/nav/header.tsx`
 
 **Interfaces:**
+
 - Produces: `HeaderAdminLink()` — props 없음, 로그인 상태에서 `/admin` 대시보드 버튼 렌더
 - Produces: `HeaderAuthButtons()` — props 없음, 비로그인 시 로그인 버튼 / 로그인 시 `UserButton` 렌더
 
@@ -103,7 +106,9 @@ vi.mock('@clerk/nextjs', () => ({
   SignedOut: () => null,
   ClerkLoading: () => null,
   ClerkLoaded: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  SignInButton: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  SignInButton: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
   UserButton: () => <div data-testid="user-button" />,
 }));
 
@@ -121,7 +126,9 @@ describe('HeaderAuthButtons', () => {
   it('로그인 상태에서 UserButton을 렌더하고 로그인 버튼은 렌더하지 않는다', () => {
     render(<HeaderAuthButtons />);
     expect(screen.getByTestId('user-button')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: '로그인' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '로그인' })
+    ).not.toBeInTheDocument();
   });
 });
 ```
@@ -200,10 +207,13 @@ Modify `src/components/nav/header.tsx` — 전체를 아래로 교체한다. `He
 
 ```tsx
 import Link from 'next/link';
+import {
+  HeaderAdminLink,
+  HeaderAuthButtons,
+} from '@/components/nav/header-auth';
 import { Logo } from '@/components/nav/logo';
-import { NavLinks } from '@/components/nav/nav-links';
 import { MobileMenu } from '@/components/nav/mobile-menu';
-import { HeaderAdminLink, HeaderAuthButtons } from '@/components/nav/header-auth';
+import { NavLinks } from '@/components/nav/nav-links';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SITE_NAME } from '@/lib/constants';
 
@@ -283,6 +293,7 @@ done
 > **실행 결과 (2026-07-21)**
 >
 > prefetch 요청 — 정적 전환된 라우트만 완료된다.
+>
 > ```
 > /apps?_rsc=...            → 200 OK
 > /tags?_rsc=...            → 200 OK
@@ -295,14 +306,14 @@ done
 >
 > 응답 시간 — 정적 2~5ms, 동적 314~452ms (약 100배).
 >
-> | 라우트 | 렌더링 | 응답 |
-> |---|:---:|---:|
-> | `/` | ○ | 3 ms |
-> | `/series` | ○ | 2 ms |
-> | `/apps` | ○ | 2 ms |
-> | `/tags` | ○ | 5 ms |
-> | `/posts` | ƒ | 314 ms |
-> | `/posts/dell-s2725qc` | ƒ | 452 ms |
+> | 라우트                | 렌더링 |   응답 |
+> | --------------------- | :----: | -----: |
+> | `/`                   |   ○    |   3 ms |
+> | `/series`             |   ○    |   2 ms |
+> | `/apps`               |   ○    |   2 ms |
+> | `/tags`               |   ○    |   5 ms |
+> | `/posts`              |   ƒ    | 314 ms |
+> | `/posts/dell-s2725qc` |   ƒ    | 452 ms |
 >
 > 동적 라우트의 prefetch가 중단되는 것은 `loading.tsx` 경계가 없어서다(스펙 2.3절). **Task 2가 정확히 이 지점을 해결한다.** 314~452ms는 비캐시 DB 왕복과 마크다운 변환 비용이며 **Task 3의 대상**이다.
 
@@ -346,10 +357,10 @@ Task 1 배포 후 체감 변화를 확인한 뒤 Task 2·3 진행 여부를 결�
 >
 > `loading.tsx`는 Suspense 경계를 만들어 응답을 스트리밍하게 한다. HTTP 상태(200)가 헤더 플러시 시점에 확정된 뒤 `notFound()`가 실행되므로, 존재하지 않는 페이지가 **본문만 404 UI이고 상태 코드는 200인 soft 404**가 된다. 검색엔진은 이를 색인 품질 문제로 취급한다.
 >
-> | 상태 | `/series/*` | `/categories/*` | `/tags/*` | `/posts/*` |
-> |---|:---:|:---:|:---:|:---:|
-> | `(main)/loading.tsx` 있음 | 200 ❌ | 200 ❌ | 200 ❌ | 200 ❌ |
-> | 전부 제거 | **404** ✅ | **404** ✅ | **404** ✅ | **404** ✅ |
+> | 상태                      | `/series/*` | `/categories/*` | `/tags/*`  | `/posts/*` |
+> | ------------------------- | :---------: | :-------------: | :--------: | :--------: |
+> | `(main)/loading.tsx` 있음 |   200 ❌    |     200 ❌      |   200 ❌   |   200 ❌   |
+> | 전부 제거                 | **404** ✅  |   **404** ✅    | **404** ✅ | **404** ✅ |
 >
 > 부모 세그먼트의 `loading.tsx`가 자식 라우트까지 덮으므로 "목록 페이지에만 둔다"는 절충도 성립하지 않는다 (`posts/loading.tsx` → `/posts/[slug]`도 soft 404). `loading.tsx`와 올바른 404 상태는 **양립 불가**다.
 >
@@ -358,10 +369,12 @@ Task 1 배포 후 체감 변화를 확인한 뒤 Task 2·3 진행 여부를 결�
 > `e2e/series.spec.ts`의 404 테스트가 이 회귀를 잡아냈다. 아래 Task 2 내용은 히스토리로 남겨둔다.
 
 **Files:**
+
 - Create: `src/app/(main)/loading.tsx`
 - Create: `src/app/(main)/posts/[slug]/loading.tsx`
 
 **Interfaces:**
+
 - Consumes: Task 1에서 정적화된 라우트 구조 (여기서 다루는 대상은 그래도 `ƒ`로 남는 라우트)
 - Produces: 없음 (Next.js 규약 파일)
 
@@ -455,11 +468,11 @@ grep -c "<글-slug>" /tmp/prefetch.txt                # 0 이어야 함
 
 > **실행 결과 (2026-07-21)**
 >
-> | 라우트 | prefetch (Task 2 전) | prefetch (후) | 전체 렌더 |
-> |---|:---:|---:|---:|
-> | `/posts` | ERR_ABORTED | **4 ms** | 374 ms |
-> | `/tags/4k` | ERR_ABORTED | **3 ms** | 3 ms |
-> | `/posts/dell-s2725qc` | ERR_ABORTED | **187 ms** | 422 ms |
+> | 라우트                | prefetch (Task 2 전) | prefetch (후) | 전체 렌더 |
+> | --------------------- | :------------------: | ------------: | --------: |
+> | `/posts`              |     ERR_ABORTED      |      **4 ms** |    374 ms |
+> | `/tags/4k`            |     ERR_ABORTED      |      **3 ms** |      3 ms |
+> | `/posts/dell-s2725qc` |     ERR_ABORTED      |    **187 ms** |    422 ms |
 >
 > `/posts` prefetch 페이로드: `animate-pulse` 19개, 글 slug 0건 — 로딩 셸만 전송됨을 확인.
 >
@@ -491,12 +504,14 @@ EOF
 ### Task 3: 읽기 쿼리 캐싱 + 글 상세 정적 생성 (3단계)
 
 **Files:**
+
 - Modify: `src/db/queries/posts.ts` (`selectPostBySlug`, `selectPosts`)
 - Modify: `src/db/queries/comments.ts` (`selectCommentsByPostId`)
 - Modify: `src/db/queries/tags.ts` (`selectTagsByPostIds`)
 - Modify: `src/app/(main)/posts/[slug]/page.tsx` (`generateStaticParams` 추가)
 
 **Interfaces:**
+
 - Consumes: `CACHE_TAGS`(`src/db/cache-tags.ts`) — `posts`, `comments`, `tags`
 - Produces: 시그니처 변경 없음. 모든 함수의 호출부 인터페이스는 그대로 유지한다 (`selectPostBySlug(slug)`, `selectCommentsByPostId(postId)`, `selectTagsByPostIds(postIds)` → `Map<number, TagSummary[]>`)
 
@@ -564,7 +579,13 @@ export async function selectPosts(options: GetPostsOptions = {}) {
 
   return unstable_cache(
     () => selectPostsUncached(options),
-    ['posts-list', String(categoryId ?? ''), String(tagId ?? ''), String(page), String(limit)],
+    [
+      'posts-list',
+      String(categoryId ?? ''),
+      String(tagId ?? ''),
+      String(page),
+      String(limit),
+    ],
     { tags: [CACHE_TAGS.posts] }
   )();
 }
@@ -686,12 +707,12 @@ Expected: 단위·E2E 전량 PASS, lint 0 errors
 >
 > **최종 측정 (warm, Task 2 되돌린 상태)**
 >
-> | 라우트 | 개선 전 | 최종 |
-> |---|---:|---:|
-> | `/posts` | 342 ms | **3 ms** |
-> | `/posts/dell-s2725qc` | 422 ms | **2 ms** |
-> | `/categories/review` | 242 ms | **3 ms** |
-> | `/tags/4k` | 3 ms | 3 ms |
+> | 라우트                | 개선 전 |     최종 |
+> | --------------------- | ------: | -------: |
+> | `/posts`              |  342 ms | **3 ms** |
+> | `/posts/dell-s2725qc` |  422 ms | **2 ms** |
+> | `/categories/review`  |  242 ms | **3 ms** |
+> | `/tags/4k`            |    3 ms |     3 ms |
 >
 > 404 상태: `/series/*`, `/posts/*`, `/categories/*`, `/tags/*` 전부 404 정상. 정상 페이지는 전부 200.
 
@@ -717,6 +738,7 @@ EOF
 ### Task 4: 문서 정리 및 PR
 
 **Files:**
+
 - Modify: `docs/superpowers/plans/2026-07-21-route-navigation-perf.md`
 - Modify: `docs/legacy/roadmap.md` (해당 시)
 

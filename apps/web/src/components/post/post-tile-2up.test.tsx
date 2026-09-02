@@ -5,13 +5,25 @@ import type { PostWithCategory } from '@/types';
 import { PostTile2up } from './post-tile-2up';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 const mockPost = {
@@ -42,7 +54,10 @@ describe('PostTile2up', () => {
 
   it('카테고리를 렌더링한다', () => {
     render(<PostTile2up post={mockPost} />);
-    expect(screen.getByRole('link', { name: '개발' })).toHaveAttribute('href', '/categories/dev');
+    expect(screen.getByRole('link', { name: '개발' })).toHaveAttribute(
+      'href',
+      '/categories/dev'
+    );
   });
 
   it('썸네일 alt에 제목을 사용한다', () => {

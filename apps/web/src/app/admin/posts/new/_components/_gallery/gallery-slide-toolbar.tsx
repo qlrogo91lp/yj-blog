@@ -1,9 +1,13 @@
 'use client';
 
 import { ArrowLeft, ArrowRight, Settings, Trash2 } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 type Props = {
   index: number;
@@ -61,7 +65,10 @@ export function GallerySlideToolbar({
           </button>
         </PopoverTrigger>
         <PopoverContent side="bottom" align="center" className="w-72">
-          <Label htmlFor={`gallery-caption-${index}`} className="mb-1 block text-xs">
+          <Label
+            htmlFor={`gallery-caption-${index}`}
+            className="mb-1 block text-xs"
+          >
             캡션
           </Label>
           <Input
@@ -70,7 +77,10 @@ export function GallerySlideToolbar({
             onChange={(e) => onCaptionChange(e.target.value)}
             placeholder="사진 아래에 붙는 설명"
           />
-          <Label htmlFor={`gallery-alt-${index}`} className="mt-3 mb-1 block text-xs">
+          <Label
+            htmlFor={`gallery-alt-${index}`}
+            className="mt-3 mb-1 block text-xs"
+          >
             대체 텍스트 (alt)
           </Label>
           <Input

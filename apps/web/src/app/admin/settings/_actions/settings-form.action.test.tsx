@@ -1,6 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { toast } from 'sonner';
+import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
+import { editSettings } from '../_services/edit-settings';
+import { SettingsFormAction } from './settings-form.action';
 
 // next/link mock
 vi.mock('next/link', () => ({
@@ -29,10 +32,6 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
-import { SettingsFormAction } from './settings-form.action';
-import { editSettings } from '../_services/edit-settings';
-import { toast } from 'sonner';
-
 // -------------------------------------------------------------------
 // zod 스키마 단위 테스트
 // -------------------------------------------------------------------
@@ -48,7 +47,11 @@ const blogSettingsSchema = z.object({
     .optional()
     .or(z.literal('')),
   defaultMetaDescription: z.string().max(300).optional(),
-  github: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
+  github: z
+    .string()
+    .url('유효한 URL을 입력하세요')
+    .optional()
+    .or(z.literal('')),
   twitter: z
     .string()
     .url('유효한 URL을 입력하세요')
@@ -148,9 +151,7 @@ describe('SettingsFormAction', () => {
     fireEvent.change(screen.getByLabelText('블로그 이름 *'), {
       target: { value: 'YJlogs' },
     });
-    expect(
-      screen.getByRole('button', { name: '저장' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
   });
 
   it('defaultValues가 폼 필드에 반영된다', () => {
@@ -172,7 +173,7 @@ describe('SettingsFormAction', () => {
     expect(screen.getByLabelText('한 줄 소개')).toHaveValue('기록하는 블로그');
     expect(screen.getByLabelText('홈 문구')).toHaveValue('개발자');
     expect(screen.getByLabelText('GitHub')).toHaveValue(
-      'https://github.com/test',
+      'https://github.com/test'
     );
   });
 
@@ -188,9 +189,7 @@ describe('SettingsFormAction', () => {
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText('블로그 이름은 필수입니다'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('블로그 이름은 필수입니다')).toBeInTheDocument();
     });
   });
 
@@ -205,7 +204,7 @@ describe('SettingsFormAction', () => {
 
     await waitFor(() => {
       expect(editSettings).toHaveBeenCalledWith(
-        expect.objectContaining({ blogName: 'YJlogs' }),
+        expect.objectContaining({ blogName: 'YJlogs' })
       );
     });
   });

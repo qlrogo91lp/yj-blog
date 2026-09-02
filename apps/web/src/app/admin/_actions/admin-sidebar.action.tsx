@@ -87,7 +87,9 @@ export function AdminSidebarAction({ pendingReplyCount }: Props) {
       </SidebarContent>
 
       <SidebarFooter className="border-sidebar-border border-t p-2">
-        <SidebarMenu>{adminFooterItems.map((item) => renderItem(item))}</SidebarMenu>
+        <SidebarMenu>
+          {adminFooterItems.map((item) => renderItem(item))}
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

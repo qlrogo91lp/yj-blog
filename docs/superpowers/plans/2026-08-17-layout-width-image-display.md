@@ -61,6 +61,7 @@ Expected: PASS (변경 전 기준선 확보)
 ## Task 1: 폭 토큰과 컨테이너 규칙 통일
 
 **Files:**
+
 - Modify: `src/app/globals.css:55` (`--radius-image` 추가), `src/app/globals.css:61` (`--article-width`)
 - Modify: `src/components/layout/content-container.tsx:10`
 - Modify: `src/components/layout/content-container.test.tsx:14`
@@ -68,6 +69,7 @@ Expected: PASS (변경 전 기준선 확보)
 - Test: `src/components/layout/article-container.test.tsx`
 
 **Interfaces:**
+
 - Produces: `ArticleContainer({ className?: string; children: React.ReactNode })` — `@/components/layout/article-container`에서 named export. Task 2가 이 컴포넌트를 사용한다.
 - Produces: CSS 변수 `--radius-image` — Task 5의 `prose.css`가 `var(--radius-image)`로 참조한다.
 
@@ -76,12 +78,12 @@ Expected: PASS (변경 전 기준선 확보)
 `src/components/layout/content-container.test.tsx`의 두 번째 테스트를 이렇게 바꾼다.
 
 ```tsx
-  it('content-width max-width 클래스를 적용한다', () => {
-    const { container } = render(<ContentContainer>x</ContentContainer>);
-    expect(container.firstElementChild?.className).toContain(
-      'max-w-[calc(var(--content-width)+2rem)]',
-    );
-  });
+it('content-width max-width 클래스를 적용한다', () => {
+  const { container } = render(<ContentContainer>x</ContentContainer>);
+  expect(container.firstElementChild?.className).toContain(
+    'max-w-[calc(var(--content-width)+2rem)]'
+  );
+});
 ```
 
 - [x] **Step 2: 테스트를 돌려 실패를 확인**
@@ -121,12 +123,14 @@ describe('ArticleContainer', () => {
   it('article-width max-width 클래스를 적용한다', () => {
     const { container } = render(<ArticleContainer>x</ArticleContainer>);
     expect(container.firstElementChild?.className).toContain(
-      'max-w-[calc(var(--article-width)+2rem)]',
+      'max-w-[calc(var(--article-width)+2rem)]'
     );
   });
 
   it('전달한 className을 병합한다', () => {
-    const { container } = render(<ArticleContainer className="py-8">x</ArticleContainer>);
+    const { container } = render(
+      <ArticleContainer className="py-8">x</ArticleContainer>
+    );
     expect(container.firstElementChild?.className).toContain('py-8');
   });
 });
@@ -151,7 +155,12 @@ type Props = {
 
 export function ArticleContainer({ className, children }: Props) {
   return (
-    <div className={cn('mx-auto w-full max-w-[calc(var(--article-width)+2rem)] px-4', className)}>
+    <div
+      className={cn(
+        'mx-auto w-full max-w-[calc(var(--article-width)+2rem)] px-4',
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -168,13 +177,13 @@ Expected: PASS
 `src/app/globals.css`의 `@theme` 블록에서 `--radius-card: 2rem;` 바로 아래 줄에 추가한다.
 
 ```css
-  --radius-image: 1rem;
+--radius-image: 1rem;
 ```
 
 같은 파일 `:root` 블록의 `--article-width`를 바꾼다.
 
 ```css
-  --article-width: 720px;
+--article-width: 720px;
 ```
 
 - [x] **Step 10: 전체 테스트와 린트 확인**
@@ -194,11 +203,13 @@ git commit -m "🎨 폭 토큰을 콘텐츠 실폭 기준으로 통일하고 Art
 ## Task 2: 산문 페이지를 ArticleContainer로 전환
 
 **Files:**
+
 - Modify: `src/app/(main)/posts/[slug]/page.tsx:97`
 - Modify: `src/app/(main)/posts/[slug]/_components/comment-section.tsx:13`
 - Modify: `src/app/(main)/apps/ralli/privacy/page.tsx:14`
 
 **Interfaces:**
+
 - Consumes: `ArticleContainer` (Task 1)
 
 - [x] **Step 1: 글 상세 본문 래퍼 교체**
@@ -264,6 +275,7 @@ git commit -m "🎨 산문 페이지를 ArticleContainer(720px)로 전환"
 ## Task 3: 목록 페이지를 ContentContainer로 흡수
 
 **Files:**
+
 - Modify: `src/app/(main)/series/page.tsx:14`
 - Modify: `src/app/(main)/series/[slug]/page.tsx:42`
 - Modify: `src/app/(main)/tags/page.tsx:15`
@@ -272,6 +284,7 @@ git commit -m "🎨 산문 페이지를 ArticleContainer(720px)로 전환"
 - Modify: `src/app/(main)/playground/page.tsx:11`
 
 **Interfaces:**
+
 - Consumes: `ContentContainer` (기존, Task 1에서 규칙 변경됨)
 
 - [x] **Step 1: 여섯 파일의 래퍼를 교체**
@@ -284,14 +297,14 @@ import { ContentContainer } from '@/components/layout/content-container';
 
 그리고 아래 표대로 여는 태그를 바꾼다. 닫는 `</div>`는 모두 `</ContentContainer>`가 된다.
 
-| 파일 | 현재 | 변경 후 |
-|------|------|---------|
-| `series/page.tsx:14` | `<div className="mx-auto max-w-3xl px-4 py-8">` | `<ContentContainer className="py-8">` |
-| `series/[slug]/page.tsx:42` | `<div className="mx-auto max-w-3xl px-4 py-8">` | `<ContentContainer className="py-8">` |
-| `tags/page.tsx:15` | `<div className="mx-auto max-w-3xl px-4 py-8">` | `<ContentContainer className="py-8">` |
-| `apps/page.tsx:13` | `<div className="mx-auto max-w-3xl px-4 py-10">` | `<ContentContainer className="py-10">` |
-| `apps/[slug]/page.tsx:36` | `<div className="mx-auto max-w-3xl px-4 py-10">` | `<ContentContainer className="py-10">` |
-| `playground/page.tsx:11` | `<div className="mx-auto max-w-3xl px-4 py-10">` | `<ContentContainer className="py-10">` |
+| 파일                        | 현재                                             | 변경 후                                |
+| --------------------------- | ------------------------------------------------ | -------------------------------------- |
+| `series/page.tsx:14`        | `<div className="mx-auto max-w-3xl px-4 py-8">`  | `<ContentContainer className="py-8">`  |
+| `series/[slug]/page.tsx:42` | `<div className="mx-auto max-w-3xl px-4 py-8">`  | `<ContentContainer className="py-8">`  |
+| `tags/page.tsx:15`          | `<div className="mx-auto max-w-3xl px-4 py-8">`  | `<ContentContainer className="py-8">`  |
+| `apps/page.tsx:13`          | `<div className="mx-auto max-w-3xl px-4 py-10">` | `<ContentContainer className="py-10">` |
+| `apps/[slug]/page.tsx:36`   | `<div className="mx-auto max-w-3xl px-4 py-10">` | `<ContentContainer className="py-10">` |
+| `playground/page.tsx:11`    | `<div className="mx-auto max-w-3xl px-4 py-10">` | `<ContentContainer className="py-10">` |
 
 - [x] **Step 2: 하드코딩 잔여가 없는지 검증**
 
@@ -319,12 +332,14 @@ git commit -m "🎨 목록 페이지 폭을 ContentContainer(980px)로 통일"
 ## Task 4: 이미지 크기 값을 medium에서 default로 재정의
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_utils/image-extension.ts`
 - Modify: `src/app/admin/posts/new/_utils/image-extension.test.ts:24-28`, `:39`
 - Modify: `src/lib/markdown.test.ts:7`, `:23`
 - Modify: `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx:15`
 
 **Interfaces:**
+
 - Produces: `type ImageSize = 'small' | 'default' | 'full'` — Task 6의 툴바가 이 타입을 import한다.
 - Produces: 직렬화 HTML의 `data-size="default"` — Task 5의 CSS 선택자, Task 8의 마이그레이션 SQL이 이 문자열에 의존한다.
 
@@ -333,12 +348,12 @@ git commit -m "🎨 목록 페이지 폭을 ContentContainer(980px)로 통일"
 `src/app/admin/posts/new/_utils/image-extension.test.ts`에서 두 곳을 바꾼다.
 
 ```tsx
-  it('속성이 없는 기존 이미지는 기본값(default/center)으로 직렬화된다', () => {
-    const editor = createEditor('<p><img src="a.png" /></p>');
-    const html = editor.getHTML();
-    expect(html).toContain('data-size="default"');
-    expect(html).toContain('data-align="center"');
-  });
+it('속성이 없는 기존 이미지는 기본값(default/center)으로 직렬화된다', () => {
+  const editor = createEditor('<p><img src="a.png" /></p>');
+  const html = editor.getHTML();
+  expect(html).toContain('data-size="default"');
+  expect(html).toContain('data-align="center"');
+});
 ```
 
 그리고 `data-caption` 테스트의 픽스처 문자열에서 `data-size="medium"`을 `data-size="default"`로 바꾼다.
@@ -352,11 +367,11 @@ git commit -m "🎨 목록 페이지 폭을 ContentContainer(980px)로 통일"
 같은 파일의 `describe` 블록 안에 새 테스트를 추가한다. 기존 글에 남아 있을 수 있는 `medium` 문자열이 안전하게 수렴하는지 확인하는 회귀 테스트다.
 
 ```tsx
-  it('알 수 없는 data-size 값은 default로 폴백된다', () => {
-    const editor = createEditor('<p><img src="a.png" data-size="medium" /></p>');
-    const html = editor.getHTML();
-    expect(html).toContain('data-size="default"');
-  });
+it('알 수 없는 data-size 값은 default로 폴백된다', () => {
+  const editor = createEditor('<p><img src="a.png" data-size="medium" /></p>');
+  const html = editor.getHTML();
+  expect(html).toContain('data-size="default"');
+});
 ```
 
 - [x] **Step 3: 테스트를 돌려 실패를 확인**
@@ -406,7 +421,7 @@ Expected: PASS
 `src/app/admin/posts/new/_components/_image-block/image-node-view.tsx:15`를 바꾼다.
 
 ```tsx
-  const size = (node.attrs.size as ImageSize) ?? 'default';
+const size = (node.attrs.size as ImageSize) ?? 'default';
 ```
 
 - [x] **Step 9: 전체 테스트와 린트 확인**
@@ -426,9 +441,11 @@ git commit -m "♻️ 이미지 크기 기본값을 medium에서 default로 재�
 ## Task 5: 이미지 폭과 radius를 prose.css에 반영
 
 **Files:**
+
 - Modify: `src/styles/prose.css:122-145` (크기 규칙과 radius)
 
 **Interfaces:**
+
 - Consumes: `--radius-image` (Task 1), `data-size="default"` (Task 4)
 
 - [x] **Step 1: 크기 선택자와 radius를 수정**
@@ -443,16 +460,16 @@ git commit -m "♻️ 이미지 크기 기본값을 medium에서 default로 재�
 .prose img[data-size] {
   border-radius: var(--radius-image);
 }
-.prose figure[data-size="small"],
-.prose img[data-size="small"] {
+.prose figure[data-size='small'],
+.prose img[data-size='small'] {
   width: 40%;
 }
-.prose figure[data-size="default"],
-.prose img[data-size="default"] {
+.prose figure[data-size='default'],
+.prose img[data-size='default'] {
   width: 100%;
 }
-.prose figure[data-size="full"],
-.prose img[data-size="full"] {
+.prose figure[data-size='full'],
+.prose img[data-size='full'] {
   width: var(--content-width);
   max-width: calc(100vw - 2rem);
   margin-left: 50%;
@@ -475,6 +492,7 @@ Expected: 출력 없음
 - [x] **Step 3: 개발 서버로 세 단계를 육안 확인**
 
 `npm run dev` 후 발행된 글 상세를 연다. 확인 항목:
+
 - `default` 이미지의 좌우 끝이 본문 텍스트의 좌우 끝과 일치(720px)
 - `full` 이미지가 본문 밖으로 좌우 각 130px 튀어나오고 목록 페이지의 좌우 정렬선(980px)과 일치
 - 세 단계 모두 모서리가 16px 둥글게
@@ -492,9 +510,11 @@ git commit -m "💄 이미지 기본 폭을 본문 폭에 맞추고 radius 16px 
 ## Task 6: 이미지 툴바를 3단계로 정리하고 정렬 활성 조건 변경
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/_components/_image-block/image-toolbar.tsx:21-25` (sizeOptions), `:46` (alignDisabled)
 
 **Interfaces:**
+
 - Consumes: `ImageSize` (Task 4)
 
 - [x] **Step 1: sizeOptions를 3단계로 교체**
@@ -502,7 +522,7 @@ git commit -m "💄 이미지 기본 폭을 본문 폭에 맞추고 radius 16px 
 `src/app/admin/posts/new/_components/_image-block/image-toolbar.tsx`의 `sizeOptions`를 바꾼다.
 
 ```tsx
-const sizeOptions: { value: ImageSize; label: string, icon?: LucideIcon }[] = [
+const sizeOptions: { value: ImageSize; label: string; icon?: LucideIcon }[] = [
   { value: 'small', label: '40%' },
   { value: 'default', label: '기본' },
   { value: 'full', label: '전체 폭', icon: ChevronsLeftRight },
@@ -516,7 +536,7 @@ const sizeOptions: { value: ImageSize; label: string, icon?: LucideIcon }[] = [
 같은 파일 46행을 바꾼다.
 
 ```tsx
-  const alignDisabled = size !== 'small';
+const alignDisabled = size !== 'small';
 ```
 
 > `default`(100%)와 `full`은 폭이 컨테이너를 가득 채워 `margin: auto` 정렬이 아무 효과가 없다. 정렬은 `small`에서만 의미를 갖는다.
@@ -529,6 +549,7 @@ Expected: PASS
 - [x] **Step 4: 에디터에서 동작 확인**
 
 `npm run dev` 후 `/admin/posts/new`에서 이미지를 하나 삽입하고 확인한다.
+
 - 삽입 직후 기본값이 `기본`으로 선택되어 있고 폭이 본문을 채운다
 - `40%` 선택 시에만 정렬 3버튼이 활성화된다
 - `전체 폭` 선택 시 이미지가 편집 영역 밖으로 넓게 펼쳐진다
@@ -545,11 +566,13 @@ git commit -m "💄 이미지 툴바를 3단계로 정리하고 정렬은 small�
 ## Task 7: 에디터와 미리보기 폭을 발행 폭에 맞춤
 
 **Files:**
+
 - Modify: `src/app/admin/posts/new/page.tsx:31`
 - Modify: `src/app/admin/posts/[id]/edit/page.tsx:48`
 - Modify: `src/app/admin/posts/new/_actions/_preview/preview.action.tsx:34-40`
 
 **Interfaces:**
+
 - Consumes: `ArticleContainer` (Task 1)
 
 - [x] **Step 1: 새 글 작성 페이지의 폭 교체**
@@ -579,15 +602,15 @@ import { ArticleContainer } from '@/components/layout/article-container';
 `<article className="mt-4">` 블록을 아래로 바꾼다. 다이얼로그 크기(`min-w-4xl max-w-[80vw]`)는 그대로 둔다.
 
 ```tsx
-        <ArticleContainer className="mt-4">
-          <article>
-            <h1 className="text-3xl font-bold mb-6">{title || '제목 없음'}</h1>
-            <div
-              className="prose prose-neutral dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
-          </article>
-        </ArticleContainer>
+<ArticleContainer className="mt-4">
+  <article>
+    <h1 className="text-3xl font-bold mb-6">{title || '제목 없음'}</h1>
+    <div
+      className="prose prose-neutral dark:prose-invert max-w-none"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  </article>
+</ArticleContainer>
 ```
 
 - [x] **Step 4: 린트 확인**
@@ -616,6 +639,7 @@ git commit -m "🎨 에디터·미리보기 폭을 발행 본문 폭(720px)에 �
 **Files:** 없음 (DB 작업)
 
 **Interfaces:**
+
 - Consumes: `data-size="default"` 직렬화 규칙 (Task 4), CSS 선택자 (Task 5)
 
 - [x] **Step 1: 마이그레이션 대상 건수를 먼저 확인**
@@ -686,14 +710,14 @@ git push -u origin refactor/layout-width-image-display
 
 ## 검증 요약
 
-| 항목 | 확인 방법 |
-|------|-----------|
-| 폭 하드코딩 제거 | `grep -rn "max-w-3xl\|max-w-2xl" "src/app/(main)"` → 0건 |
+| 항목                    | 확인 방법                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------ |
+| 폭 하드코딩 제거        | `grep -rn "max-w-3xl\|max-w-2xl" "src/app/(main)"` → 0건                       |
 | medium 잔여 제거 (코드) | `grep -rn "medium" src/styles/prose.css src/app/admin/posts/new/_utils/` → 0건 |
-| medium 잔여 제거 (DB) | `SELECT count(*) FROM posts WHERE content LIKE '%data-size="medium"%'` → 0 |
-| 단위 테스트 | `npm run test:run` |
-| E2E | `npm run test:e2e` |
-| 빌드 | `npm run build` |
+| medium 잔여 제거 (DB)   | `SELECT count(*) FROM posts WHERE content LIKE '%data-size="medium"%'` → 0     |
+| 단위 테스트             | `npm run test:run`                                                             |
+| E2E                     | `npm run test:e2e`                                                             |
+| 빌드                    | `npm run build`                                                                |
 
 ## 범위 밖 (이 계획에서 하지 않는 것)
 

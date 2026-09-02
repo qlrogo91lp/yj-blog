@@ -14,7 +14,10 @@ vi.mock('../_components/tag-chip', () => ({
 }));
 
 vi.mock('@/app/admin/posts/new/_services/add-tag', () => ({
-  addTag: vi.fn(async () => ({ success: true, tag: { id: 9, name: 'new', slug: 'new' } })),
+  addTag: vi.fn(async () => ({
+    success: true,
+    tag: { id: 9, name: 'new', slug: 'new' },
+  })),
 }));
 
 vi.mock('../_services/remove-unused-tags', () => ({
@@ -25,7 +28,13 @@ vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
 const tags: TagWithCount[] = [
   { id: 1, name: '4k모니터', slug: '4k', createdAt: new Date(), postCount: 3 },
-  { id: 2, name: 'nextjs', slug: 'nextjs', createdAt: new Date(), postCount: 1 },
+  {
+    id: 2,
+    name: 'nextjs',
+    slug: 'nextjs',
+    createdAt: new Date(),
+    postCount: 1,
+  },
   { id: 3, name: 'dell', slug: 'dell', createdAt: new Date(), postCount: 0 },
 ];
 
@@ -50,7 +59,9 @@ describe('TagBoardAction', () => {
     render(<TagBoardAction tags={tags.filter((tag) => tag.postCount > 0)} />);
 
     expect(screen.queryByText('글에 쓰이지 않음')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /정리/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /정리/ })
+    ).not.toBeInTheDocument();
   });
 
   it('새 태그 입력창을 렌더한다', () => {
@@ -62,9 +73,27 @@ describe('TagBoardAction', () => {
 
   it('사용 중 태그를 사용 횟수 내림차순으로 정렬하고, 동률이면 이름 순으로 정렬한다', () => {
     const unsorted: TagWithCount[] = [
-      { id: 1, name: 'zebra', slug: 'zebra', createdAt: new Date(), postCount: 2 },
-      { id: 2, name: 'apple', slug: 'apple', createdAt: new Date(), postCount: 5 },
-      { id: 3, name: 'nextjs', slug: 'nextjs', createdAt: new Date(), postCount: 2 },
+      {
+        id: 1,
+        name: 'zebra',
+        slug: 'zebra',
+        createdAt: new Date(),
+        postCount: 2,
+      },
+      {
+        id: 2,
+        name: 'apple',
+        slug: 'apple',
+        createdAt: new Date(),
+        postCount: 5,
+      },
+      {
+        id: 3,
+        name: 'nextjs',
+        slug: 'nextjs',
+        createdAt: new Date(),
+        postCount: 2,
+      },
     ];
 
     render(<TagBoardAction tags={unsorted} />);

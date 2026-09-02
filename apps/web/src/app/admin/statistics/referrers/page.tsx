@@ -6,13 +6,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { selectTopReferrers } from '@/db/queries/statistics';
 import { getBlogSettings } from '@/db/queries/settings';
+import { selectTopReferrers } from '@/db/queries/statistics';
 import { AdminPageHeader } from '../../_components/admin-page-header';
-import { AnalyticsLinkButton } from '../_components/analytics-link-button';
 import { PeriodFilterAction } from '../_actions/period-filter.action';
-import { ReferrerExcludesFormAction } from './_actions/referrer-excludes-form.action';
+import { AnalyticsLinkButton } from '../_components/analytics-link-button';
 import { DevTrafficNoticeAction } from './_actions/dev-traffic-notice.action';
+import { ReferrerExcludesFormAction } from './_actions/referrer-excludes-form.action';
 import { ReferrerRow } from './_components/referrer-row';
 
 export const revalidate = 60;

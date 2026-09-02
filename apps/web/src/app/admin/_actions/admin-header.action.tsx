@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Plus } from 'lucide-react';
 import { UserButton } from '@clerk/nextjs';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { SITE_NAME } from '@/lib/constants';
@@ -23,7 +23,10 @@ export function AdminHeaderAction() {
       ) : (
         <>
           <SidebarTrigger />
-          <nav aria-label="현재 위치" className="flex items-center gap-1.5 text-sm">
+          <nav
+            aria-label="현재 위치"
+            className="flex items-center gap-1.5 text-sm"
+          >
             {breadcrumb.map((crumb, index) => (
               <span key={crumb} className="flex items-center gap-1.5">
                 {index > 0 && <span className="text-muted-foreground">/</span>}

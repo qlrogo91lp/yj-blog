@@ -24,7 +24,9 @@ function getDirective(csp: string, name: string): string[] {
 describe('next.config CSP', () => {
   it('script-src가 Google Tag Manager를 허용한다', async () => {
     const csp = await getCspHeaderValue();
-    expect(getDirective(csp, 'script-src')).toContain('https://www.googletagmanager.com');
+    expect(getDirective(csp, 'script-src')).toContain(
+      'https://www.googletagmanager.com'
+    );
   });
 
   it('connect-src가 Google Analytics 수집 엔드포인트를 허용한다', async () => {

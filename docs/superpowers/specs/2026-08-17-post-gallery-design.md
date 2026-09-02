@@ -35,13 +35,13 @@ if (node.type.name === 'imageBlock' && node.attrs.src) {
 
 ## 실측 레퍼런스 — Apple Newsroom (뷰포트 1280px)
 
-| 항목 | 실측값 |
-|------|--------|
-| 갤러리 컨테이너 | `.gallery-images` grid 1열 980px (본문 텍스트 653px 대비 bleed) |
-| 전환 방식 | 이미지를 겹쳐 쌓고 활성 1장만 `visibility: visible` — 가로 스크롤이 아니라 화살표 캐러셀 |
-| 조작 | 좌우 화살표 버튼(`paddlenav-arrow-previous`/`-next`), 도트 인디케이터 없음 |
-| 캡션 | `.gallery-caption` 12px, 슬라이드별 개별 캡션 |
-| 이미지 수 | 6장 |
+| 항목            | 실측값                                                                                   |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| 갤러리 컨테이너 | `.gallery-images` grid 1열 980px (본문 텍스트 653px 대비 bleed)                          |
+| 전환 방식       | 이미지를 겹쳐 쌓고 활성 1장만 `visibility: visible` — 가로 스크롤이 아니라 화살표 캐러셀 |
+| 조작            | 좌우 화살표 버튼(`paddlenav-arrow-previous`/`-next`), 도트 인디케이터 없음               |
+| 캡션            | `.gallery-caption` 12px, 슬라이드별 개별 캡션                                            |
+| 이미지 수       | 6장                                                                                      |
 
 > Apple은 "가로 스크롤"이 아니라 한 장씩 교체하는 캐러셀이다. 이 스펙은 **의도적으로 다른 방식**(네이티브 가로 스크롤)을 택했다 — 아래 결정 사항 참조. 폭(980px)·슬라이드별 캡션은 Apple을 따른다.
 
@@ -74,13 +74,13 @@ export type GalleryImage = {
 
 Tiptap 노드 정의:
 
-| 항목 | 값 |
-|------|-----|
-| `name` | `gallery` |
-| `group` | `block` |
-| `atom` | `true` — 내부를 ProseMirror 콘텐츠가 아닌 React NodeView가 소유 |
-| `draggable` | `true` |
-| 속성 | `images: GalleryImage[]` (기본값 `[]`) |
+| 항목        | 값                                                              |
+| ----------- | --------------------------------------------------------------- |
+| `name`      | `gallery`                                                       |
+| `group`     | `block`                                                         |
+| `atom`      | `true` — 내부를 ProseMirror 콘텐츠가 아닌 React NodeView가 소유 |
+| `draggable` | `true`                                                          |
+| 속성        | `images: GalleryImage[]` (기본값 `[]`)                          |
 
 검토한 대안:
 
@@ -94,11 +94,16 @@ Tiptap 노드 정의:
 ```html
 <div data-gallery>
   <figure>
-    <img src="https://…/image1.jpg" alt="거실 창가" width="1600" height="1067">
+    <img
+      src="https://…/image1.jpg"
+      alt="거실 창가"
+      width="1600"
+      height="1067"
+    />
     <figcaption>거실 창가에서</figcaption>
   </figure>
   <figure>
-    <img src="https://…/image2.jpg" alt="" width="1067" height="1600">
+    <img src="https://…/image2.jpg" alt="" width="1067" height="1600" />
   </figure>
 </div>
 ```
@@ -139,6 +144,7 @@ Tiptap 노드 정의:
 - `--gallery-height` 신규 토큰: `globals.css`의 `:root`에 `460px`. `@media (max-width: 640px)`에서 `260px`로 낮추고, 같은 미디어쿼리에서 단일 이미지와 동일하게 bleed를 해제한다(`max-width: 100%`, `margin-left: 0`, `transform: none`).
 
 > **모바일 높이는 실기기 확인 후 확정한다.** 375px 뷰포트(컨테이너 약 343px) 기준으로 `260px`일 때 3:2 가로는 390px(컨테이너의 88%가 보임), 2:3 세로는 173px(두 장이 나란히)이 된다. 세로 사진이 다소 작으므로 구현 중 `280~320px`도 함께 보고 정한다. 데스크톱 `460px`는 그대로 간다 — 가로 690px/세로 307px로 둘 다 무리 없다.
+
 - `figcaption`은 기존 `.prose figcaption` 스타일(0.8125rem, muted, 가운데 정렬)을 그대로 상속한다. 갤러리 `figure`에는 `data-size`가 없으므로 선행 스펙의 `.prose figure[data-size] img` 규칙(폭 100%)에 걸리지 않는다.
 - 스크롤바는 브라우저 기본을 쓴다. 감추지 않는다 — 스크롤 가능하다는 유일한 시각 신호다.
 
@@ -193,14 +199,14 @@ JS가 없으면 갤러리가 스스로 bleed하고, JS가 붙으면 래퍼가 �
 
 **파일 구성**
 
-| 파일 | 역할 |
-|------|------|
-| `_utils/gallery-extension.ts` (신규) | 노드 정의, `GalleryImage` 타입, parse/render |
-| `_utils/read-image-size.ts` (신규) | `File`을 읽어 `{ width, height }` 반환 (`createImageBitmap` 또는 `Image` 로드) |
-| `_components/_gallery/gallery-node-view.tsx` (신규) | 갤러리 NodeView. 공개 페이지와 같은 스크롤 스트립으로 렌더 |
-| `_components/_gallery/gallery-slide-toolbar.tsx` (신규) | 슬라이드별 오버레이 조작 바 |
-| `_actions/wysiwyg-editor.action.tsx` (수정) | 다중 파일 드롭·붙여넣기, 갤러리 삽입, 정리 로직 수정 |
-| `_actions/editor-toolbar.action.tsx` (수정) | `[갤러리]` 버튼 추가 |
+| 파일                                                    | 역할                                                                           |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `_utils/gallery-extension.ts` (신규)                    | 노드 정의, `GalleryImage` 타입, parse/render                                   |
+| `_utils/read-image-size.ts` (신규)                      | `File`을 읽어 `{ width, height }` 반환 (`createImageBitmap` 또는 `Image` 로드) |
+| `_components/_gallery/gallery-node-view.tsx` (신규)     | 갤러리 NodeView. 공개 페이지와 같은 스크롤 스트립으로 렌더                     |
+| `_components/_gallery/gallery-slide-toolbar.tsx` (신규) | 슬라이드별 오버레이 조작 바                                                    |
+| `_actions/wysiwyg-editor.action.tsx` (수정)             | 다중 파일 드롭·붙여넣기, 갤러리 삽입, 정리 로직 수정                           |
+| `_actions/editor-toolbar.action.tsx` (수정)             | `[갤러리]` 버튼 추가                                                           |
 
 **업로드 흐름** — 기존 단일 이미지 패턴을 그대로 확장한다.
 
@@ -212,11 +218,11 @@ JS가 없으면 갤러리가 스스로 bleed하고, JS가 붙으면 래퍼가 �
 
 **슬라이드 편집** — 노드 선택 시 각 슬라이드 위에 오버레이 바를 띄운다. 기존 `ImageToolbar`의 디자인 언어(작은 아이콘 버튼 + 팝오버)를 따른다.
 
-| 컨트롤 | 동작 |
-|--------|------|
+| 컨트롤  | 동작                                                        |
+| ------- | ----------------------------------------------------------- |
 | `←` `→` | 배열에서 해당 항목의 위치를 앞뒤로 이동. 양 끝에서는 비활성 |
-| 톱니 | 팝오버에서 캡션·대체 텍스트(alt) 입력 |
-| 휴지통 | 배열에서 제거. 마지막 1장을 지우면 갤러리 노드 자체를 삭제 |
+| 톱니    | 팝오버에서 캡션·대체 텍스트(alt) 입력                       |
+| 휴지통  | 배열에서 제거. 마지막 1장을 지우면 갤러리 노드 자체를 삭제  |
 
 모든 편집은 `updateAttributes({ images: 새배열 })` 한 경로로 수렴한다.
 
@@ -238,8 +244,8 @@ JS가 없으면 갤러리가 스스로 bleed하고, JS가 붙으면 래퍼가 �
 현재 `prose.css`에는 세로 길이 제약이 전혀 없다. 단일 이미지는 폭만 고정하므로(`data-size="default"` → `width: 100%`), 2:3 세로 사진이 720 × **1080px**이 되어 노트북 화면 높이(800px 안팎)를 넘긴다. 한 화면에 안 들어가는 이미지가 본문 흐름을 끊는다.
 
 ```css
-.prose img[data-size="default"],
-.prose img[data-size="small"] {
+.prose img[data-size='default'],
+.prose img[data-size='small'] {
   max-height: 80vh;
   width: auto;
 }
@@ -261,12 +267,12 @@ JS가 없으면 갤러리가 스스로 bleed하고, JS가 붙으면 래퍼가 �
 
 ## 테스트
 
-| 파일 | 내용 |
-|------|------|
-| `_utils/gallery-extension.test.ts` (신규) | parseHTML ↔ renderHTML 왕복, 빈 캡션 시 `figcaption` 생략, `width`/`height` 누락 시 `0` 폴백 |
-| `_components/_gallery/gallery-node-view.test.tsx` (신규) | 캡션 입력·삭제·순서 이동이 올바른 배열로 `updateAttributes`를 호출, 마지막 1장 삭제 시 노드 삭제 |
-| `src/lib/markdown.test.ts` (수정) | 갤러리 HTML이 `rehypeImageCaption`을 통과해도 변형되지 않음(`div[data-gallery]` 안의 `figure`는 `<p><img></p>` 패턴이 아니므로 대상이 아니다) |
-| `_actions/wysiwyg-editor` 정리 로직 | `image`와 `gallery` 양쪽 src를 모두 수집하는지 — §7 회귀 방지 |
+| 파일                                                     | 내용                                                                                                                                          |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_utils/gallery-extension.test.ts` (신규)                | parseHTML ↔ renderHTML 왕복, 빈 캡션 시 `figcaption` 생략, `width`/`height` 누락 시 `0` 폴백                                                  |
+| `_components/_gallery/gallery-node-view.test.tsx` (신규) | 캡션 입력·삭제·순서 이동이 올바른 배열로 `updateAttributes`를 호출, 마지막 1장 삭제 시 노드 삭제                                              |
+| `src/lib/markdown.test.ts` (수정)                        | 갤러리 HTML이 `rehypeImageCaption`을 통과해도 변형되지 않음(`div[data-gallery]` 안의 `figure`는 `<p><img></p>` 패턴이 아니므로 대상이 아니다) |
+| `_actions/wysiwyg-editor` 정리 로직                      | `image`와 `gallery` 양쪽 src를 모두 수집하는지 — §7 회귀 방지                                                                                 |
 
 `read-image-size.ts`에는 단위 테스트를 두지 않는다. 이미지 디코딩은 jsdom에서 동작하지 않아 테스트가 목(mock)만 검증하게 되고, 프로젝트 테스트 규칙("실제 브라우저가 필요한가")상 Vitest 대상이 아니다. 측정 실패 시 `{ width: 0, height: 0 }`으로 폴백해 갤러리가 깨지지 않는다는 점만 구현에서 보장하고, 에디터에서 실제 업로드로 확인한다.
 

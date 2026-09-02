@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { animate, useInView, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { ralliWorkoutSection, type RalliStat } from '../_utils/ralli-content';
+import { Reveal } from '../../_actions/reveal.action';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from '../../_actions/reveal.action';
+import { type RalliStat, ralliWorkoutSection } from '../_utils/ralli-content';
 
 const toneClassName: Record<RalliStat['tone'], string> = {
   lime: 'text-ralli-lime',
@@ -45,12 +45,14 @@ function StatCard({ stat }: StatCardProps) {
         <span
           className={cn(
             'text-[52px] font-extrabold tracking-[-0.04em] tabular-nums',
-            toneClassName[stat.tone],
+            toneClassName[stat.tone]
           )}
         >
           {displayed}
         </span>
-        <span className="text-lg font-semibold text-ralli-fg/50">{stat.unit}</span>
+        <span className="text-lg font-semibold text-ralli-fg/50">
+          {stat.unit}
+        </span>
       </p>
       <p className="mt-1.5 text-[14.5px] text-ralli-fg/55">{stat.caption}</p>
     </div>
@@ -69,7 +71,9 @@ export function WorkoutArea() {
           <h2 className="mb-3.5 text-[clamp(30px,4vw,54px)] font-bold leading-[1.02] tracking-[-0.04em] text-pretty">
             {ralliWorkoutSection.heading}
           </h2>
-          <p className="text-[17px] leading-normal text-ralli-fg/58">{ralliWorkoutSection.body}</p>
+          <p className="text-[17px] leading-normal text-ralli-fg/58">
+            {ralliWorkoutSection.body}
+          </p>
         </Reveal>
 
         <div className="mb-6 grid grid-cols-1 gap-3.5 md:grid-cols-3">

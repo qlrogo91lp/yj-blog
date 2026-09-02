@@ -1,15 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { toast } from 'sonner';
 import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
-import { common, createLowlight } from 'lowlight';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
-import { ImageBlock } from '../_utils/image-extension';
-import { ImageUploading } from '../_utils/image-uploading-extension';
 import { Link } from '@tiptap/extension-link';
-import { Youtube } from '@tiptap/extension-youtube';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { Table } from '@tiptap/extension-table';
 import { TableCell } from '@tiptap/extension-table-cell';
@@ -18,15 +13,20 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Underline } from '@tiptap/extension-underline';
-import { EditorContent, useEditor, type Editor } from '@tiptap/react';
+import { Youtube } from '@tiptap/extension-youtube';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
+import { common, createLowlight } from 'lowlight';
+import { toast } from 'sonner';
 import { useEditorContext } from '../_providers/editor.provider';
-import { useNewPostStore } from '../_store';
 import { uploadImage } from '../_services/upload-image';
-import { replaceUploadingNode } from '../_utils/replace-uploading-node';
-import { Gallery, type GalleryImage } from '../_utils/gallery-extension';
-import { readImageSize } from '../_utils/read-image-size';
+import { useNewPostStore } from '../_store';
 import { compressImage } from '../_utils/compress-image';
+import { Gallery, type GalleryImage } from '../_utils/gallery-extension';
+import { ImageBlock } from '../_utils/image-extension';
+import { ImageUploading } from '../_utils/image-uploading-extension';
+import { readImageSize } from '../_utils/read-image-size';
+import { replaceUploadingNode } from '../_utils/replace-uploading-node';
 import { ImageBubbleMenuAction } from './image-bubble-menu.action';
 
 const lowlight = createLowlight(common);
@@ -81,7 +81,7 @@ export function WysiwygEditorAction() {
 
       return true;
     },
-    [setPostId],
+    [setPostId]
   );
 
   const uploadFiles = useCallback(
@@ -147,7 +147,7 @@ export function WysiwygEditorAction() {
       if (failed > 0) toast.error(`${failed}장 업로드에 실패했습니다`);
       return true;
     },
-    [uploadAndInsert, setPostId],
+    [uploadAndInsert, setPostId]
   );
 
   const editor = useEditor({
@@ -213,7 +213,9 @@ export function WysiwygEditorAction() {
   // context에 editor 인스턴스 공유
   useEffect(() => {
     setEditor(editor);
-    setUploadFiles(editor ? (files: File[]) => void uploadFiles(editor, files) : null);
+    setUploadFiles(
+      editor ? (files: File[]) => void uploadFiles(editor, files) : null
+    );
     return () => {
       setEditor(null);
       setUploadFiles(null);

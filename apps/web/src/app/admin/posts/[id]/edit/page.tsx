@@ -5,17 +5,17 @@ import { selectPostById } from '@/db/queries/posts';
 import { selectSeriesList } from '@/db/queries/series';
 import { getAllTags, selectTagsByPostId } from '@/db/queries/tags';
 import { markdownToHtml } from '@/lib/markdown';
-import { BottomBar } from '../../new/_components/bottom-bar';
-import { EditorToolbarAction } from '../../new/_actions/editor-toolbar.action';
 import { CategorySelectorAction } from '../../new/_actions/category-selector.action';
+import { EditorToolbarAction } from '../../new/_actions/editor-toolbar.action';
+import { SeoSectionAction } from '../../new/_actions/seo-section.action';
 import { SeriesSelectorAction } from '../../new/_actions/series-selector.action';
 import { TagSelectorAction } from '../../new/_actions/tag-selector.action';
-import { TitleInputAction } from '../../new/_actions/title-input.action';
 import { ThumbnailUploadAction } from '../../new/_actions/thumbnail-upload.action';
-import { SeoSectionAction } from '../../new/_actions/seo-section.action';
+import { TitleInputAction } from '../../new/_actions/title-input.action';
 import { WysiwygEditorAction } from '../../new/_actions/wysiwyg-editor.action';
-import { EditorProvider } from '../../new/_providers/editor.provider';
+import { BottomBar } from '../../new/_components/bottom-bar';
 import { AutoSaveProvider } from '../../new/_providers/auto-save.provider';
+import { EditorProvider } from '../../new/_providers/editor.provider';
 import { PostInitHandler } from './_handlers/post-init.handler';
 
 type Props = {

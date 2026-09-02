@@ -66,7 +66,10 @@ export const selectSeriesListForAdmin = unstable_cache(
         })
         .from(posts)
         .where(isNotNull(posts.seriesId))
-        .orderBy(sql`${posts.publishedAt} asc nulls last`, asc(posts.createdAt)),
+        .orderBy(
+          sql`${posts.publishedAt} asc nulls last`,
+          asc(posts.createdAt)
+        ),
     ]);
 
     return seriesRows.map((row) => ({
@@ -108,7 +111,9 @@ export const selectSeriesBySlug = unstable_cache(
         publishedAt: posts.publishedAt,
       })
       .from(posts)
-      .where(and(eq(posts.seriesId, found[0].id), eq(posts.status, 'published')))
+      .where(
+        and(eq(posts.seriesId, found[0].id), eq(posts.status, 'published'))
+      )
       .orderBy(asc(posts.publishedAt));
 
     return { ...found[0], posts: postRows };

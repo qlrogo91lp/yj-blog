@@ -27,7 +27,11 @@ type Props = {
   category?: Category | null;
 };
 
-export function CategoryFormDialogAction({ open, onOpenChange, category }: Props) {
+export function CategoryFormDialogAction({
+  open,
+  onOpenChange,
+  category,
+}: Props) {
   const isEdit = !!category;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

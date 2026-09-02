@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllTags } from '@/db/queries/tags';
 import { ContentContainer } from '@/components/layout/content-container';
 import { Badge } from '@/components/ui/badge';
+import { getAllTags } from '@/db/queries/tags';
 
 export const metadata: Metadata = {
   title: '태그 목록',
@@ -23,7 +23,9 @@ export default async function TagsPage() {
             <Link key={tag.id} href={`/tags/${tag.slug}`}>
               <Badge variant="outline" className="text-sm px-3 py-1">
                 #{tag.name}
-                <span className="ml-1.5 text-muted-foreground">{tag.postCount}</span>
+                <span className="ml-1.5 text-muted-foreground">
+                  {tag.postCount}
+                </span>
               </Badge>
             </Link>
           ))}

@@ -21,15 +21,15 @@ SEO(Search Engine Optimization, 검색엔진 최적화)는 구글 같은 검색�
 
 글을 발행하면 페이지 `<head>`와 `<body>`에 아래 메타데이터가 자동으로 채워집니다. 출처 코드는 `src/app/layout.tsx`(사이트 공통 기본값)와 `src/app/(main)/posts/[slug]/page.tsx`(글 상세 페이지)입니다.
 
-| 메타데이터 | 누구에게/어디서 보이는가 | 이 블로그에서의 동작 |
-|---|---|---|
-| `<title>` / `meta description` | 구글 검색 결과의 제목(파란 링크)과 그 아래 회색 설명글 | `title`은 SEO 제목(`metaTitle`)을 우선 사용하고, 비어 있으면 글 제목(`title`)을 사용합니다. `description`은 `metaDescription` → 없으면 `excerpt` 순으로 사용합니다 |
-| OpenGraph (`og:*`) | 카카오톡 채팅창, 슬랙 채널에 URL을 붙였을 때 뜨는 카드 미리보기 | `og:title`/`og:description`은 위와 동일한 우선순위, `og:image`는 글 썸네일(`thumbnailUrl`) → 없으면 사이트 기본 이미지(`/og-default.png`). 글 상세에서는 `type: article`, 발행일·수정일(`publishedTime`/`modifiedTime`), 태그도 함께 출력됩니다 |
-| Twitter Cards (`twitter:*`) | X(트위터)에 URL을 붙였을 때 뜨는 카드 미리보기 | `card: summary_large_image`로 큰 이미지 카드 형태. 제목·설명·이미지는 OpenGraph와 동일한 값을 사용 |
-| `canonical` | 검색엔진에게 "이 URL이 대표 주소"임을 알려 중복 URL(쿼리 파라미터 등으로 변형된 같은 페이지) 페널티를 방지 | 글 상세 페이지마다 `/posts/{slug}`를 canonical로 고정 |
-| JSON-LD `BlogPosting` | 구글이 검색 결과에 리치 스니펫(발행일·저자·썸네일 등)을 보여줄 때 참고하는 구조화 데이터 | 글 상세 페이지 `<script type="application/ld+json">`에 `headline`(metaTitle→title), `description`(metaDescription→excerpt), `image`(썸네일→기본 이미지), `datePublished`/`dateModified`, `author`/`publisher`(블로그 이름), `url`을 포함해 출력 (`build-article-json-ld.ts`) |
-| `sitemap.xml` (`src/app/sitemap.ts`) | 크롤러가 어떤 URL들이 존재하는지 한 번에 파악하는 목록 | 홈, `/posts` 목록, 그리고 **발행(published)된 글**의 `/posts/{slug}` URL을 모두 나열. 글마다 `lastModified`(수정일)도 포함 |
-| `robots.txt` (`src/app/robots.ts`) | 크롤러가 사이트에 처음 진입했을 때 가장 먼저 확인하는 규칙 파일 | `/admin/` 경로는 크롤링 금지(`disallow`)하고 나머지는 모두 허용(`allow: /`), `sitemap.xml` 위치도 함께 안내 |
+| 메타데이터                           | 누구에게/어디서 보이는가                                                                                   | 이 블로그에서의 동작                                                                                                                                                                                                                                                         |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<title>` / `meta description`       | 구글 검색 결과의 제목(파란 링크)과 그 아래 회색 설명글                                                     | `title`은 SEO 제목(`metaTitle`)을 우선 사용하고, 비어 있으면 글 제목(`title`)을 사용합니다. `description`은 `metaDescription` → 없으면 `excerpt` 순으로 사용합니다                                                                                                           |
+| OpenGraph (`og:*`)                   | 카카오톡 채팅창, 슬랙 채널에 URL을 붙였을 때 뜨는 카드 미리보기                                            | `og:title`/`og:description`은 위와 동일한 우선순위, `og:image`는 글 썸네일(`thumbnailUrl`) → 없으면 사이트 기본 이미지(`/og-default.png`). 글 상세에서는 `type: article`, 발행일·수정일(`publishedTime`/`modifiedTime`), 태그도 함께 출력됩니다                              |
+| Twitter Cards (`twitter:*`)          | X(트위터)에 URL을 붙였을 때 뜨는 카드 미리보기                                                             | `card: summary_large_image`로 큰 이미지 카드 형태. 제목·설명·이미지는 OpenGraph와 동일한 값을 사용                                                                                                                                                                           |
+| `canonical`                          | 검색엔진에게 "이 URL이 대표 주소"임을 알려 중복 URL(쿼리 파라미터 등으로 변형된 같은 페이지) 페널티를 방지 | 글 상세 페이지마다 `/posts/{slug}`를 canonical로 고정                                                                                                                                                                                                                        |
+| JSON-LD `BlogPosting`                | 구글이 검색 결과에 리치 스니펫(발행일·저자·썸네일 등)을 보여줄 때 참고하는 구조화 데이터                   | 글 상세 페이지 `<script type="application/ld+json">`에 `headline`(metaTitle→title), `description`(metaDescription→excerpt), `image`(썸네일→기본 이미지), `datePublished`/`dateModified`, `author`/`publisher`(블로그 이름), `url`을 포함해 출력 (`build-article-json-ld.ts`) |
+| `sitemap.xml` (`src/app/sitemap.ts`) | 크롤러가 어떤 URL들이 존재하는지 한 번에 파악하는 목록                                                     | 홈, `/posts` 목록, 그리고 **발행(published)된 글**의 `/posts/{slug}` URL을 모두 나열. 글마다 `lastModified`(수정일)도 포함                                                                                                                                                   |
+| `robots.txt` (`src/app/robots.ts`)   | 크롤러가 사이트에 처음 진입했을 때 가장 먼저 확인하는 규칙 파일                                            | `/admin/` 경로는 크롤링 금지(`disallow`)하고 나머지는 모두 허용(`allow: /`), `sitemap.xml` 위치도 함께 안내                                                                                                                                                                  |
 
 > 사이트 전역 기본값(`metadataBase`, 사이트명, 기본 설명, 기본 OG 이미지 `/og-default.png`)은 `src/app/layout.tsx`의 `generateMetadata`에서 한 번 정의되고, 글 상세 페이지가 이를 글 단위 값으로 덮어씁니다. `metadataBase`는 환경변수 `NEXT_PUBLIC_BASE_URL`(없으면 `http://localhost:3000`)로 설정됩니다.
 
@@ -59,13 +59,13 @@ SEO(Search Engine Optimization, 검색엔진 최적화)는 구글 같은 검색�
 
 ## 5. 용어 사전
 
-| 용어 | 설명 |
-|---|---|
-| **excerpt** | 글의 요약문. 글 목록 카드의 미리보기 텍스트로 쓰이고, `metaDescription`이 비어 있을 때 검색 결과 설명글의 대체값(fallback)으로도 쓰입니다 |
-| **metaDescription** | 검색 결과 설명글 전용 필드. excerpt와 별도로 둘 수 있지만, 이 블로그는 별도 입력 UI 없이 비어 있으면 excerpt를 그대로 사용합니다 |
-| **canonical** | "이 URL이 이 콘텐츠의 정식 주소"라고 검색엔진에 알리는 태그. 같은 글이 여러 URL(쿼리 파라미터 등)로 접근 가능할 때 검색엔진이 한 URL로만 색인하도록 유도해 중복 콘텐츠 페널티를 막습니다 |
-| **OpenGraph** | 페이스북이 만든 메타태그 규격(`og:title`, `og:description`, `og:image` 등). 카카오톡, 슬랙 등 대부분의 메신저·SNS가 이 규격을 읽어 링크 카드를 만듭니다 |
-| **Twitter Cards** | X(트위터) 전용 카드 메타태그 규격(`twitter:card`, `twitter:title` 등). 이 블로그는 `summary_large_image` 타입을 사용해 큰 이미지가 강조된 카드를 보여줍니다 |
-| **JSON-LD** | 검색엔진이 페이지 내용을 구조적으로 이해하도록 `<script type="application/ld+json">`에 넣는 구조화 데이터 포맷. 이 블로그는 `schema.org`의 `BlogPosting` 타입을 사용합니다 |
-| **metadataBase** | Next.js가 OG 이미지 등 상대 경로(`/og-default.png`)를 절대 URL로 바꿀 때 기준이 되는 사이트 루트 주소. 이 블로그는 `NEXT_PUBLIC_BASE_URL` 환경변수 값을 사용합니다 |
-| **네이버 서치어드바이저** | 네이버 검색에 사이트를 등록하고 sitemap을 제출하는 도구. 구글 Search Console의 네이버판이며, 검색로봇(Yeti)이 별도이므로 구글과 별개로 등록해야 합니다 |
+| 용어                      | 설명                                                                                                                                                                                     |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **excerpt**               | 글의 요약문. 글 목록 카드의 미리보기 텍스트로 쓰이고, `metaDescription`이 비어 있을 때 검색 결과 설명글의 대체값(fallback)으로도 쓰입니다                                                |
+| **metaDescription**       | 검색 결과 설명글 전용 필드. excerpt와 별도로 둘 수 있지만, 이 블로그는 별도 입력 UI 없이 비어 있으면 excerpt를 그대로 사용합니다                                                         |
+| **canonical**             | "이 URL이 이 콘텐츠의 정식 주소"라고 검색엔진에 알리는 태그. 같은 글이 여러 URL(쿼리 파라미터 등)로 접근 가능할 때 검색엔진이 한 URL로만 색인하도록 유도해 중복 콘텐츠 페널티를 막습니다 |
+| **OpenGraph**             | 페이스북이 만든 메타태그 규격(`og:title`, `og:description`, `og:image` 등). 카카오톡, 슬랙 등 대부분의 메신저·SNS가 이 규격을 읽어 링크 카드를 만듭니다                                  |
+| **Twitter Cards**         | X(트위터) 전용 카드 메타태그 규격(`twitter:card`, `twitter:title` 등). 이 블로그는 `summary_large_image` 타입을 사용해 큰 이미지가 강조된 카드를 보여줍니다                              |
+| **JSON-LD**               | 검색엔진이 페이지 내용을 구조적으로 이해하도록 `<script type="application/ld+json">`에 넣는 구조화 데이터 포맷. 이 블로그는 `schema.org`의 `BlogPosting` 타입을 사용합니다               |
+| **metadataBase**          | Next.js가 OG 이미지 등 상대 경로(`/og-default.png`)를 절대 URL로 바꿀 때 기준이 되는 사이트 루트 주소. 이 블로그는 `NEXT_PUBLIC_BASE_URL` 환경변수 값을 사용합니다                       |
+| **네이버 서치어드바이저** | 네이버 검색에 사이트를 등록하고 sitemap을 제출하는 도구. 구글 Search Console의 네이버판이며, 검색로봇(Yeti)이 별도이므로 구글과 별개로 등록해야 합니다                                   |

@@ -21,20 +21,30 @@ describe('HealthArea', () => {
     render(<HealthArea />);
     expect(screen.getByText('HEALTH')).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'A round is a workout — logged automatically.' }),
+      screen.getByRole('heading', {
+        name: 'A round is a workout — logged automatically.',
+      })
     ).toBeInTheDocument();
   });
 
   it('스텝 2개를 모두 렌더한다', () => {
     render(<HealthArea />);
     expect(screen.getByText('Tied to a HealthKit session')).toBeInTheDocument();
-    expect(screen.getByText('Calories, heart rate, round time')).toBeInTheDocument();
+    expect(
+      screen.getByText('Calories, heart rate, round time')
+    ).toBeInTheDocument();
   });
 
   it('초기 활성 스텝은 첫 번째다', () => {
     render(<HealthArea />);
-    expect(screen.getByTestId('golf-step-session')).toHaveAttribute('data-active', 'true');
-    expect(screen.getByTestId('golf-step-sync')).toHaveAttribute('data-active', 'false');
+    expect(screen.getByTestId('golf-step-session')).toHaveAttribute(
+      'data-active',
+      'true'
+    );
+    expect(screen.getByTestId('golf-step-sync')).toHaveAttribute(
+      'data-active',
+      'false'
+    );
   });
 
   it('비활성 이미지는 스크린 리더에서 숨긴다', () => {

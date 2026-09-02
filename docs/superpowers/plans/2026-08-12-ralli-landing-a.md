@@ -47,39 +47,39 @@ git checkout -b feature/ralli-landing-a
 
 ## File Structure
 
-| 파일 | 책임 | 태스크 |
-|---|---|---|
-| `src/app/globals.css` | `@theme`에 ralli 색상 토큰 4종 등록 | 1 |
-| `src/styles/ralli.css` | 마스크 클래스 · 마퀴/bob keyframes · reduced-motion 무효화 | 1 |
-| `_components/ralli-shot.tsx` | 마스크 적용 `next/image` 래퍼. 모든 스크린샷의 단일 진입점 | 1 |
-| `_utils/ralli-motion.ts` | 순수 함수 — `clamp` · `mapRange` · `scoreAt` · `stepIndexAt` | 2 |
-| `_utils/ralli-content.ts` | 시안 카피 · 이미지 · 스탯 · 룰 칩 전량 | 3 |
-| `_hooks/useSectionProgress.ts` | `useScroll` + `useSpring` + reduced-motion 판정 | 4 |
-| `_hooks/useIsMobile.ts` | `matchMedia` 기반 뷰포트 판정 (Replay 갤러리 전용) | 4 |
-| `_actions/reveal.action.tsx` | 범용 `whileInView` 래퍼 | 4 |
-| `_components/ralli-section-label.tsx` | `01 — ON THE COURT` 라벨 | 5 |
-| `_components/ralli-marquee.tsx` | CSS 무한 루프 마퀴 | 5 |
-| `_components/ralli-court-svg.tsx` | 히어로 코트 라인 SVG (정적 마크업) | 5 |
-| `_areas/hero.area.tsx` | 280vh sticky 히어로 전체 | 6 |
-| `_areas/watch.area.tsx` | 300vh pin 섹션 3-step | 7 |
-| `_areas/workout.area.tsx` | 카운트업 스탯 + 이미지 2장 | 8 |
-| `_areas/replay.area.tsx` | 가로 드리프트 / 모바일 네이티브 스크롤 | 9 |
-| `_areas/rules.area.tsx` | 04 룰 칩 섹션 | 10 |
-| `_actions/ralli-section-nav.action.tsx` | 앵커 pill 내비 + 모바일 하단 CTA 바 | 11 |
-| `_areas/final-cta.area.tsx` | 최종 CTA (시안 푸터) | 12 |
-| `page.tsx` | 서버 컴포넌트 — metadata + 영역 조립 | 13 |
-| `e2e/ralli.spec.ts` | E2E 재작성 (기존 단언이 전부 깨진다) | 13 |
+| 파일                                    | 책임                                                         | 태스크 |
+| --------------------------------------- | ------------------------------------------------------------ | ------ |
+| `src/app/globals.css`                   | `@theme`에 ralli 색상 토큰 4종 등록                          | 1      |
+| `src/styles/ralli.css`                  | 마스크 클래스 · 마퀴/bob keyframes · reduced-motion 무효화   | 1      |
+| `_components/ralli-shot.tsx`            | 마스크 적용 `next/image` 래퍼. 모든 스크린샷의 단일 진입점   | 1      |
+| `_utils/ralli-motion.ts`                | 순수 함수 — `clamp` · `mapRange` · `scoreAt` · `stepIndexAt` | 2      |
+| `_utils/ralli-content.ts`               | 시안 카피 · 이미지 · 스탯 · 룰 칩 전량                       | 3      |
+| `_hooks/useSectionProgress.ts`          | `useScroll` + `useSpring` + reduced-motion 판정              | 4      |
+| `_hooks/useIsMobile.ts`                 | `matchMedia` 기반 뷰포트 판정 (Replay 갤러리 전용)           | 4      |
+| `_actions/reveal.action.tsx`            | 범용 `whileInView` 래퍼                                      | 4      |
+| `_components/ralli-section-label.tsx`   | `01 — ON THE COURT` 라벨                                     | 5      |
+| `_components/ralli-marquee.tsx`         | CSS 무한 루프 마퀴                                           | 5      |
+| `_components/ralli-court-svg.tsx`       | 히어로 코트 라인 SVG (정적 마크업)                           | 5      |
+| `_areas/hero.area.tsx`                  | 280vh sticky 히어로 전체                                     | 6      |
+| `_areas/watch.area.tsx`                 | 300vh pin 섹션 3-step                                        | 7      |
+| `_areas/workout.area.tsx`               | 카운트업 스탯 + 이미지 2장                                   | 8      |
+| `_areas/replay.area.tsx`                | 가로 드리프트 / 모바일 네이티브 스크롤                       | 9      |
+| `_areas/rules.area.tsx`                 | 04 룰 칩 섹션                                                | 10     |
+| `_actions/ralli-section-nav.action.tsx` | 앵커 pill 내비 + 모바일 하단 CTA 바                          | 11     |
+| `_areas/final-cta.area.tsx`             | 최종 CTA (시안 푸터)                                         | 12     |
+| `page.tsx`                              | 서버 컴포넌트 — metadata + 영역 조립                         | 13     |
+| `e2e/ralli.spec.ts`                     | E2E 재작성 (기존 단언이 전부 깨진다)                         | 13     |
 
 ### `_areas`에 무엇이 들어가고 무엇이 안 들어가는가
 
 `page-folder.md`에 신설된 `_areas` 규칙을 따른다 — **`page.tsx`가 직접 조립하는 세로 구간 하나**가 `*.area.tsx` 하나에 대응한다.
 
-| 대상 | 위치 | 이유 |
-|---|---|---|
-| 히어로 · 01~04 섹션 · 최종 CTA | `_areas/*.area.tsx` | 여러 조각을 묶어 화면 한 구간을 완성한다 |
-| 마퀴 | `_components/ralli-marquee.tsx` | 조각 하나로 끝나는 단일 위젯. `page.tsx`가 직접 렌더한다 |
-| 앵커 내비 · 모바일 하단 CTA 바 | `_actions/ralli-section-nav.action.tsx` | 화면에 고정된 오버레이라 세로 구간이 아니다 |
-| `Reveal` 래퍼 | `_actions/reveal.action.tsx` | 영역 여러 곳에서 재사용한다 |
+| 대상                           | 위치                                    | 이유                                                     |
+| ------------------------------ | --------------------------------------- | -------------------------------------------------------- |
+| 히어로 · 01~04 섹션 · 최종 CTA | `_areas/*.area.tsx`                     | 여러 조각을 묶어 화면 한 구간을 완성한다                 |
+| 마퀴                           | `_components/ralli-marquee.tsx`         | 조각 하나로 끝나는 단일 위젯. `page.tsx`가 직접 렌더한다 |
+| 앵커 내비 · 모바일 하단 CTA 바 | `_actions/ralli-section-nav.action.tsx` | 화면에 고정된 오버레이라 세로 구간이 아니다              |
+| `Reveal` 래퍼                  | `_actions/reveal.action.tsx`            | 영역 여러 곳에서 재사용한다                              |
 
 `_areas`에는 서버 데이터 페칭(`_queries`·`_services` 호출)과 전역 상태(zustand·tanstack-query)를 두지 않는다. 이 랜딩은 콘텐츠가 전부 `_utils/ralli-content.ts` 정적 import라 자연히 만족한다. Area가 갖는 상태는 스크롤 진행도와 활성 스텝 인덱스뿐이며 영역 밖으로 나가지 않는 뷰 로컬 상태다.
 
@@ -94,12 +94,14 @@ git checkout -b feature/ralli-landing-a
 시안의 모든 스크린샷은 동일한 radial-gradient 마스크를 쓴다. 이 마스크를 40여 곳에 반복하지 않도록 단일 컴포넌트로 봉인하고, 색상 토큰을 먼저 등록한다.
 
 **Files:**
+
 - Create: `src/styles/ralli.css`
 - Create: `src/app/(main)/apps/ralli/_components/ralli-shot.tsx`
 - Modify: `src/app/globals.css`
 - Test: `src/app/(main)/apps/ralli/_components/ralli-shot.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `RalliImage` 타입 (기존 `_utils/ralli-content.ts`에 이미 존재)
 - Produces: `RalliShot({ image, className?, sizes?, priority? })` — 모든 후속 섹션이 스크린샷 렌더에 사용한다. `.ralli-shot-mask` 클래스를 항상 적용한다.
 
@@ -109,8 +111,8 @@ git checkout -b feature/ralli-landing-a
 
 ```tsx
 import { render, screen } from '@testing-library/react';
-import { RalliShot } from './ralli-shot';
 import type { RalliImage } from '../_utils/ralli-content';
+import { RalliShot } from './ralli-shot';
 
 vi.mock('next/image', () => ({
   default: ({
@@ -128,7 +130,14 @@ vi.mock('next/image', () => ({
     className?: string;
     sizes?: string;
   }) => (
-    <img src={src} alt={alt} width={width} height={height} className={className} sizes={sizes} />
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+      sizes={sizes}
+    />
   ),
 }));
 
@@ -176,8 +185,16 @@ Expected: FAIL — `Failed to resolve import "./ralli-shot"`
 
 ```css
 .ralli-shot-mask {
-  -webkit-mask-image: radial-gradient(ellipse 62% 74% at 50% 50%, #000 42%, transparent 84%);
-  mask-image: radial-gradient(ellipse 62% 74% at 50% 50%, #000 42%, transparent 84%);
+  -webkit-mask-image: radial-gradient(
+    ellipse 62% 74% at 50% 50%,
+    #000 42%,
+    transparent 84%
+  );
+  mask-image: radial-gradient(
+    ellipse 62% 74% at 50% 50%,
+    #000 42%,
+    transparent 84%
+  );
 }
 
 @keyframes ralli-marquee {
@@ -248,14 +265,24 @@ type Props = {
   priority?: boolean;
 };
 
-export function RalliShot({ image, className, sizes, priority = false }: Props) {
+export function RalliShot({
+  image,
+  className,
+  sizes,
+  priority = false,
+}: Props) {
   return (
     <Image
       src={image.src}
       alt={image.alt}
       width={image.width}
       height={image.height}
-      sizes={sizes ?? (image.kind === 'watch' ? '(max-width: 768px) 40vw, 26vw' : '(max-width: 768px) 60vw, 30vw')}
+      sizes={
+        sizes ??
+        (image.kind === 'watch'
+          ? '(max-width: 768px) 40vw, 26vw'
+          : '(max-width: 768px) 60vw, 30vw')
+      }
       priority={priority}
       className={cn('ralli-shot-mask w-auto object-contain', className)}
     />
@@ -293,10 +320,12 @@ git commit -m "🎨 Ralli 랜딩 색상 토큰·스크린샷 마스크 기반 �
 시안이 rAF 루프 안에서 인라인으로 계산하던 값들을 순수 함수로 분리한다. 이 태스크가 유일하게 완전한 TDD가 가능한 지점이므로 경계값을 촘촘히 덮는다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_utils/ralli-motion.ts`
 - Test: `src/app/(main)/apps/ralli/_utils/ralli-motion.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `clamp(value: number, min: number, max: number): number`
   - `mapRange(value: number, inMin: number, inMax: number, outMin: number, outMax: number): number`
@@ -401,7 +430,7 @@ export function mapRange(
   inMin: number,
   inMax: number,
   outMin: number,
-  outMax: number,
+  outMax: number
 ): number {
   if (inMax === inMin) return outMin;
   const t = clamp((value - inMin) / (inMax - inMin), 0, 1);
@@ -447,10 +476,12 @@ git commit -m "✨ Ralli 스크롤 모션 순수 함수 추가"
 시안 카피를 전량 옮기고 섹션별 데이터 모델을 정의한다. 기존 `ralliFeatures`·`ralliScreenshots`는 제거하되 `ralliMeta`의 외부 참조 키는 보존한다.
 
 **Files:**
+
 - Modify: `src/app/(main)/apps/ralli/_utils/ralli-content.ts` (전면 재작성)
 - Test: `src/app/(main)/apps/ralli/_utils/ralli-content.test.ts` (전면 재작성)
 
 **Interfaces:**
+
 - Produces: `ralliMeta` · `ralliNavLinks` · `ralliMarqueeItems` · `ralliHeroLetters` · `ralliHeroShot` · `ralliWatchSection` · `ralliWorkoutSection` · `ralliReplaySection` · `ralliRulesSection` · `ralliFinalCta`, 타입 `RalliImage` · `RalliStep` · `RalliStat` · `RalliNote`
 - **삭제**: `ralliFeatures`, `ralliScreenshots`, `ralliMeta.tagline`, `RalliFeature` 타입
 - **보존 필수**: `ralliMeta.name` · `.iconSrc` · `.subtitle` · `.appStoreUrl` · `.supportEmail`
@@ -461,16 +492,16 @@ git commit -m "✨ Ralli 스크롤 모션 순수 함수 추가"
 
 ```ts
 import {
-  ralliMeta,
-  ralliNavLinks,
+  type RalliImage,
+  ralliFinalCta,
   ralliHeroLetters,
   ralliHeroShot,
-  ralliWatchSection,
-  ralliWorkoutSection,
+  ralliMeta,
+  ralliNavLinks,
   ralliReplaySection,
   ralliRulesSection,
-  ralliFinalCta,
-  type RalliImage,
+  ralliWatchSection,
+  ralliWorkoutSection,
 } from './ralli-content';
 
 const allImages: RalliImage[] = [
@@ -500,7 +531,9 @@ describe('ralli-content', () => {
     expect(ralliMeta.name).toBe('Ralli');
     expect(ralliMeta.iconSrc).toBe('/ralli/icon1.png');
     expect(ralliMeta.subtitle.length).toBeGreaterThan(0);
-    expect(ralliMeta.appStoreUrl).toBe('https://apps.apple.com/us/app/ralli/id6449350578');
+    expect(ralliMeta.appStoreUrl).toBe(
+      'https://apps.apple.com/us/app/ralli/id6449350578'
+    );
     expect(ralliMeta.supportEmail).toBe('qlrogo91lp@gmail.com');
   });
 
@@ -515,8 +548,14 @@ describe('ralli-content', () => {
   });
 
   it('앵커 내비 href가 실제 섹션 id와 일치한다', () => {
-    const sectionIds = [ralliWatchSection.id, ralliWorkoutSection.id, ralliReplaySection.id];
-    expect(ralliNavLinks.map((l) => l.href)).toEqual(sectionIds.map((id) => `#${id}`));
+    const sectionIds = [
+      ralliWatchSection.id,
+      ralliWorkoutSection.id,
+      ralliReplaySection.id,
+    ];
+    expect(ralliNavLinks.map((l) => l.href)).toEqual(
+      sectionIds.map((id) => `#${id}`)
+    );
   });
 
   it('히어로 글자는 RALLI 5자다', () => {
@@ -600,7 +639,8 @@ function watchImage(src: string, alt: string): RalliImage {
 export const ralliMeta = {
   name: 'Ralli',
   taglineLines: ['Tennis scores,', 'right on your wrist.'],
-  subtitle: 'Score, track, and replay every match — without ever pulling out your phone.',
+  subtitle:
+    'Score, track, and replay every match — without ever pulling out your phone.',
   platforms: 'Apple Watch · iPhone',
   iconSrc: '/ralli/icon1.png',
   supportEmail: 'qlrogo91lp@gmail.com',
@@ -611,7 +651,7 @@ export const ralliHeroLetters = ['R', 'A', 'L', 'L', 'I'] as const;
 
 export const ralliHeroShot = watchImage(
   '/ralli/watch-match-global.png',
-  'Ralli match score on Apple Watch',
+  'Ralli match score on Apple Watch'
 );
 
 export const ralliMarqueeItems = [
@@ -640,7 +680,10 @@ export const ralliWatchSection = {
       id: 'score',
       title: 'Score without your phone',
       body: 'Pick a format, tap to score, check results — entirely from Apple Watch.',
-      image: watchImage('/ralli/watch-match-global.png', 'Ralli match score on Apple Watch'),
+      image: watchImage(
+        '/ralli/watch-match-global.png',
+        'Ralli match score on Apple Watch'
+      ),
     },
     {
       id: 'complication',
@@ -648,7 +691,7 @@ export const ralliWatchSection = {
       body: 'Add the complication and start a match the second you step on court.',
       image: watchImage(
         '/ralli/watch-complication-global.png',
-        'Ralli complication on the Apple Watch face',
+        'Ralli complication on the Apple Watch face'
       ),
     },
     {
@@ -657,7 +700,7 @@ export const ralliWatchSection = {
       body: 'The current score stays visible in Dynamic Island and Live Activities.',
       image: iosImage(
         '/ralli/ios-live-global.png',
-        'Ralli Live Activity on the iPhone Lock Screen',
+        'Ralli Live Activity on the iPhone Lock Screen'
       ),
     },
   ] satisfies RalliStep[],
@@ -702,8 +745,14 @@ export const ralliWorkoutSection = {
     },
   ] satisfies RalliStat[],
   images: [
-    watchImage('/ralli/watch-workout-global.png', 'Ralli workout metrics on Apple Watch'),
-    iosImage('/ralli/ios-workout-global.png', 'Ralli workout metrics on iPhone'),
+    watchImage(
+      '/ralli/watch-workout-global.png',
+      'Ralli workout metrics on Apple Watch'
+    ),
+    iosImage(
+      '/ralli/ios-workout-global.png',
+      'Ralli workout metrics on iPhone'
+    ),
   ],
 };
 
@@ -718,11 +767,23 @@ export const ralliReplaySection = {
   label: '03 — REPLAY',
   heading: 'Every match, back on your iPhone.',
   gallery: [
-    iosImage('/ralli/ios-summary-global.png', 'Ralli match summary stats on iPhone'),
+    iosImage(
+      '/ralli/ios-summary-global.png',
+      'Ralli match summary stats on iPhone'
+    ),
     iosImage('/ralli/ios-match-global.png', 'Ralli match score on iPhone'),
-    iosImage('/ralli/connectivity-global.png', 'Ralli on iPhone and Apple Watch together'),
-    iosImage('/ralli/ios-mode-global.png', 'Ralli match format selection on iPhone'),
-    iosImage('/ralli/ios-live-global.png', 'Ralli Live Activity on the iPhone Lock Screen'),
+    iosImage(
+      '/ralli/connectivity-global.png',
+      'Ralli on iPhone and Apple Watch together'
+    ),
+    iosImage(
+      '/ralli/ios-mode-global.png',
+      'Ralli match format selection on iPhone'
+    ),
+    iosImage(
+      '/ralli/ios-live-global.png',
+      'Ralli Live Activity on the iPhone Lock Screen'
+    ),
   ],
   notes: [
     {
@@ -750,8 +811,14 @@ export const ralliRulesSection = {
   body: 'Club night, league, or a quick hit — start with the format you actually play.',
   chips: ['4 games', '5 games', '6 games', 'No-ad', 'No-tie', 'Tiebreak'],
   images: [
-    watchImage('/ralli/watch-mode-global.png', 'Ralli match format on Apple Watch'),
-    iosImage('/ralli/ios-mode-global.png', 'Ralli match format selection on iPhone'),
+    watchImage(
+      '/ralli/watch-mode-global.png',
+      'Ralli match format on Apple Watch'
+    ),
+    iosImage(
+      '/ralli/ios-mode-global.png',
+      'Ralli match format selection on iPhone'
+    ),
   ],
 };
 
@@ -799,12 +866,14 @@ git commit -m "♻️ Ralli 콘텐츠를 A 시안 카피·섹션 모델로 재�
 모든 섹션이 공유하는 스크롤 진행도 훅과 등장 애니메이션 래퍼를 만든다. reduced-motion 판정을 여기 한 곳에 모아 각 섹션이 `isStatic` 불리언만 보게 한다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_hooks/useSectionProgress.ts`
 - Create: `src/app/(main)/apps/ralli/_hooks/useIsMobile.ts`
 - Create: `src/app/(main)/apps/ralli/_actions/reveal.action.tsx`
 - Test: `src/app/(main)/apps/ralli/_actions/reveal.test.tsx`
 
 **Interfaces:**
+
 - Consumes: framer-motion `useScroll` · `useSpring` · `useReducedMotion` · `useInView`
 - Produces:
   - `useSectionProgress(offset?, smooth?)` → `{ ref: RefObject<HTMLDivElement | null>; progress: MotionValue<number>; isStatic: boolean }` — Task 6~10, 12가 사용
@@ -826,7 +895,7 @@ describe('Reveal', () => {
     render(
       <Reveal>
         <p>등장 대상</p>
-      </Reveal>,
+      </Reveal>
     );
     expect(screen.getByText('등장 대상')).toBeInTheDocument();
   });
@@ -835,7 +904,7 @@ describe('Reveal', () => {
     render(
       <Reveal className="max-w-160">
         <p>본문</p>
-      </Reveal>,
+      </Reveal>
     );
     expect(screen.getByText('본문').parentElement).toHaveClass('max-w-160');
   });
@@ -855,13 +924,13 @@ Expected: FAIL — `Failed to resolve import "./reveal.action"`
 ```ts
 'use client';
 
-import { useRef, type RefObject } from 'react';
+import { type RefObject, useRef } from 'react';
 import {
+  type MotionValue,
+  type UseScrollOptions,
   useReducedMotion,
   useScroll,
   useSpring,
-  type MotionValue,
-  type UseScrollOptions,
 } from 'framer-motion';
 
 type SectionProgress = {
@@ -876,7 +945,7 @@ type SectionProgress = {
  */
 export function useSectionProgress(
   offset: UseScrollOptions['offset'] = ['start start', 'end end'],
-  smooth = true,
+  smooth = true
 ): SectionProgress {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -979,12 +1048,14 @@ git commit -m "✨ Ralli 스크롤 진행도 훅과 Reveal 래퍼 추가"
 섹션 라벨 · 마퀴 · 코트 SVG를 순수 컴포넌트로 만든다. 셋 다 클라이언트 로직이 없어 서버에서 렌더된다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_components/ralli-section-label.tsx`
 - Create: `src/app/(main)/apps/ralli/_components/ralli-marquee.tsx`
 - Create: `src/app/(main)/apps/ralli/_components/ralli-court-svg.tsx`
 - Test: `src/app/(main)/apps/ralli/_components/ralli-marquee.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ralliMarqueeItems` (Task 3)
 - Produces:
   - `RalliSectionLabel({ children })` — Task 7, 8, 9, 10이 사용
@@ -1037,7 +1108,7 @@ export function RalliSectionLabel({ children, className }: Props) {
     <p
       className={cn(
         'mb-3.5 text-[11px] font-bold tracking-[0.22em] text-ralli-lime',
-        className,
+        className
       )}
     >
       {children}
@@ -1138,10 +1209,12 @@ git commit -m "✨ Ralli 섹션 라벨·마퀴·코트 SVG 순수 컴포넌트 �
 글자별 `useTransform`은 `.map()` 콜백 안에서 호출하면 `react-hooks/rules-of-hooks` 위반이므로, 글자 하나를 자식 컴포넌트(`HeroLetter`)로 분리해 각자 훅을 호출하게 한다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_areas/hero.area.tsx`
 - Test: `src/app/(main)/apps/ralli/_areas/hero.area.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useSectionProgress` (Task 4), `scoreAt` · `RalliScore` (Task 2), `ralliHeroLetters` · `ralliHeroShot` · `ralliMeta` (Task 3), `RalliCourtSvg` (Task 5), `RalliShot` (Task 1), `RalliCtaButton` (기존)
 - Produces: `HeroArea()` — Task 13이 `page.tsx`에서 사용. props 없음(콘텐츠를 직접 import).
 
@@ -1156,9 +1229,15 @@ import { render, screen } from '@testing-library/react';
 import { HeroArea } from './hero.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt, className }: { src: string; alt: string; className?: string }) => (
-    <img src={src} alt={alt} className={className} />
-  ),
+  default: ({
+    src,
+    alt,
+    className,
+  }: {
+    src: string;
+    alt: string;
+    className?: string;
+  }) => <img src={src} alt={alt} className={className} />,
 }));
 
 describe('HeroArea', () => {
@@ -1173,13 +1252,16 @@ describe('HeroArea', () => {
     render(<HeroArea />);
     expect(screen.getByRole('link', { name: /App Store/i })).toHaveAttribute(
       'href',
-      'https://apps.apple.com/us/app/ralli/id6449350578',
+      'https://apps.apple.com/us/app/ralli/id6449350578'
     );
   });
 
   it('장식용 RALLI 글자는 스크린 리더에서 숨긴다', () => {
     const { container } = render(<HeroArea />);
-    expect(container.querySelector('[data-ralli-wordmark]')).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('[data-ralli-wordmark]')).toHaveAttribute(
+      'aria-hidden',
+      'true'
+    );
   });
 
   it('초기 스코어는 0이다', () => {
@@ -1203,14 +1285,23 @@ Expected: FAIL — `Failed to resolve import "./hero.area"`
 'use client';
 
 import { useState } from 'react';
-import { motion, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion';
+import {
+  type MotionValue,
+  motion,
+  useMotionValueEvent,
+  useTransform,
+} from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useSectionProgress } from '../_hooks/useSectionProgress';
-import { scoreAt, type RalliScore } from '../_utils/ralli-motion';
-import { ralliHeroLetters, ralliHeroShot, ralliMeta } from '../_utils/ralli-content';
 import { RalliCourtSvg } from '../_components/ralli-court-svg';
-import { RalliShot } from '../_components/ralli-shot';
 import { RalliCtaButton } from '../_components/ralli-cta-button';
+import { RalliShot } from '../_components/ralli-shot';
+import { useSectionProgress } from '../_hooks/useSectionProgress';
+import {
+  ralliHeroLetters,
+  ralliHeroShot,
+  ralliMeta,
+} from '../_utils/ralli-content';
+import { type RalliScore, scoreAt } from '../_utils/ralli-motion';
 
 const LETTER_DIRECTIONS = [-1.7, -0.85, 0, 0.85, 1.7];
 const LETTER_SPREAD_VW = 58;
@@ -1226,14 +1317,31 @@ type HeroLetterProps = {
   isStatic: boolean;
 };
 
-function HeroLetter({ char, direction, progress, isAccent, isStatic }: HeroLetterProps) {
-  const x = useTransform(progress, [0, 0.84], ['0vw', `${direction * LETTER_SPREAD_VW}vw`]);
+function HeroLetter({
+  char,
+  direction,
+  progress,
+  isAccent,
+  isStatic,
+}: HeroLetterProps) {
+  const x = useTransform(
+    progress,
+    [0, 0.84],
+    ['0vw', `${direction * LETTER_SPREAD_VW}vw`]
+  );
   const y = useTransform(progress, [0, 0.84], ['0vh', '-6vh']);
   const scale = useTransform(progress, [0, 0.84], [1, 1.26]);
   const opacity = useTransform(progress, [0, 0.56], [1, 0]);
-  const filter = useTransform(progress, [0, 0.84], ['blur(0px)', 'blur(3.5px)']);
+  const filter = useTransform(
+    progress,
+    [0, 0.84],
+    ['blur(0px)', 'blur(3.5px)']
+  );
 
-  const className = cn(letterClassName, isAccent ? 'text-ralli-lime' : 'text-ralli-fg');
+  const className = cn(
+    letterClassName,
+    isAccent ? 'text-ralli-lime' : 'text-ralli-fg'
+  );
 
   if (isStatic) {
     return <span className={className}>{char}</span>;
@@ -1247,7 +1355,10 @@ function HeroLetter({ char, direction, progress, isAccent, isStatic }: HeroLette
 }
 
 export function HeroArea() {
-  const { ref, progress, isStatic } = useSectionProgress(['start start', 'end end']);
+  const { ref, progress, isStatic } = useSectionProgress([
+    'start start',
+    'end end',
+  ]);
   const [score, setScore] = useState<RalliScore>('0');
 
   useMotionValueEvent(progress, 'change', (value) => {
@@ -1266,10 +1377,18 @@ export function HeroArea() {
 
   const glowScale = useTransform(progress, [0, 0.84], [0.7, 1.6]);
 
-  const copyOpacity = useTransform(progress, [0.14, 0.36, 0.86, 1], [0, 1, 1, 0]);
+  const copyOpacity = useTransform(
+    progress,
+    [0.14, 0.36, 0.86, 1],
+    [0, 1, 1, 0]
+  );
   const copyY = useTransform(progress, [0.14, 0.36], [40, 0]);
 
-  const scoreOpacity = useTransform(progress, [0.2, 0.4, 0.86, 1], [0, 1, 1, 0]);
+  const scoreOpacity = useTransform(
+    progress,
+    [0.2, 0.4, 0.86, 1],
+    [0, 1, 1, 0]
+  );
   const hintOpacity = useTransform(progress, [0, 0.17], [1, 0]);
 
   return (
@@ -1280,7 +1399,9 @@ export function HeroArea() {
       <div
         className={cn(
           'grid place-items-center overflow-hidden',
-          isStatic ? 'relative min-h-[80vh] py-24' : 'sticky top-14 h-[calc(100vh-3.5rem)]',
+          isStatic
+            ? 'relative min-h-[80vh] py-24'
+            : 'sticky top-14 h-[calc(100vh-3.5rem)]'
         )}
       >
         <motion.div
@@ -1328,7 +1449,12 @@ export function HeroArea() {
           style={
             isStatic
               ? undefined
-              : { scale: watchScale, rotate: watchRotate, y: watchY, opacity: watchOpacity }
+              : {
+                  scale: watchScale,
+                  rotate: watchRotate,
+                  y: watchY,
+                  opacity: watchOpacity,
+                }
           }
           className="relative z-3"
         >
@@ -1344,12 +1470,16 @@ export function HeroArea() {
           style={isStatic ? undefined : { opacity: scoreOpacity }}
           className="pointer-events-none absolute right-[max(6vw,32px)] top-[18%] z-4 text-right md:top-1/2"
         >
-          <p className="mb-1.5 text-xs font-bold tracking-[0.22em] text-ralli-fg/45">GAME POINT</p>
+          <p className="mb-1.5 text-xs font-bold tracking-[0.22em] text-ralli-fg/45">
+            GAME POINT
+          </p>
           <p
             data-testid="ralli-hero-score"
             className={cn(
               'font-extrabold leading-[0.85] tracking-[-0.05em] text-ralli-lime tabular-nums',
-              score === 'GAME' ? 'text-[min(7vw,84px)]' : 'text-[min(11vw,132px)]',
+              score === 'GAME'
+                ? 'text-[min(7vw,84px)]'
+                : 'text-[min(11vw,132px)]'
             )}
           >
             {score}
@@ -1372,7 +1502,9 @@ export function HeroArea() {
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <RalliCtaButton appStoreUrl={ralliMeta.appStoreUrl} />
-            <span className="text-[13px] text-ralli-fg/40">{ralliMeta.platforms}</span>
+            <span className="text-[13px] text-ralli-fg/40">
+              {ralliMeta.platforms}
+            </span>
           </div>
         </motion.div>
 
@@ -1418,10 +1550,12 @@ git commit -m "✨ Ralli 히어로 스크롤 시퀀스 구현"
 300vh 동안 sticky 상태로 3개 스텝을 순회하며 이미지를 교체하고 해당 스텝 카드를 강조한다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_areas/watch.area.tsx`
 - Test: `src/app/(main)/apps/ralli/_areas/watch.area.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useSectionProgress` (Task 4), `stepIndexAt` (Task 2), `ralliWatchSection` (Task 3), `RalliSectionLabel` (Task 5), `RalliShot` (Task 1)
 - Produces: `WatchArea()` — Task 13이 사용
 
@@ -1432,20 +1566,26 @@ import { render, screen } from '@testing-library/react';
 import { WatchArea } from './watch.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('WatchArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
     render(<WatchArea />);
-    expect(screen.getByRole('heading', { name: 'All on your wrist.' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'All on your wrist.' })
+    ).toBeInTheDocument();
     expect(screen.getByText('01 — ON THE COURT')).toBeInTheDocument();
   });
 
   it('3개 스텝을 모두 렌더한다', () => {
     render(<WatchArea />);
     expect(screen.getByText('Score without your phone')).toBeInTheDocument();
-    expect(screen.getByText('One tap from your watch face')).toBeInTheDocument();
+    expect(
+      screen.getByText('One tap from your watch face')
+    ).toBeInTheDocument();
     expect(screen.getByText('Live on the Lock Screen')).toBeInTheDocument();
   });
 
@@ -1456,8 +1596,14 @@ describe('WatchArea', () => {
 
   it('초기 활성 스텝은 첫 번째다', () => {
     render(<WatchArea />);
-    expect(screen.getByTestId('ralli-step-score')).toHaveAttribute('data-active', 'true');
-    expect(screen.getByTestId('ralli-step-live')).toHaveAttribute('data-active', 'false');
+    expect(screen.getByTestId('ralli-step-score')).toHaveAttribute(
+      'data-active',
+      'true'
+    );
+    expect(screen.getByTestId('ralli-step-live')).toHaveAttribute(
+      'data-active',
+      'false'
+    );
   });
 });
 ```
@@ -1478,14 +1624,17 @@ Expected: FAIL — 모듈 미존재
 import { useState } from 'react';
 import { motion, useMotionValueEvent } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useSectionProgress } from '../_hooks/useSectionProgress';
-import { stepIndexAt } from '../_utils/ralli-motion';
-import { ralliWatchSection } from '../_utils/ralli-content';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
+import { useSectionProgress } from '../_hooks/useSectionProgress';
+import { ralliWatchSection } from '../_utils/ralli-content';
+import { stepIndexAt } from '../_utils/ralli-motion';
 
 export function WatchArea() {
-  const { ref, progress, isStatic } = useSectionProgress(['start start', 'end end']);
+  const { ref, progress, isStatic } = useSectionProgress([
+    'start start',
+    'end end',
+  ]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useMotionValueEvent(progress, 'change', (value) => {
@@ -1496,14 +1645,17 @@ export function WatchArea() {
     <section
       id={ralliWatchSection.id}
       ref={ref}
-      className={cn('relative bg-ralli-bg', isStatic ? 'h-auto py-24' : 'h-[240vh] md:h-[300vh]')}
+      className={cn(
+        'relative bg-ralli-bg',
+        isStatic ? 'h-auto py-24' : 'h-[240vh] md:h-[300vh]'
+      )}
     >
       <div
         className={cn(
           'grid items-center gap-10 px-[max(6vw,32px)]',
           isStatic
             ? 'relative grid-cols-1 md:grid-cols-2'
-            : 'sticky top-14 h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-2',
+            : 'sticky top-14 h-[calc(100vh-3.5rem)] grid-cols-1 md:grid-cols-2'
         )}
       >
         <div className="max-w-120">
@@ -1523,11 +1675,15 @@ export function WatchArea() {
                     'rounded-2xl border px-4.5 py-4 transition-all duration-350',
                     isActive
                       ? 'border-ralli-lime/35 bg-ralli-lime/10 opacity-100'
-                      : 'border-ralli-fg/8 bg-transparent opacity-40',
+                      : 'border-ralli-fg/8 bg-transparent opacity-40'
                   )}
                 >
-                  <p className="mb-1 text-[17px] font-semibold tracking-[-0.2px]">{step.title}</p>
-                  <p className="text-[14.5px] leading-[1.45] text-ralli-fg/55">{step.body}</p>
+                  <p className="mb-1 text-[17px] font-semibold tracking-[-0.2px]">
+                    {step.title}
+                  </p>
+                  <p className="text-[14.5px] leading-[1.45] text-ralli-fg/55">
+                    {step.body}
+                  </p>
                 </li>
               );
             })}
@@ -1544,12 +1700,21 @@ export function WatchArea() {
               key={step.id}
               className="absolute"
               animate={{
-                opacity: isStatic ? (index === 0 ? 1 : 0) : index === activeIndex ? 1 : 0,
+                opacity: isStatic
+                  ? index === 0
+                    ? 1
+                    : 0
+                  : index === activeIndex
+                    ? 1
+                    : 0,
                 scale: index === activeIndex ? 1 : 0.94,
               }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
             >
-              <RalliShot image={step.image} className="max-h-[38vh] md:max-h-[58vh]" />
+              <RalliShot
+                image={step.image}
+                className="max-h-[38vh] md:max-h-[58vh]"
+              />
             </motion.div>
           ))}
         </div>
@@ -1581,10 +1746,12 @@ git commit -m "✨ Ralli 01 On the court pin 섹션 구현"
 스탯 3장의 숫자를 뷰포트 진입 시 1회 카운트업하고, 워크아웃 이미지 2장을 배치한다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_areas/workout.area.tsx`
 - Test: `src/app/(main)/apps/ralli/_areas/workout.area.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ralliWorkoutSection` (Task 3), `Reveal` (Task 4), `RalliSectionLabel` (Task 5), `RalliShot` (Task 1)
 - Produces: `WorkoutArea()` — Task 13이 사용
 
@@ -1595,14 +1762,18 @@ import { render, screen } from '@testing-library/react';
 import { WorkoutArea } from './workout.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('WorkoutArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
     render(<WorkoutArea />);
     expect(
-      screen.getByRole('heading', { name: 'A match is a workout — logged automatically.' }),
+      screen.getByRole('heading', {
+        name: 'A match is a workout — logged automatically.',
+      })
     ).toBeInTheDocument();
     expect(screen.getByText('02 — HEALTH')).toBeInTheDocument();
   });
@@ -1612,7 +1783,9 @@ describe('WorkoutArea', () => {
     expect(screen.getByText('kcal')).toBeInTheDocument();
     expect(screen.getByText('bpm')).toBeInTheDocument();
     expect(screen.getByText('min')).toBeInTheDocument();
-    expect(screen.getByText('Active energy, tracked per match')).toBeInTheDocument();
+    expect(
+      screen.getByText('Active energy, tracked per match')
+    ).toBeInTheDocument();
   });
 
   it('앵커 이동을 위해 섹션 id를 노출한다', () => {
@@ -1638,10 +1811,10 @@ Expected: FAIL — 모듈 미존재
 import { useEffect, useRef, useState } from 'react';
 import { animate, useInView, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { ralliWorkoutSection, type RalliStat } from '../_utils/ralli-content';
+import { Reveal } from '../_actions/reveal.action';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from '../_actions/reveal.action';
+import { type RalliStat, ralliWorkoutSection } from '../_utils/ralli-content';
 
 const toneClassName: Record<RalliStat['tone'], string> = {
   lime: 'text-ralli-lime',
@@ -1685,12 +1858,14 @@ function StatCard({ stat }: StatCardProps) {
         <span
           className={cn(
             'text-[52px] font-extrabold tracking-[-0.04em] tabular-nums',
-            toneClassName[stat.tone],
+            toneClassName[stat.tone]
           )}
         >
           {displayed}
         </span>
-        <span className="text-lg font-semibold text-ralli-fg/50">{stat.unit}</span>
+        <span className="text-lg font-semibold text-ralli-fg/50">
+          {stat.unit}
+        </span>
       </p>
       <p className="mt-1.5 text-[14.5px] text-ralli-fg/55">{stat.caption}</p>
     </div>
@@ -1709,7 +1884,9 @@ export function WorkoutArea() {
           <h2 className="mb-3.5 text-[clamp(30px,4vw,54px)] font-bold leading-[1.02] tracking-[-0.04em] text-pretty">
             {ralliWorkoutSection.heading}
           </h2>
-          <p className="text-[17px] leading-normal text-ralli-fg/58">{ralliWorkoutSection.body}</p>
+          <p className="text-[17px] leading-normal text-ralli-fg/58">
+            {ralliWorkoutSection.body}
+          </p>
         </Reveal>
 
         <div className="mb-6 grid grid-cols-1 gap-3.5 md:grid-cols-3">
@@ -1757,10 +1934,12 @@ git commit -m "✨ Ralli 02 Health 카운트업 스탯 섹션 구현"
 데스크톱은 스크롤 연동 가로 드리프트, 모바일은 네이티브 가로 스크롤 + `scroll-snap`. 두 방식이 같은 축에서 충돌하므로 `useIsMobile`로 분기하는 유일한 지점이다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_areas/replay.area.tsx`
 - Test: `src/app/(main)/apps/ralli/_areas/replay.area.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useSectionProgress` · `useIsMobile` (Task 4), `ralliReplaySection` (Task 3), `RalliSectionLabel` (Task 5), `RalliShot` (Task 1), `Reveal` (Task 4)
 - Produces: `ReplayArea()` — Task 13이 사용
 
@@ -1773,7 +1952,9 @@ import { render, screen } from '@testing-library/react';
 import { ReplayArea } from './replay.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 beforeAll(() => {
@@ -1784,7 +1965,7 @@ beforeAll(() => {
       media: query,
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
-    })),
+    }))
   );
 });
 
@@ -1796,7 +1977,7 @@ describe('ReplayArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
     render(<ReplayArea />);
     expect(
-      screen.getByRole('heading', { name: 'Every match, back on your iPhone.' }),
+      screen.getByRole('heading', { name: 'Every match, back on your iPhone.' })
     ).toBeInTheDocument();
     expect(screen.getByText('03 — REPLAY')).toBeInTheDocument();
   });
@@ -1809,7 +1990,9 @@ describe('ReplayArea', () => {
   it('설명 노트 3개를 렌더한다', () => {
     render(<ReplayArea />);
     expect(screen.getByText('Set-by-set detail')).toBeInTheDocument();
-    expect(screen.getByText('A calendar that fills itself')).toBeInTheDocument();
+    expect(
+      screen.getByText('A calendar that fills itself')
+    ).toBeInTheDocument();
     expect(screen.getByText('Monthly & lifetime stats')).toBeInTheDocument();
   });
 
@@ -1835,18 +2018,21 @@ Expected: FAIL — 모듈 미존재
 
 import { motion, useTransform } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useSectionProgress } from '../_hooks/useSectionProgress';
-import { useIsMobile } from '../_hooks/useIsMobile';
-import { ralliReplaySection } from '../_utils/ralli-content';
+import { Reveal } from '../_actions/reveal.action';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from '../_actions/reveal.action';
+import { useIsMobile } from '../_hooks/useIsMobile';
+import { useSectionProgress } from '../_hooks/useSectionProgress';
+import { ralliReplaySection } from '../_utils/ralli-content';
 
 /** 데스크톱 드리프트 이동 거리. 갤러리 전체 폭에서 뷰포트를 뺀 만큼 왼쪽으로 민다. */
 const DRIFT_VW = -55;
 
 export function ReplayArea() {
-  const { ref, progress, isStatic } = useSectionProgress(['start end', 'end start'], false);
+  const { ref, progress, isStatic } = useSectionProgress(
+    ['start end', 'end start'],
+    false
+  );
   const isMobile = useIsMobile();
   const driftX = useTransform(progress, [0, 1], ['0vw', `${DRIFT_VW}vw`]);
 
@@ -1867,7 +2053,7 @@ export function ReplayArea() {
 
       <div
         className={cn(
-          useNativeScroll && 'snap-x snap-mandatory overflow-x-auto pb-4',
+          useNativeScroll && 'snap-x snap-mandatory overflow-x-auto pb-4'
         )}
       >
         <motion.div
@@ -1890,7 +2076,9 @@ export function ReplayArea() {
         {ralliReplaySection.notes.map((note, index) => (
           <Reveal key={note.id} delay={index * 0.08}>
             <p className="mb-1.25 text-[16.5px] font-semibold">{note.title}</p>
-            <p className="text-[14.5px] leading-[1.45] text-ralli-fg/55">{note.body}</p>
+            <p className="text-[14.5px] leading-[1.45] text-ralli-fg/55">
+              {note.body}
+            </p>
           </Reveal>
         ))}
       </div>
@@ -1919,10 +2107,12 @@ git commit -m "✨ Ralli 03 Replay 갤러리 구현"
 ### Task 10: 04 Your rules 영역 (`rules.area.tsx`)
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_areas/rules.area.tsx`
 - Test: `src/app/(main)/apps/ralli/_areas/rules.area.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ralliRulesSection` (Task 3), `Reveal` (Task 4), `RalliSectionLabel` (Task 5), `RalliShot` (Task 1)
 - Produces: `RulesArea()` — Task 13이 사용
 
@@ -1933,19 +2123,30 @@ import { render, screen } from '@testing-library/react';
 import { RulesArea } from './rules.area';
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('RulesArea', () => {
   it('섹션 제목과 라벨을 렌더한다', () => {
     render(<RulesArea />);
-    expect(screen.getByRole('heading', { name: 'Play by your own rules.' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Play by your own rules.' })
+    ).toBeInTheDocument();
     expect(screen.getByText('04 — YOUR RULES')).toBeInTheDocument();
   });
 
   it('룰 칩 6개를 렌더한다', () => {
     render(<RulesArea />);
-    for (const chip of ['4 games', '5 games', '6 games', 'No-ad', 'No-tie', 'Tiebreak']) {
+    for (const chip of [
+      '4 games',
+      '5 games',
+      '6 games',
+      'No-ad',
+      'No-tie',
+      'Tiebreak',
+    ]) {
       expect(screen.getByText(chip)).toBeInTheDocument();
     }
   });
@@ -1972,14 +2173,17 @@ Expected: FAIL — 모듈 미존재
 'use client';
 
 import { cn } from '@/lib/utils';
-import { ralliRulesSection } from '../_utils/ralli-content';
+import { Reveal } from '../_actions/reveal.action';
 import { RalliSectionLabel } from '../_components/ralli-section-label';
 import { RalliShot } from '../_components/ralli-shot';
-import { Reveal } from '../_actions/reveal.action';
+import { ralliRulesSection } from '../_utils/ralli-content';
 
 export function RulesArea() {
   return (
-    <section id={ralliRulesSection.id} className="bg-ralli-bg px-[max(6vw,32px)] pb-24 md:pb-32">
+    <section
+      id={ralliRulesSection.id}
+      className="bg-ralli-bg px-[max(6vw,32px)] pb-24 md:pb-32"
+    >
       <div className="mx-auto grid max-w-295 grid-cols-1 items-center gap-12 rounded-[34px] border border-ralli-fg/9 bg-linear-150 from-ralli-lime/9 via-ralli-green/5 to-transparent p-7 md:grid-cols-2 md:p-14">
         <Reveal>
           <RalliSectionLabel>{ralliRulesSection.label}</RalliSectionLabel>
@@ -1997,7 +2201,7 @@ export function RulesArea() {
                   'rounded-full px-4 py-2.25 text-[13.5px]',
                   index === 0
                     ? 'bg-ralli-lime font-bold text-ralli-bg'
-                    : 'border border-ralli-fg/10 bg-ralli-fg/7 font-semibold',
+                    : 'border border-ralli-fg/10 bg-ralli-fg/7 font-semibold'
                 )}
               >
                 {chip}
@@ -2011,7 +2215,9 @@ export function RulesArea() {
             <RalliShot
               key={image.src}
               image={image}
-              className={image.kind === 'watch' ? 'h-60 md:h-85' : 'h-70 md:h-100'}
+              className={
+                image.kind === 'watch' ? 'h-60 md:h-85' : 'h-70 md:h-100'
+              }
             />
           ))}
         </Reveal>
@@ -2043,10 +2249,12 @@ git commit -m "✨ Ralli 04 Your rules 섹션 구현"
 데스크톱은 공용 Header 아래 pill 앵커 내비, 모바일은 하단 고정 CTA 바. 표시 분기는 Tailwind `md:` 클래스만으로 처리한다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_actions/ralli-section-nav.action.tsx`
 - Test: `src/app/(main)/apps/ralli/_actions/ralli-section-nav.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ralliNavLinks` · `ralliMeta` (Task 3)
 - Produces: `RalliSectionNavAction()` — Task 13이 사용
 
@@ -2059,22 +2267,36 @@ import { RalliSectionNavAction } from './ralli-section-nav.action';
 describe('RalliSectionNavAction', () => {
   it('앵커 링크 3개를 렌더한다', () => {
     render(<RalliSectionNavAction />);
-    expect(screen.getByRole('link', { name: 'Watch' })).toHaveAttribute('href', '#watch');
-    expect(screen.getByRole('link', { name: 'Workout' })).toHaveAttribute('href', '#workout');
-    expect(screen.getByRole('link', { name: 'iPhone' })).toHaveAttribute('href', '#iphone');
+    expect(screen.getByRole('link', { name: 'Watch' })).toHaveAttribute(
+      'href',
+      '#watch'
+    );
+    expect(screen.getByRole('link', { name: 'Workout' })).toHaveAttribute(
+      'href',
+      '#workout'
+    );
+    expect(screen.getByRole('link', { name: 'iPhone' })).toHaveAttribute(
+      'href',
+      '#iphone'
+    );
   });
 
   it('데스크톱 내비와 모바일 하단 바 양쪽에 App Store 링크를 둔다', () => {
     render(<RalliSectionNavAction />);
     const ctas = screen.getAllByRole('link', { name: /Ralli|App Store/i });
     for (const cta of ctas) {
-      expect(cta).toHaveAttribute('href', 'https://apps.apple.com/us/app/ralli/id6449350578');
+      expect(cta).toHaveAttribute(
+        'href',
+        'https://apps.apple.com/us/app/ralli/id6449350578'
+      );
     }
   });
 
   it('내비에 접근성 레이블을 부여한다', () => {
     render(<RalliSectionNavAction />);
-    expect(screen.getByRole('navigation', { name: 'Ralli 섹션' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('navigation', { name: 'Ralli 섹션' })
+    ).toBeInTheDocument();
   });
 });
 ```
@@ -2104,7 +2326,10 @@ export function RalliSectionNavAction() {
         <ul className="flex gap-4 text-[13px] font-medium text-ralli-fg/62">
           {ralliNavLinks.map((link) => (
             <li key={link.href}>
-              <a href={link.href} className="transition-colors hover:text-ralli-fg">
+              <a
+                href={link.href}
+                className="transition-colors hover:text-ralli-fg"
+              >
                 {link.label}
               </a>
             </li>
@@ -2157,10 +2382,12 @@ git commit -m "✨ Ralli 섹션 앵커 내비와 모바일 하단 CTA 바 추가
 시안 푸터를 최종 CTA 섹션으로 옮긴다. **`© 2026 YJlogs` 줄은 넣지 않는다** — 공용 `Footer`가 이미 렌더한다.
 
 **Files:**
+
 - Create: `src/app/(main)/apps/ralli/_areas/final-cta.area.tsx`
 - Test: `src/app/(main)/apps/ralli/_areas/final-cta.area.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ralliMeta` · `ralliFinalCta` (Task 3), `Reveal` (Task 4), `RalliCtaButton` (기존)
 - Produces: `FinalCtaArea()` — Task 13이 사용
 
@@ -2188,28 +2415,31 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }));
 
 describe('FinalCtaArea', () => {
   it('최종 CTA 카피와 App Store 버튼을 렌더한다', () => {
     render(<FinalCtaArea />);
-    expect(screen.getByRole('heading', { name: 'Go win the next one.' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Go win the next one.' })
+    ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /App Store/i })).toHaveAttribute(
       'href',
-      'https://apps.apple.com/us/app/ralli/id6449350578',
+      'https://apps.apple.com/us/app/ralli/id6449350578'
     );
   });
 
   it('Privacy와 Support 링크를 렌더한다', () => {
     render(<FinalCtaArea />);
-    expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute(
-      'href',
-      '/apps/ralli/privacy',
-    );
+    expect(
+      screen.getByRole('link', { name: 'Privacy Policy' })
+    ).toHaveAttribute('href', '/apps/ralli/privacy');
     expect(screen.getByRole('link', { name: 'Support' })).toHaveAttribute(
       'href',
-      'mailto:qlrogo91lp@gmail.com',
+      'mailto:qlrogo91lp@gmail.com'
     );
   });
 
@@ -2235,9 +2465,9 @@ Expected: FAIL — 모듈 미존재
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ralliFinalCta, ralliMeta } from '../_utils/ralli-content';
-import { RalliCtaButton } from '../_components/ralli-cta-button';
 import { Reveal } from '../_actions/reveal.action';
+import { RalliCtaButton } from '../_components/ralli-cta-button';
+import { ralliFinalCta, ralliMeta } from '../_utils/ralli-content';
 
 export function FinalCtaArea() {
   return (
@@ -2253,10 +2483,15 @@ export function FinalCtaArea() {
         <h2 className="mb-3.5 text-[clamp(30px,4.4vw,58px)] font-extrabold leading-none tracking-[-0.045em]">
           {ralliFinalCta.heading}
         </h2>
-        <p className="mb-7 text-[16.5px] text-ralli-fg/55">{ralliFinalCta.body}</p>
+        <p className="mb-7 text-[16.5px] text-ralli-fg/55">
+          {ralliFinalCta.body}
+        </p>
         <RalliCtaButton appStoreUrl={ralliMeta.appStoreUrl} />
         <div className="mt-11 flex justify-center gap-5.5 text-[13.5px] text-ralli-fg/42">
-          <Link href="/apps/ralli/privacy" className="transition-colors hover:text-ralli-fg">
+          <Link
+            href="/apps/ralli/privacy"
+            className="transition-colors hover:text-ralli-fg"
+          >
             Privacy Policy
           </Link>
           <a
@@ -2294,11 +2529,13 @@ git commit -m "✨ Ralli 최종 CTA 섹션 구현"
 모든 섹션을 조립하고 더 이상 쓰지 않는 파일을 지운다. 기존 E2E는 `h1`이 `Ralli`라고 단언하는데 새 `h1`은 태그라인이므로 전부 깨진다 — 재작성한다.
 
 **Files:**
+
 - Modify: `src/app/(main)/apps/ralli/page.tsx` (전면 재작성)
 - Delete: `_components/ralli-hero.tsx` · `ralli-feature-section.tsx` · `ralli-screenshot-gallery.tsx` · `ralli-support.tsx` · `ralli-support.test.tsx`
 - Modify: `e2e/ralli.spec.ts` (전면 재작성)
 
 **Interfaces:**
+
 - Consumes: Task 6~12의 모든 `*Action` 컴포넌트, `RalliMarquee` (Task 5), `RalliJsonLd` (기존), `ralliMarqueeItems` · `ralliMeta` (Task 3)
 
 - [ ] **Step 1: `page.tsx` 재작성**
@@ -2306,16 +2543,16 @@ git commit -m "✨ Ralli 최종 CTA 섹션 구현"
 ```tsx
 import type { Metadata } from 'next';
 import { SITE_NAME } from '@/lib/constants';
-import { ralliMarqueeItems, ralliMeta } from './_utils/ralli-content';
-import { RalliJsonLd } from './_components/ralli-json-ld';
-import { RalliMarquee } from './_components/ralli-marquee';
 import { RalliSectionNavAction } from './_actions/ralli-section-nav.action';
+import { FinalCtaArea } from './_areas/final-cta.area';
 import { HeroArea } from './_areas/hero.area';
-import { WatchArea } from './_areas/watch.area';
-import { WorkoutArea } from './_areas/workout.area';
 import { ReplayArea } from './_areas/replay.area';
 import { RulesArea } from './_areas/rules.area';
-import { FinalCtaArea } from './_areas/final-cta.area';
+import { WatchArea } from './_areas/watch.area';
+import { WorkoutArea } from './_areas/workout.area';
+import { RalliJsonLd } from './_components/ralli-json-ld';
+import { RalliMarquee } from './_components/ralli-marquee';
+import { ralliMarqueeItems, ralliMeta } from './_utils/ralli-content';
 
 export const metadata: Metadata = {
   title: `${ralliMeta.name} — Tennis Score | ${SITE_NAME}`,
@@ -2329,7 +2566,12 @@ export const metadata: Metadata = {
     url: '/apps/ralli',
     type: 'website',
     images: [
-      { url: ralliMeta.iconSrc, width: 1024, height: 1024, alt: `${ralliMeta.name} app icon` },
+      {
+        url: ralliMeta.iconSrc,
+        width: 1024,
+        height: 1024,
+        alt: `${ralliMeta.name} app icon`,
+      },
     ],
   },
   twitter: {
@@ -2381,22 +2623,30 @@ Expected: 에러 0건, 전체 테스트 PASS. Task 3 Step 5에서 예상했던 `
 `e2e/ralli.spec.ts` (전체 교체):
 
 ```ts
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/ralli/id6449350578';
 
 test('랜딩 페이지가 4개 섹션을 모두 렌더한다', async ({ page }) => {
   await page.goto('/apps/ralli');
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('right on your wrist.');
-  await expect(page.getByRole('heading', { name: 'All on your wrist.' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'right on your wrist.'
+  );
   await expect(
-    page.getByRole('heading', { name: 'A match is a workout — logged automatically.' }),
+    page.getByRole('heading', { name: 'All on your wrist.' })
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Every match, back on your iPhone.' }),
+    page.getByRole('heading', {
+      name: 'A match is a workout — logged automatically.',
+    })
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Play by your own rules.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Every match, back on your iPhone.' })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Play by your own rules.' })
+  ).toBeVisible();
 });
 
 test('모든 App Store CTA가 동일한 URL을 가리킨다', async ({ page }) => {
@@ -2409,7 +2659,10 @@ test('모든 App Store CTA가 동일한 URL을 가리킨다', async ({ page }) =
 test('앵커 내비로 섹션에 이동한다', async ({ page }) => {
   await page.goto('/apps/ralli');
 
-  await page.getByRole('navigation', { name: 'Ralli 섹션' }).getByRole('link', { name: 'Workout' }).click();
+  await page
+    .getByRole('navigation', { name: 'Ralli 섹션' })
+    .getByRole('link', { name: 'Workout' })
+    .click();
   await expect(page).toHaveURL(/#workout$/);
   await expect(page.locator('#workout')).toBeInViewport();
 });
@@ -2419,7 +2672,9 @@ test('개인정보 처리방침으로 이동한다', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Privacy Policy' }).click();
   await expect(page).toHaveURL('/apps/ralli/privacy');
-  await expect(page.getByRole('heading', { name: 'Privacy Policy', level: 1 })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Privacy Policy', level: 1 })
+  ).toBeVisible();
 });
 
 test('Apps 목록에서 Ralli 카드로 진입한다', async ({ page }) => {
@@ -2427,7 +2682,9 @@ test('Apps 목록에서 Ralli 카드로 진입한다', async ({ page }) => {
 
   await page.getByRole('link', { name: /Ralli/ }).click();
   await expect(page).toHaveURL('/apps/ralli');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('right on your wrist.');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'right on your wrist.'
+  );
 });
 
 test.describe('모바일', () => {
@@ -2438,7 +2695,7 @@ test.describe('모바일', () => {
     await page.waitForLoadState('networkidle');
 
     const overflows = await page.evaluate(
-      () => document.documentElement.scrollWidth > window.innerWidth + 1,
+      () => document.documentElement.scrollWidth > window.innerWidth + 1
     );
     expect(overflows).toBe(false);
   });
@@ -2446,7 +2703,9 @@ test.describe('모바일', () => {
   test('하단 고정 CTA 바가 보인다', async ({ page }) => {
     await page.goto('/apps/ralli');
 
-    await expect(page.getByRole('link', { name: 'Download on the App Store' }).last()).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: 'Download on the App Store' }).last()
+    ).toBeVisible();
   });
 });
 
@@ -2456,9 +2715,15 @@ test.describe('reduced-motion', () => {
   test('모션을 끈 상태에서도 모든 섹션이 보인다', async ({ page }) => {
     await page.goto('/apps/ralli');
 
-    await expect(page.getByRole('heading', { name: 'All on your wrist.' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Play by your own rules.' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Go win the next one.' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'All on your wrist.' })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Play by your own rules.' })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Go win the next one.' })
+    ).toBeVisible();
   });
 });
 ```
@@ -2524,12 +2789,12 @@ EOF
 
 설계 문서 §9의 4개 항목이다. 재검토하지 않으면 아래 기본값대로 진행되며, 위 태스크 코드는 모두 기본값을 전제로 작성되어 있다.
 
-| # | 항목 | 기본값 | 변경 시 영향 태스크 |
-|---|---|---|---|
-| 1 | 폰트 | Geist 유지 (별도 작업 없음) | 변경 시 `layout.tsx`에 `next/font/google` 추가 + Task 13 |
-| 2 | Watch 이미지 | 2x 재캡처 후 `WATCH_W`/`WATCH_H` 갱신 | Task 3 (`ralli-content.ts` 상수) |
-| 3 | 모바일 CTA | 하단 고정 바 | Task 11 |
-| 4 | `watch-home-global.png` | 콘텐츠에서 제거 (파일은 `public/`에 존치) | Task 3 |
+| #   | 항목                    | 기본값                                    | 변경 시 영향 태스크                                      |
+| --- | ----------------------- | ----------------------------------------- | -------------------------------------------------------- |
+| 1   | 폰트                    | Geist 유지 (별도 작업 없음)               | 변경 시 `layout.tsx`에 `next/font/google` 추가 + Task 13 |
+| 2   | Watch 이미지            | 2x 재캡처 후 `WATCH_W`/`WATCH_H` 갱신     | Task 3 (`ralli-content.ts` 상수)                         |
+| 3   | 모바일 CTA              | 하단 고정 바                              | Task 11                                                  |
+| 4   | `watch-home-global.png` | 콘텐츠에서 제거 (파일은 `public/`에 존치) | Task 3                                                   |
 
 1번은 Task 6 완료 직후 히어로를 실제로 띄워 두 폰트로 비교한 뒤 정한다. 2번은 재캡처 자산을 확보하면 `_utils/ralli-content.ts`의 `WATCH_W`/`WATCH_H`만 바꾸면 되고 나머지 코드는 영향받지 않는다.
 

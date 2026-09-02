@@ -7,17 +7,26 @@ vi.mock('next/navigation', () => ({
 }));
 
 /** 지정한 href를 가진 앵커를 document에 붙이고 반환한다. */
-function appendAnchor(href: string, attrs: Record<string, string> = {}): HTMLAnchorElement {
+function appendAnchor(
+  href: string,
+  attrs: Record<string, string> = {}
+): HTMLAnchorElement {
   const anchor = document.createElement('a');
   anchor.href = href;
-  for (const [key, value] of Object.entries(attrs)) anchor.setAttribute(key, value);
+  for (const [key, value] of Object.entries(attrs))
+    anchor.setAttribute(key, value);
   document.body.appendChild(anchor);
   return anchor;
 }
 
 /** 좌클릭 MouseEvent를 만든다. */
 function leftClick(init: MouseEventInit = {}): MouseEvent {
-  return new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, ...init });
+  return new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    button: 0,
+    ...init,
+  });
 }
 
 describe('shouldStartProgress', () => {
@@ -32,15 +41,25 @@ describe('shouldStartProgress', () => {
 
   it('수정키를 누른 클릭은 새 탭/창이므로 추적하지 않는다', () => {
     const anchor = appendAnchor('/posts');
-    expect(shouldStartProgress(leftClick({ metaKey: true }), anchor, '/')).toBe(false);
-    expect(shouldStartProgress(leftClick({ ctrlKey: true }), anchor, '/')).toBe(false);
-    expect(shouldStartProgress(leftClick({ shiftKey: true }), anchor, '/')).toBe(false);
-    expect(shouldStartProgress(leftClick({ altKey: true }), anchor, '/')).toBe(false);
+    expect(shouldStartProgress(leftClick({ metaKey: true }), anchor, '/')).toBe(
+      false
+    );
+    expect(shouldStartProgress(leftClick({ ctrlKey: true }), anchor, '/')).toBe(
+      false
+    );
+    expect(
+      shouldStartProgress(leftClick({ shiftKey: true }), anchor, '/')
+    ).toBe(false);
+    expect(shouldStartProgress(leftClick({ altKey: true }), anchor, '/')).toBe(
+      false
+    );
   });
 
   it('가운데 클릭은 추적하지 않는다', () => {
     const anchor = appendAnchor('/posts');
-    expect(shouldStartProgress(leftClick({ button: 1 }), anchor, '/')).toBe(false);
+    expect(shouldStartProgress(leftClick({ button: 1 }), anchor, '/')).toBe(
+      false
+    );
   });
 
   it('외부 링크는 추적하지 않는다', () => {
@@ -91,7 +110,9 @@ describe('NavigationProgress', () => {
 
   it('초기에는 숨겨져 있다', () => {
     render(<NavigationProgress />);
-    expect(screen.getByTestId('navigation-progress')).toHaveStyle({ opacity: '0' });
+    expect(screen.getByTestId('navigation-progress')).toHaveStyle({
+      opacity: '0',
+    });
   });
 
   it('클릭 후 150ms 전에는 나타나지 않는다', () => {
@@ -103,7 +124,9 @@ describe('NavigationProgress', () => {
       vi.advanceTimersByTime(149);
     });
 
-    expect(screen.getByTestId('navigation-progress')).toHaveStyle({ opacity: '0' });
+    expect(screen.getByTestId('navigation-progress')).toHaveStyle({
+      opacity: '0',
+    });
   });
 
   it('클릭 후 150ms가 지나면 나타난다', () => {
@@ -115,7 +138,9 @@ describe('NavigationProgress', () => {
       vi.advanceTimersByTime(150);
     });
 
-    expect(screen.getByTestId('navigation-progress')).toHaveStyle({ opacity: '1' });
+    expect(screen.getByTestId('navigation-progress')).toHaveStyle({
+      opacity: '1',
+    });
   });
 
   it('제외 대상 클릭은 150ms가 지나도 나타나지 않는다', () => {
@@ -127,6 +152,8 @@ describe('NavigationProgress', () => {
       vi.advanceTimersByTime(300);
     });
 
-    expect(screen.getByTestId('navigation-progress')).toHaveStyle({ opacity: '0' });
+    expect(screen.getByTestId('navigation-progress')).toHaveStyle({
+      opacity: '0',
+    });
   });
 });

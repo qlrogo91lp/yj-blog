@@ -5,14 +5,14 @@
 
 ## 결정 사항 요약
 
-| 항목 | 결정 |
-|------|------|
-| 관리 방식 | 관리자 페이지(`admin/series`)에서 CRUD |
-| 글 순서 | `seriesOrder` 컬럼 없이 `publishedAt ASC` 자동 정렬 |
-| 글 상세 UI | 상단 시리즈 박스 + 하단 이전/다음 카드 (벨로그 스타일) |
-| 목록 진입점 | 헤더 내비게이션에 "시리즈" 메뉴 추가 |
-| 대표 이미지 | 시리즈 내 첫 글의 썸네일 재사용 (전용 커버 없음) |
-| 에디터 UI | 카테고리와 동일한 셀렉트만 (즉석 생성 없음) |
+| 항목        | 결정                                                   |
+| ----------- | ------------------------------------------------------ |
+| 관리 방식   | 관리자 페이지(`admin/series`)에서 CRUD                 |
+| 글 순서     | `seriesOrder` 컬럼 없이 `publishedAt ASC` 자동 정렬    |
+| 글 상세 UI  | 상단 시리즈 박스 + 하단 이전/다음 카드 (벨로그 스타일) |
+| 목록 진입점 | 헤더 내비게이션에 "시리즈" 메뉴 추가                   |
+| 대표 이미지 | 시리즈 내 첫 글의 썸네일 재사용 (전용 커버 없음)       |
+| 에디터 UI   | 카테고리와 동일한 셀렉트만 (즉석 생성 없음)            |
 
 ## 1. 스키마 (`src/db/schema.ts`)
 
@@ -43,12 +43,12 @@ seriesId: integer('series_id').references(() => series.id, { onDelete: 'set null
 
 **`src/db/queries/series.ts`** (신규, SQL 동사 컨벤션):
 
-| 함수 | 용도 | 반환 |
-|------|------|------|
-| `selectSeriesList()` | `/series` 목록·관리자 목록 | 시리즈 + published 글 수 + 첫 글 썸네일 + 최근 발행일 |
-| `selectSeriesBySlug(slug)` | `/series/[slug]` 상세 | 시리즈 + published 글 목록 (`publishedAt ASC`, id·title·slug·excerpt·publishedAt) |
-| `selectSeriesPosts(seriesId)` | 글 상세 시리즈 박스 | published 글의 id·title·slug·publishedAt (`publishedAt ASC`) |
-| `insertSeries` / `updateSeries` / `deleteSeries` | 관리자 쓰기 | — |
+| 함수                                             | 용도                       | 반환                                                                              |
+| ------------------------------------------------ | -------------------------- | --------------------------------------------------------------------------------- |
+| `selectSeriesList()`                             | `/series` 목록·관리자 목록 | 시리즈 + published 글 수 + 첫 글 썸네일 + 최근 발행일                             |
+| `selectSeriesBySlug(slug)`                       | `/series/[slug]` 상세      | 시리즈 + published 글 목록 (`publishedAt ASC`, id·title·slug·excerpt·publishedAt) |
+| `selectSeriesPosts(seriesId)`                    | 글 상세 시리즈 박스        | published 글의 id·title·slug·publishedAt (`publishedAt ASC`)                      |
+| `insertSeries` / `updateSeries` / `deleteSeries` | 관리자 쓰기                | —                                                                                 |
 
 - 독자 노출 쿼리는 **published 글만** 집계·표시한다. draft는 시리즈에 속해 있어도 회차 수·목록에서 제외.
 - 읽기 쿼리는 `unstable_cache` + `CACHE_TAGS.series`로 캐싱. 글 발행/수정 시에도 시리즈 구성이 바뀔 수 있으므로 글 저장 Server Action에서 `revalidateTag(CACHE_TAGS.series)`를 함께 호출한다.
@@ -113,6 +113,7 @@ seriesId: integer('series_id').references(() => series.id, { onDelete: 'set null
 ## 9. 테스트
 
 **Vitest**
+
 - `seriesFormSchema` — 유효/무효 케이스 (이름 누락, slug 형식, 길이 제한).
 - `series-prev-next` — 첫 화(이전 없음)/중간/마지막 화(다음 없음) 렌더링.
 - 시리즈 박스 — 회차 표시("3 / 7"), 접기/펼치기, 현재 글 하이라이트.
@@ -120,6 +121,7 @@ seriesId: integer('series_id').references(() => series.id, { onDelete: 'set null
 - `nav-links.test.tsx` — "시리즈" 링크 추가 반영.
 
 **Playwright (`e2e/series.spec.ts`)**
+
 - 글 상세 진입 → 시리즈 박스 노출 → 펼치기 → 다음 화 이동.
 - 헤더 "시리즈" 클릭 → `/series` → 시리즈 카드 클릭 → 상세 → 1화 진입.
 

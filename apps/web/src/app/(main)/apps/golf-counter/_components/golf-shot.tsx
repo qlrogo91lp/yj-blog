@@ -11,7 +11,13 @@ type Props = {
   ariaHidden?: boolean;
 };
 
-export function GolfShot({ image, className, sizes, priority = false, ariaHidden }: Props) {
+export function GolfShot({
+  image,
+  className,
+  sizes,
+  priority = false,
+  ariaHidden,
+}: Props) {
   return (
     <Image
       src={image.src}

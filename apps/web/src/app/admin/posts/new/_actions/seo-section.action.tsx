@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNewPostStore } from '../_store';
-import { CharacterCounter } from '../_components/character-counter';
-import { generateExcerpt } from '../_services/generate-excerpt';
-import { generateSlug } from '@/lib/slugify';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+import { generateSlug } from '@/lib/slugify';
+import { CharacterCounter } from '../_components/character-counter';
+import { generateExcerpt } from '../_services/generate-excerpt';
+import { useNewPostStore } from '../_store';
 
 export function SeoSectionAction() {
   const [open, setOpen] = useState(false);
@@ -35,7 +35,7 @@ export function SeoSectionAction() {
       toast.success('AI 요약을 생성했습니다');
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : 'AI 요약 생성에 실패했습니다',
+        error instanceof Error ? error.message : 'AI 요약 생성에 실패했습니다'
       );
     } finally {
       setIsGenerating(false);
@@ -55,7 +55,9 @@ export function SeoSectionAction() {
       {open && (
         <div className="space-y-4 px-4 pb-4">
           <div>
-            <Label htmlFor="seo-slug" className="mb-1 block">URL slug</Label>
+            <Label htmlFor="seo-slug" className="mb-1 block">
+              URL slug
+            </Label>
             <Input
               id="seo-slug"
               value={slug}
@@ -64,7 +66,8 @@ export function SeoSectionAction() {
               aria-invalid={!isSlugValid}
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              /posts/{slug || (title ? generateSlug(title) : '…')} — 비우면 제목으로 자동 생성됩니다.
+              /posts/{slug || (title ? generateSlug(title) : '…')} — 비우면
+              제목으로 자동 생성됩니다.
             </p>
             {!isSlugValid && (
               <p className="mt-1 text-xs text-destructive">
@@ -76,7 +79,11 @@ export function SeoSectionAction() {
           <div>
             <div className="mb-1 flex items-center justify-between">
               <Label htmlFor="seo-excerpt">요약 (excerpt)</Label>
-              <CharacterCounter value={excerpt} recommendedMax={200} hardMax={500} />
+              <CharacterCounter
+                value={excerpt}
+                recommendedMax={200}
+                hardMax={500}
+              />
             </div>
             <Textarea
               id="seo-excerpt"
@@ -101,7 +108,11 @@ export function SeoSectionAction() {
           <div>
             <div className="mb-1 flex items-center justify-between">
               <Label htmlFor="seo-meta-title">SEO 제목 (meta title)</Label>
-              <CharacterCounter value={metaTitle} recommendedMax={60} hardMax={100} />
+              <CharacterCounter
+                value={metaTitle}
+                recommendedMax={60}
+                hardMax={100}
+              />
             </div>
             <Input
               id="seo-meta-title"

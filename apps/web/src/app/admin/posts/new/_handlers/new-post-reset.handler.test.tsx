@@ -1,12 +1,11 @@
 import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useNewPostStore } from '../_store';
+import { NewPostResetHandler } from './new-post-reset.handler';
 
 vi.mock('../_services/save-post', () => ({
   savePost: vi.fn(),
 }));
-
-import { useNewPostStore } from '../_store';
-import { NewPostResetHandler } from './new-post-reset.handler';
 
 describe('NewPostResetHandler', () => {
   beforeEach(() => {

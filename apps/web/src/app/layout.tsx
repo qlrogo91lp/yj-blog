@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { GoogleAnalytics } from '@next/third-parties/google';
-import { cn } from '@/lib/utils';
 import { ClerkProvider } from '@clerk/nextjs';
-import { PageTracker } from '@/components/page-tracker';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { NavigationProgress } from '@/components/navigation-progress';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants';
+import { PageTracker } from '@/components/page-tracker';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { getBlogSettings } from '@/db/queries/settings';
+import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 import './globals.css';
 
 const geistSans = Geist({
@@ -63,7 +63,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ko" suppressHydrationWarning>
         <body
-          className={cn(geistSans.variable, geistMono.variable, 'antialiased min-w-100')}
+          className={cn(
+            geistSans.variable,
+            geistMono.variable,
+            'antialiased min-w-100'
+          )}
         >
           <ThemeProvider>
             <TooltipProvider>

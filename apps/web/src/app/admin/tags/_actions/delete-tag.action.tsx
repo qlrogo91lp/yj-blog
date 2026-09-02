@@ -19,11 +19,7 @@ export function DeleteTagAction({ tag }: Props) {
         <TrashIcon size={16} />
         <span className="sr-only">삭제</span>
       </Button>
-      <DeleteTagDialogAction
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        tag={tag}
-      />
+      <DeleteTagDialogAction open={isOpen} onOpenChange={setIsOpen} tag={tag} />
     </>
   );
 }

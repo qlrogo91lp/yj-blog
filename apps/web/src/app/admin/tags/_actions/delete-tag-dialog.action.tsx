@@ -46,9 +46,12 @@ export function DeleteTagDialogAction({ open, onOpenChange, tag }: Props) {
           <DialogDescription>
             &ldquo;{tag.name}&rdquo; 태그를 삭제하시겠습니까?
             {tag.postCount > 0 && (
-              <> 이 태그가 연결된 {tag.postCount}개의 글에서 태그가 제거됩니다.</>
-            )}
-            {' '}이 작업은 되돌릴 수 없습니다.
+              <>
+                {' '}
+                이 태그가 연결된 {tag.postCount}개의 글에서 태그가 제거됩니다.
+              </>
+            )}{' '}
+            이 작업은 되돌릴 수 없습니다.
           </DialogDescription>
         </DialogHeader>
         {error && <p className="text-sm text-destructive">{error}</p>}

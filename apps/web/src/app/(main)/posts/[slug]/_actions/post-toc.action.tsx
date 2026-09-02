@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { cn } from '@/lib/utils';
 import type { TocItem } from '@/lib/markdown';
+import { cn } from '@/lib/utils';
 
 type Props = {
   toc: TocItem[];

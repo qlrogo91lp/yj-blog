@@ -41,7 +41,9 @@ describe('ReferrerRow', () => {
 
   it('하위 호스트가 그룹명과 같으면 보조 라인을 생략한다', () => {
     renderRow({ label: 'example.com', hosts: ['example.com'] });
-    expect(screen.queryByText('example.com', { selector: 'span.text-xs' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('example.com', { selector: 'span.text-xs' })
+    ).not.toBeInTheDocument();
   });
 
   it('하위 호스트가 없으면 보조 라인이 없다', () => {

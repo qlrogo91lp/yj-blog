@@ -59,7 +59,9 @@ describe('AdminHeaderAction', () => {
     pathname.current = '/admin/posts/new';
     render(<AdminHeaderAction />);
 
-    expect(screen.queryByRole('link', { name: /글쓰기/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: /글쓰기/ })
+    ).not.toBeInTheDocument();
     expect(screen.queryByText('콘텐츠')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'YJlogs' })).toHaveAttribute(
       'href',
@@ -71,7 +73,9 @@ describe('AdminHeaderAction', () => {
     pathname.current = '/admin/posts/12/edit';
     render(<AdminHeaderAction />);
 
-    expect(screen.queryByRole('link', { name: /글쓰기/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: /글쓰기/ })
+    ).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'YJlogs' })).toBeInTheDocument();
   });
 

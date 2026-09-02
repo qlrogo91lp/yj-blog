@@ -19,12 +19,15 @@ describe('seriesFormSchema', () => {
 
   describe('name', () => {
     it('빈 문자열이면 실패', () => {
-      expect(seriesFormSchema.safeParse({ ...validData, name: '' }).success).toBe(false);
+      expect(
+        seriesFormSchema.safeParse({ ...validData, name: '' }).success
+      ).toBe(false);
     });
 
     it('100자 초과면 실패', () => {
       expect(
-        seriesFormSchema.safeParse({ ...validData, name: 'a'.repeat(101) }).success
+        seriesFormSchema.safeParse({ ...validData, name: 'a'.repeat(101) })
+          .success
       ).toBe(false);
     });
   });
@@ -32,13 +35,15 @@ describe('seriesFormSchema', () => {
   describe('slug', () => {
     it('영소문자·숫자·하이픈 조합은 성공', () => {
       expect(
-        seriesFormSchema.safeParse({ ...validData, slug: 'ralli-dev-1' }).success
+        seriesFormSchema.safeParse({ ...validData, slug: 'ralli-dev-1' })
+          .success
       ).toBe(true);
     });
 
     it('한글 slug는 성공 (post slug 규칙과 동일)', () => {
       expect(
-        seriesFormSchema.safeParse({ ...validData, slug: '랠리-개발기' }).success
+        seriesFormSchema.safeParse({ ...validData, slug: '랠리-개발기' })
+          .success
       ).toBe(true);
     });
 
@@ -55,14 +60,19 @@ describe('seriesFormSchema', () => {
     });
 
     it('빈 문자열이면 실패', () => {
-      expect(seriesFormSchema.safeParse({ ...validData, slug: '' }).success).toBe(false);
+      expect(
+        seriesFormSchema.safeParse({ ...validData, slug: '' }).success
+      ).toBe(false);
     });
   });
 
   describe('description', () => {
     it('500자 초과면 실패', () => {
       expect(
-        seriesFormSchema.safeParse({ ...validData, description: 'a'.repeat(501) }).success
+        seriesFormSchema.safeParse({
+          ...validData,
+          description: 'a'.repeat(501),
+        }).success
       ).toBe(false);
     });
   });
@@ -76,7 +86,8 @@ describe('seriesFormSchema', () => {
 
     it('completed면 성공', () => {
       expect(
-        seriesFormSchema.safeParse({ ...validData, status: 'completed' }).success
+        seriesFormSchema.safeParse({ ...validData, status: 'completed' })
+          .success
       ).toBe(true);
     });
 

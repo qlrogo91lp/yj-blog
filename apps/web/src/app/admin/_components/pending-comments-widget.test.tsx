@@ -3,9 +3,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { PendingCommentsWidget } from './pending-comments-widget';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  ),
+  default: ({
+    href,
+    children,
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => <a href={href}>{children}</a>,
 }));
 
 const comments = [
