@@ -113,6 +113,11 @@
   .figure svg {
     @apply block max-w-full mx-auto rounded border border-line;
   }
+  /* 그림을 눌러 원본을 여는 링크. a가 인라인이면 이미지 정렬이 틀어진다 */
+  .figure > a,
+  .figure-row > a {
+    @apply block;
+  }
   .figure-row {
     @apply grid grid-cols-2 gap-3;
   }
