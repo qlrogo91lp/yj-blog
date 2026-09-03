@@ -56,7 +56,7 @@
 
   /* 프로젝트 장. 페이지를 나누지 않으므로 선으로 끊는다 */
   .page {
-    @apply mt-12 pt-9 border-t border-line;
+    @apply mt-6 pt-6 border-t border-line;
   }
 
   /* 장 헤더 */
@@ -99,7 +99,7 @@
   }
   .bullet::before {
     content: '';
-    @apply absolute left-0 top-[8px] w-1 h-1 rounded-full bg-accent opacity-55;
+    @apply absolute left-0 top-2 w-1 h-1 rounded-full bg-accent opacity-55;
   }
   .stack {
     @apply text-2xs text-accent bg-accent-soft inline-block px-2 py-0.5 rounded-[3px];
@@ -161,7 +161,7 @@
 
   /* 왜 이걸 골랐나 */
   .callout {
-    @apply border-l-2 border-accent bg-accent-soft px-3 py-2 my-2 text-secondary rounded-r break-inside-avoid;
+    @apply border-l-2 border-accent bg-accent-soft px-3 py-2 my-2 text-secondary rounded-r-sm break-inside-avoid;
   }
 
   /* 대안 비교 */
