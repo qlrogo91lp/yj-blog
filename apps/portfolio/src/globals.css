@@ -121,6 +121,11 @@
   .figure-row {
     @apply grid grid-cols-2 gap-3;
   }
+  /* 배경이 투명한 목업 이미지. 흰 종이 위에서는 기기 테두리가 사라지므로
+     어두운 판을 깔아 화면 경계를 살린다 */
+  .figure-dark img {
+    @apply bg-primary p-3 border-transparent;
+  }
   .figure-placeholder {
     @apply w-full bg-surface border border-dashed border-line rounded flex items-center justify-center text-xs text-muted;
   }

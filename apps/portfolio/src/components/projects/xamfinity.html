@@ -17,11 +17,11 @@
       <dd>앱·웹 1 (본인) · 백엔드 협업</dd>
       <dt>스택</dt>
       <dd>
-        <span class="stack"
-          >Flutter · Riverpod · Firebase (Messaging · Analytics · Remote Config
-          · Crashlytics) · React · TypeScript · Vanilla Extract · TanStack Query
-          · Recoil · Fastlane</span
-        >
+        <span class="stack">
+          Flutter · Riverpod · Firebase (Messaging · Analytics · Remote Config ·
+          Crashlytics) · React · TypeScript · Vanilla Extract · TanStack Query ·
+          Recoil · Fastlane
+        </span>
       </dd>
     </dl>
   </div>
@@ -50,7 +50,6 @@
     <div class="figure-caption">
       WebView 안의 React 화면들. 학원·학부모·학교 정보는 가렸다.
     </div>
-    <div class="strip-hint">좌우로 넘겨 볼 수 있습니다</div>
   </div>
 
   <h3 class="section-h">문제</h3>
@@ -60,16 +59,12 @@
       만들고, 두 번 고치고, 두 번 배포했다.
     </li>
     <li class="bullet">
-      화면 변경이 잦은 앱인데 매번 스토어 심사를 거쳐야 했다. 작은 문구 수정도
-      며칠이 걸렸다.
-    </li>
-    <li class="bullet">
-      스토어 업로드가 수동이라 빌드 번호, 서명, 스크린샷 관리에서 실수가
-      반복됐다.
+      기능이 거의 없었고 인포 위주의 앱이었다. 앱의 기능을 제대로 활용하지
+      못하고 있었다.
     </li>
   </ul>
 
-  <h3 class="section-h">접근과 선택</h3>
+  <!-- <h3 class="section-h">접근과 선택</h3>
   <p class="text-secondary">
     핵심 질문은 "무엇을 네이티브로 두고 무엇을 웹으로 보낼 것인가"였다.
     결제·푸시·기기 권한처럼 웹으로 안 되는 것만 네이티브에 남기고, 화면과
@@ -107,17 +102,16 @@
     하이브리드의 성패는 브리지 경계에서 갈린다. 네이티브가 해야 할 일의 목록을
     먼저 확정하고, 그 외에는 전부 웹으로 보냈다. 경계가 흐려지면 두 벌 관리로
     되돌아간다.
-  </div>
+  </div> -->
 
   <h3 class="section-h">구현</h3>
   <ul class="space-y-1">
     <li class="bullet">
       <b>양방향 브리지.</b> Flutter → 웹은 MethodChannel, 웹 → Flutter는
-      EventChannel로 연결했다. 로그인 토큰 전달, 결제 결과 반환, 푸시 탭 시 화면
-      이동이 이 통로로 오간다.
+      EventChannel로 연결했다.
     </li>
     <li class="bullet">
-      <b>네이티브 기능.</b> 인앱결제, FCM 푸시, Remote Config로 기능 플래그,
+      <b>네이티브 기능.</b> 인앱결제, FCM 푸시, Remote Config로 동적으로 설정 관리,
       Crashlytics 에러 수집. Android는 학원 공용 태블릿용 Kiosk 모드와 자동
       업데이트를 추가했다.
     </li>
@@ -137,18 +131,14 @@
 
   <h3 class="section-h">결과</h3>
   <div class="flex flex-wrap gap-2 mb-2">
-    <span class="kpi"
-      ><span class="text-xs text-muted">누적 다운로드</span
-      ><span class="kpi-to">약 8,000</span></span
+    <span class="kpi">
+      <span class="text-xs text-muted">누적 다운로드</span>
+      <span class="kpi-to">약 8,000</span></span
     >
-    <span class="kpi"
-      ><span class="text-xs text-muted">월 활성 사용자</span
-      ><span class="kpi-to">약 3,000</span></span
-    >
-    <span class="kpi"
-      ><span class="text-xs text-muted">현재 버전 비정상 종료</span
-      ><span class="kpi-to">0건</span></span
-    >
+    <span class="kpi">
+      <span class="text-xs text-muted">월 활성 사용자</span>
+      <span class="kpi-to">약 3,000</span>
+    </span>
   </div>
   <ul class="space-y-1">
     <li class="bullet">
@@ -161,11 +151,11 @@
     </li>
   </ul>
 
-  <h3 class="section-h">회고</h3>
+  <!-- <h3 class="section-h">회고</h3>
   <p class="text-secondary">
     브리지 API를 처음부터 문서로 고정해 둔 것이 가장 잘한 일이다. 웹과 앱이 따로
     개발돼도 계약이 흔들리지 않았다. 아쉬운 점은 WebView 초기 로딩이다. 첫
     화면을 네이티브로 두고 그 뒤부터 웹을 띄우는 구조였다면 첫 인상이 더 빨랐을
     것이다.
-  </p>
+  </p> -->
 </section>

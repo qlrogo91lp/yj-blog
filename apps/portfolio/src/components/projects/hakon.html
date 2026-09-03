@@ -12,7 +12,7 @@
       <dt>역할</dt>
       <dd>프론트엔드 설계·구현 전담, 배포 파이프라인 설계·주도</dd>
       <dt>인원</dt>
-      <dd>프론트엔드 1 (본인) · 백엔드 협업</dd>
+      <dd>프론트엔드 2 · 백엔드 협업</dd>
       <dt>스택</dt>
       <dd>
         <span class="stack"
@@ -42,30 +42,23 @@
     <div class="figure-caption">
       원비 관리와 역할별 권한 설정. 학원·학생·직원 정보는 가렸다.
     </div>
-    <div class="strip-hint">좌우로 넘겨 볼 수 있습니다</div>
   </div>
 
   <h3 class="section-h">문제</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      페이지 이동마다 전체 리로드가 일어나 화면이 깜박였고, 출결처럼 자주 오가는
-      화면에서 체감이 컸다.
+      페이지 이동마다 화면이 깜박였고 뒤로가기 한번에 첫 메뉴로 돌아가곤 했다.
     </li>
     <li class="bullet">
-      출결은 QR 스캔으로 들어오는데, 관리자 화면은 새로고침해야 반영됐다.
-      실시간으로 봐야 할 정보가 실시간이 아니었다.
+      출결 사이트는 또 다른 웹사이트로 되어있었고 소켓으로 되어있지 않아서
+      데이터 업데이트를 수동으로 진행했었다.
     </li>
     <li class="bullet">
-      배포는 운영 서버에서 직접 빌드했다. 빌드 동안 서버 리소스를 점유했고,
-      이미지가 약 2.4GB라 전체 과정이 약 10분 걸렸다.
-    </li>
-    <li class="bullet">
-      공통 컴포넌트에 문서가 없고 테스트도 없어, 화면을 고칠 때마다 다른 화면이
-      깨지는지 손으로 확인했다.
+      공통 컴포넌트에 문서가 없고 형상관리가 되어있지 않았다.
     </li>
   </ul>
 
-  <h3 class="section-h">접근과 선택</h3>
+  <!-- <h3 class="section-h">접근과 선택</h3>
   <p class="text-secondary">
     레거시를 고쳐 쓸지, 새로 만들지가 첫 결정이었다. PHP 코드는 화면과 로직이
     섞여 있어 부분 개선으로는 깜박임과 실시간성 문제를 풀 수 없다고 판단했고,
@@ -101,25 +94,30 @@
         <td>—</td>
       </tr>
     </tbody>
-  </table>
-  <div class="callout">
+  </table> -->
+
+  <!-- <div class="callout">
     화면 수가 많은 관리 시스템에서는 "라우팅과 코드 분리를 프레임워크가
     해주는가"가 유지보수 비용을 결정한다. Next.js를 고른 이유는 성능보다 이쪽이
     컸다.
-  </div>
+  </div> -->
 
   <h3 class="section-h">구현</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      <b>화면 전환.</b> 파일 기반 라우팅 위에 SSR과 코드 스플리팅을 두고, 자주
-      오가는 경로는 prefetch로 미리 받아 깜박임을 없앴다.
+      <b>화면 전환.</b> 파일 기반 라우팅 위에 SSR과 코드 스플리팅을 두고, prefetch를 통해서 페이지 랜더링시 데이터를
+      빠르게 보여줄 수 있었다.
     </li>
     <li class="bullet">
       <b>실시간 출결 모니터링.</b> QR 스캔 이벤트를 Socket.io로 받아 관리자
-      화면에 즉시 반영한다. 새로고침 없이 지금 누가 들어왔는지 보인다.
+      화면에 즉시 반영한다. 새로고침 없이 실시간으로 출결한 학생 목록을 볼수 있다.
     </li>
     <li class="bullet">
-      <b>배포 파이프라인.</b> 서버 직접 빌드를 GitHub Actions에서 Docker
+      <b>사용자 경험 개선.</b> 메뉴 구성 전면 개편, 페이지 어디서든 QR 출결을 찍을 수 있고 단축키를 적극 활용하는 등
+      기존 시스템에서 불편했던 사항들을 개선하여 사용자 경험을 크게 개선하였다.
+    </li>
+    <li class="bullet">
+      <b>UX</b> 서버 직접 빌드를 GitHub Actions에서 Docker
       이미지를 만들어 GHCR에 올리고 서버는 pull만 하는 구조로 바꿨다. 실행에
       필요한 파일만 이미지에 넣어 크기를 줄였다.
     </li>
@@ -154,8 +152,8 @@
   </div>
   <ul class="space-y-1">
     <li class="bullet">
-      학생 약 500명 규모, 일 약 160건 출결로 베타 운영 중. 전체 전환은 학원 단위로
-      진행한다.
+      학생 약 500명 규모, 일 약 160건 출결로 베타 운영 중. 전체 전환은 학원
+      단위로 진행한다.
     </li>
     <li class="bullet">
       페이지 전환 깜박임 제거, 초기 로딩 개선. 출결 모니터링은 새로고침 없이
@@ -164,7 +162,10 @@
   </ul>
   <div class="figure mx-auto max-w-[78%]">
     <a href="./hakon/attendance-monitor.png" target="_blank" rel="noopener">
-      <img src="./hakon/attendance-monitor.png" alt="실시간 출결 모니터링 화면" />
+      <img
+        src="./hakon/attendance-monitor.png"
+        alt="실시간 출결 모니터링 화면"
+      />
     </a>
     <div class="figure-caption">
       QR 스캔 출결이 WebSocket으로 즉시 반영되는 모니터링 페이지. 학생 정보는
@@ -172,11 +173,9 @@
     </div>
   </div>
 
-  <h3 class="section-h">회고</h3>
+  <!-- <h3 class="section-h">회고</h3>
   <p class="text-secondary">
-    신규 구축을 결정할 때 레거시의 데이터 구조까지 같이 바꾸지 않은 것은 옳았다.
-    화면을 먼저 바꾸고 데이터는 그대로 두니 학원 단위로 점진 전환이 가능했다.
     아쉬운 점은 테스트를 나중에 붙인 것이다. 처음부터 핵심 로직에 Vitest를
     두었다면 재구축 초반의 회귀를 더 빨리 잡았을 것이다.
-  </p>
+  </p> -->
 </section>
