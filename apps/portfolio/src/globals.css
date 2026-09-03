@@ -16,16 +16,19 @@
 
   --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* 이력서보다 한 단계 크게. 본문 12.5px, 행간 1.6 */
-  --text-2xs: 11px;
-  --text-2xs--line-height: 1.55;
-  --text-xs: 11.5px;
-  --text-xs--line-height: 1.55;
-  --text-base: 12.5px;
-  --text-base--line-height: 1.6;
-  --text-h: 14px;
+  /* 화면으로 읽는 문서 기준. 본문 14px, 행간 1.65.
+     sm까지 여기서 정의해 Tailwind 기본값(14px)이 스케일 밖으로 새지 않게 한다. */
+  --text-2xs: 12px;
+  --text-2xs--line-height: 1.5;
+  --text-xs: 13px;
+  --text-xs--line-height: 1.6;
+  --text-base: 14px;
+  --text-base--line-height: 1.65;
+  --text-sm: 15px;
+  --text-sm--line-height: 1.7;
+  --text-h: 16px;
   --text-h--line-height: 1.4;
-  --text-title: 22px;
+  --text-title: 26px;
   --text-title--line-height: 1.25;
 }
 
@@ -185,7 +188,7 @@
   }
   .dg-text {
     font-family: var(--font-sans);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     fill: var(--color-primary);
     text-anchor: middle;
@@ -193,7 +196,7 @@
   }
   .dg-label {
     font-family: var(--font-sans);
-    font-size: 9.5px;
+    font-size: 11px;
     fill: var(--color-tertiary);
     text-anchor: middle;
     dominant-baseline: middle;

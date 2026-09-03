@@ -27,17 +27,17 @@
   <text x="448" y="144" class="dg-label">portfolio.yjlogs.com</text>
 
   <!-- Services -->
-  <path d="M510,70 L560,70" class="dg-line" />
-  <rect x="562" y="14" width="144" height="34" rx="6" class="dg-box-soft" />
-  <text x="634" y="26" class="dg-text">Neon PostgreSQL</text>
-  <text x="634" y="40" class="dg-label">Drizzle ORM</text>
-  <rect x="562" y="56" width="144" height="34" rx="6" class="dg-box-soft" />
-  <text x="634" y="68" class="dg-text">Clerk</text>
-  <text x="634" y="82" class="dg-label">관리자 인증</text>
-  <rect x="562" y="98" width="144" height="34" rx="6" class="dg-box-soft" />
-  <text x="634" y="110" class="dg-text">Cloudflare R2</text>
-  <text x="634" y="124" class="dg-label">이미지 · assets.yjlogs.com</text>
-  <rect x="562" y="140" width="144" height="34" rx="6" class="dg-box-soft" />
-  <text x="634" y="152" class="dg-text">Cloudflare DNS</text>
-  <text x="634" y="166" class="dg-label">도메인 · 서브도메인</text>
+  <path d="M510,70 L546,70" class="dg-line" />
+  <rect x="548" y="14" width="158" height="34" rx="6" class="dg-box-soft" />
+  <text x="627" y="26" class="dg-text">Neon PostgreSQL</text>
+  <text x="627" y="40" class="dg-label">Drizzle ORM</text>
+  <rect x="548" y="56" width="158" height="34" rx="6" class="dg-box-soft" />
+  <text x="627" y="68" class="dg-text">Clerk</text>
+  <text x="627" y="82" class="dg-label">관리자 인증</text>
+  <rect x="548" y="98" width="158" height="34" rx="6" class="dg-box-soft" />
+  <text x="627" y="110" class="dg-text">Cloudflare R2</text>
+  <text x="627" y="124" class="dg-label">이미지 · assets.yjlogs.com</text>
+  <rect x="548" y="140" width="158" height="34" rx="6" class="dg-box-soft" />
+  <text x="627" y="152" class="dg-text">Cloudflare DNS</text>
+  <text x="627" y="166" class="dg-label">도메인 · 서브도메인</text>
 </svg>
