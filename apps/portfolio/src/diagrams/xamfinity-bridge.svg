@@ -13,9 +13,9 @@
   <rect x="156" y="50" width="130" height="38" rx="6" class="dg-box" />
   <text x="221" y="69" class="dg-text">푸시 (FCM)</text>
   <rect x="16" y="100" width="130" height="38" rx="6" class="dg-box" />
-  <text x="81" y="119" class="dg-text">Kiosk · 자동 업데이트</text>
+  <text x="81" y="119" class="dg-text">공유 기능</text>
   <rect x="156" y="100" width="130" height="38" rx="6" class="dg-box" />
-  <text x="221" y="119" class="dg-text">WebView 컨테이너</text>
+  <text x="221" y="119" class="dg-text">이미지 핸들러</text>
   <text x="150" y="176" class="dg-label">네이티브 권한·결제·알림처럼 웹으로 안 되는 것만</text>
 
   <!-- bridge -->
@@ -29,12 +29,8 @@
   <!-- Web -->
   <rect x="420" y="14" width="300" height="180" rx="8" class="dg-box-soft" />
   <text x="570" y="32" class="dg-label">React 모바일 웹 (WebView 안)</text>
-  <rect x="436" y="50" width="268" height="30" rx="6" class="dg-box" />
-  <text x="570" y="65" class="dg-text">출결 · 수납 · 공지 · 상담 화면</text>
-  <rect x="436" y="88" width="268" height="30" rx="6" class="dg-box" />
-  <text x="570" y="103" class="dg-text">TanStack Query · Recoil</text>
-  <rect x="436" y="126" width="268" height="30" rx="6" class="dg-box" />
-  <text x="570" y="141" class="dg-text">Vanilla Extract CSS</text>
+  <rect x="436" y="81" width="268" height="46" rx="6" class="dg-box" />
+  <text x="570" y="104" class="dg-text">출결 · 수납 · 공지 · 평가관리 화면</text>
   <text x="570" y="176" class="dg-label">화면과 비즈니스 로직. 배포는 웹만 다시 하면 된다</text>
 
   <!-- Firebase — 앱 밖에서 바꾸고, 앱 밖에서 지켜보는 것 -->

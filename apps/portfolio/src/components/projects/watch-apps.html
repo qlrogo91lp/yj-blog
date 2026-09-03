@@ -23,9 +23,11 @@
 
   <h3 class="section-h">개요</h3>
   <p class="text-secondary">
-    Ralli는 테니스 점수를, GolfCounter는 골프 타수와 퍼팅을 기록한다. 둘 다 경기
-    중에는 워치만 조작하고, 아이폰은 기록과 통계를 보는 용도다. 두 앱 모두 App
-    Store에 출시해 유료로 판매 중이다.
+    테니스 경기를 할때 가끔 점수를 까먹는 경우가 있어서
+    경기 중에도 간단하게 기록할 수 있으면 좋지 않을까 생각했다.
+    Ralli는 테니스 점수를, GolfCounter는 골프 타수와 퍼팅을 기록한다.
+    둘 다 경기 중에는 워치만 조작하고, 아이폰은 기록과 통계를 보는 용도다.
+    예전에 출시했떤 앱을 전면 개편했다.
   </p>
   <div class="figure mx-auto max-w-[64%]">
     <div class="figure-row">
@@ -43,24 +45,20 @@
       </a>
     </div>
     <div class="figure-caption">
-      왼쪽 Ralli, 오른쪽 GolfCounter. 경기 중 조작은 워치에서 끝난다.
+      왼쪽 Ralli, 오른쪽 GolfCounter.
     </div>
   </div>
 
   <h3 class="section-h">문제</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      경기 중에 폰을 꺼내는 순간 흐름이 끊긴다. 기록은 손목에서 두 번 탭으로
-      끝나야 한다.
+      데이터 저장 기능이 없어서 기록 저장이 불가능하고 UI가 너무 단순하고 입력하기 불편했다.
     </li>
     <li class="bullet">
-      첫 앱(Ralli)을 만들고 나니 HealthKit 세션, 워치↔폰 동기화, 저장 계층이
-      종목과 무관한 코드였다. 두 번째 앱을 같은 방식으로 만들면 그 코드를
-      복사하게 된다.
+      운동 기록 측정은 비슷해서 중복되는 코드가 많았다. 앱이 많아짐에 따라서 레포가 계속 늘어났다.
     </li>
     <li class="bullet">
-      출시 후에는 만드는 것보다 알리는 게 문제였다. 검색에 안 잡히면 다운로드가
-      없다.
+      출시 후에는 만드는 것보다 알리는 게 문제였다. 검색을 통한 유입이 거의 없었다.
     </li>
   </ul>
 
@@ -81,11 +79,11 @@
       워크스페이스로 통합했다.
     </li>
   </ul>
-  <div class="callout">
+  <!-- <div class="callout">
     두 번째 앱을 "도메인 로직만 쓰면 되는" 상태로 만드는 것이 목표였다.
     GolfCounter는 그 검증이었고, 워치 워크아웃·동기화·저장은 한 줄도 다시 쓰지
     않았다.
-  </div>
+  </div> -->
 
   <h3 class="section-h">구현</h3>
   <div class="figure">
@@ -105,10 +103,10 @@
       화면과 다이나믹 아일랜드에 실시간 표시하고, 워치 페이스에서 바로 진입하며,
       기록은 기기 간 동기화된다.
     </li>
-    <li class="bullet">
+    <!-- <li class="bullet">
       <b>CI.</b> PR마다 변경된 앱만 빌드·테스트한다. YJKit이 바뀌면 전 앱을
       돌린다. job 분리로 전체 21분 → 6.4분, 문서만 바뀐 커밋은 6초.
-    </li>
+    </li> -->
   </ul>
 
   <h3 class="section-h">결과</h3>
@@ -132,7 +130,7 @@
       결과다.
     </li>
   </ul>
-  <div class="figure mx-auto max-w-[44%]">
+  <div class="figure figure-dark mx-auto max-w-[44%]">
     <div class="figure-row">
       <a href="./watch-apps/ralli-ios-live.png" target="_blank" rel="noopener">
         <img src="./watch-apps/ralli-ios-live.png" alt="Ralli Live Activity" />
@@ -146,10 +144,10 @@
     </div>
   </div>
 
-  <h3 class="section-h">회고</h3>
+  <!-- <h3 class="section-h">회고</h3>
   <p class="text-secondary">
     코어 분리를 첫 앱 출시 전에 하지 않은 것은 옳았다. 무엇이 공통인지는 두 번째
     앱을 만들 때 보인다. 아쉬운 점은 ASO를 출시 두 달 뒤에야 손댄 것이다.
     키워드는 출시 전에 정해야 첫 노출을 놓치지 않는다.
-  </p>
+  </p> -->
 </section>

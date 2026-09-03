@@ -21,12 +21,12 @@
     </dl>
   </div>
 
-  <h3 class="section-h">개요</h3>
+  <!-- <h3 class="section-h">개요</h3>
   <p class="text-secondary">
     글을 쓰고, 출시한 앱의 랜딩 페이지를 두고, 지원할 때 보여줄 이 포트폴리오를
     올려두는 곳이다. 프론트엔드부터 DB, 인증, 이미지 스토리지, 배포, SEO, 유입
     분석까지 직접 구성했다.
-  </p>
+  </p> -->
   <div class="figure">
     <div class="strip">
       <a href="./yjlogs/home.png" target="_blank" rel="noopener">
@@ -39,10 +39,29 @@
     <div class="figure-caption">
       홈과 글 상세. 최신 글과 앱 랜딩으로 이어진다.
     </div>
-    <div class="strip-hint">좌우로 넘겨 볼 수 있습니다</div>
+  </div>
+  <div class="figure">
+    <div class="strip">
+      <a href="./yjlogs/admin-dashboard.png" target="_blank" rel="noopener">
+        <img src="./yjlogs/admin-dashboard.png" alt="관리자 대시보드" />
+      </a>
+      <a href="./yjlogs/admin-posts.png" target="_blank" rel="noopener">
+        <img src="./yjlogs/admin-posts.png" alt="관리자 글 관리 화면" />
+      </a>
+      <a href="./yjlogs/admin-categories.png" target="_blank" rel="noopener">
+        <img
+          src="./yjlogs/admin-categories.png"
+          alt="관리자 카테고리 관리 화면"
+        />
+      </a>
+    </div>
+    <div class="figure-caption">
+      직접 만든 관리자 화면. 대시보드에서 방문·유입을 보고, 글과 카테고리를
+      관리한다.
+    </div>
   </div>
 
-  <h3 class="section-h">문제</h3>
+  <!-- <h3 class="section-h">문제</h3>
   <ul class="space-y-1">
     <li class="bullet">
       회사에서는 백엔드가 있었다. 혼자 만들 때 "어떤 DB, 어떤 인증, 어떤
@@ -55,7 +74,7 @@
       나중에 포트폴리오를 같은 도메인에 두고 싶었다. 블로그와 포트폴리오는
       스택이 달라 한 앱 안에 넣기 어려웠다.
     </li>
-  </ul>
+  </ul> -->
 
   <h3 class="section-h">접근과 선택</h3>
   <table class="compare-table">
@@ -108,10 +127,10 @@
       </tr>
     </tbody>
   </table>
-  <div class="callout">
+  <!-- <div class="callout">
     포트폴리오를 블로그 라우트로 넣지 않고 별도 앱으로 뺀 이유는 PDF 품질이다.
     블로그의 루트 레이아웃(인증·분석·테마)이 PDF에 끼어들지 않아야 했다.
-  </div>
+  </div> -->
 
   <h3 class="section-h">구현</h3>
   <div class="figure">
@@ -123,16 +142,11 @@
   <ul class="space-y-1">
     <li class="bullet">
       <b>SEO.</b> 사이트맵, JSON-LD, OG 이미지 자동 생성. GA4로 유입을 본다.
-      포트폴리오는 반대로 noindex와 robots.txt로 검색에서 뺀다.
     </li>
     <li class="bullet">
       <b>모노레포 전환.</b> 기존 저장소를 apps/web으로 옮기고 pnpm과 Turborepo를
       얹었다. Vercel은 프로젝트별 Root Directory로 연결하고, 그 디렉터리와
       무관한 커밋의 빌드는 Vercel의 Skip deployments가 건너뛴다.
-    </li>
-    <li class="bullet">
-      <b>포트폴리오 앱.</b> HTML 파티셜을 빌드 시 하나로 합치는 구조. 같은
-      HTML이 웹이자 PDF다.
     </li>
   </ul>
 
@@ -161,11 +175,11 @@
     <div class="strip-hint">좌우로 넘겨 볼 수 있습니다</div>
   </div>
 
-  <h3 class="section-h">회고</h3>
+  <!-- <h3 class="section-h">회고</h3>
   <p class="text-secondary">
     서비스를 고를 때 "직접 만들 수 있는가"보다 "혼자 운영할 수 있는가"를
     기준으로 삼은 것이 맞았다. 인증과 스토리지를 직접 만들었다면 지금 글을 쓰는
     대신 그걸 고치고 있었을 것이다. 모노레포는 앱이 둘뿐이라 Turborepo의 이득이
     아직 작다. 공유 패키지가 생기면 그때 진가가 나온다.
-  </p>
+  </p> -->
 </section>
