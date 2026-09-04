@@ -5,7 +5,7 @@
 | 앱         | 경로             | 스택                             | 배포                         |
 | ---------- | ---------------- | -------------------------------- | ---------------------------- |
 | 블로그     | `apps/web`       | Next.js 16, Drizzle, Neon, Clerk | https://yjlogs.com           |
-| 포트폴리오 | `apps/portfolio` | Vite, HTML 파티셜                | https://portfolio.yjlogs.com |
+| 포트폴리오 | `apps/portfolio` | Astro 7, .astro 컴포넌트         | https://portfolio.yjlogs.com |
 
 앱별 상세는 각 폴더의 README를 본다. 규칙과 컨벤션은 `CLAUDE.md`와 `.claude/rules/`에 있다.
 

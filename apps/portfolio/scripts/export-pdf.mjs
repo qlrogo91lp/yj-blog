@@ -1,4 +1,4 @@
-// vite preview를 띄우고 Chrome 헤드리스로 A4 PDF를 만든다.
+// astro preview를 띄우고 Chrome 헤드리스로 A4 PDF를 만든다.
 // file:// 로 열면 crossorigin 속성 때문에 CSS가 막히므로 반드시 HTTP로 연다.
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -22,7 +22,7 @@ if (!existsSync(chrome)) {
 
 const preview = spawn(
   'pnpm',
-  ['exec', 'vite', 'preview', '--port', String(port), '--strictPort'],
+  ['exec', 'astro', 'preview', '--port', String(port), '--strictPort'],
   {
     cwd: root,
     stdio: 'ignore',

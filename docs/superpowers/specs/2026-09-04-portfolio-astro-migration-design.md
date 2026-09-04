@@ -36,7 +36,7 @@ Astro는 이 문제를 정확히 겨냥한다. 컴포넌트가 1급 시민이므
   `@tailwindcss/vite`를 `astro.config.mjs`의 `vite.plugins`에 그대로 꽂는다
 - **구조만 1:1 이전.** 파티셜과 SVG는 확장자만 바꾸고 내용은 건드리지 않는다
 - SVG 네 개도 `.astro` 컴포넌트로 만든다. 재귀 include와 1:1 대응이고, `?raw` + `set:html`보다 단순하다
-- 인라인 `<script>` 두 개는 `is:inline`으로 그대로 둔다
+- 인라인 `<script>`(IIFE와 `printDoc` 두 함수를 담은 블록 하나)는 `is:inline`으로 그대로 둔다
 - **`compressHTML: false`.** 글을 고칠 때 공백을 신경 쓰지 않아도 되도록 Astro 7의 공백 압축을 끈다
   (아래 **공백 정책**). `yj-resume`도 같은 선택을 했다
 - `globals.css`의 `@source` 지시자를 Astro 구조에 맞게 고친다 (아래 **함께 고치는 것**)

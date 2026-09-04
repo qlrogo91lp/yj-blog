@@ -1,3 +1,14 @@
+---
+import '../globals.css';
+import Cover from '../components/cover.astro';
+import Toc from '../components/toc.astro';
+import Hakon from '../components/projects/hakon.astro';
+import Xamfinity from '../components/projects/xamfinity.astro';
+import WatchApps from '../components/projects/watch-apps.astro';
+import Yjlogs from '../components/projects/yjlogs.astro';
+import Closing from '../components/closing.astro';
+---
+
 <!doctype html>
 <html lang="ko">
   <head>
@@ -9,7 +20,6 @@
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
       rel="stylesheet"
     />
-    <link href="/src/globals.css" rel="stylesheet" />
   </head>
   <body class="bg-page text-primary print:bg-white">
     <button
@@ -21,16 +31,16 @@
     </button>
 
     <div class="doc">
-      <!-- include: src/components/cover.html -->
-      <!-- include: src/components/toc.html -->
-      <!-- include: src/components/projects/hakon.html -->
-      <!-- include: src/components/projects/xamfinity.html -->
-      <!-- include: src/components/projects/watch-apps.html -->
-      <!-- include: src/components/projects/yjlogs.html -->
-      <!-- include: src/components/closing.html -->
+      <Cover />
+      <Toc />
+      <Hakon />
+      <Xamfinity />
+      <WatchApps />
+      <Yjlogs />
+      <Closing />
     </div>
 
-    <script>
+    <script is:inline>
       // 이 문서는 A4로 나누지 않고 한 장으로 이어 붙인다.
       // `?print=1` 로 열면 인쇄 레이아웃(.printing)을 적용하고, 이미지까지 다 실린
       // 뒤 실제 문서 높이를 재서 @page 크기로 넣는다. export-pdf.mjs가 이 경로를 쓴다.

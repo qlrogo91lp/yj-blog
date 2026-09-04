@@ -77,7 +77,7 @@ pnpm --filter web test:e2e    # Playwright E2E 테스트
 pnpm workspace + Turborepo 모노레포다. 앱은 `apps/` 아래에 있고 공유 패키지는 아직 없다.
 
 - `apps/web/` — 블로그 (Next.js). 이 문서와 `.claude/rules/*.md`에 적힌 `src/`, `public/`, `e2e/` 경로는 모두 `apps/web/` 기준이다.
-- `apps/portfolio/` — 포트폴리오 (Vite). 별도 스펙으로 추가한다.
+- `apps/portfolio/` — 포트폴리오 (Astro). 별도 스펙으로 추가한다.
 - `docs/`, `.claude/`, `.github/` — 루트. 앱과 무관하게 저장소 전체를 다룬다.
 - 루트 `package.json`은 워크스페이스 설정과 turbo 스크립트만 갖는다. 앱 의존성은 각 앱의 `package.json`에 둔다.
 
