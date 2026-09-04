@@ -3,7 +3,10 @@
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "es5",
-  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-astro"
+  ],
   "importOrder": [
     "^react$",
     "^next(/.*)?$",
