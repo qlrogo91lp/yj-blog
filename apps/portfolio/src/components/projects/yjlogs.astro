@@ -1,3 +1,7 @@
+---
+import YjlogsStack from '../../diagrams/yjlogs-stack.astro';
+---
+
 <section class="page">
   <div class="chapter-head">
     <div class="chapter-no">04 · 개인 프로젝트</div>
@@ -134,7 +138,7 @@
 
   <h3 class="section-h">구현</h3>
   <div class="figure">
-    <!-- include: src/diagrams/yjlogs-stack.svg -->
+    <YjlogsStack />
     <div class="figure-caption">
       저장소 하나, Vercel 프로젝트 둘, 외부 서비스 넷.
     </div>
@@ -144,9 +148,9 @@
       <b>SEO.</b> 사이트맵, JSON-LD, OG 이미지 자동 생성. GA4로 유입을 본다.
     </li>
     <li class="bullet">
-      <b>모노레포 전환.</b> 기존 저장소를 apps/web으로 옮기고 pnpm과 Turborepo를
-      얹었다. Vercel은 프로젝트별 Root Directory로 연결하고, 그 디렉터리와
-      무관한 커밋의 빌드는 Vercel의 Skip deployments가 건너뛴다.
+      <b>모노레포 전환.</b> 기존 저장소를 apps/web으로 옮기고 pnpm과 Turborepo를 얹었다.
+      Vercel은 프로젝트별 Root Directory로 연결하고, 그 디렉터리와 무관한 커밋의 빌드는
+      Vercel의 Skip deployments가 건너뛴다.
     </li>
   </ul>
 

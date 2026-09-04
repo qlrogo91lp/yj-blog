@@ -1,6 +1,7 @@
-@import 'tailwindcss';
-@source '../index.html';
+@import 'tailwindcss' source(none);
+@source './pages';
 @source './components';
+@source './diagrams';
 
 @theme {
   /* 텍스트 톤 4단계 (진한 순) */
