@@ -1,5 +1,8 @@
 # 포트폴리오 앱 설계
 
+> **2026-09-04 갱신:** 이 문서의 Vite + HTML 파티셜 구조는 Astro 7로 이전했다.
+> `2026-09-04-portfolio-astro-migration-design.md` 참조.
+
 **작성일:** 2026-09-02
 **상태:** 검토 대기
 **선행 스펙:** `2026-09-02-monorepo-migration-design.md` — `apps/` 구조, pnpm, Turborepo가 먼저 들어와야 한다

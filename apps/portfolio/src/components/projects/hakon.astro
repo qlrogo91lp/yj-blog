@@ -1,3 +1,7 @@
+---
+import HakonPipeline from '../../diagrams/hakon-pipeline.astro';
+---
+
 <section class="page">
   <div class="chapter-head">
     <div class="chapter-no">01 · 회사 프로젝트</div>
@@ -105,30 +109,31 @@
   <h3 class="section-h">구현</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      <b>화면 전환.</b> 파일 기반 라우팅 위에 SSR과 코드 스플리팅을 두고, prefetch를 통해서 페이지 랜더링시 데이터를
-      빠르게 보여줄 수 있었다.
+      <b>화면 전환.</b> 파일 기반 라우팅 위에 SSR과 코드 스플리팅을 두고, prefetch를
+      통해서 페이지 랜더링시 데이터를 빠르게 보여줄 수 있었다.
     </li>
     <li class="bullet">
-      <b>실시간 출결 모니터링.</b> QR 스캔 이벤트를 Socket.io로 받아 관리자
-      화면에 즉시 반영한다. 새로고침 없이 실시간으로 출결한 학생 목록을 볼수 있다.
+      <b>실시간 출결 모니터링.</b> QR 스캔 이벤트를 Socket.io로 받아 관리자 화면에
+      즉시 반영한다. 새로고침 없이 실시간으로 출결한 학생 목록을 볼수 있다.
     </li>
     <li class="bullet">
-      <b>사용자 경험 개선.</b> 메뉴 구성 전면 개편, 페이지 어디서든 QR 출결을 찍을 수 있고 단축키를 적극 활용하는 등
-      기존 시스템에서 불편했던 사항들을 개선하여 사용자 경험을 크게 개선하였다.
+      <b>사용자 경험 개선.</b> 메뉴 구성 전면 개편, 페이지 어디서든 QR 출결을 찍을
+      수 있고 단축키를 적극 활용하는 등 기존 시스템에서 불편했던 사항들을 개선하여
+      사용자 경험을 크게 개선하였다.
     </li>
     <li class="bullet">
-      <b>UX</b> 서버 직접 빌드를 GitHub Actions에서 Docker
-      이미지를 만들어 GHCR에 올리고 서버는 pull만 하는 구조로 바꿨다. 실행에
-      필요한 파일만 이미지에 넣어 크기를 줄였다.
+      <b>UX</b> 서버 직접 빌드를 GitHub Actions에서 Docker 이미지를 만들어 GHCR에
+      올리고 서버는 pull만 하는 구조로 바꿨다. 실행에 필요한 파일만 이미지에 넣어
+      크기를 줄였다.
     </li>
     <li class="bullet">
-      <b>협업 기반.</b> Storybook으로 공통 컴포넌트를 문서화하고 Vitest로 핵심
-      로직을 테스트한다. 문의 확인이 늦어지는 문제는 Slack을 도입하고
-      Webhook·GitHub Actions를 연동해 실시간 알림으로 풀었다.
+      <b>협업 기반.</b> Storybook으로 공통 컴포넌트를 문서화하고 Vitest로 핵심 로직을
+      테스트한다. 문의 확인이 늦어지는 문제는 Slack을 도입하고 Webhook·GitHub Actions를
+      연동해 실시간 알림으로 풀었다.
     </li>
   </ul>
   <div class="figure">
-    <!-- include: src/diagrams/hakon-pipeline.svg -->
+    <HakonPipeline />
     <div class="figure-caption">
       배포 파이프라인 전후. 서버가 빌드하지 않는 구조로 바꿨다.
     </div>
@@ -137,17 +142,19 @@
   <h3 class="section-h">결과</h3>
   <div class="flex flex-wrap gap-2 mb-2">
     <span class="kpi"
-      ><span class="text-xs text-muted">Docker 이미지</span
-      ><span class="kpi-from">2.4GB</span
+      ><span class="text-xs text-muted">Docker 이미지</span><span
+        class="kpi-from">2.4GB</span
       ><span class="kpi-to">500MB</span></span
     >
     <span class="kpi"
-      ><span class="text-xs text-muted">빌드·배포</span
-      ><span class="kpi-from">10분</span><span class="kpi-to">7분</span></span
+      ><span class="text-xs text-muted">빌드·배포</span><span class="kpi-from"
+        >10분</span
+      ><span class="kpi-to">7분</span></span
     >
     <span class="kpi"
-      ><span class="text-xs text-muted">서버 빌드 부하</span
-      ><span class="kpi-to">0</span></span
+      ><span class="text-xs text-muted">서버 빌드 부하</span><span
+        class="kpi-to">0</span
+      ></span
     >
   </div>
   <ul class="space-y-1">

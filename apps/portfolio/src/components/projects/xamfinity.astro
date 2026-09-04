@@ -1,3 +1,7 @@
+---
+import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
+---
+
 <section class="page">
   <div class="chapter-head">
     <div class="chapter-no">02 · 회사 프로젝트</div>
@@ -107,22 +111,21 @@
   <h3 class="section-h">구현</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      <b>양방향 브리지.</b> Flutter → 웹은 MethodChannel, 웹 → Flutter는
-      EventChannel로 연결했다.
+      <b>양방향 브리지.</b> Flutter → 웹은 MethodChannel, 웹 → Flutter는 EventChannel로
+      연결했다.
     </li>
     <li class="bullet">
       <b>네이티브 기능.</b> 인앱결제, FCM 푸시, Remote Config로 동적으로 설정 관리,
-      Crashlytics 에러 수집. Android는 학원 공용 태블릿용 Kiosk 모드와 자동
-      업데이트를 추가했다.
+      Crashlytics 에러 수집. Android는 학원 공용 태블릿용 Kiosk 모드와 자동 업데이트를
+      추가했다.
     </li>
     <li class="bullet">
-      <b>배포 자동화.</b> Fastlane으로 빌드·서명·업로드를 묶어 iOS 빌드는 App
-      Store Connect로, Android 빌드는 Google Play로 자동 올라간다. 수동 배포
-      절차를 없앴다.
+      <b>배포 자동화.</b> Fastlane으로 빌드·서명·업로드를 묶어 iOS 빌드는 App Store
+      Connect로, Android 빌드는 Google Play로 자동 올라간다. 수동 배포 절차를 없앴다.
     </li>
   </ul>
   <div class="figure">
-    <!-- include: src/diagrams/xamfinity-bridge.svg -->
+    <XamfinityBridge />
     <div class="figure-caption">
       네이티브가 맡는 것과 웹이 맡는 것, 그 사이의 두 채널. 아래는 앱 밖에서
       값을 바꾸고 예외를 받는 두 서비스.
