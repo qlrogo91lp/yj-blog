@@ -37,7 +37,3 @@ export const apps: App[] = [
     links: [],
   },
 ];
-
-export function getApp(slug: string): App | undefined {
-  return apps.find((app) => app.slug === slug);
-}
