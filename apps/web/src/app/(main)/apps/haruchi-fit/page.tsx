@@ -15,7 +15,10 @@ export default function HaruchiFitPage() {
       <article className="prose max-w-none">
         <h1>{haruchiFitMeta.name}</h1>
         <p>{haruchiFitMeta.tagline}</p>
-        <p>{haruchiFitMeta.platforms} — Coming soon to the App Store.</p>
+        <p>{haruchiFitMeta.platforms}</p>
+        <p>
+          <a href={haruchiFitMeta.appStoreUrl}>Download on the App Store</a>
+        </p>
 
         <h2>Support</h2>
         <p>

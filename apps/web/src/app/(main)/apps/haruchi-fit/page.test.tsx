@@ -28,6 +28,14 @@ describe('HaruchiFitPage', () => {
     ).toHaveAttribute('href', `mailto:${haruchiFitMeta.supportEmail}`);
   });
 
+  it('App Store 링크를 렌더한다', () => {
+    render(<HaruchiFitPage />);
+    expect(screen.getByRole('link', { name: /App Store/ })).toHaveAttribute(
+      'href',
+      haruchiFitMeta.appStoreUrl
+    );
+  });
+
   it('방침 페이지 링크를 렌더한다', () => {
     render(<HaruchiFitPage />);
     expect(
