@@ -27,10 +27,10 @@ import WatchAppsYjkit from '../../diagrams/watch-apps-yjkit.astro';
 
   <h3 class="section-h">개요</h3>
   <p class="text-secondary">
-    테니스 경기를 할때 가끔 점수를 까먹는 경우가 있어서 경기 중에도 간단하게
+    테니스 경기를 할 때 가끔 점수를 까먹는 경우가 있어서 경기 중에도 간단하게
     기록할 수 있으면 좋지 않을까 생각했다. Ralli는 테니스 점수를, GolfCounter는
     골프 타수와 퍼팅을 기록한다. 둘 다 경기 중에는 워치만 조작하고, 아이폰은
-    기록과 통계를 보는 용도다. 예전에 출시했떤 앱을 전면 개편했다.
+    기록과 통계를 보는 용도다. 예전에 출시했던 앱을 전면 개편했다.
   </p>
   <div class="figure mx-auto max-w-[64%]">
     <div class="figure-row">
@@ -86,11 +86,13 @@ import WatchAppsYjkit from '../../diagrams/watch-apps-yjkit.astro';
       버전 갱신이 필요했다. 커밋 히스토리를 보존한 채 단일 Xcode 워크스페이스로 통합했다.
     </li>
   </ul>
-  <!-- <div class="callout">
+  {
+    /* <div class="callout">
     두 번째 앱을 "도메인 로직만 쓰면 되는" 상태로 만드는 것이 목표였다.
     GolfCounter는 그 검증이었고, 워치 워크아웃·동기화·저장은 한 줄도 다시 쓰지
     않았다.
-  </div> -->
+  </div> */
+  }
 
   <h3 class="section-h">구현</h3>
   <div class="figure">
@@ -110,10 +112,12 @@ import WatchAppsYjkit from '../../diagrams/watch-apps-yjkit.astro';
       다이나믹 아일랜드에 실시간 표시하고, 워치 페이스에서 바로 진입하며, 기록은 기기
       간 동기화된다.
     </li>
-    <!-- <li class="bullet">
+    {
+      /* <li class="bullet">
       <b>CI.</b> PR마다 변경된 앱만 빌드·테스트한다. YJKit이 바뀌면 전 앱을
       돌린다. job 분리로 전체 21분 → 6.4분, 문서만 바뀐 커밋은 6초.
-    </li> -->
+    </li> */
+    }
   </ul>
 
   <h3 class="section-h">결과</h3>
@@ -153,10 +157,12 @@ import WatchAppsYjkit from '../../diagrams/watch-apps-yjkit.astro';
     </div>
   </div>
 
-  <!-- <h3 class="section-h">회고</h3>
+  {
+    /* <h3 class="section-h">회고</h3>
   <p class="text-secondary">
     코어 분리를 첫 앱 출시 전에 하지 않은 것은 옳았다. 무엇이 공통인지는 두 번째
     앱을 만들 때 보인다. 아쉬운 점은 ASO를 출시 두 달 뒤에야 손댄 것이다.
     키워드는 출시 전에 정해야 첫 노출을 놓치지 않는다.
-  </p> -->
+  </p> */
+  }
 </section>
