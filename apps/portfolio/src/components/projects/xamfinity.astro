@@ -7,16 +7,14 @@ import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
     <div class="chapter-no">02 · 회사 프로젝트</div>
     <div class="chapter-title">Xamfinity 하이브리드 앱</div>
     <div class="chapter-summary">
-      두 네이티브 앱(iOS, Android)을 Flutter + WebView(React) 한 벌로 바꾼
+      로그인만 있던 Flutter 앱을 이어받아 기능 개발부터 출시·운영까지 맡은
       학생·학부모용 학원 앱
     </div>
     <dl class="meta-table">
       <dt>기간</dt>
       <dd>2024.02 – 2024.12 (개발·출시) · 이후 운영</dd>
       <dt>역할</dt>
-      <dd>
-        크로스플랫폼 구조 설계·주도, Flutter 앱과 React 웹 개발, 스토어 배포
-      </dd>
+      <dd>Flutter 앱·React 웹 개발, 스토어 배포·운영</dd>
       <dt>인원</dt>
       <dd>앱·웹 1 (본인) · 백엔드 협업</dd>
       <dt>스택</dt>
@@ -59,12 +57,11 @@ import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
   <h3 class="section-h">문제</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      iOS와 Android를 각각의 네이티브 코드로 관리하고 있었다. 같은 기능을 두 번
-      만들고, 두 번 고치고, 두 번 배포했다.
+      로그인만 구현된 Flutter 앱을 이어받았다. 출결·수납·공지 같은 나머지 기능을
+      만들어 출시해야 했다.
     </li>
     <li class="bullet">
-      기능이 거의 없었고 인포 위주의 앱이었다. 앱의 기능을 제대로 활용하지
-      못하고 있었다.
+      앱 심사 문제로 화면을 WebView 안의 React 웹으로 옮겨 달라는 요청을 받았다.
     </li>
   </ul>
 
