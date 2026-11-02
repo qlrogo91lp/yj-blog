@@ -7,16 +7,14 @@ import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
     <div class="chapter-no">02 · 회사 프로젝트</div>
     <div class="chapter-title">Xamfinity 하이브리드 앱</div>
     <div class="chapter-summary">
-      두 네이티브 앱(iOS, Android)을 Flutter + WebView(React) 한 벌로 바꾼
+      로그인만 있던 Flutter 앱을 이어받아 기능 개발부터 출시·운영까지 맡은
       학생·학부모용 학원 앱
     </div>
     <dl class="meta-table">
       <dt>기간</dt>
       <dd>2024.02 – 2024.12 (개발·출시) · 이후 운영</dd>
       <dt>역할</dt>
-      <dd>
-        크로스플랫폼 구조 설계·주도, Flutter 앱과 React 웹 개발, 스토어 배포
-      </dd>
+      <dd>Flutter 앱·React 웹 개발, 스토어 배포·운영</dd>
       <dt>인원</dt>
       <dd>앱·웹 1 (본인) · 백엔드 협업</dd>
       <dt>스택</dt>
@@ -59,16 +57,16 @@ import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
   <h3 class="section-h">문제</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      iOS와 Android를 각각의 네이티브 코드로 관리하고 있었다. 같은 기능을 두 번
-      만들고, 두 번 고치고, 두 번 배포했다.
+      로그인만 구현된 Flutter 앱을 이어받았다. 출결·수납·공지 같은 나머지 기능을
+      만들어 출시해야 했다.
     </li>
     <li class="bullet">
-      기능이 거의 없었고 인포 위주의 앱이었다. 앱의 기능을 제대로 활용하지
-      못하고 있었다.
+      앱 심사 문제로 화면을 WebView 안의 React 웹으로 옮겨 달라는 요청을 받았다.
     </li>
   </ul>
 
-  <!-- <h3 class="section-h">접근과 선택</h3>
+  {
+    /* <h3 class="section-h">접근과 선택</h3>
   <p class="text-secondary">
     핵심 질문은 "무엇을 네이티브로 두고 무엇을 웹으로 보낼 것인가"였다.
     결제·푸시·기기 권한처럼 웹으로 안 되는 것만 네이티브에 남기고, 화면과
@@ -106,7 +104,8 @@ import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
     하이브리드의 성패는 브리지 경계에서 갈린다. 네이티브가 해야 할 일의 목록을
     먼저 확정하고, 그 외에는 전부 웹으로 보냈다. 경계가 흐려지면 두 벌 관리로
     되돌아간다.
-  </div> -->
+  </div> */
+  }
 
   <h3 class="section-h">구현</h3>
   <ul class="space-y-1">
@@ -154,11 +153,13 @@ import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
     </li>
   </ul>
 
-  <!-- <h3 class="section-h">회고</h3>
+  {
+    /* <h3 class="section-h">회고</h3>
   <p class="text-secondary">
     브리지 API를 처음부터 문서로 고정해 둔 것이 가장 잘한 일이다. 웹과 앱이 따로
     개발돼도 계약이 흔들리지 않았다. 아쉬운 점은 WebView 초기 로딩이다. 첫
     화면을 네이티브로 두고 그 뒤부터 웹을 띄우는 구조였다면 첫 인상이 더 빨랐을
     것이다.
-  </p> -->
+  </p> */
+  }
 </section>
