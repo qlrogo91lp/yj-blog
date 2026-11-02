@@ -1,0 +1,146 @@
+<section class="page" id="pse-messenger" aria-labelledby="pse-messenger-title">
+  <div class="chapter-head">
+    <div class="chapter-no">05 · 개인 프로젝트</div>
+    <h2 class="chapter-title" id="pse-messenger-title">PSE Messenger</h2>
+    <div class="chapter-summary">
+      반복되는 로그인 풀림과 알림 누락을 개선하기 위해, AI와 기존 통신 방식을
+      분석하고 구현한 비즈메카 EZ 비공식 macOS 메신저
+    </div>
+    <dl class="meta-table">
+      <dt>기간</dt>
+      <dd>2026.10 – 현재</dd>
+      <dt>역할</dt>
+      <dd>문제 정의 · 요구사항과 사용 흐름 결정 · 실사용 피드백</dd>
+      <dt>구현 방식</dt>
+      <dd>
+        AI와 분석·설계를 논의하고, Rust 코어와 React 화면 구현은 AI에 위임
+      </dd>
+      <dt>스택</dt>
+      <dd>
+        <span class="stack"
+          >Tauri 2 · Rust · React · TypeScript · WebSocket · macOS</span
+        >
+      </dd>
+    </dl>
+  </div>
+
+  <h3 class="section-h">출발점 — 업무 중 메시지를 놓치는 불편</h3>
+  <p class="text-secondary">
+    업무에 쓰던 웹메신저는 로그인이 자주 풀렸고, 새 메시지 알림도 제대로 오지
+    않았다. 필요한 것은 새로운 메신저 서비스가 아니라, 기존 계정과 동료 목록을
+    그대로 쓰면서 연결과 알림을 챙겨 주는 도구였다. 이 불편을 줄일 방법을 찾는
+    것에서 프로젝트를 시작했다.
+  </p>
+
+  <h3 class="section-h">분석에서 기획으로</h3>
+  <p class="text-secondary">
+    AI와 기존 웹메신저 코드를 분석하면서 메시지를 WebSocket으로 주고받는다는
+    점을 확인했다. 포털 로그인으로 토큰을 발급받고, 정해진
+    핸드셰이크·로그인·동기화 순서와 패킷 규격을 따르면 별도 클라이언트에서도
+    기존 서버와 통신할 수 있다는 방향을 논의했다. 이를 바탕으로 서버를 새로
+    만드는 대신 macOS 앱에서 연결과 알림을 처리하도록 기획했다.
+  </p>
+  <ol class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-3 text-xs">
+    <li class="bg-surface border border-line rounded p-3">
+      <b class="block text-accent mb-1">01 · 기존 인증 활용</b>
+      포털 로그인 → 쿠키로 메신저 토큰 발급
+    </li>
+    <li class="bg-surface border border-line rounded p-3">
+      <b class="block text-accent mb-1">02 · 기존 서버와 통신</b>
+      WebSocket 접속 → 기존 패킷 규격으로 로그인·대화 동기화
+    </li>
+    <li class="bg-surface border border-line rounded p-3">
+      <b class="block text-accent mb-1">03 · 앱에서 불편 개선</b>
+      연결 유지·재접속과 macOS 알림 처리
+    </li>
+  </ol>
+
+  <h3 class="section-h">불편을 요구사항으로 바꾸기</h3>
+  <table class="compare-table">
+    <thead
+      ><tr
+        ><th scope="col">겪었던 불편</th><th scope="col">앱에 반영한 대응</th
+        ></tr
+      ></thead
+    >
+    <tbody>
+      <tr>
+        <td>로그인이 자주 풀려 메시지를 놓침</td>
+        <td
+          >연결 유지 신호와 자동 재접속, 재접속 시 새 토큰 발급과 키체인 기반
+          자동 로그인</td
+        >
+      </tr>
+      <tr>
+        <td>새 메시지 알림이 제대로 오지 않음</td>
+        <td>메시지 수신을 macOS 알림과 Dock 배지로 전달</td>
+      </tr>
+      <tr>
+        <td>업무 중 웹메신저를 계속 띄워 두어야 함</td>
+        <td>창을 닫아도 메뉴바에 상주하며 연결 유지, 맥 로그인 시 자동 실행</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="section-h">기존 웹 화면과 새 앱</h3>
+  <div class="figure">
+    <a
+      href="./pse-messenger/screens-comparison.png"
+      target="_blank"
+      rel="noopener"
+    >
+      <img
+        src="./pse-messenger/screens-comparison.png"
+        alt="위는 기존 비즈메카 웹메신저, 아래는 새 macOS 앱의 대화 화면. 개인 정보와 대화 내용은 가림 처리."
+        loading="lazy"
+      />
+    </a>
+    <div class="figure-caption">
+      위: 기존 웹메신저. 아래: 새 앱. 첨부 화면을 바탕으로 AI로 개인 정보·인증
+      정보·대화 내용을 가림 처리한 비교 이미지.
+    </div>
+  </div>
+  <p class="text-secondary">
+    화면은 익숙하게 쓸 수 있도록 Slack의 구성을 참고해 메뉴·대화 목록·대화
+    영역으로 나눴다. 화면 구성과 함께, 창이 숨겨져도 연결과 알림 처리가
+    이어지도록 하는 것을 핵심 요구사항으로 삼았다.
+  </p>
+  <div class="figure">
+    <a href="./pse-messenger/settings.png" target="_blank" rel="noopener">
+      <img
+        src="./pse-messenger/settings.png"
+        alt="새 메시지 알림, 알림 소리, 맥 로그인 시 자동 실행을 선택하는 PSE Messenger 설정 화면"
+        loading="lazy"
+      />
+    </a>
+    <div class="figure-caption">
+      새 메시지 알림·알림 소리·맥 로그인 시 자동 실행을 설정하는 화면.
+    </div>
+  </div>
+
+  <h3 class="section-h">AI 구현과 실제 사용 중 확인</h3>
+  <p class="text-secondary">
+    빠르게 쓸 수 있는 도구를 만드는 것이 목적이어서, 필요한 동작을 정하고 AI에
+    구현을 위임했다. 구현 코드 전반을 직접 검수한 것은 아니며, 실제 사용 중
+    발견한 문제를 전달하고 수정 결과를 확인하는 방식으로 진행했다. 예를 들어
+    메시지가 수신돼 배지는 늘어나는데 알림이 뜨지 않는 문제가 있어 개선을
+    요청했다. AI가 macOS 비동기 알림 API를 적용한 뒤, 다른 앱을 사용하는 동안
+    동료의 메시지 알림이 표시되는 것을 확인했다.
+  </p>
+
+  <h3 class="section-h">현재 결과와 남은 확인</h3>
+  <ul class="space-y-1">
+    <li class="bullet">
+      로그인·대화·파일 전송·조직도 등 핵심 기능을 갖춘 앱과 Developer ID
+      서명·공증을 거친 설치용 DMG를 만들었다.
+    </li>
+    <li class="bullet">
+      실제 메시지 수신 시 macOS 알림 표시를 확인했다. 장시간 연결 유지·잠자기
+      복귀·알림 클릭 후 대화방 이동은 추가 확인이 남아 있다.
+    </li>
+  </ul>
+  <div class="callout">
+    이 경험의 핵심은 일상적인 업무 불편을 구체적인 요구사항으로 바꾸고, AI와
+    해결 방법을 논의해 실제로 쓸 수 있는 도구로 만드는 과정을 진행한 것이다.
+  </div>
+</section>
