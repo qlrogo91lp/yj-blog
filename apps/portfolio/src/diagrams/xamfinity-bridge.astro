@@ -1,8 +1,8 @@
 <svg
-  viewBox="0 0 720 290"
+  viewBox="0 0 720 390"
   xmlns="http://www.w3.org/2000/svg"
   role="img"
-  aria-label="Flutter와 WebView 사이의 브리지 구조, 그리고 Remote Config·Crashlytics 연결"
+  aria-label="웹에서 JavaScript 핸들러로 Flutter 앱 기능을 호출하고 Flutter가 채널로 iOS·Android 네이티브에 연결되는 구조, 그리고 Remote Config·Crashlytics 연결"
 >
   <defs>
     <marker
@@ -34,12 +34,18 @@
   >
 
   <!-- bridge -->
-  <path d="M302,84 L418,84" class="dg-line"></path>
-  <text x="360" y="72" class="dg-label">MethodChannel</text>
-  <text x="360" y="96" class="dg-label">네이티브 → 웹 호출</text>
-  <path d="M418,134 L302,134" class="dg-line"></path>
-  <text x="360" y="122" class="dg-label">EventChannel</text>
-  <text x="360" y="146" class="dg-label">웹 → 네이티브 이벤트</text>
+  <path d="M418,104 L302,104" class="dg-line"></path>
+  <text x="360" y="83" class="dg-label">JavaScript</text>
+  <text x="360" y="95" class="dg-label">핸들러</text>
+  <text x="360" y="122" class="dg-label">웹 → 앱 기능 호출</text>
+
+  <!-- Native -->
+  <path d="M80,194 L80,245" class="dg-line"></path>
+  <text x="150" y="214" class="dg-label">MethodChannel ·</text>
+  <text x="150" y="228" class="dg-label">EventChannel</text>
+  <rect x="40" y="245" width="220" height="42" rx="6" class="dg-box-soft"
+  ></rect>
+  <text x="150" y="266" class="dg-text">iOS · Android 네이티브</text>
 
   <!-- Web -->
   <rect x="420" y="14" width="300" height="180" rx="8" class="dg-box-soft"
@@ -53,17 +59,17 @@
   >
 
   <!-- Firebase — 앱 밖에서 바꾸고, 앱 밖에서 지켜보는 것 -->
-  <path d="M150,236 L150,202" class="dg-line"></path>
-  <text x="238" y="216" class="dg-label">WebView URL · 기능 플래그</text>
-  <path d="M300,200 L455,234" class="dg-line"></path>
-  <path d="M620,200 L545,234" class="dg-line"></path>
-  <text x="500" y="216" class="dg-label">양쪽 예외 수집</text>
-  <rect x="40" y="236" width="220" height="42" rx="6" class="dg-box-soft"
+  <path d="M40,336 L20,202" class="dg-line"></path>
+  <text x="150" y="316" class="dg-label">WebView URL · 기능 플래그</text>
+  <path d="M300,200 L455,334" class="dg-line"></path>
+  <path d="M620,200 L545,334" class="dg-line"></path>
+  <text x="500" y="316" class="dg-label">양쪽 예외 수집</text>
+  <rect x="40" y="336" width="220" height="42" rx="6" class="dg-box-soft"
   ></rect>
-  <text x="150" y="252" class="dg-text">Remote Config</text>
-  <text x="150" y="268" class="dg-label">스토어 심사 없이 바꾸는 값</text>
-  <rect x="390" y="236" width="220" height="42" rx="6" class="dg-box-soft"
+  <text x="150" y="352" class="dg-text">Remote Config</text>
+  <text x="150" y="368" class="dg-label">스토어 심사 없이 바꾸는 값</text>
+  <rect x="390" y="336" width="220" height="42" rx="6" class="dg-box-soft"
   ></rect>
-  <text x="500" y="252" class="dg-text">Crashlytics</text>
-  <text x="500" y="268" class="dg-label">앱·웹 예외를 한곳으로</text>
+  <text x="500" y="352" class="dg-text">Crashlytics</text>
+  <text x="500" y="368" class="dg-label">앱·웹 예외를 한곳으로</text>
 </svg>
