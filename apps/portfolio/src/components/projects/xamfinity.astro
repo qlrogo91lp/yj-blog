@@ -110,8 +110,8 @@ import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
   <h3 class="section-h">구현</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      <b>양방향 브리지.</b> Flutter → 웹은 MethodChannel, 웹 → Flutter는 EventChannel로
-      연결했다.
+      <b>웹–앱 브리지.</b> Flutter에 WebView용 JavaScript 핸들러를 만들어 웹에서 앱
+      기능을 호출하고, 네이티브 기능은 MethodChannel·EventChannel로 연결했다.
     </li>
     <li class="bullet">
       <b>네이티브 기능.</b> 인앱결제, FCM 푸시, Remote Config로 동적으로 설정 관리,
@@ -126,8 +126,8 @@ import XamfinityBridge from '../../diagrams/xamfinity-bridge.astro';
   <div class="figure">
     <XamfinityBridge />
     <div class="figure-caption">
-      네이티브가 맡는 것과 웹이 맡는 것, 그 사이의 두 채널. 아래는 앱 밖에서
-      값을 바꾸고 예외를 받는 두 서비스.
+      웹에서 앱 기능을 호출하는 핸들러와 Flutter의 네이티브 연결. 아래는 앱
+      밖에서 값을 바꾸고 예외를 받는 두 서비스.
     </div>
   </div>
 
