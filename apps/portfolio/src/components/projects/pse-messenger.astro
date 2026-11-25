@@ -4,7 +4,7 @@
     <h2 class="chapter-title" id="pse-messenger-title">PSE Messenger</h2>
     <div class="chapter-summary">
       반복되는 로그인 풀림과 알림 누락을 개선하기 위해, AI와 기존 통신 방식을
-      분석하고 구현한 비즈메카 EZ 비공식 macOS 메신저
+      분석하고 구현한 비즈메카 EZ 비공식 데스크톱 메신저(macOS·Windows)
     </div>
     <dl class="meta-table">
       <dt>기간</dt>
@@ -18,7 +18,7 @@
       <dt>스택</dt>
       <dd>
         <span class="stack"
-          >Tauri 2 · Rust · React · TypeScript · WebSocket · macOS</span
+          >Tauri 2 · Rust · React · TypeScript · WebSocket · macOS · Windows</span
         >
       </dd>
     </dl>
@@ -135,12 +135,17 @@
   <h3 class="section-h">현재 결과와 남은 확인</h3>
   <ul class="space-y-1">
     <li class="bullet">
-      로그인·대화·파일 전송·조직도 등 핵심 기능을 갖춘 앱과 Developer ID
-      서명·공증을 거친 설치용 DMG를 만들었다.
+      로그인·대화·파일 전송·조직도 등 핵심 기능을 갖춘 앱을 만들어, macOS용은
+      Developer ID 서명·공증을 거친 DMG로, Windows용은 exe로 빌드해 사내에
+      배포하고 있다. Windows용은 사내에서만 쓰는 도구라 코드 서명은 하지 않았다.
     </li>
     <li class="bullet">
       실제 메시지 수신 시 macOS 알림 표시를 확인했다. 장시간 연결 유지·잠자기
       복귀·알림 클릭 후 대화방 이동은 추가 확인이 남아 있다.
+    </li>
+    <li class="bullet">
+      새 버전을 설치 파일 없이 받을 수 있도록 앱 자동 업데이트를 추가할
+      예정이다.
     </li>
   </ul>
   <div class="callout">
